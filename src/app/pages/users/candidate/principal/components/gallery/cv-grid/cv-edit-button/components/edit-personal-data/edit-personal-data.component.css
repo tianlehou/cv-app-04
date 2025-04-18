@@ -1,0 +1,87 @@
+/* Grupos de formulario */
+.form-group {
+  margin-bottom: 15px;
+  text-align: left;
+
+  label {
+    display: block;
+    margin: 0.5em 0 0 1em;
+    font-weight: 500;
+  }
+
+  .input-group {
+    display: flex;
+    align-items: center;
+  }
+
+  input {
+    flex: 1;
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1em;
+  }
+
+  button {
+    width: 85px;
+    color: white;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    padding: 8px 0;
+    border-radius: 4px;
+    margin-left: 8px;
+    transition: all 0.3s ease;
+  }
+
+  /* Estilo para botón Editar */
+  button:not(.editing) {
+    background-color: var(--clr-blue);
+  }
+
+  button:not(.editing):hover {
+    background-color: var(--clr-blue-dark);
+  }
+
+  /* Estilo para botón Guardar */
+  button.editing {
+    background-color: var(--clr-green);
+  }
+
+  button.editing:hover {
+    background-color: var(--clr-green-dark);
+  }
+
+  /* Estilo para botón Cancelar */
+  button.cancel {
+    background-color: var(--clr-red);
+  }
+
+  button.cancel:hover {
+    background-color: var(--clr-red-dark);
+  }
+
+  /* Mensajes de error */
+  .text-danger {
+    color: var(--clr-red);
+    font-size: 0.875em;
+    margin-top: 5px;
+    margin-left: 1em;
+  }
+}
+
+.btn {
+  z-index: 1;
+}
+
+input#phone {
+  letter-spacing: 0.1em;
+}
+
+input[type="email"] {
+  text-transform: lowercase;
+}
+
+.invalid-field {
+  border: 1px solid var(--clr-red) !important;
+}

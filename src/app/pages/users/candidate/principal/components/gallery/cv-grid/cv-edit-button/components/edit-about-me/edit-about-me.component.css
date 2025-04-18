@@ -1,0 +1,97 @@
+.form-group {
+  label {
+    margin-bottom: 10px;
+  }
+}
+
+/* Textarea y texto no editable - Mismo ancho y estilo */
+.edit-profile-container textarea,
+.edit-profile-container .non-editable-text {
+  width: 100%;
+  min-width: 300px;
+  max-width: 100%;
+  min-height: 150px;
+  padding: 15px;
+  border-radius: 8px;
+  border: 1px solid var(--bg-light);
+  background: var(--clr-white);
+  color: var(--text-color);
+  text-align: left;
+}
+
+/* Textarea específico */
+.edit-profile-container textarea {
+  width: 100%;
+  resize: vertical;
+  outline: none;
+}
+
+/* Fila de botones - Mejorada con espaciado y alineación */
+.edit-profile-container .button-row {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin-top: 20px;
+  gap: 15px;
+}
+
+/* Botones - Estilo impactante como en cv-edit-button */
+.edit-profile-container .btn {
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  min-width: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.edit-profile-container .btn i {
+  font-size: 0.9rem;
+}
+
+.edit-profile-container .btn-edit {
+  border: 1px solid var(--clr-blue);
+  background-color: white;
+  color: var(--clr-blue);
+  transition: all 0.5s ease-in-out;
+}
+
+.edit-profile-container .btn-edit:hover {
+  color: white;
+  background-color: var(--clr-blue);
+}
+
+.edit-profile-container .btn-cancel {
+  color: var(--clr-red);
+  background-color: var(--clr-white);
+  border: 1px solid var(--clr-red);
+  transition: all 0.5s ease-in-out;
+}
+
+.edit-profile-container .btn-cancel:hover {
+  background-color: var(--clr-red);
+  color: var(--clr-white);
+}
+
+.edit-profile-container .btn-save {
+  background-color: var(--clr-white);
+  border: 1px solid var(--clr-green);
+  color: var(--clr-green);
+  transition: all 0.5s ease-in-out;
+}
+
+.edit-profile-container .btn-save:hover {
+  background-color: var(--clr-green);
+  color: var(--clr-white);
+}
+
+.edit-profile-container .btn-save:disabled {
+  background-color: var(--bg-dark);
+  color: var(--text-color-light);
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}

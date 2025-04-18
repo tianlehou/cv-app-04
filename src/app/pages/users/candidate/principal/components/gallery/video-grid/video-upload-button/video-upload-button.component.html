@@ -1,0 +1,7 @@
+<div class="upload-button">
+    <label for="video-upload">
+        <i class="fas fa-plus"></i>
+    </label>
+    <input id="video-upload" type="file" accept="video/*" hidden (click)="$event.stopPropagation()"
+        (change)="onFileSelected($event)">
+</div>

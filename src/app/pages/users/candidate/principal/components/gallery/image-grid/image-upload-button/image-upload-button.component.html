@@ -1,0 +1,7 @@
+<div class="upload-button">
+    <label for="image-upload">
+        <i class="fas fa-plus"></i>
+    </label>
+    <input id="image-upload" type="file" accept="image/*" hidden (click)="$event.stopPropagation()"
+        (change)="onFileSelected($event)">
+</div>

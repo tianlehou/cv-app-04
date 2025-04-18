@@ -1,0 +1,32 @@
+<div class="profile-container">
+  @if (isLoading) {
+    <p>Cargando datos personales...</p>
+  } @else {
+    <div class="form-group" [formGroup]="profileForm">
+      <div class="personal-data-field">
+        <label>Nombre Completo:</label>
+        <p>{{ profileForm.get('fullName')?.value }}</p>
+      </div>
+
+      <div class="personal-data-field">
+        <label>Profesión:</label>
+        <p>{{ profileForm.get('profesion')?.value }}</p>
+      </div>
+
+      <div class="personal-data-field">
+        <label>Teléfono/Celular:</label>
+        <p>{{ profileForm.get('phone')?.value }}</p>
+      </div>
+
+      <div class="personal-data-field">
+        <label>Correo Electrónico:</label>
+        <p>{{ profileForm.get('editableEmail')?.value }}</p>
+      </div>
+
+      <div class="personal-data-field">
+        <label>Dirección:</label>
+        <p>{{ profileForm.get('direction')?.value }}</p>
+      </div>
+    </div>
+  }
+</div>

@@ -1,0 +1,18 @@
+<div class="gallery-container">
+    <app-icon-rows [activeView]="activeView" (iconSelected)="onIconSelected($event)">
+    </app-icon-rows>
+
+    <div class="content-container">
+        @switch (activeView) {
+        @case ('image') {
+        <app-image-grid *ngIf="currentUser" [currentUser]="currentUser"></app-image-grid>
+        }
+        @case ('video') {
+        <app-video-grid *ngIf="currentUser" [currentUser]="currentUser"></app-video-grid>
+        }
+        @case ('cv') {
+        <app-cv-grid *ngIf="currentUser" [currentUser]="currentUser"></app-cv-grid>
+        }
+        }
+    </div>
+</div>

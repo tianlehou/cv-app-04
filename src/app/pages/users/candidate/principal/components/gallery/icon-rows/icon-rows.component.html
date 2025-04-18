@@ -1,0 +1,14 @@
+<div class="icon-row">
+    <div class="icon-container" [class.active]="activeView === 'image'" (click)="selectIcon('image')">
+        <i class="fas fa-camera-retro icon"></i>
+        <div class="active-line"></div>
+    </div>
+    <div class="icon-container" [class.active]="activeView === 'video'" (click)="selectIcon('video')">
+        <i class="fas fa-film icon"></i>
+        <div class="active-line"></div>
+    </div>
+    <div class="icon-container" [class.active]="activeView === 'cv'" (click)="selectIcon('cv')">
+        <i class="fas fa-file icon"></i>
+        <div class="active-line"></div>
+    </div>
+</div>

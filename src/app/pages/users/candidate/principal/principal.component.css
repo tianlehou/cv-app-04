@@ -1,0 +1,54 @@
+.profile-header {
+  height: 4rem;
+  display: flex;
+  align-items: center;
+  background-color: var(--clr-white);
+  border-bottom: 1px solid #ccc;
+}
+
+.profile-header button {
+  position: absolute;
+  right: 10px;
+  border: 1px solid #ccc;
+  background-color: var(--clr-white);
+}
+
+.profile-container {
+  max-width: 800px;
+  margin: auto;
+  text-align: center;
+}
+
+app-custom-button {
+  position: fixed;
+  top: 25px;
+  right: 25px;
+}
+
+.profile-components-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 1rem;
+  width: 100%;
+}
+
+/* Responsive para tablet */
+@media (max-width: 768px) {
+  .profile-components-row {
+    gap: 15px;
+  }
+}
+
+/* Responsive para móvil */
+@media (max-width: 480px) {
+  .profile-components-row {
+    flex-direction: column;
+  }
+
+  app-profile-picture {
+    width: 150px;
+    height: 150px;
+  }
+}

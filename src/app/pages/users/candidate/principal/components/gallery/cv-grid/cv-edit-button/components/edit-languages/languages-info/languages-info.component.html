@@ -1,0 +1,145 @@
+<div class="info-container" #infoContainer>
+  <header class="info-header">
+    <button class="back-button" (click)="goBack()">
+      <i class="fas fa-arrow-left"></i>
+    </button>
+    <h3><i class="fas fa-language"></i><span>Idiomas</span></h3>
+  </header>
+
+  <!-- Sección Informativa -->
+  <section id="main-section">
+    <!-- Tarjeta 1 - Importancia -->
+    <div class="info-card blue">
+      <div class="info-header">
+        <i class="fas fa-globe-americas"></i>
+        <h4>¿Por qué incluir idiomas?</h4>
+      </div>
+      <ul class="info-list">
+        <li>
+          <span>
+            <i class="fas fa-check"></i>
+            <strong>Competitividad global:</strong> 60% de empleos en multinacionales requieren inglés (LinkedIn, 2023).
+          </span>
+        </li>
+        <li>
+          <span>
+            <i class="fas fa-check"></i>
+            <strong>Brecha salarial:</strong> Saber inglés puede aumentar tu sueldo hasta un 30% (EF EPI).
+          </span>
+        </li>
+        <li>
+          <span>
+            <i class="fas fa-check"></i>
+            <strong>Flexibilidad:</strong> Acceso a trabajos remotos internacionales.
+          </span>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Tarjeta 2 - Qué incluir -->
+    <div class="info-card green">
+      <div class="info-header">
+        <i class="fas fa-list-alt"></i>
+        <h4>¿Cómo listar idiomas?</h4>
+      </div>
+      <ul class="info-list">
+        <li>
+          <span>
+            <i class="fas fa-certificate"></i>
+            <strong>Niveles estándar:</strong> Básico (A1/A2), Intermedio (B1/B2), Avanzado (C1/C2), Nativo.
+          </span>
+        </li>
+        <li>
+          <span>
+            <i class="fas fa-award"></i>
+            <strong>Certificaciones:</strong> TOEFL, DELE, DELF (opcional pero valioso).
+          </span>
+        </li>
+        <li>
+          <span>
+            <i class="fas fa-comment-alt"></i>
+            <strong>Habilidades específicas:</strong> "Conversación fluida", "Redacción técnica".
+          </span>
+        </li>
+      </ul>
+    </div>
+
+      <!-- Consejos Finales -->
+  <div class="info-card red" style="margin-top: 2rem;">
+    <div class="info-header">
+      <i class="fas fa-exclamation-circle"></i>
+      <h4>¡Precaución!</h4>
+    </div>
+    <ul class="info-list">
+      <li>
+        <span>
+          <i class="fas fa-times"></i>
+          <strong>No exageres niveles:</strong> 72% de reclutadores detectan mentiras en entrevistas (Forbes).
+        </span>
+      </li>
+      <li>
+        <span>
+          <i class="fas fa-times"></i>
+          <strong>Evita:</strong> "Portugués: Lo entiendo pero no lo hablo".
+        </span>
+      </li>
+    </ul>
+  </div>
+  </section>
+
+  <!-- Ejemplos Prácticos -->
+  <section id="examples-section">
+    <h4 class="gradient-title display-flex-center">Ejemplos según tu perfil</h4>
+
+    <!-- Ejemplo 1 - Solo idioma nativo -->
+    <div class="example-card clr-purple">
+      <div class="example-header">
+        <i class="fas fa-user"></i>
+        <h5>Solo idioma nativo</h5>
+      </div>
+      <p>
+        <strong>Español:</strong> Nativo<br>
+        <em>* Redacción impecable y dominio de lenguaje técnico.</em>
+      </p>
+    </div>
+
+    <!-- Ejemplo 2 - Nivel básico -->
+    <div class="example-card clr-blue">
+      <div class="example-header">
+        <i class="fas fa-book"></i>
+        <h5>Idioma en aprendizaje</h5>
+      </div>
+      <p>
+        <strong>Inglés:</strong> Básico (A2) | Cursando B1 en Academia XYZ<br>
+        <strong>Francés:</strong> Principiante (Duolingo, 2023)
+      </p>
+    </div>
+
+    <!-- Ejemplo 3 - Bilingüe -->
+    <div class="example-card clr-green">
+      <div class="example-header">
+        <i class="fas fa-comments"></i>
+        <h5>Perfil bilingüe</h5>
+      </div>
+      <p>
+        <strong>Inglés:</strong> Avanzado (C1 - IELTS 7.5)<br>
+        <strong>Español:</strong> Nativo<br>
+        <strong>Alemán:</strong> Intermedio (B1 - Goethe Institut)
+      </p>
+    </div>
+
+    <!-- Ejemplo 4 - Multilingüe profesional -->
+    <div class="example-card clr-yellow">
+      <div class="example-header">
+        <i class="fas fa-globe"></i>
+        <h5>Perfil global</h5>
+      </div>
+      <p>
+        <strong>Inglés:</strong> Nativo (TOEFL 118/120)<br>
+        <strong>Mandarín:</strong> Avanzado (HSK 5)<br>
+        <strong>Español:</strong> Fluido (C2 - DELE)<br>
+        <strong>Francés:</strong> Intermedio (B2 - Alliance Française)
+      </p>
+    </div>
+  </section>
+</div>

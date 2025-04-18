@@ -1,0 +1,58 @@
+<div class="edit-profile-container" *ngIf="!showInfoComponent">
+  <header>
+    <h3>
+      <i class="fas fa-language"></i>
+      <span>Idiomas</span>
+    </h3>
+    <i class="fas fa-info-circle info-icon" title="Información" (click)="openInfoModal()"></i>
+  </header>
+
+  <body>
+    <form [formGroup]="profileForm" (ngSubmit)="onSubmit()">
+      <div class="form-group">
+        <div class="display-flex-space-between">
+          <label for="languages">Idiomas:</label>
+          <button type="button" class="add-button" id="languages-btn" (click)="addLanguage()">
+            Agregar
+          </button>
+        </div>
+
+        <div class="line"></div>
+
+        <div formArrayName="languages">
+          <div *ngFor="let language of languagesArray.controls; let i = index" [formGroupName]="i"
+            class="language-group">
+            <div class="form-row">
+              <div class="form-group third-width">
+                <label for="name">Idioma:</label>
+                <input type="text" id="name" formControlName="name" class="form-control" />
+              </div>
+              <div class="form-group third-width">
+                <label for="proficiency">Nivel:</label>
+                <input type="text" id="proficiency" formControlName="proficiency" class="form-control" />
+              </div>
+              <div class="form-group third-width">
+                <label for="certification">Certificación:</label>
+                <input type="text" id="certification" formControlName="certification" class="form-control" />
+              </div>
+            </div>
+
+            <div class="button-row">
+              <button type="button" class="delete-btn" (click)="confirmDeleteLanguage(i)">
+                Eliminar
+              </button>
+              <button type="button" class="edit-save-button" (click)="toggleEdit('languages')"
+                [class.editing]="editableFields['languages']">
+                {{ editableFields["languages"] ? "Guardar" : "Editar" }}
+              </button>
+            </div>
+            <div class="line"></div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </body>
+</div>
+
+
+<app-languages-info *ngIf="showInfoComponent" (back)="toggleInfoView()"></app-languages-info>

@@ -1,0 +1,6 @@
+<!-- main.component.html -->
+<app-sidebar></app-sidebar>
+<div class="main-container display-flex-center">
+  <h1>Panel de Administración</h1>
+</div>
+<app-admin-dashboard *ngIf="userRole === 'admin'"></app-admin-dashboard>

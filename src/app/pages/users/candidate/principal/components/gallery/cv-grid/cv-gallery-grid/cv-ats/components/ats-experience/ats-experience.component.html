@@ -1,0 +1,37 @@
+<div class="profile-container">
+  @if (isLoading) {
+    <p>Cargando experiencias...</p>
+  } @else {
+    <div class="form-group" [formGroup]="profileForm">
+      <label>Experiencia Laboral:</label>
+      @if (experienceArray.length > 0) {
+        <ul class="experience-list">
+          @for (exp of experienceArray.controls; track $index) {
+            <li>
+              <div class="experience-item">
+                <div class="experience-field">
+                  <label>Año:</label>
+                  <p>{{ exp.get('year')?.value }}</p>
+                </div>
+                <div class="experience-field">
+                  <label>Empresa:</label>
+                  <p>{{ exp.get('company')?.value }}</p>
+                </div>
+                <div class="experience-field">
+                  <label>Rol:</label>
+                  <p>{{ exp.get('role')?.value }}</p>
+                </div>
+                <div class="experience-field">
+                  <label>Descripción:</label>
+                  <p>{{ exp.get('description')?.value }}</p>
+                </div>
+              </div>
+            </li>
+          }
+        </ul>
+      } @else {
+        <p class="no-experience">No se encontraron experiencias laborales</p>
+      }
+    </div>
+  }
+</div>

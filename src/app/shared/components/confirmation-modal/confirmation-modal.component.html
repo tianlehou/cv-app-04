@@ -1,0 +1,16 @@
+<div class="modal-overlay" *ngIf="(ConfirmationModalService.isVisible | async)" role="dialog" 
+     aria-labelledby="modal-title" aria-describedby="modal-message"
+     (click)="ConfirmationModalService.onCancel()">
+  <div class="modal-content" (click)="$event.stopPropagation()" *ngIf="ConfirmationModalService.config | async as config">
+    <h2 id="modal-title">{{ config.title }}</h2>
+    <p id="modal-message">{{ config.message }}</p>
+    <div class="modal-actions">
+      <button class="btn confirm-btn" (click)="ConfirmationModalService.onConfirm()">
+        {{ config.confirmText }}
+      </button>
+      <button class="btn cancel-btn" (click)="ConfirmationModalService.onCancel()">
+        {{ config.cancelText }}
+      </button>
+    </div>
+  </div>
+</div>

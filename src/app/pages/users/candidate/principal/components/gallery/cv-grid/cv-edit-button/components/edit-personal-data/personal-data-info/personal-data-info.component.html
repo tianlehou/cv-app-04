@@ -1,0 +1,99 @@
+<div class="info-container" #infoContainer>
+  <header class="info-header">
+    <button class="back-button" (click)="goBack()">
+      <i class="fas fa-arrow-left"></i>
+    </button>
+    <h3><i class="fas fa-id-card"></i><span>Datos de Contacto & Personales</span></h3>
+  </header>
+
+  <section id="main-section">
+    <div class="info-card green">
+      <div class="info-header">
+        <i class="fas fa-id-card"></i>
+        <h4>¿Qué datos personales incluir?</h4>
+      </div>
+      <ul class="info-list">
+        <li>
+          <span>
+            <i class="fas fa-user"></i>
+            <strong>Nombre completo:</strong>Nombre y apellidos (sin apodos, evitar abreviaturas).
+          </span>
+        </li>
+        <li>
+          <span>
+            <i class="fas fa-map-marker-alt"></i>
+            <strong>Ubicación:</strong>Ciudad y país (No es necesario incluir dirección completa por privacidad).
+          </span>
+        </li>
+        <li>
+          <span>
+            <i class="fas fa-envelope"></i>
+            <strong>Email profesional:</strong>Evita correo informal (como: "chicofiesta&#64;...",
+            "gatitalinda&#64;...").
+          </span>
+        </li>
+        <li>
+          <span>
+            <i class="fas fa-phone-alt"></i>
+            <strong>Teléfono:</strong>Incluye código de área si aplica (Usa un número con buena cobertura y buzón de voz
+            profesional.)
+          </span>
+        </li>
+        <li>
+          <span>
+            <i class="fas fa-info-circle"></i>
+            <strong>Opcionales:</strong>Edad, nacionalidad o estado civil (si lo
+            requiere el país o sector).
+          </span>
+        </li>
+        <li>
+          <span>
+            <i class="fas fa-ban"></i>
+            <strong>Evita:</strong>Número de documento, dirección completa,
+            creencias, fotos familiares.
+          </span>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Nueva tarjeta 1 (roja) - Qué NO incluir -->
+    <div class="info-card red">
+      <div class="info-header">
+        <i class="fas fa-ban"></i>
+        <h4>¿Qué NO incluir en los datos de contacto?</h4>
+      </div>
+      <ul class="info-list">
+        <li>
+          <span>
+            <i class="fas fa-birthday-cake"></i>
+            <strong>Fecha de nacimiento o edad:</strong> Puede generar discriminación.
+          </span>
+        </li>
+        <li>
+          <span>
+            <i class="fas fa-heart"></i>
+            <strong>Estado civil o hijos:</strong> No es relevante para la mayoría de trabajos.
+          </span>
+        </li>
+        <li>
+          <span>
+            <i class="fas fa-id-badge"></i>
+            <strong>Documentos de identidad:</strong> DNI, CURP, RFC (solo si son requeridos explícitamente).
+          </span>
+        </li>
+        <li>
+          <span>
+            <i class="fas fa-home"></i>
+            <strong>Dirección exacta:</strong> Basta con ciudad y país por seguridad.
+          </span>
+        </li>
+        <li>
+          <span>
+            <i class="fas fa-camera"></i>
+            <strong>Fotografía:</strong> Solo en industrias donde sea obligatorio (modelaje, actuación).
+          </span>
+        </li>
+      </ul>
+    </div>
+  </section>
+</div>

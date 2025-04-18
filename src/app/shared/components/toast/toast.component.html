@@ -1,0 +1,7 @@
+<div class="toast-container">
+    <div *ngFor="let toast of toastService.toasts" class="toast {{ toast.type }}"
+        [style.--duration]="toast.duration + 'ms'">
+        <i class="{{ getIcon(toast.type) }}"></i>
+        <span class="toast-message">{{ toast.message }}</span>
+    </div>
+</div>

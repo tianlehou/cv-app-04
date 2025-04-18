@@ -1,0 +1,11 @@
+<div class="profile-container">
+  <form [formGroup]="profileForm">
+    <!-- Sobre Mí -->
+    <div class="form-group">
+      <label for="AboutMe">Acerca de Mí:</label>
+      <p id="aboutMe" class="form-control-static">
+        {{ profileForm.get("aboutMe")?.value || "No especificado" }}
+      </p>
+    </div>
+  </form>
+</div>

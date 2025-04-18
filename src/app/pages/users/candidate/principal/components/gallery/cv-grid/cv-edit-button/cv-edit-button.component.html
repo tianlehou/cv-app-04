@@ -1,0 +1,38 @@
+<div
+  class="upload-button"
+  [class.paused]="showOptions"
+  (click)="toggleOptions($event)"
+>
+  <label>
+    <i class="fas" [ngClass]="showOptions ? 'fa-times' : 'fa-pencil-alt'"></i>
+  </label>
+
+  <div class="options-popover" *ngIf="showOptions">
+    <header>
+      <i class="fas fa-arrow-left" (click)="onClose($event)"></i>
+      <h4>Editar</h4>
+    </header>
+
+    <div class="option" (click)="selectOption('foto-perfil', $event)">
+      <i class="fas fa-camera"></i><span> Foto de perfil</span>
+    </div>
+    <div class="option" (click)="selectOption('datos-personales', $event)">
+      <i class="fas fa-id-card"></i><span> Datos de Contacto</span>
+    </div>
+    <div class="option" (click)="selectOption('sobre-mi', $event)">
+      <i class="fas fa-user"></i><span> Sobre mí</span>
+    </div>
+    <div class="option" (click)="selectOption('experiencias', $event)">
+      <i class="fas fa-briefcase"></i><span> Experiencias</span>
+    </div>
+    <div class="option" (click)="selectOption('habilidades', $event)">
+      <i class="fas fa-star"></i><span> Habilidades</span>
+    </div>
+    <div class="option" (click)="selectOption('educacion', $event)">
+      <i class="fas fa-graduation-cap"></i><span> Educación</span>
+    </div>
+    <div class="option" (click)="selectOption('idiomas', $event)">
+      <i class="fas fa-language"></i><span> Idiomas</span>
+    </div>
+  </div>
+</div>

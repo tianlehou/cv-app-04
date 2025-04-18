@@ -1,0 +1,73 @@
+.profile-container {
+  width: 100%;
+  height: auto;
+  padding: 0 20px;
+}
+
+#fullName {
+  font-size: clamp(1.2rem, 2vw, 1.5rem);
+  font-weight: 500;
+}
+
+#profesion {
+  font-size: clamp(0.75rem, 1.5vw, 1rem);
+  font-weight: 400;
+  margin-bottom: 1rem;
+}
+
+.icon-field {
+  display: flex;
+  align-items: center;
+  text-align: left;
+  gap: 8px;
+  margin: 0.25rem 0;
+}
+
+.icon-field i {
+  font-size: clamp(0.8rem, 1.5vw, 1rem);
+  color: #333;
+  min-width: 25px;
+}
+
+.profile-container p {
+  white-space: pre-wrap;
+  font-size: clamp(0.75rem, 1.5vw, 1rem);
+  font-weight: 300;
+  margin: 0;
+}
+
+/* Tablet */
+@media (max-width: 768px) {
+  #fullName {
+    font-size: 1.2rem;
+  }
+  
+  .icon-field {
+    gap: 6px;
+  }
+}
+
+/* Móvil */
+@media (max-width: 480px) {
+  #fullName {
+    font-size: 1.2rem;
+  }
+  
+  #profesion {
+    font-size: 0.8rem;
+  }
+
+  .icon-field {
+    flex-direction: row;
+    align-items: center;
+  }
+  
+  .icon-field i {
+    font-size: 0.9rem;
+  }
+
+  .icon-field p {
+    white-space: pre-wrap;
+    overflow: hidden;
+  }
+}

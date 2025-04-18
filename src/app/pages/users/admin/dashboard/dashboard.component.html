@@ -1,0 +1,75 @@
+<div class="dashboard-container">
+    <!-- Estadísticas -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <p>{{ totalUsers }}</p>
+            <h3>Total Usuarios</h3>
+        </div>
+        <div class="stat-card" style="text-align: center;">
+            <p>{{ totalCandidates }}</p>
+            <h3>Candidatos</h3>
+        </div>
+        <div class="stat-card">
+            <p>{{ totalCompanies }}</p>
+            <h3>Empresas</h3>
+        </div>
+    </div>
+
+    <!-- Filtros -->
+    <div class="filters">
+        <select [(ngModel)]="userTypeFilter" (change)="applyFilters()">
+            <option value="all">Todos</option>
+            <option value="user">Candidatos</option>
+            <option value="company">Empresas</option>
+        </select>
+
+        <input type="text" [(ngModel)]="searchQuery" (input)="applyFilters()" placeholder="Buscar por nombre o email">
+    </div>
+
+    <!-- Lista de usuarios -->
+    <div class="user-table">
+        <table>
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Email</th>
+                    <th>Tipo</th>
+                    <th>Registro</th>
+                    <th>Último acceso</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let user of paginatedUsers">
+                    <td>{{ user.fullName || 'N/A' }}</td>
+                    <td>{{ user.email }}</td>
+                    <td>
+                        {{ user.role === 'user' ? 'Candidato' :
+                           user.role === 'company' ? 'Empresa' :
+                           user.role === 'admin' ? 'Administrador' : 'Desconocido' }}
+                    </td>
+                    <td>{{ formatDate(user.createdAt) }}</td>
+                    <td>{{ formatDate(user.lastLogin) }}</td>
+                    <td>
+                        <span class="status-badge" [class.active]="user.enabled">
+                            {{ user.enabled ? 'Activo' : 'Inactivo' }}
+                        </span>
+                    </td>
+                    <td>
+                        <button (click)="toggleUserStatus(user)" [class.btn-inactive]="!user.enabled">
+                            {{ user.enabled ? 'Desactivar' : 'Activar' }}
+                        </button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <app-pagination 
+          [currentPage]="currentPage"
+          [totalItems]="filteredUsers.length"
+          [pageSize]="pageSize"
+          (pageChange)="onPageChange($event)"
+        ></app-pagination>
+    </div>
+</div>

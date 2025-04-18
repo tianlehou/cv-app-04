@@ -1,0 +1,33 @@
+<div class="top-row">
+    <app-video-info-bar [totalUploadedMB]="state.totalUploadedMB"></app-video-info-bar>
+    <app-video-upload-button [userEmailKey]="userEmailKey" [currentUser]="currentUser"
+        (fileSelected)="handleFileSelected($event)">
+    </app-video-upload-button>
+</div>
+
+<!-- Upload Progress -->
+<app-video-upload-progress-bar *ngIf="state.uploadProgress !== null" [uploadProgress]="state.uploadProgress"
+    [uploadedSize]="state.uploadedSize" [totalSize]="state.totalSize">
+</app-video-upload-progress-bar>
+
+<div class="gallery-grid">
+    <!-- Videos Grid -->
+    <div *ngFor="let video of state.userVideos; trackBy: trackByVideoUrl" class="video-item"
+        [ngClass]="{'expanded': state.expandedStates[video]}">
+        <video controls #videoPlayer>
+            <source [src]="video" type="video/mp4">
+            Tu navegador no soporta videos.
+        </video>
+        <button class="toggle-button" (click)="toggleExpansion(video)">
+            <i class="fas" [ngClass]="state.expandedStates[video] ? 'fa-compress' : 'fa-expand'"></i>
+        </button>
+        <button class="delete-button" (click)="confirmDeleteVideo(video)">
+            <i class="fas fa-trash"></i>
+        </button>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="state.isLoading" class="loading-spinner">
+        <i class="fas fa-spinner fa-spin"></i>
+    </div>
+</div>

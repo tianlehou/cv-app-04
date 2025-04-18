@@ -1,0 +1,181 @@
+<div class="info-container" #infoContainer>
+  <header class="info-header">
+    <button class="back-button" (click)="goBack()">
+      <i class="fas fa-arrow-left"></i>
+    </button>
+    <h3><i class="fas fa-user-circle"></i><span>Sobre mí en tu CV</span></h3>
+  </header>
+
+  <!-- Sección Informativa -->
+  <section id="main-section">
+    <!-- Tarjeta 1 - Qué es -->
+    <div class="info-card purple">
+      <div class="info-header">
+        <i class="fas fa-info-circle"></i>
+        <h4>¿Qué es esta sección?</h4>
+      </div>
+      <ul class="info-list">
+        <li>
+          <span>
+            <i class="fas fa-quote-left"></i>
+            Breve introducción personal (3-5 líneas) que resume tu perfil profesional.
+          </span>
+        </li>
+        <li>
+          <span>
+            <i class="fas fa-eye"></i>
+            Es lo primero que leen los reclutadores.
+          </span>
+        </li>
+        <li>
+          <span>
+            <i class="fas fa-bolt"></i>
+            Tu oportunidad para destacar desde el inicio.
+          </span>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Tarjeta 2 - Qué incluir -->
+    <div class="info-card green">
+      <div class="info-header">
+        <i class="fas fa-check-double"></i>
+        <h4>¿Qué debe contener?</h4>
+      </div>
+      <ul class="info-list">
+        <li>
+          <span>
+            <i class="fas fa-briefcase"></i>
+            <strong>Título/profesión:</strong> Ej: "Desarrollador Frontend con especialización en React".
+          </span>
+        </li>
+        <li>
+          <span>
+            <i class="fas fa-trophy"></i>
+            <strong>Logro clave:</strong> Ej: "+5 años optimizando UX en empresas SaaS".
+          </span>
+        </li>
+        <li>
+          <span>
+            <i class="fas fa-cogs"></i>
+            <strong>Habilidades estrella:</strong> 2-3 relevantes para el puesto.
+          </span>
+        </li>
+        <li>
+          <span>
+            <i class="fas fa-bullseye"></i>
+            <strong>Objetivo profesional:</strong> Ej: "Busco liderar equipos de desarrollo ágil".
+          </span>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Tarjeta 3 - Consejos -->
+    <div class="info-card blue">
+      <div class="info-header">
+        <i class="fas fa-lightbulb"></i>
+        <h4>Consejos clave</h4>
+      </div>
+      <ul class="info-list">
+        <li>
+          <span>
+            <i class="fas fa-text-width"></i>
+            <strong>Lenguaje claro:</strong> Evita jerga técnica excesiva.
+          </span>
+        </li>
+        <li>
+          <span>
+            <i class="fas fa-magic"></i>
+            <strong>Personaliza:</strong> Adapta a cada oferta de empleo.
+          </span>
+        </li>
+        <li>
+          <span>
+            <i class="fas fa-stopwatch"></i>
+            <strong>Brevedad:</strong> Máximo 50 palabras.
+          </span>
+        </li>
+        <li>
+          <span>
+            <i class="fas fa-spell-check"></i>
+            <strong>Revisión:</strong> 0 errores ortográficos.
+          </span>
+        </li>
+      </ul>
+    </div>
+
+      <!-- Sección de advertencias -->
+  <div class="info-card red" style="margin-top: 2rem;">
+    <div class="info-header">
+      <i class="fas fa-exclamation-triangle"></i>
+      <h4>Errores comunes</h4>
+    </div>
+    <ul class="info-list">
+      <li>
+        <span>
+          <i class="fas fa-times"></i>
+          <strong>Autobiografías:</strong> No incluyas datos personales irrelevantes.
+        </span>
+      </li>
+      <li>
+        <span>
+          <i class="fas fa-times"></i>
+          <strong>Lugares comunes:</strong> "Soy proactivo y trabajo bien en equipo" (demuéstralo con ejemplos).
+        </span>
+      </li>
+    </ul>
+  </div>
+  </section>
+
+  <!-- Sección de ejemplos -->
+  <section id="examples-section">
+    <h4 class="gradient-title display-flex-center">Ejemplos por perfil</h4>
+
+    <div class="example-card clr-blue">
+      <div class="example-header">
+        <i class="fas fa-laptop-code"></i>
+        <h5>Perfil técnico (TI)</h5>
+      </div>
+      <p>
+        <strong>Desarrollador Full Stack</strong> con 4 años de experiencia en JavaScript (React, Node.js). 
+        Especializado en arquitecturas escalables y mejora de rendimiento (+30% en startups tech). 
+        Apasionado por mentoring y código limpio.
+      </p>
+    </div>
+
+    <div class="example-card clr-green">
+      <div class="example-header">
+        <i class="fas fa-chart-line"></i>
+        <h5>Perfil comercial</h5>
+      </div>
+      <p>
+        <strong>Gerente de Ventas</strong> internacional con éxito comprobado en expansión de mercados (+200% crecimiento LATAM). 
+        Dominio de CRM y negociación B2B. Enfoque en estrategias data-driven y formación de equipos.
+      </p>
+    </div>
+
+    <div class="example-card clr-purple">
+      <div class="example-header">
+        <i class="fas fa-palette"></i>
+        <h5>Perfil creativo</h5>
+      </div>
+      <p>
+        <strong>Diseñadora UX/UI</strong> con background en Psicología. Creación de interfaces centradas 
+        en el usuario que aumentan engagement (+40%). Experiencia en Design Thinking y pruebas de usabilidad.
+      </p>
+    </div>
+
+    <div class="example-card clr-red">
+      <div class="example-header">
+        <i class="fas fa-graduation-cap"></i>
+        <h5>Recién graduado</h5>
+      </div>
+      <p>
+        <strong>Ingeniero Industrial</strong> recién titulado con especialización en logística. 
+        Prácticas en optimización de cadena de suministro (reducción de costos del 15%). 
+        Capacidad analítica y trabajo en equipos multidisciplinarios.
+      </p>
+    </div>
+  </section>
+
+</div>

@@ -1,0 +1,121 @@
+.form-group {
+  margin-bottom: 15px;
+  text-align: left;
+  /* Asegura que los elementos dentro no estén centrados */
+}
+
+label {
+  display: block;
+  margin: 0.5em 0 0 1em;
+  font-weight: 500;
+}
+
+/* Inputs, textareas y botones */
+input,
+textarea,
+button {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+/* Inputs de solo lectura */
+input[readonly] {
+  background-color: #f8f9fa;
+  border: 1px solid #ddd;
+}
+
+/* Inputs interactivos */
+input:not([readonly]) {
+  background-color: #fff;
+  border: 1px solid #007bff;
+}
+
+/* Mensajes de error */
+.text-danger {
+  color: #e74c3c;
+  font-size: 0.875em;
+}
+
+/* Grupo de inputs con botones */
+.input-group {
+  display: flex;
+  align-items: center;
+}
+
+.input-group input {
+  flex: 1;
+  /* Permite que el input ocupe todo el espacio disponible */
+}
+
+.input-group button {
+  width: 85px;
+  /* Define un ancho fijo para el botón */
+}
+
+/* Estilo de los botones generales */
+button {
+  background-color: var(--2nd-color);
+  color: white;
+  font-weight: 300;
+  cursor: pointer;
+}
+
+button:disabled {
+  background-color: var(--2nd-color);
+  cursor: not-allowed;
+}
+
+/* Experiencia */
+.display-flex-space-between {
+  display: flex;
+  justify-content: space-between;
+  /* Distribuye los elementos con espacio entre ellos */
+  align-items: center;
+  /* Asegura que estén alineados verticalmente */
+  width: 100%;
+  /* Asegura que ocupe todo el ancho disponible */
+}
+
+.line {
+  border: #999 1px solid;
+  margin: 20px 100px;
+}
+
+/* Filas y columnas en la sección de experiencia */
+.form-row {
+  display: flex;
+  /* Coloca los elementos en una fila horizontal */
+  gap: 1em;
+  /* Añade espacio entre las columnas */
+  align-items: center;
+  /* Alinea verticalmente los elementos */
+}
+
+.quarter-width {
+  flex: 1;
+  /* Ocupa 1 parte del espacio disponible */
+}
+
+.three-quarters-width {
+  flex: 3;
+  /* Ocupa 3 partes del espacio disponible */
+}
+
+.form-control {
+  width: 100%;
+  /* Asegura que el input ocupe todo el ancho del contenedor */
+}
+
+textarea {
+  height: 150px;
+}
+
+.button-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 0.5em;
+  gap: 2em;
+}

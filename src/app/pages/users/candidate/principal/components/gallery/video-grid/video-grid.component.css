@@ -1,0 +1,195 @@
+/* video-grid.component.css */
+.top-row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: 1rem;
+    margin: 0 1rem 0;
+}
+
+.gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 16px;
+    padding: 16px;
+    grid-auto-rows: min-content;
+}
+
+.video-item {
+    width: 100%;
+    aspect-ratio: 16/9;
+    overflow: hidden;
+    position: relative;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    grid-row: span 1;
+}
+
+.video-item.expanded {
+    aspect-ratio: 9/16;
+    grid-row: span 3;
+}
+
+.toggle-button {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    background: rgba(0, 0, 0, 0.7);
+    color: var(--clr-white);
+    border: none;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 1;
+}
+
+.video-item:hover .toggle-button {
+    opacity: 1;
+}
+
+.video-item video {
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+    object-fit: cover;
+    transition: all 0.3s ease;
+}
+
+.video-item:hover video {
+    transform: scale(1.02);
+}
+
+.upload-container {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border: 2px dashed #ccc;
+    border-radius: 8px;
+    aspect-ratio: 16/9;
+    transition: all 0.3s ease;
+    padding: 10px;
+    pointer-events: auto !important;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.upload-container:hover,
+.upload-button:hover {
+    border-color: var(--clr-blue);
+    background: rgba(var(--clr-primary-rgb), 0.05);
+}
+
+.upload-button {
+    position: relative;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+
+.upload-button label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    color: #ccc;
+    cursor: pointer;
+    transition: color, font-size 1s ease;
+}
+
+.upload-button label:hover {
+    font-size: 1.5rem;
+    color: var(--clr-blue);
+}
+
+.upload-button i {
+    margin-right: 10px;
+    font-size: 2rem;
+    margin-bottom: 8px;
+}
+
+.video-title-input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin-top: 8px;
+}
+
+.video-title {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.7), transparent);
+    color: var(--clr-white);
+    padding: 10px;
+    font-size: 0.9rem;
+}
+
+.delete-button {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: var(--clr-red);
+    color: var(--clr-white);
+    border: none;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.video-item:hover .delete-button {
+    opacity: 1;
+}
+
+.error-message {
+    color: var(--clr-red);
+    font-size: 0.8rem;
+    margin-top: 5px;
+}
+
+.loading-spinner {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 2;
+    background: rgba(255, 255, 255, 0.8);
+    padding: 20px;
+    border-radius: 50%;
+}
+
+.loading-spinner i {
+    font-size: 3rem;
+    color: var(--clr-blue);
+}
+
+@media (max-width: 768px) {
+    .video-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .video-item.expanded {
+        grid-row: span 1;
+    }
+}

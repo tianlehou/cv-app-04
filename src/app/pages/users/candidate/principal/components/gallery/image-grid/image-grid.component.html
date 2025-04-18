@@ -1,0 +1,11 @@
+<div class="top-row">
+    <app-image-info-bar [userImages]="userImages"></app-image-info-bar>
+    <app-image-upload-button [userEmailKey]="userEmailKey" (uploadComplete)="handleUploadComplete($event)">
+    </app-image-upload-button>
+</div>
+
+<div class="gallery-grid">
+    <!-- Images Item Container -->
+    <app-image-item-container *ngFor="let image of userImages" [imageUrl]="image" [currentUser]="currentUser"
+        [userEmailKey]="userEmailKey" (imageDeleted)="onImageDeleted($event)"></app-image-item-container>
+</div>

@@ -1,0 +1,79 @@
+
+
+/* Grupos de formulario - Estilo actualizado */
+.form-group {
+  margin-bottom: 20px;
+}
+
+/* Inputs - Estilo similar a los textarea de about-me */
+input[type="file"] {
+  width: 100%;
+  padding: 15px;
+  border-radius: 8px;
+  border: 1px solid var(--bg-light);
+  background: var(--clr-white);
+  color: var(--text-color);
+  margin-top: 10px;
+}
+
+/* Botón - Estilo idéntico al de about-me */
+.btn {
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background-color: var(--clr-white);
+  border: 1px solid var(--clr-green);
+  color: var(--clr-green);
+  transition: all 0.5s ease-in-out;
+}
+
+.btn:hover {
+  background-color: var(--clr-green);
+  color: var(--clr-white);
+}
+
+.btn:disabled {
+  background-color: var(--bg-dark);
+  color: var(--text-color-light);
+  cursor: not-allowed;
+  border: 1px solid var(--bg-dark);
+}
+
+/* Vista previa de imagen - Estilo mejorado */
+.display-flex-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.profile-picture-preview {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid var(--clr-blue-light);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Texto de label - Estilo consistente */
+.display-flex-center label {
+  font-weight: 500;
+  color: var(--clr-blue-dark);
+  font-size: 1rem;
+  align-self: flex-start;
+}
+
+/* Mensajes de error - Mismo estilo */
+.text-danger {
+  color: var(--clr-red);
+  font-size: 0.875em;
+  margin-top: 5px;
+}

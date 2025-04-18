@@ -1,0 +1,209 @@
+<div class="info-container" #infoContainer>
+  <header class="info-header">
+    <button class="back-button" (click)="goBack()">
+      <i class="fas fa-arrow-left"></i>
+    </button>
+    <h3><i class="fas fa-graduation-cap"></i><span>Educación</span></h3>
+  </header>
+
+  <!-- Sección Informativa (agregar esto después del <header> y antes de los ejemplos) -->
+  <section id="main-section">
+    <!-- Tarjeta 1 - Qué incluir -->
+    <div class="info-card green">
+      <div class="info-header">
+        <i class="fas fa-check-circle"></i>
+        <h4>¿Qué información incluir?</h4>
+      </div>
+      <ul class="info-list">
+        <li>
+          <span>
+            <i class="fas fa-certificate"></i>
+            <strong>Título obtenido:</strong> Licenciatura, Maestría, Técnico, etc.
+          </span>
+        </li>
+        <li>
+          <span>
+            <i class="fas fa-university"></i>
+            <strong>Institución:</strong> Nombre de la universidad o centro educativo.
+          </span>
+        </li>
+        <li>
+          <span>
+            <i class="fas fa-calendar-alt"></i>
+            <strong>Fechas:</strong> Año de inicio y graduación (o "en curso").
+          </span>
+        </li>
+        <li>
+          <span>
+            <i class="fas fa-star"></i>
+            <strong>Logros académicos:</strong> Promedio, honores, becas.
+          </span>
+        </li>
+        <li>
+          <span>
+            <i class="fas fa-book"></i>
+            <strong>Detalles relevantes:</strong> Especializaciones, tesis, proyectos destacados.
+          </span>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Tarjeta 2 - Qué NO incluir -->
+    <div class="info-card red">
+      <div class="info-header">
+        <i class="fas fa-ban"></i>
+        <h4>¿Qué evitar?</h4>
+      </div>
+      <ul class="info-list">
+        <li>
+          <span>
+            <i class="fas fa-times"></i>
+            <strong>Educación secundaria:</strong> Solo si es tu máximo nivel de estudios.
+          </span>
+        </li>
+        <li>
+          <span>
+            <i class="fas fa-times"></i>
+            <strong>Promedios bajos:</strong> A menos que sea requerido.
+          </span>
+        </li>
+        <li>
+          <span>
+            <i class="fas fa-times"></i>
+            <strong>Cursos no certificados:</strong> Ej: "Taller de Excel de 2 horas".
+          </span>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Tarjeta 3 - Consejos para destacar -->
+    <div class="info-card blue">
+      <div class="info-header">
+        <i class="fas fa-lightbulb"></i>
+        <h4>Consejos clave</h4>
+      </div>
+      <ul class="info-list">
+        <li>
+          <span>
+            <i class="fas fa-sort-amount-down"></i>
+            <strong>Orden cronológico inverso:</strong> Comienza con lo más reciente.
+          </span>
+        </li>
+        <li>
+          <span>
+            <i class="fas fa-bullseye"></i>
+            <strong>Relaciona con el puesto:</strong> Destaca especializaciones relevantes.
+          </span>
+        </li>
+        <li>
+          <span>
+            <i class="fas fa-globe"></i>
+            <strong>Para CV internacionales:</strong> Incluye equivalencias (ej: GPA 3.5/4.0).
+          </span>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Consejos adicionales -->
+    <div class="info-card orange" style="margin-top: 2rem;">
+      <div class="info-header">
+        <i class="fas fa-lightbulb"></i>
+        <h4>Consejos para destacar</h4>
+      </div>
+      <ul class="info-list">
+        <li>
+          <span>
+            <i class="fas fa-check"></i>
+            <strong>Incluye logros académicos:</strong> Promedios altos, tesis relevantes o becas.
+          </span>
+        </li>
+        <li>
+          <span>
+            <i class="fas fa-check"></i>
+            <strong>Cursos complementarios:</strong> Certificaciones aunque no sean títulos formales.
+          </span>
+        </li>
+        <li>
+          <span>
+            <i class="fas fa-check"></i>
+            <strong>Orden cronológico inverso:</strong> Desde lo más reciente.
+          </span>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <section id="examples-section">
+    <h4 class="gradient-title display-flex-center">Ejemplos según tu perfil</h4>
+
+    <!-- Ejemplo 1 - Tecnología -->
+    <div class="example-card clr-blue">
+      <div class="example-header">
+        <i class="fas fa-laptop-code"></i>
+        <h5>Sector Tecnología</h5>
+      </div>
+      <p>
+        <strong>Ingeniería en Sistemas Computacionales</strong><br>
+        Instituto Tecnológico de Monterrey | 2019–2023<br>
+        - Especialización en Inteligencia Artificial<br>
+        - Tesis: "Modelo de detección de fraudes con Machine Learning" (9.8/10)
+      </p>
+    </div>
+
+    <!-- Ejemplo 2 - Salud -->
+    <div class="example-card clr-green">
+      <div class="example-header">
+        <i class="fas fa-user-md"></i>
+        <h5>Sector Salud</h5>
+      </div>
+      <p>
+        <strong>Medicina General</strong><br>
+        Universidad Nacional Autónoma de México | 2015–2021<br>
+        - Rotación en Hospital ABC (Área de Urgencias)<br>
+        - Publicación: "Nuevos enfoques en vacunación pediátrica"
+      </p>
+    </div>
+
+    <!-- Ejemplo 3 - Arte/Diseño -->
+    <div class="example-card clr-purple">
+      <div class="example-header">
+        <i class="fas fa-palette"></i>
+        <h5>Sector Creativo</h5>
+      </div>
+      <p>
+        <strong>Licenciatura en Diseño Gráfico</strong><br>
+        Centro de Arte Digital | 2020–2024 (en curso)<br>
+        - Mención Honorífica en Diseño UX/UI<br>
+        - Portfolio: www.diseñadoramartinez.com
+      </p>
+    </div>
+
+    <!-- Ejemplo 4 - Negocios -->
+    <div class="example-card clr-yellow">
+      <div class="example-header">
+        <i class="fas fa-chart-line"></i>
+        <h5>Sector Negocios</h5>
+      </div>
+      <p>
+        <strong>Maestría en Administración de Empresas (MBA)</strong><br>
+        IE Business School | 2022–2023<br>
+        - Enfoque en Finanzas Corporativas<br>
+        - Proyecto destacado: "Reestructuración de PYMEs pospandemia"
+      </p>
+    </div>
+
+    <!-- Ejemplo 5 - Oficios -->
+    <div class="example-card clr-red">
+      <div class="example-header">
+        <i class="fas fa-tools"></i>
+        <h5>Sector Técnico/Oficios</h5>
+      </div>
+      <p>
+        <strong>Técnico en Electricidad Industrial</strong><br>
+        CETIS No. 8 | 2021–2023<br>
+        - Certificación en Normas NOM-001-SEDE<br>
+        - Prácticas en Schneider Electric (300 horas)
+      </p>
+    </div>
+  </section>
+</div>

@@ -1,0 +1,27 @@
+.top-row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: 1rem;
+    margin: 0 1rem;
+}
+
+.gallery-grid {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    padding: 16px;
+    transition: all 0.3s ease;
+}
+
+/* Opcional: Estilo para cuando no hay componente seleccionado */
+.gallery-grid:empty::before {
+    content: "Selecciona una opción de edición";
+    text-align: center;
+    color: var(--text-color-light);
+    padding: 2rem;
+}
+
+section#principal {
+    transition: all 0.3s ease;
+  }

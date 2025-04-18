@@ -1,0 +1,304 @@
+/* profile-picture-info.component.css */
+.info-container {
+  width: 100% !important;
+  min-width: 300px;
+  max-width: 800px;
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+
+  /* uso general */
+  .info-card {
+    background: white;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    border-left: 4px solid var(--clr-yellow);
+    background: rgba(59, 130, 246, 0.08);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  /* Efecto de sombra y desplazamiento al pasar el mouse */
+  .info-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+  }
+
+  .fa-info-circle {
+    font-size: 2rem;
+    color: var(--clr-blue);
+  }
+}
+
+header {
+  display: flex;
+  align-items: center;
+  padding: 18px 24px;
+  background: linear-gradient(135deg, var(--clr-blue-dark) 0%, var(--clr-purple-dark) 100%);
+  color: var(--clr-white);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+
+  button {
+    display: flex;
+    align-items: center;
+    border: none;
+    background: rgba(255, 255, 255, 0.2);
+    color: var(--clr-white);
+    padding: 0px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.3s ease;
+
+    i {
+      font-size: 1.2rem;
+    }
+  }
+
+  button:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: translateX(-3px);
+  }
+
+  h3 {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin: 0;
+    font-size: 1.3rem;
+
+    i {
+      font-size: 1.5rem;
+    }
+  }
+}
+
+/* Info - Colores de Tarjetas */
+#main-section {
+  .info-card {
+    background: white;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    border-left: 4px solid var(--clr-yellow);
+    background: rgba(59, 130, 246, 0.08);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .info-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+  }
+
+  .blue {
+    border-left-color: var(--clr-blue);
+
+    .fa-globe-americas {
+      background: var(--clr-blue);
+    }
+  }
+
+  .red {
+    border-left-color: var(--clr-red);
+
+    .fa-exclamation-circle {
+      background: var(--clr-red);
+    }
+  }
+
+  .purple {
+    border-left-color: var(--clr-purple);
+
+    .fa-file-alt {
+      background: var(--clr-purple);
+    }
+  }
+
+  .green {
+    border-left-color: var(--clr-green);
+
+    .fa-list-alt {
+      background: var(--clr-green);
+    }
+  }
+
+  .blue-dark {
+    border-left-color: var(--clr-blue-dark);
+
+    .fa-eye {
+      background: var(--clr-blue-dark);
+    }
+  }
+
+  .purple-dark {
+    border-left-color: var(--clr-purple-dark);
+
+    .fa-camera {
+      background: var(--clr-purple-dark);
+    }
+  }
+}
+
+/* Info - Encabezados */
+.info-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+
+  i {
+    font-size: 1rem;
+    width: 40px;
+    height: 40px;
+    padding: 0 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50% !important;
+    color: white;
+  }
+
+  h4 {
+    margin: 0;
+    font-size: 1.2rem;
+    color: var(--text-color);
+  }
+}
+
+/* Info - Listas */
+.info-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+
+  li {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px dashed var(--bg-light);
+
+    span {
+      text-align: justify;
+    }
+
+    i {
+      font-size: 1rem;
+      margin-bottom: 3px;
+      color: var(--clr-yellow);
+    }
+
+    strong {
+      margin: 0 10px;
+    }
+  }
+
+  li:last-child {
+    border-bottom: none;
+  }
+}
+
+/* Ejemplos - Título */
+#examples-section {
+  .gradient-title {
+    background: linear-gradient(135deg,
+        var(--clr-blue) 0%,
+        var(--clr-purple) 100%);
+    color: white;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-size: 1.2rem;
+  }
+}
+
+/* Ejemplos - Tarjetas */
+#examples-section {
+  .example-card {
+    padding: 16px;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+
+    .example-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+
+      i {
+        font-size: 1rem;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0 10px;
+        border-radius: 50%;
+        color: white;
+      }
+    }
+
+    p {
+      text-align: justify;
+      font-size: 0.9rem;
+    }
+  }
+}
+
+/* Ejemplos - Colores de Tarjetas */
+#examples-section {
+  .clr-blue {
+    background: rgba(59, 130, 246, 0.08);
+    border-left: 4px solid var(--clr-blue);
+
+    i {
+      background: var(--clr-blue);
+    }
+  }
+
+  .clr-green {
+    background: rgba(16, 185, 129, 0.08);
+    border-left: 4px solid var(--clr-green);
+
+    i {
+      background: var(--clr-green);
+    }
+  }
+
+  .clr-purple {
+    background: rgba(139, 92, 246, 0.08);
+    border-left: 4px solid var(--clr-purple);
+
+    i {
+      background: var(--clr-purple);
+    }
+  }
+
+  .clr-red {
+    background: rgba(239, 68, 68, 0.08);
+    border-left: 4px solid var(--clr-red);
+
+    i {
+      background: var(--clr-red);
+    }
+  }
+
+  .clr-yellow {
+    background: rgba(234, 179, 8, 0.08);
+    border-left: 4px solid var(--clr-yellow);
+
+    i {
+      background: var(--clr-yellow);
+    }
+  }
+
+  .clr-orange {
+    background: rgba(249, 115, 22, 0.08);
+    border-left: 4px solid var(--clr-orange);
+
+    i {
+      background: var(--clr-orange);
+    }
+  }
+}

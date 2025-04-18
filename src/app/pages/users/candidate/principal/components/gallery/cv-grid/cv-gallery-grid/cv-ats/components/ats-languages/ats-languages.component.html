@@ -1,0 +1,34 @@
+<div class="profile-container">
+  @if (isLoading) {
+    <p>Cargando idiomas...</p>
+  } @else {
+    <div class="form-group" [formGroup]="profileForm">
+      <label>Idiomas:</label>
+      @if (languagesArray.length > 0) {
+        <div class="languages-list">
+          @for (language of languagesArray.controls; track $index; let i = $index) {
+            <div class="language-item" [formGroupName]="i">
+              <div class="language-field">
+                <label [for]="'language-name-' + i">Idioma:</label>
+                <p>{{ language.get('name')?.value }}</p>
+              </div>
+              <div class="language-field">
+                <label [for]="'language-proficiency-' + i">Nivel:</label>
+                <p>{{ language.get('proficiency')?.value }}</p>
+              </div>
+              <div class="language-field">
+                <label [for]="'language-certification-' + i">Certificación:</label>
+                <p>{{ language.get('certification')?.value }}</p>
+              </div>
+              @if (!$last) {
+                <div class="divider"></div>
+              }
+            </div>
+          }
+        </div>
+      } @else {
+        <p class="no-languages">No se encontraron idiomas</p>
+      }
+    </div>
+  }
+</div>

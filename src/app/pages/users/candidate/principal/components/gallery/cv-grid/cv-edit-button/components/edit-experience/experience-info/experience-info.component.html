@@ -1,0 +1,130 @@
+<div class="info-container" #infoContainer>
+  <header class="info-header">
+    <button class="back-button" (click)="goBack()">
+      <i class="fas fa-arrow-left"></i>
+    </button>
+    <h3><i class="fas fa-briefcase"></i><span>Experiencia Laboral</span></h3>
+  </header>
+
+  <section id="main-section">
+    <!-- Tarjeta 1 - Qué Incluir (verde) -->
+    <div class="info-card green">
+      <div class="info-header">
+        <i class="fas fa-check-circle"></i>
+        <h4>¿Qué incluir en la sección de Experiencia?</h4>
+      </div>
+      <ul class="info-list">
+        <li>
+          <span>
+            <i class="fas fa-user-tie"></i>
+            <strong>Puesto/Título:</strong> Ej: "Desarrollador Frontend Senior".
+          </span>
+        </li>
+        <li>
+          <span>
+            <i class="fas fa-building"></i>
+            <strong>Empresa e industria:</strong> Ej: "TechSolutions (Startup de SaaS)".
+          </span>
+        </li>
+        <li>
+          <span>
+            <i class="fas fa-calendar-alt"></i>
+            <strong>Fechas:</strong> Mes/Año de inicio y fin (ej: "Marzo 2020 – Presente").
+          </span>
+        </li>
+        <li>
+          <span>
+            <i class="fas fa-map-marker-alt"></i>
+            <strong>Ubicación (opcional):</strong> Ciudad o "Remoto".
+          </span>
+        </li>
+        <li>
+          <span>
+            <i class="fas fa-tasks"></i>
+            <strong>Logros cuantificables:</strong> Usa verbos como "Optimicé", "Implementé", "Lideré".
+          </span>
+        </li>
+        <li>
+          <span>
+            <i class="fas fa-chart-line"></i>
+            <strong>Métricas:</strong> Ej: "Aumenté la retención de usuarios en un 30%".
+          </span>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Tarjeta 2 - Consejos (azul) -->
+    <div class="info-card blue">
+      <div class="info-header">
+        <i class="fas fa-lightbulb"></i>
+        <h4>Consejos Clave</h4>
+      </div>
+      <ul class="info-list">
+        <li>
+          <span>
+            <i class="fas fa-sort-amount-down"></i>
+            <strong>Orden cronológico inverso:</strong> Comienza por tu trabajo más reciente.
+          </span>
+        </li>
+        <li>
+          <span>
+            <i class="fas fa-bullseye"></i>
+            <strong>Adapta al puesto:</strong> Destaca lo relevante para el empleo que buscas.
+          </span>
+        </li>
+        <li>
+          <span>
+            <i class="fas fa-project-diagram"></i>
+            <strong>Incluye freelance/proyectos:</strong> Si tienes poca experiencia formal.
+          </span>
+        </li>
+        <li>
+          <span>
+            <i class="fas fa-filter"></i>
+            <strong>Filtra experiencia:</strong> Omite trabajos irrelevantes o muy antiguos (+10 años).
+          </span>
+        </li>
+        <li>
+          <span>
+            <i class="fas fa-file-alt"></i>
+            <strong>Sé específico:</strong> Evita descripciones genéricas como "Trabajé en equipo".
+          </span>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Tarjeta 3 - Qué Evitar (roja) -->
+    <div class="info-card red">
+      <div class="info-header">
+        <i class="fas fa-ban"></i>
+        <h4>¿Qué evitar?</h4>
+      </div>
+      <ul class="info-list">
+        <li>
+          <span>
+            <i class="fas fa-times-circle"></i>
+            <strong>Mentiras:</strong> Sobre fechas, puestos o responsabilidades.
+          </span>
+        </li>
+        <li>
+          <span>
+            <i class="fas fa-list-ul"></i>
+            <strong>Listas de tareas sin contexto:</strong> Ej: "Hacía informes" → Mejor: "Generé informes que optimizaron decisiones".
+          </span>
+        </li>
+        <li>
+          <span>
+            <i class="fas fa-language"></i>
+            <strong>Jerga técnica excesiva:</strong> A menos que sea para puestos muy especializados.
+          </span>
+        </li>
+        <li>
+          <span>
+            <i class="fas fa-clock"></i>
+            <strong>Experiencia muy antigua:</strong> A menos que sea relevante para el puesto actual.
+          </span>
+        </li>
+      </ul>
+    </div>
+  </section>
+</div>

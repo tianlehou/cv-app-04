@@ -1,0 +1,75 @@
+.watermark {
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    width: 80%;
+    z-index: 2;
+    pointer-events: none;
+    user-select: none;
+    transition: all 0.5s ease;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
+    font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+}
+
+.watermark-content {
+    display: flex;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.5);
+    padding: 6px 15px;
+    border-radius: 25px;
+    backdrop-filter: blur(4px);
+    color: rgba(255, 255, 255, 0.95);
+    font-weight: 500;
+    font-size: 0.85rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+}
+
+.watermark-content i {
+    margin-right: 8px;
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+/* Efecto hover para la marca de agua */
+.image-item:hover .watermark-content {
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(6px);
+}
+
+/* Posiciones con ajustes para mejor visibilidad */
+.watermark.top-1 {
+    top: 30%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+}
+
+.watermark.top-2 {
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+}
+
+.watermark.center {
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+}
+
+.watermark.bottom-2 {
+    top: 60%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+}
+
+.watermark.bottom-1 {
+    top: 70%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+}

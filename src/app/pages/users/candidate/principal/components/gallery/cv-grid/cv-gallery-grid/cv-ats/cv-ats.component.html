@@ -1,0 +1,34 @@
+<div class="ats-container">
+  <h2>Análisis ATS</h2>
+  <p>Usuario recibido en CV-ATS: {{currentUser?.email}}</p>
+  
+  <div class="section">
+    <h3>Datos Personales</h3>
+    <app-ats-personal-data [currentUser]="currentUser"></app-ats-personal-data>
+  </div>
+
+  <div class="section">
+    <h3>Sobre Mí</h3>
+    <app-ats-about-me [currentUser]="currentUser"></app-ats-about-me>
+  </div>
+
+  <div class="section">
+    <h3>Experiencia Laboral</h3>
+    <app-ats-experience [currentUser]="currentUser"></app-ats-experience>
+  </div>
+
+  <div class="section">
+    <h3>Habilidades</h3>
+    <app-ats-skills [currentUser]="currentUser"></app-ats-skills>
+  </div>
+
+  <div class="section">
+    <h3>Educación</h3>
+    <app-ats-education [currentUser]="currentUser"></app-ats-education>
+  </div>
+
+  <div class="section">
+    <h3>Idiomas</h3>
+    <app-ats-languages [currentUser]="currentUser"></app-ats-languages>
+  </div>
+</div>

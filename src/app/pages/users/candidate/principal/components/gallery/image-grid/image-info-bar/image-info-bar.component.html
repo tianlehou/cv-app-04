@@ -1,0 +1,9 @@
+<div class="gallery-info">
+    {{ getImageCountText() }}
+    <i class="fas fa-info-circle info-icon attention" (click)="showInfoModal()"></i>
+    <span style="margin-left: -5px;">info</span>
+</div>
+
+<!-- Mover el modal aquí -->
+<app-info-modal [isVisible]="isInfoModalVisible" (closed)="hideInfoModal()">
+</app-info-modal>

@@ -1,0 +1,21 @@
+<div class="profile-container">
+    <div class="form-group" [formGroup]="profileForm">
+      <label>Formación Académica:</label>
+      <ng-container *ngIf="profileForm.get('academicFormation')?.value?.length > 0;
+      else noAcademicFormation">
+        <ul>
+          <li *ngFor="let formation of profileForm.get('academicFormation')?.value">
+            <label for="">Año:</label>
+            <p>{{ formation.year || "No especificado" }}</p>
+            <label for="">Institución:</label>
+            <p>{{ formation.institution || "No especificado" }}</p>
+            <label for="">Título/Grado:</label>
+            <p>{{ formation.degree || "No especificado" }}</p>
+          </li>
+        </ul>
+      </ng-container>
+      <ng-template #noAcademicFormation>
+        <p>No especificado</p>
+      </ng-template>
+    </div>
+</div>

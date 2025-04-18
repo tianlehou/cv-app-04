@@ -1,0 +1,105 @@
+.icon-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+    padding: 0;
+    margin: 0 0 15px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.icon-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    cursor: pointer;
+    padding: 16px 0;
+    transition: all 0.5s ease;
+}
+
+/* Default icon styles */
+.icon {
+    font-size: 20px;
+    transition: all 0.5s ease;
+}
+
+/* Camera icon (fa-camera-retro) */
+.icon-container .fa-camera-retro {
+    color: var(--clr-yellow-light); /* Inactive */
+}
+
+.icon-container:hover .fa-camera-retro {
+    color: var(--clr-yellow-dark); /* Hover */
+}
+
+.icon-container.active .fa-camera-retro {
+    color: var(--clr-yellow); /* Active */
+}
+
+/* Video icon (fa-film) */
+.icon-container .fa-film {
+    color: var(--clr-red-light); /* Inactive */
+}
+
+.icon-container:hover .fa-film {
+    color: var(--clr-red-dark); /* Hover */
+}
+
+.icon-container.active .fa-film {
+    color: var(--clr-red); /* Active */
+}
+
+/* File icon (fa-file) */
+.icon-container .fa-file {
+    color: var(--clr-purple-light); /* Inactive */
+}
+
+.icon-container:hover .fa-file {
+    color: var(--clr-purple-dark); /* Hover */
+}
+
+.icon-container.active .fa-file {
+    color: var(--clr-purple); /* Active */
+}
+
+/* Active line styles */
+.active-line {
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    transform: scaleX(0);
+    transition: transform 1.5s ease;
+}
+
+/* Active line gradient per icon */
+.icon-container.active:has(.fa-camera-retro) .active-line {
+    background: linear-gradient(to right, var(--clr-yellow-dark), var(--clr-yellow-light));
+    transform-origin: left;
+}
+
+.icon-container.active:has(.fa-film) .active-line {
+    background: linear-gradient(to right, var(--clr-red-light), var(--clr-red-dark), var(--clr-red-light));
+    transform-origin: center;
+}
+
+.icon-container.active:has(.fa-file) .active-line {
+    background: linear-gradient(to right, var(--clr-purple-light), var(--clr-purple-dark));
+    transform-origin: right;
+}
+
+/* Hover effect */
+.icon-container:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+/* Active icon scaling */
+.icon-container.active .icon {
+    transform: scale(1.1);
+}
+
+.icon-container.active .active-line {
+    transform: scaleX(1);
+}

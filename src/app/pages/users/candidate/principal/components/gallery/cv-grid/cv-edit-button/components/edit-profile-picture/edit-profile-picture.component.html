@@ -1,0 +1,46 @@
+<div class="edit-profile-container" *ngIf="!showInfoComponent">
+  <header>
+    <h3>
+      <i class="fas fa-camera"></i>
+      <span>Foto de Perfil</span>
+    </h3>
+    <i
+      class="fas fa-info-circle info-icon"
+      title="Información"
+      (click)="openInfoModal()"
+    ></i>
+  </header>
+  
+  <body>
+    <form [formGroup]="profileForm" (ngSubmit)="onSubmit()">
+      <div class="form-group">
+        <div class="display-flex-center">
+          <img
+          [src]="profileForm.get('profilePicture')?.value || 'assets/default-profile.png'"
+          class="profile-picture-preview"
+          alt="Vista previa de la foto de perfil"
+          />
+          <label>Selecciona una imagen:</label>
+        </div>
+        <input
+          type="file"
+          accept="image/*"
+          (change)="onFileSelected($event)"
+          class="form-control"
+        />
+      </div>
+      <button
+        type="submit"
+        class="btn"
+        [disabled]="profileForm.invalid"
+      >
+        <i class="fas fa-save"></i> Guardar Cambios
+      </button>
+    </form>
+  </body>
+</div>
+
+<app-profile-picture-info
+  *ngIf="showInfoComponent"
+  (back)="toggleInfoView()"
+></app-profile-picture-info>
