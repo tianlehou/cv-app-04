@@ -4,28 +4,27 @@
   } @else {
     <div class="form-group" [formGroup]="profileForm">
       <div class="personal-data-field">
-        <label>Nombre Completo:</label>
         <p>{{ profileForm.get('fullName')?.value }}</p>
       </div>
 
       <div class="personal-data-field">
-        <label>Profesión:</label>
-        <p>{{ profileForm.get('profesion')?.value }}</p>
+        <i class="fas fa-briefcase"></i>
+        <label>{{ profileForm.get('profesion')?.value }}</label>
       </div>
 
       <div class="personal-data-field">
-        <label>Teléfono/Celular:</label>
-        <p>{{ profileForm.get('phone')?.value }}</p>
+        <i class="fas fa-phone-alt"></i>
+        <label>{{ profileForm.get('phone')?.value }}</label>
       </div>
 
       <div class="personal-data-field">
-        <label>Correo Electrónico:</label>
-        <p>{{ profileForm.get('editableEmail')?.value }}</p>
+        <i class="fas fa-envelope"></i>
+        <label>{{ profileForm.get('editableEmail')?.value }}</label>
       </div>
 
       <div class="personal-data-field">
-        <label>Dirección:</label>
-        <p>{{ profileForm.get('direction')?.value }}</p>
+        <i class="fas fa-map-marker-alt"></i>
+        <label>{{ profileForm.get('direction')?.value }}</label>
       </div>
     </div>
   }

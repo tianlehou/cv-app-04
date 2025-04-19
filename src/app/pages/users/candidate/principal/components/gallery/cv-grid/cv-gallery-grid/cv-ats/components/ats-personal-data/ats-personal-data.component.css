@@ -1,28 +1,100 @@
-/* Contenedor principal */
+/* Contenedor principal - Estilo profesional ATS */
 .profile-container {
-  max-width: 600px;
-  margin: 10px 0;
-  padding: 20px;
-  border: 1px solid #999;
-  background: #f9f9f9;
+  max-width: 800px;
+  margin: 20px auto;
+  padding: 30px;
+  background: #ffffff;
+  border: 1px solid #e0e0e0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  font-family: 'Arial', 'Helvetica', sans-serif;
+  color: #333333;
 }
 
-/* Grupos de formulario */
-.form-group {
-  margin-bottom: 15px;
-  text-align: left;
+/* Encabezado con nombre completo */
+.personal-data-field:first-child {
+  margin-bottom: 25px;
+  border-bottom: 2px solid #2c5e91;
+  padding-bottom: 15px;
+}
+
+.personal-data-field:first-child p {
+  font-size: 28px;
+  font-weight: 600;
+  color: #2c5e91;
+  margin: 5px 0 0 0;
+  padding: 0;
+  border: none;
+  background: none;
+}
+
+/* Estilo para los campos de datos */
+.personal-data-field {
+  margin-bottom: 12px;
+  display: flex;
+  align-items: flex-start;
 }
 
 label {
-  display: block;
-  margin: 0.5em 0 0 1em;
-  font-weight: 500;
+  font-weight: 600;
+  color: #555;
+  width: 150px;
+  margin: 0;
+  padding: 5px 0;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+}
+
+/* Estilo para los iconos */
+label i {
+  margin-right: 10px;
+  width: 16px;
+  text-align: center;
+  font-size: 14px;
+  color: #2c5e91;
 }
 
 .profile-container p {
+  flex: 1;
+  margin: 0;
+  padding: 5px 0 5px 10px;
+  font-size: 15px;
+  line-height: 1.5;
+  color: #333;
+  border: none;
+  background: none;
   white-space: pre-wrap;
-  border: 1px solid #ccc;
-  padding: 10px;
-  background-color: #f9f9f9;
-  border-radius: 4px;
+  word-break: break-word;
+}
+
+/* Estilo para el email */
+.personal-data-field:nth-child(4) p {
+  color: #1a73e8;
+}
+
+/* Estilo para la profesión */
+.personal-data-field:nth-child(2) p {
+  font-size: 18px;
+  font-weight: 500;
+  color: #666;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .personal-data-field {
+    flex-direction: column;
+  }
+  
+  label {
+    width: 100%;
+    padding-bottom: 2px;
+  }
+  
+  .profile-container p {
+    padding-left: 0;
+  }
+  
+  .personal-data-field:first-child p {
+    font-size: 24px;
+  }
 }

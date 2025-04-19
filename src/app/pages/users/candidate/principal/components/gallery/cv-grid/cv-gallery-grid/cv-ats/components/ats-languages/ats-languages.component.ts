@@ -20,7 +20,7 @@ export class AtsLanguagesComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private firebaseService: FirebaseService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.initializeForm();
@@ -34,7 +34,7 @@ export class AtsLanguagesComponent implements OnInit {
 
   private initializeForm(): void {
     this.profileForm = this.fb.group({
-      languages: this.fb.array([]),
+      languages: this.fb.array([]), // Array vacío
     });
   }
 
@@ -44,11 +44,11 @@ export class AtsLanguagesComponent implements OnInit {
       this.isLoading = false;
       return;
     }
-  
+
     try {
       const userData = await this.firebaseService.getUserData(this.userEmail);
       const languages = userData?.profileData?.languages || [];
-      
+
       this.populateLanguages(languages);
     } catch (error) {
       console.error('Error al cargar idiomas:', error);
@@ -59,20 +59,15 @@ export class AtsLanguagesComponent implements OnInit {
 
   private populateLanguages(languages: any[]): void {
     const formArray = this.languagesArray;
-    formArray.clear();
-    
+    formArray.clear(); // Limpia el grupo inicial
+
     if (languages.length === 0) {
-      formArray.push(this.fb.group({
-        name: ['No especificado'],
-        proficiency: ['No especificado'],
-        certification: ['No especificado'],
-      }));
     } else {
       languages.forEach(lang => {
         formArray.push(this.fb.group({
-          name: [lang.name || 'No especificado'],
-          proficiency: [lang.proficiency || 'No especificado'],
-          certification: [lang.certification || 'No especificado'],
+          name: [lang.name || ''],
+          proficiency: [lang.proficiency || ''],
+          certification: [lang.certification || ''],
         }));
       });
     }

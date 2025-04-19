@@ -73,7 +73,7 @@
 .info-modal-body p {
     margin-bottom: 16px;
     line-height: 1.6;
-    color: var(--text-color-dark);
+    color: var(--text-color-light);
 }
 
 .info-modal-body p:first-child {

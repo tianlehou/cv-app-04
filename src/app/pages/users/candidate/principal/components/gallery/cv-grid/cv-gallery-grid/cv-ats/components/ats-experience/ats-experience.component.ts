@@ -56,12 +56,15 @@ export class AtsExperienceComponent implements OnInit {
     }
   }
 
+  get experienceArray(): FormArray {
+    return this.profileForm.get('experience') as FormArray;
+  }
+
   private populateExperiences(experiences: any[]): void {
     const formArray = this.experienceArray;
     formArray.clear();
     
     if (experiences.length === 0) {
-      // Agregar un elemento vacío para mostrar "No especificado"
       formArray.push(this.fb.group({
         year: ['No especificado'],
         company: ['No especificado'],
@@ -78,9 +81,5 @@ export class AtsExperienceComponent implements OnInit {
         }));
       });
     }
-  }
-
-  get experienceArray(): FormArray {
-    return this.profileForm.get('experience') as FormArray;
   }
 }
