@@ -47,3 +47,42 @@
   box-shadow: 0 2px 3px rgba(0, 0, 0, 0.05);
   background: rgba(0, 0, 0, 0.02);
 }
+
+/* Estilo para el botón activo */
+.cv-button.active {
+  background: var(--clr-purple-dark);
+  color: white;
+  border-color: var(--clr-purple-dark);
+}
+
+/* Opcional: ajusta el hover para el estado activo */
+.cv-button.active:hover {
+  background: var(--clr-purple-dark);
+  transform: none; /* Opcional: quita la transformación en hover para el activo */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.cv-button:not(.active) {
+  opacity: 0.7;
+  background: var(--bg-purple-light);
+  /* Otros estilos que prefieras */
+}
+
+.cv-button:disabled,
+.cv-button.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+  background: var(--bg-purple-light) !important;
+  border-color: var(--clr-purple-light) !important;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+/* Eliminar cualquier indicación de activo cuando está deshabilitado */
+.cv-button.active.disabled,
+.cv-button.active:disabled {
+  background: var(--bg-purple-light) !important;
+  color: var(--clr-purple-dark) !important;
+  border-color: var(--clr-purple-light) !important;
+}

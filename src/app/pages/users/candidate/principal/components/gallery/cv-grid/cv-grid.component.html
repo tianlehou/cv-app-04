@@ -1,5 +1,7 @@
 <div class="top-row">
   <app-cv-info-bar
+    [activeButton]="showGalleryGrid ? null : activeSection"
+    [disabled]="disableInfoBar || showGalleryGrid"
     (canvasClicked)="onCanvasClicked()"
     (atsClicked)="onAtsClicked()">
   </app-cv-info-bar>

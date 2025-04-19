@@ -1,7 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { User } from '@angular/fire/auth';
-import { IconRowsComponent } from './icon-rows/icon-rows.component';
+import { IconRowsComponent } from '../icon-rows/icon-rows.component';
 import { ImageGridComponent } from './image-grid/image-grid.component';
 import { VideoGridComponent } from './video-grid/video-grid.component';
 import { CvGridComponent } from './cv-grid/cv-grid.component';

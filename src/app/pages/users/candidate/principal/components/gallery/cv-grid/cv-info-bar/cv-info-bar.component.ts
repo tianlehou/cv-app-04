@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, Output, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -9,14 +9,20 @@ import { CommonModule } from '@angular/common';
   styleUrls: ['./cv-info-bar.component.css']
 })
 export class CvInfoBarComponent {
+  @Input() activeButton: 'canvas' | 'ats' | null = null;
+  @Input() disabled = false;
   @Output() canvasClicked = new EventEmitter<void>();
   @Output() atsClicked = new EventEmitter<void>();
 
   onCanvasClick() {
-    this.canvasClicked.emit();
+    if (!this.disabled) {
+      this.canvasClicked.emit();
+    }
   }
 
   onAtsClick() {
-    this.atsClicked.emit();
+    if (!this.disabled) {
+      this.atsClicked.emit();
+    }
   }
 }

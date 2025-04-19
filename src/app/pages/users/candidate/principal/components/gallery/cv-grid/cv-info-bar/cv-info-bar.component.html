@@ -1,6 +1,22 @@
-<div class="cv-info-container">
+<div class="cv-info-container" [class.disabled]="disabled">
   <div class="button-container">
-    <button class="cv-button canvas" (click)="onCanvasClick()">canvas</button>
-    <button class="cv-button ats" (click)="onAtsClick()">ATS</button>
+    <button 
+      class="cv-button canvas" 
+      [class.active]="activeButton === 'canvas'" 
+      [class.disabled]="disabled"
+      (click)="onCanvasClick()"
+      [disabled]="disabled"
+    >
+      canvas
+    </button>
+    <button 
+      class="cv-button ats" 
+      [class.active]="activeButton === 'ats'" 
+      [class.disabled]="disabled"
+      (click)="onAtsClick()"
+      [disabled]="disabled"
+    >
+      ATS
+    </button>
   </div>
 </div>
