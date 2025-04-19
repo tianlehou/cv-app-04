@@ -64,7 +64,7 @@
 
 .cv-button:not(.active) {
   opacity: 0.7;
-  background: var(--bg-purple-light);
+  background: var(--bg-purple);
   /* Otros estilos que prefieras */
 }
 
@@ -73,8 +73,9 @@
   opacity: 0.5;
   cursor: not-allowed;
   pointer-events: none;
-  background: var(--bg-purple-light) !important;
-  border-color: var(--clr-purple-light) !important;
+  background: white !important;
+  color: white !important;
+  border-color: white !important;
   transform: none !important;
   box-shadow: none !important;
 }
@@ -82,7 +83,7 @@
 /* Eliminar cualquier indicación de activo cuando está deshabilitado */
 .cv-button.active.disabled,
 .cv-button.active:disabled {
-  background: var(--bg-purple-light) !important;
+  background: var(--bg-purple) !important;
   color: var(--clr-purple-dark) !important;
   border-color: var(--clr-purple-light) !important;
 }
