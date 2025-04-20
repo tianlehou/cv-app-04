@@ -65,7 +65,6 @@
 .cv-button:not(.active) {
   opacity: 0.7;
   background: var(--bg-purple);
-  /* Otros estilos que prefieras */
 }
 
 .cv-button:disabled,
@@ -73,9 +72,9 @@
   opacity: 0.5;
   cursor: not-allowed;
   pointer-events: none;
-  background: white !important;
-  color: white !important;
-  border-color: white !important;
+  background: transparent !important;
+  color: transparent !important;
+  border-color: transparent !important;
   transform: none !important;
   box-shadow: none !important;
 }

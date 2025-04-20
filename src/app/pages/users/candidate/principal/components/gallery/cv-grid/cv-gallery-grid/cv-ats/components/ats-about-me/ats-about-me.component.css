@@ -1,10 +1,8 @@
 /* Contenedor principal */
 .profile-container {
-  max-width: 600px;
+  max-width: 1200px;
   margin: 10px 0;
   padding: 20px;
-  border: 1px solid #999;
-  background: #f9f9f9;
 }
 
 /* Grupos de formulario */
@@ -15,14 +13,12 @@
 
 label {
   display: block;
-  margin: 0.5em 0 0 1em;
-  font-weight: 500;
+  font-weight: 600;
 }
 
 .profile-container p {
   white-space: pre-wrap;
-  border: 1px solid #ccc;
-  padding: 10px;
-  background-color: #f9f9f9;
-  border-radius: 4px;
+  padding: 0 10px;
+  font-size: clamp(10px, 2.5vw, 16px);
+  text-align: justify;
 }

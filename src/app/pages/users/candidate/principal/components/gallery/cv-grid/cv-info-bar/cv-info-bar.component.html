@@ -1,21 +1,13 @@
 <div class="cv-info-container" [class.disabled]="disabled">
   <div class="button-container">
-    <button 
-      class="cv-button canvas" 
-      [class.active]="activeButton === 'canvas'" 
-      [class.disabled]="disabled"
-      (click)="onCanvasClick()"
-      [disabled]="disabled"
-    >
+    <button class="cv-button canvas" [class.active]="activeButton === 'canvas'" [class.disabled]="disabled"
+      (click)="onCanvasClick()" [disabled]="disabled">
+      <i class="fas fa-palette" style="margin-right: 10px;"></i>
       canvas
     </button>
-    <button 
-      class="cv-button ats" 
-      [class.active]="activeButton === 'ats'" 
-      [class.disabled]="disabled"
-      (click)="onAtsClick()"
-      [disabled]="disabled"
-    >
+    <button class="cv-button ats" [class.active]="activeButton === 'ats'" [class.disabled]="disabled"
+      (click)="onAtsClick()" [disabled]="disabled">
+      <i class="fas fa-robot" style="margin-right: 10px;"></i>
       ATS
     </button>
   </div>

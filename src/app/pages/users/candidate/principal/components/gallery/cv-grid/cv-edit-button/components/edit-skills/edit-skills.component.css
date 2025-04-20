@@ -1,79 +1,83 @@
-  /* Grupos de formulario */
-  .form-group {
-    margin-bottom: 15px;
-    text-align: left;
-    /* Asegura que los elementos dentro no estén centrados */
-  }
+header {
+  background: linear-gradient(135deg, var(--clr-blue-dark) 0%, var(--clr-purple-dark) 100%);
+}
 
-  label {
-    display: block;
-    margin: 0.5em 0 0 1em;
-    font-weight: 500;
-  }
+/* Grupos de formulario */
+.form-group {
+  margin-bottom: 15px;
+  text-align: left;
+  /* Asegura que los elementos dentro no estén centrados */
+}
 
-  /* Inputs, textareas y botones */
-  input,
-  textarea,
-  button {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-  }
+label {
+  display: block;
+  margin: 0.5em 0 0 1em;
+  font-weight: 500;
+}
+
+/* Inputs, textareas y botones */
+input,
+textarea,
+button {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
 
 
-  /* Mensajes de error */
-  .text-danger {
-    color: #e74c3c;
-    font-size: 0.875em;
-  }
+/* Mensajes de error */
+.text-danger {
+  color: #e74c3c;
+  font-size: 0.875em;
+}
 
-  /* Grupo de inputs con botones */
-  .input-group {
-    display: flex;
-    align-items: center;
-  }
+/* Grupo de inputs con botones */
+.input-group {
+  display: flex;
+  align-items: center;
+}
 
-  .input-group input {
-    flex: 1;
-    /* Permite que el input ocupe todo el espacio disponible */
-  }
+.input-group input {
+  flex: 1;
+  /* Permite que el input ocupe todo el espacio disponible */
+}
 
-  /* Experiencia */
-  .display-flex-space-between {
-    display: flex;
-    justify-content: space-between;
-    /* Distribuye los elementos con espacio entre ellos */
-    align-items: center;
-    /* Asegura que estén alineados verticalmente */
-    width: 100%;
-    /* Asegura que ocupe todo el ancho disponible */
-  }
+/* Experiencia */
+.display-flex-space-between {
+  display: flex;
+  justify-content: space-between;
+  /* Distribuye los elementos con espacio entre ellos */
+  align-items: center;
+  /* Asegura que estén alineados verticalmente */
+  width: 100%;
+  /* Asegura que ocupe todo el ancho disponible */
+}
 
-  /* Filas y columnas en la sección de experiencia */
-  .form-row {
-    display: flex;
-    /* Coloca los elementos en una fila horizontal */
-    gap: 1em;
-    /* Añade espacio entre las columnas */
-    align-items: center;
-    /* Alinea verticalmente los elementos */
-  }
+/* Filas y columnas en la sección de experiencia */
+.form-row {
+  display: flex;
+  /* Coloca los elementos en una fila horizontal */
+  gap: 1em;
+  /* Añade espacio entre las columnas */
+  align-items: center;
+  /* Alinea verticalmente los elementos */
+}
 
-  .quarter-width {
-    flex: 1;
-    /* Ocupa 1 parte del espacio disponible */
-  }
+.quarter-width {
+  flex: 1;
+  /* Ocupa 1 parte del espacio disponible */
+}
 
-  .three-quarters-width {
-    flex: 3;
-    /* Ocupa 3 partes del espacio disponible */
-  }
+.three-quarters-width {
+  flex: 3;
+  /* Ocupa 3 partes del espacio disponible */
+}
 
-  .button-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: 0.5em;
-    gap: 2em;
-  }
+.button-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 0.5em;
+  gap: 2em;
+}

@@ -5,6 +5,10 @@
   margin-bottom: 20px;
 }
 
+header {
+  background: linear-gradient(135deg, var(--clr-blue-dark) 0%, var(--clr-purple-dark) 100%);
+}
+
 /* Inputs - Estilo similar a los textarea de about-me */
 input[type="file"] {
   width: 100%;

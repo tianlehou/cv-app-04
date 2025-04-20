@@ -4,6 +4,10 @@
   }
 }
 
+header {
+  background: linear-gradient(135deg, var(--clr-blue-dark) 0%, var(--clr-purple-dark) 100%);
+}
+
 /* Textarea y texto no editable - Mismo ancho y estilo */
 .edit-profile-container textarea,
 .edit-profile-container .non-editable-text {

@@ -1,3 +1,7 @@
+header {
+  background: linear-gradient(135deg, var(--clr-blue-dark) 0%, var(--clr-purple-dark) 100%);
+}
+
 /* Grupos de formulario */
 .form-group {
   margin-bottom: 15px;

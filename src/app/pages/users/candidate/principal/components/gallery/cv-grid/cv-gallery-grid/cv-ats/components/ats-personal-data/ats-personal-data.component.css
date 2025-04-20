@@ -1,100 +1,45 @@
 /* Contenedor principal - Estilo profesional ATS */
 .profile-container {
-  max-width: 800px;
-  margin: 20px auto;
-  padding: 30px;
-  background: #ffffff;
-  border: 1px solid #e0e0e0;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-  font-family: 'Arial', 'Helvetica', sans-serif;
-  color: #333333;
-}
-
-/* Encabezado con nombre completo */
-.personal-data-field:first-child {
-  margin-bottom: 25px;
-  border-bottom: 2px solid #2c5e91;
-  padding-bottom: 15px;
-}
-
-.personal-data-field:first-child p {
-  font-size: 28px;
-  font-weight: 600;
-  color: #2c5e91;
-  margin: 5px 0 0 0;
-  padding: 0;
-  border: none;
-  background: none;
-}
-
-/* Estilo para los campos de datos */
-.personal-data-field {
-  margin-bottom: 12px;
-  display: flex;
-  align-items: flex-start;
-}
-
-label {
-  font-weight: 600;
-  color: #555;
-  width: 150px;
+  max-width: 1200px;
   margin: 0;
-  padding: 5px 0;
-  font-size: 14px;
-  display: flex;
-  align-items: center;
-}
-
-/* Estilo para los iconos */
-label i {
-  margin-right: 10px;
-  width: 16px;
-  text-align: center;
-  font-size: 14px;
-  color: #2c5e91;
+  background: white;
+  color: var(--text-color);
+  font-weight: 300;
 }
 
 .profile-container p {
   flex: 1;
-  margin: 0;
-  padding: 5px 0 5px 10px;
-  font-size: 15px;
-  line-height: 1.5;
-  color: #333;
-  border: none;
-  background: none;
-  white-space: pre-wrap;
-  word-break: break-word;
-}
-
-/* Estilo para el email */
-.personal-data-field:nth-child(4) p {
-  color: #1a73e8;
-}
-
-/* Estilo para la profesión */
-.personal-data-field:nth-child(2) p {
-  font-size: 18px;
+  font-size: 20px;
+  font-size: clamp(20px, 3.5vw, 36px);
   font-weight: 500;
-  color: #666;
+  color: var(--clr-blue-dark);
+  margin: 4rem 0 0;
 }
 
-/* Responsive */
-@media (max-width: 600px) {
-  .personal-data-field {
-    flex-direction: column;
-  }
-  
-  label {
-    width: 100%;
-    padding-bottom: 2px;
-  }
-  
-  .profile-container p {
-    padding-left: 0;
-  }
-  
-  .personal-data-field:first-child p {
-    font-size: 24px;
-  }
+.point {
+  width: 5px;
+  height: 5px;
+  margin: 5px;
+  background-color: var(--text-color);
+  border-radius: 50%;
+}
+
+label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: fit-content;
+  font-size: clamp(10px, 2.5vw, 16px);
+}
+
+.profesion {
+  display: flex;
+  justify-content: center;
+  padding: 3px;
+  margin: 5px 10px 0;
+  color: white;
+  font-size: 12px;
+  font-weight: 500;
+  background-color: var(--clr-blue-dark);
+  border-radius: 4px;
 }
