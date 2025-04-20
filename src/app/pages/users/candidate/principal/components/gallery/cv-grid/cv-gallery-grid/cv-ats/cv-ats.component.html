@@ -1,4 +1,4 @@
-<div class="ats-container">
+<div class="ats-container" *ngIf="currentUser; else loadingTemplate">
   <div class="section">
     <app-ats-personal-data [currentUser]="currentUser"></app-ats-personal-data>
   </div>
@@ -27,3 +27,7 @@
     <app-ats-languages [currentUser]="currentUser"></app-ats-languages>
   </div>
 </div>
+
+<ng-template #loadingTemplate>
+  <p>Cargando datos del usuario...</p>
+</ng-template>

@@ -1,38 +1,32 @@
-<div class="profile-container" style="border: 2px solid red; padding: 10px;">
-  <h3>DEBUG: Componente Skills Cargado</h3>
-  <p>Usuario: {{currentUser?.email}}</p>
-  @if (isLoading) {
-    <p>Cargando habilidades...</p>
-  } @else {
-    <div class="form-group" [formGroup]="profileForm">
-      <label>Habilidades:</label>
-      @if (skillsArray.length > 0) {
-        <ul class="skills-list">
-          @for (skill of skillsArray.controls; track $index) {
-            <li>
-              <div class="skill-item">
-                <div class="skill-detail">
-                  <label>Habilidad:</label>
-                  <p>{{ skill.get('name')?.value }}</p>
-                </div>
-                <div class="skill-detail">
-                  <label>Nivel:</label>
-                  <p>{{ skill.get('proficiency')?.value }}</p>
-                </div>
-                <div class="skill-detail">
-                  <label>Certificación:</label>
-                  <p>{{ skill.get('certification')?.value }}</p>
-                </div>
-              </div>
-              @if (!$last) {
-                <div class="line"></div>
-              }
-            </li>
-          }
-        </ul>
-      } @else {
-        <p class="no-skills">No se encontraron habilidades</p>
+<div class="profile-container">
+  <div class="form-group" [formGroup]="profileForm">
+    <label>Habilidades:</label>
+    @if (skillsArray.length > 0) {
+    <ul class="skills-list">
+      @for (skill of skillsArray.controls; track $index) {
+      <li>
+        <div class="skill-item">
+          <div class="skill-detail">
+            <label>Habilidad:</label>
+            <p>{{ skill.get("name")?.value }}</p>
+          </div>
+          <div class="skill-detail">
+            <label>Nivel:</label>
+            <p>{{ skill.get("proficiency")?.value }}</p>
+          </div>
+          <div class="skill-detail">
+            <label>Certificación:</label>
+            <p>{{ skill.get("certification")?.value }}</p>
+          </div>
+        </div>
+        @if (!$last) {
+        <div class="line"></div>
+        }
+      </li>
       }
-    </div>
-  }
+    </ul>
+    } @else {
+    <p class="no-skills">No se encontraron habilidades</p>
+    }
+  </div>
 </div>

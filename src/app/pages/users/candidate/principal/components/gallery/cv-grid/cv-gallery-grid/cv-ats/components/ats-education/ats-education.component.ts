@@ -15,7 +15,6 @@ export class AtsEducationComponent implements OnInit {
   @Input() currentUser: User | null = null;
   profileForm!: FormGroup;
   userEmail: string | null = null;
-  isLoading = true;
 
   constructor(
     private fb: FormBuilder,
@@ -27,8 +26,6 @@ export class AtsEducationComponent implements OnInit {
     if (this.currentUser) {
       this.userEmail = this.currentUser.email?.replace(/\./g, '_') || null;
       this.loadUserData();
-    } else {
-      this.isLoading = false;
     }
   }
 
@@ -41,7 +38,6 @@ export class AtsEducationComponent implements OnInit {
   private async loadUserData(): Promise<void> {
     if (!this.userEmail) {
       console.error('Error: Email de usuario no disponible');
-      this.isLoading = false;
       return;
     }
   
@@ -52,8 +48,6 @@ export class AtsEducationComponent implements OnInit {
       this.populateEducation(education);
     } catch (error) {
       console.error('Error al cargar educación:', error);
-    } finally {
-      this.isLoading = false;
     }
   }
 

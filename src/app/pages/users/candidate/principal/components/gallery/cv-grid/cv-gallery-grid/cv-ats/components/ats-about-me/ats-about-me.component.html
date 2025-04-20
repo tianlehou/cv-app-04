@@ -1,15 +1,11 @@
 <div class="profile-container">
-  @if (isLoading) {
-    <p>Cargando datos...</p>
-  } @else {
-    <form [formGroup]="profileForm">
-      <!-- Sobre Mí -->
-      <div class="form-group">
+  <form [formGroup]="profileForm">
+    <!-- Sobre Mí -->
+    <div class="form-group">
+      <span>
         <label for="AboutMe">Sobre Mí:</label>
-        <p id="aboutMe" class="form-control-static">
-          {{ profileForm.get("aboutMe")?.value }}
-        </p>
-      </div>
-    </form>
-  }
+        {{ profileForm.get("aboutMe")?.value }}
+      </span>
+    </div>
+  </form>
 </div>

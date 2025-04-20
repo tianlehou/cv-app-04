@@ -1,29 +1,25 @@
 <div class="profile-container">
-  @if (isLoading) {
-  <p>Cargando datos personales...</p>
-  } @else {
   <div class="form-group" [formGroup]="profileForm">
     <div class="personal-data-field">
-      <p>{{ profileForm.get('fullName')?.value }}</p>
+      <p>{{ profileForm.get("fullName")?.value }}</p>
     </div>
 
     <div class="display-flex-center">
       <div class="personal-data-field">
-        <label>{{ profileForm.get('phone')?.value }}</label>
+        <label>{{ profileForm.get("phone")?.value }}</label>
       </div>
       <div class="point"></div>
       <div class="personal-data-field">
-        <label>{{ profileForm.get('editableEmail')?.value }}</label>
+        <label>{{ profileForm.get("editableEmail")?.value }}</label>
       </div>
       <div class="point"></div>
       <div class="personal-data-field">
-        <label>{{ profileForm.get('direction')?.value }}</label>
+        <label>{{ profileForm.get("direction")?.value }}</label>
       </div>
     </div>
 
     <div class="personal-data-field profesion">
-      <label>{{ profileForm.get('profesion')?.value }}</label>
+      <label>{{ profileForm.get("profesion")?.value }}</label>
     </div>
   </div>
-  }
 </div>

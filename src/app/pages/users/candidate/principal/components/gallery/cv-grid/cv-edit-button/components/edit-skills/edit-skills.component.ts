@@ -11,6 +11,7 @@ import { FirebaseService } from '../../../../../../../../../../shared/services/f
 import { ConfirmationModalService } from '../../../../../../../../../../shared/services/confirmation-modal.service';
 import { User } from '@angular/fire/auth';
 import { SkillsInfoComponent } from './skills-info/skills-info.component';
+import { ToastService } from '../../../../../../../../../../shared/services/toast.service';
 
 @Component({
   selector: 'app-edit-skills',
@@ -30,7 +31,8 @@ export class EditSkillsComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private firebaseService: FirebaseService,
-    private ConfirmationModalService: ConfirmationModalService
+    private ConfirmationModalService: ConfirmationModalService,
+    private toastService: ToastService
   ) {}
 
   ngOnInit(): void {
@@ -91,7 +93,7 @@ export class EditSkillsComponent implements OnInit {
 
   async onSubmit(): Promise<void> {
     if (!this.profileForm.valid || !this.userEmail) {
-      alert('Error en los datos o usuario no autenticado.');
+      this.toastService.show('Error en los datos o usuario no autenticado.', 'error');
       return;
     }
 
@@ -108,12 +110,12 @@ export class EditSkillsComponent implements OnInit {
         profileData: updatedProfileData,
       });
 
-      alert('Datos actualizados exitosamente.');
+      this.toastService.show('Datos actualizados exitosamente.', 'success');
 
       await this.loadUserData();
     } catch (error) {
       console.error('Error al actualizar el perfil:', error);
-      alert('Error al guardar datos. Intenta nuevamente.');
+      this.toastService.show('Error al guardar datos. Intenta nuevamente.', 'error');
     }
   }
 

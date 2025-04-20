@@ -1,38 +1,42 @@
 <div class="profile-container">
-  @if (isLoading) {
-    <p class="loading-text">Cargando idiomas...</p>
-  } @else {
-    <div class="form-group" [formGroup]="profileForm"> <!-- Añade esto -->
-      <label class="section-label">Idiomas:</label>
-      
-      @if (languagesArray.length > 0) {
-        <div class="languages-list" formArrayName="languages"> <!-- Ahora tiene un padre formGroup -->
-          @for (language of languagesArray.controls; track $index; let i = $index) {
-            <div class="language-item" [formGroupName]="i">
-              <div class="language-field">
-                <label [for]="'language-name-' + i">Idioma:</label>
-                <p class="language-value">{{ language.get('name')?.value || 'No especificado' }}</p>
-              </div>
-              
-              <div class="language-field">
-                <label [for]="'language-proficiency-' + i">Nivel:</label>
-                <p class="language-value">{{ language.get('proficiency')?.value || 'No especificado' }}</p>
-              </div>
-              
-              <div class="language-field">
-                <label [for]="'language-certification-' + i">Certificación:</label>
-                <p class="language-value">{{ language.get('certification')?.value || 'No especificado' }}</p>
-              </div>
-              
-              @if (!$last) {
-                <div class="divider"></div>
-              }
-            </div>
-          }
+  <div class="form-group" [formGroup]="profileForm">
+    <!-- Añade esto -->
+    <label class="section-label">Idiomas:</label>
+
+    @if (languagesArray.length > 0) {
+    <div class="languages-list" formArrayName="languages">
+      <!-- Ahora tiene un padre formGroup -->
+      @for (language of languagesArray.controls; track $index; let i = $index) {
+      <div class="language-item" [formGroupName]="i">
+        <div class="language-field">
+          <label [for]="'language-name-' + i">Idioma:</label>
+          <p class="language-value">
+            {{ language.get("name")?.value || "No especificado" }}
+          </p>
         </div>
-      } @else {
-        <p class="no-languages-message">No se encontraron idiomas registrados.</p>
+
+        <div class="language-field">
+          <label [for]="'language-proficiency-' + i">Nivel:</label>
+          <p class="language-value">
+            {{ language.get("proficiency")?.value || "No especificado" }}
+          </p>
+        </div>
+
+        <div class="language-field">
+          <label [for]="'language-certification-' + i">Certificación:</label>
+          <p class="language-value">
+            {{ language.get("certification")?.value || "No especificado" }}
+          </p>
+        </div>
+
+        @if (!$last) {
+        <div class="divider"></div>
+        }
+      </div>
       }
     </div>
-  }
+    } @else {
+    <p class="no-languages-message">No se encontraron idiomas registrados.</p>
+    }
+  </div>
 </div>

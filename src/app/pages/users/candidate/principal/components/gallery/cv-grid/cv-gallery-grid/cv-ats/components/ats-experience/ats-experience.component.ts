@@ -15,7 +15,6 @@ export class AtsExperienceComponent implements OnInit {
   @Input() currentUser: User | null = null;
   profileForm!: FormGroup;
   userEmail: string | null = null;
-  isLoading = true;
 
   constructor(
     private fb: FormBuilder,
@@ -27,8 +26,6 @@ export class AtsExperienceComponent implements OnInit {
     if (this.currentUser) {
       this.userEmail = this.currentUser.email?.replace(/\./g, '_') || null;
       this.loadUserData();
-    } else {
-      this.isLoading = false;
     }
   }
 
@@ -41,7 +38,6 @@ export class AtsExperienceComponent implements OnInit {
   private async loadUserData(): Promise<void> {
     if (!this.userEmail) {
       console.error('Error: Usuario no autenticado.');
-      this.isLoading = false;
       return;
     }
 
@@ -51,8 +47,6 @@ export class AtsExperienceComponent implements OnInit {
       this.populateExperiences(experiences);
     } catch (error) {
       console.error('Error loading experiences:', error);
-    } finally {
-      this.isLoading = false;
     }
   }
 

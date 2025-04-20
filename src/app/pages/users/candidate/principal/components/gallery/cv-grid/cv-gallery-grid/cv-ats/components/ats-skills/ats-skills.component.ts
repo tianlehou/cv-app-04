@@ -15,20 +15,17 @@ export class AtsSkillsComponent implements OnInit {
   @Input() currentUser: User | null = null;
   profileForm!: FormGroup;
   userEmail: string | null = null;
-  isLoading = true;
 
   constructor(
     private fb: FormBuilder,
     private firebaseService: FirebaseService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.initializeForm();
     if (this.currentUser) {
       this.userEmail = this.currentUser.email?.replace(/\./g, '_') || null;
       this.loadUserData();
-    } else {
-      this.isLoading = false;
     }
   }
 
@@ -41,10 +38,9 @@ export class AtsSkillsComponent implements OnInit {
   private async loadUserData(): Promise<void> {
     if (!this.userEmail) {
       console.error('Error: Email de usuario no disponible');
-      this.isLoading = false;
       return;
     }
-  
+
     try {
       const userData = await this.firebaseService.getUserData(this.userEmail);
       const skills = userData?.profileData?.skills || [];
@@ -52,15 +48,13 @@ export class AtsSkillsComponent implements OnInit {
       this.populateSkills(skills);
     } catch (error) {
       console.error('Error al cargar habilidades:', error);
-    } finally {
-      this.isLoading = false;
     }
   }
 
   private populateSkills(skills: any[]): void {
     const formArray = this.skillsArray;
     formArray.clear();
-    
+
     if (skills.length === 0) {
       formArray.push(this.fb.group({
         name: ['No especificado'],

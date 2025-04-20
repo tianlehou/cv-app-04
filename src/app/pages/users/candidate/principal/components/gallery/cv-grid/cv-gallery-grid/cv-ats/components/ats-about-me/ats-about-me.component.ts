@@ -16,7 +16,6 @@ export class AtsAboutMeComponent implements OnInit {
   @Input() currentUser: User | null = null;
   profileForm!: FormGroup;
   userEmail: string | null = null;
-  isLoading = true;
 
   constructor(
     private fb: FormBuilder,
@@ -28,8 +27,6 @@ export class AtsAboutMeComponent implements OnInit {
     if (this.currentUser) {
       this.userEmail = this.currentUser.email?.replace(/\./g, '_') || null;
       this.loadUserData();
-    } else {
-      this.isLoading = false;
     }
   }
 
@@ -42,7 +39,6 @@ export class AtsAboutMeComponent implements OnInit {
   private async loadUserData(): Promise<void> {
     if (!this.userEmail) {
       console.error('Error: Usuario no autenticado.');
-      this.isLoading = false;
       return;
     }
 
@@ -54,8 +50,6 @@ export class AtsAboutMeComponent implements OnInit {
     } catch (error) {
       console.error('Error al cargar los datos del usuario:', error);
       this.profileForm.patchValue({ aboutMe: 'Error al cargar datos' });
-    } finally {
-      this.isLoading = false;
     }
   }
 }

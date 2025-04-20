@@ -11,6 +11,7 @@ import { FirebaseService } from '../../../../../../../../../../shared/services/f
 import { ConfirmationModalService } from '../../../../../../../../../../shared/services/confirmation-modal.service';
 import { User } from '@angular/fire/auth';
 import { ExperienceInfoComponent } from './experience-info/experience-info.component';
+import { ToastService } from '../../../../../../../../../../shared/services/toast.service';
 
 @Component({
   selector: 'app-edit-experience',
@@ -30,7 +31,8 @@ export class EditExperienceComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private firebaseService: FirebaseService,
-    private ConfirmationModalService: ConfirmationModalService
+    private ConfirmationModalService: ConfirmationModalService,
+    private toastService: ToastService
   ) {}
 
   ngOnInit(): void {
@@ -87,7 +89,7 @@ export class EditExperienceComponent implements OnInit {
 
   async onSubmit(): Promise<void> {
     if (!this.profileForm.valid || !this.userEmail) {
-      alert('Deber completar los campos vacíos.');
+      this.toastService.show('Debes completar los campos vacíos.', 'error');
       return;
     }
 
@@ -107,13 +109,13 @@ export class EditExperienceComponent implements OnInit {
         profileData: updatedProfileData,
       });
 
-      alert('Datos actualizados exitosamente.');
+      this.toastService.show('Datos actualizados exitosamente.', 'success');
 
       // Restaurar estado
       await this.loadUserData();
     } catch (error) {
       console.error('Error al actualizar el perfil:', error);
-      alert('Error al guardar datos. Intenta nuevamente.');
+      this.toastService.show('Error al guardar datos. Intenta nuevamente.', 'error');
     }
   }
 

@@ -1,24 +1,16 @@
 /* Contenedor principal */
 .profile-container {
   max-width: 1200px;
-  margin: 10px 0;
+  text-align: justify;
   padding: 20px;
+  margin: 0;
 }
 
-/* Grupos de formulario */
-.form-group {
-  margin-bottom: 15px;
-  text-align: left;
+span {
+  white-space: pre-wrap;
+  font-size: clamp(10px, 2.5vw, 16px);
 }
 
 label {
-  display: block;
-  font-weight: 600;
-}
-
-.profile-container p {
-  white-space: pre-wrap;
-  padding: 0 10px;
-  font-size: clamp(10px, 2.5vw, 16px);
-  text-align: justify;
+  font-weight: 700;
 }

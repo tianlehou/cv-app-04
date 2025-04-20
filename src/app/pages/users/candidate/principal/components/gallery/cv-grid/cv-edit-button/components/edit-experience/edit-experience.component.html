@@ -22,26 +22,26 @@
 
         <div formArrayName="experience">
           <div *ngFor="let exp of experienceArray.controls; let i = index" [formGroupName]="i" class="experience-group">
+            <!-- Rol o Cargo -->
+            <div class="form-group">
+              <label for="role">Rol:</label>
+              <input type="text" id="role" formControlName="role" [readonly]="!editableFields['experience']"
+                class="form-control" />
+            </div>
+
             <div class="form-row">
-              <!-- Año -->
-              <div class="form-group quarter-width">
-                <label for="year">Año:</label>
-                <input type="text" id="year" formControlName="year" [readonly]="!editableFields['experience']"
-                  class="form-control" />
-              </div>
               <!-- Empresa -->
               <div class="form-group three-quarters-width">
                 <label for="company">Empresa:</label>
                 <input type="text" id="company" formControlName="company" [readonly]="!editableFields['experience']"
                   class="form-control" />
               </div>
-            </div>
-
-            <!-- Rol o Cargo -->
-            <div class="form-group">
-              <label for="role">Rol:</label>
-              <input type="text" id="role" formControlName="role" [readonly]="!editableFields['experience']"
-                class="form-control" />
+              <!-- Año -->
+              <div class="form-group quarter-width">
+                <label for="year">Año:</label>
+                <input type="text" id="year" formControlName="year" [readonly]="!editableFields['experience']"
+                  class="form-control" />
+              </div>
             </div>
 
             <!-- Destalles o Descripción -->
@@ -67,6 +67,5 @@
     </form>
   </body>
 </div>
-
 
 <app-experience-info *ngIf="showInfoComponent" (back)="toggleInfoView()"></app-experience-info>
