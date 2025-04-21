@@ -77,7 +77,7 @@ export class EditSkillsComponent implements OnInit {
     skillList.forEach((skill) => {
       const skillGroup = this.fb.group({
         name: [skill.name || '', Validators.required],
-        proficiency: [skill.proficiency || '', Validators.required],
+        proficiency: [skill.proficiency || ''],
         certification: [skill.certification || ''],
       });
       formArray.push(skillGroup);
@@ -126,7 +126,7 @@ export class EditSkillsComponent implements OnInit {
   addSkill(): void {
     const skillGroup = this.fb.group({
       name: ['', Validators.required],
-      proficiency: ['', Validators.required],
+      proficiency: [''],
       certification: [''],
     });
     this.skillsArray.push(skillGroup);

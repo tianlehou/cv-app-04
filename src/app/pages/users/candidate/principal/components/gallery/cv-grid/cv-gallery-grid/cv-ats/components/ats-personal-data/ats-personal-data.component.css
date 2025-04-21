@@ -13,7 +13,7 @@
   font-size: clamp(20px, 3.5vw, 36px);
   font-weight: 500;
   color: var(--clr-blue-dark);
-  margin: 4rem 0 0;
+  margin: 2.5rem 0 0;
 }
 
 .point {
@@ -32,7 +32,7 @@ label {
   font-size: clamp(10px, 2.5vw, 16px);
 }
 
-.profesion {
+.bar {
   display: flex;
   justify-content: center;
   padding: 3px;

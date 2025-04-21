@@ -1,26 +1,22 @@
 <div class="profile-container">
   <div class="form-group" [formGroup]="profileForm">
-    <label>Experiencia Laboral:</label>
+    <label class="bar">Experiencia Profesional:</label>
     @if (experienceArray.length > 0) {
     <ul class="experience-list">
       @for (exp of experienceArray.controls; track $index) {
       <li>
-        <div class="experience-item">
-          <div class="experience-field">
-            <label>Año:</label>
-            <p>{{ exp.get("year")?.value }}</p>
-          </div>
-          <div class="experience-field">
-            <label>Empresa:</label>
-            <p>{{ exp.get("company")?.value }}</p>
-          </div>
-          <div class="experience-field">
-            <label>Rol:</label>
-            <p>{{ exp.get("role")?.value }}</p>
-          </div>
-          <div class="experience-field">
-            <label>Descripción:</label>
-            <p>{{ exp.get("description")?.value }}</p>
+        <div class="item">
+          <section class="top-body">
+            <div>
+              <span>{{ exp.get("role")?.value }}</span>
+            </div>
+            <div>
+              <span>{{ exp.get("year")?.value }}</span>
+            </div>
+          </section>
+          <div>
+            <span style="padding-right: 0.25rem;">Empresa:</span>{{ exp.get("company")?.value }} <br>
+              {{ exp.get("description")?.value }}
           </div>
         </div>
       </li>
