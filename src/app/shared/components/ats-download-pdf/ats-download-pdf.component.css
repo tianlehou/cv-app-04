@@ -1,0 +1,21 @@
+/* ats-download-pdf.component.css */
+.downloadPDF-btn {
+    background-color: var(--bg-red);
+    color:  var(--clr-red);
+    border: 1px solid var(--clr-red) !important;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    margin: 1rem 0 0;
+}
+
+.downloadPDF-btn:hover {
+    color:  var(--clr-white);
+    background-color: var(--clr-red);
+}
+
+span {
+    margin-right: 10px;
+}

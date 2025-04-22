@@ -2,16 +2,22 @@ header {
   background: linear-gradient(135deg, var(--clr-blue-dark) 0%, var(--clr-purple-dark) 100%);
 }
 
-/* Grupos de formulario */
+/* Formulario general */
 .form-group {
   margin-bottom: 15px;
-  text-align: left; /* Asegura que los elementos dentro no estén centrados */
+  text-align: left;
 }
 
 label {
   display: block;
   margin: 0.5em 0 0 1em;
   font-weight: 500;
+}
+
+.edit-save-button {
+  width: fit-content;
+  margin-right: 10px;
+  padding: 8px;
 }
 
 /* Inputs, textareas y botones */
@@ -24,81 +30,54 @@ button {
   border-radius: 5px;
 }
 
-/* Inputs de solo lectura */
-input[readonly] {
+input[readonly],
+textarea[readonly] {
   background-color: #f8f9fa;
   border: 1px solid #ddd;
 }
 
-/* Inputs interactivos */
-input:not([readonly]) {
+input:not([readonly]),
+textarea:not([readonly]) {
   background-color: #fff;
   border: 1px solid #007bff;
 }
 
-/* Mensajes de error */
-.text-danger {
-  color: #e74c3c;
-  font-size: 0.875em;
-}
-
-/* Grupo de inputs con botones */
-.input-group {
-  display: flex;
-  align-items: center;
-}
-
-.input-group input {
-  flex: 1; /* Permite que el input ocupe todo el espacio disponible */
-}
-
-.input-group button {
-  width: 85px; /* Define un ancho fijo para el botón */
-}
-
-/* Estilo de los botones generales */
 button {
   background-color: var(--clr-green);
   color: white;
   font-weight: 300;
   cursor: pointer;
-}r
+}
 
 button:disabled {
   background-color: var(--clr-green);
   cursor: not-allowed;
 }
 
-/* Experiencia */
+/* Estructura flexible */
 .display-flex-space-between {
   display: flex;
-  justify-content: space-between; /* Distribuye los elementos con espacio entre ellos */
-  align-items: center; /* Asegura que estén alineados verticalmente */
-  width: 100%; /* Asegura que ocupe todo el ancho disponible */
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
 }
 
-
-
-
-
-
-/* Filas y columnas en la sección de experiencia */
 .form-row {
-  display: flex; /* Coloca los elementos en una fila horizontal */
-  gap: 1em; /* Añade espacio entre las columnas */
-  align-items: center; /* Alinea verticalmente los elementos */
+  display: flex;
+  gap: 1em;
+  align-items: center;
 }
 
 .quarter-width {
-  flex: 1; /* Ocupa 1 parte del espacio disponible */
+  flex: 1;
 }
 
 .three-quarters-width {
-  flex: 3; /* Ocupa 3 partes del espacio disponible */
+  flex: 3;
 }
 
 .form-control {
-  width: 100%; /* Asegura que el input ocupe todo el ancho del contenedor */
+  width: 100%;
 }
 
 textarea {
@@ -113,3 +92,12 @@ textarea {
   gap: 2em;
 }
 
+.text-danger {
+  color: #e74c3c;
+  font-size: 0.875em;
+}
+
+.line {
+  border-bottom: 1px solid #ccc;
+  margin: 1em 0;
+}

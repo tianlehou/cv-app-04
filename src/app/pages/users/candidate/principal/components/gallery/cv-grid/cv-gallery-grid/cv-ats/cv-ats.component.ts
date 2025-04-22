@@ -7,6 +7,7 @@ import { AtsExperienceComponent } from './components/ats-experience/ats-experien
 import { AtsSkillsComponent } from './components/ats-skills/ats-skills.component';
 import { AtsEducationComponent } from './components/ats-education/ats-education.component';
 import { AtsLanguagesComponent } from './components/ats-languages/ats-languages.component';
+import { AtsDownloadPdfComponent } from '../../../../../../../../../shared/components/ats-download-pdf/ats-download-pdf.component';
 
 @Component({
   selector: 'app-cv-ats',
@@ -19,6 +20,7 @@ import { AtsLanguagesComponent } from './components/ats-languages/ats-languages.
     AtsSkillsComponent,
     AtsEducationComponent,
     AtsLanguagesComponent,
+    AtsDownloadPdfComponent
   ],
   templateUrl: './cv-ats.component.html',
   styleUrl: './cv-ats.component.css',

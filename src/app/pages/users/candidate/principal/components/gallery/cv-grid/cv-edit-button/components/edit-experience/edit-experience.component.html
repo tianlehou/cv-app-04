@@ -13,9 +13,19 @@
       <div class="form-group">
         <div class="display-flex-space-between">
           <label for="experience">Experiencia(s):</label>
-          <button type="button" class="add-button" id="experience-btn" (click)="addExperience()">
-            Agregar
-          </button>
+          <div>
+            <button type="button" class="edit-save-button" (click)="toggleEdit('experience')"
+              [class.editing]="editableFields['experience']">
+              <i class="fas" [ngClass]="
+                  editableFields['experience'] ? 'fa-save' : 'fa-pencil-alt'
+                " style="margin-right: 5px;"></i>
+              {{ editableFields["experience"] ? "Guardar" : "Editar" }}
+            </button>
+
+            <button type="button" class="add-button" id="experience-btn" (click)="addExperience()">
+              Agregar
+            </button>
+          </div>
         </div>
 
         <div class="line"></div>
@@ -24,7 +34,17 @@
           <div *ngFor="let exp of experienceArray.controls; let i = index" [formGroupName]="i" class="experience-group">
             <!-- Rol o Cargo -->
             <div class="form-group">
-              <label for="role">Rol:</label>
+              <div style="
+                  display: flex;
+                  justify-content: space-between;
+                  margin-bottom: 5px;
+                ">
+                <label for="role">Rol:</label>
+                <button type="button" class="btn delete-btn" style="width: fit-content"
+                  (click)="confirmDeleteExperience(i)">
+                  <i class="fas fa-trash"><span>Eliminar</span></i>
+                </button>
+              </div>
               <input type="text" id="role" formControlName="role" [readonly]="!editableFields['experience']"
                 class="form-control" />
             </div>
@@ -48,18 +68,6 @@
             <label>Detalle(s):</label>
             <textarea formControlName="description" class="form-control"
               [readonly]="!editableFields['experience']"></textarea>
-
-            <div class="button-row">
-              <button type="button" class="btn delete-btn" (click)="confirmDeleteExperience(i)">
-                Eliminar
-              </button>
-
-              <button type="button" class="edit-save-button" (click)="toggleEdit('experience')"
-                [class.editing]="editableFields['experience']">
-                {{ editableFields["experience"] ? "Guardar" : "Editar" }}
-              </button>
-            </div>
-
             <div class="line"></div>
           </div>
         </div>

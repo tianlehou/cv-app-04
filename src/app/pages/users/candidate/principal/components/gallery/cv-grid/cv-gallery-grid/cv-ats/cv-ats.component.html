@@ -1,4 +1,6 @@
-<div class="ats-container" *ngIf="currentUser; else loadingTemplate">
+<app-ats-download-pdf containerId="pdf-content"></app-ats-download-pdf>
+<!-- cv-ats.component.html -->
+<div class="ats-container" *ngIf="currentUser; else loadingTemplate" id="pdf-content">
   <div class="section">
     <app-ats-personal-data [currentUser]="currentUser"></app-ats-personal-data>
   </div>
@@ -20,7 +22,6 @@
   </div>
 
   <div class="section">
-    <h3>Idiomas</h3>
     <app-ats-languages [currentUser]="currentUser"></app-ats-languages>
   </div>
 </div>

@@ -23,19 +23,32 @@
   margin: 0 1rem;
 }
 
+.skills-list.detailed-view li {
+  display: flex;
+  justify-content: space-between;
+}
+
 .skills-list.detailed-view .item {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
 }
 
-.skills-list.detailed-view .skill-detail {
-  flex: 1;
+.skills-list.detailed-view .skill-detail-inline {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.skills-list.detailed-view .proficiency {
+  font-weight: 500;
+  color: #333;
 }
 
 .skills-list.detailed-view span {
-  padding-right: 0.5rem;
-  font-weight: 600;
+  font-weight: 700;
+  margin-right: 0.25rem;
 }
 
 .skills-list.compact-view li:first-child {

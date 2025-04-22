@@ -77,7 +77,7 @@ export class EditLanguagesComponent implements OnInit {
     languageList.forEach((language) => {
       const languageGroup = this.fb.group({
         name: [language.name || '', Validators.required],
-        proficiency: [language.proficiency || '', Validators.required],
+        proficiency: [language.proficiency || ''],
         certification: [language.certification || ''],
       });
       formArray.push(languageGroup);
@@ -126,7 +126,7 @@ export class EditLanguagesComponent implements OnInit {
   addLanguage(): void {
     const languageGroup = this.fb.group({
       name: ['', Validators.required],
-      proficiency: ['', Validators.required],
+      proficiency: [''],
       certification: [''],
     });
     this.languagesArray.push(languageGroup);

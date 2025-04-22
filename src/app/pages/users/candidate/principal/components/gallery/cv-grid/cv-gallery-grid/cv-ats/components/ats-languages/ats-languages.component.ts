@@ -15,6 +15,10 @@ export class AtsLanguagesComponent implements OnInit {
   @Input() currentUser: User | null = null;
   profileForm!: FormGroup;
   userEmail: string | null = null;
+  
+  // Propiedades para manejar los idiomas categorizados
+  languagesWithDetails: any[] = [];
+  languagesWithoutDetails: any[] = [];
 
   constructor(
     private fb: FormBuilder,
@@ -31,7 +35,7 @@ export class AtsLanguagesComponent implements OnInit {
 
   private initializeForm(): void {
     this.profileForm = this.fb.group({
-      languages: this.fb.array([]), // Array vacío
+      languages: this.fb.array([]),
     });
   }
 
@@ -44,24 +48,52 @@ export class AtsLanguagesComponent implements OnInit {
     try {
       const userData = await this.firebaseService.getUserData(this.userEmail);
       const languages = userData?.profileData?.languages || [];
-
-      this.populateLanguages(languages);
+      this.categorizeLanguages(languages);
+      this.populateForm();
     } catch (error) {
       console.error('Error al cargar idiomas:', error);
     }
   }
 
-  private populateLanguages(languages: any[]): void {
-    const formArray = this.languagesArray;
-    formArray.clear(); // Limpia el grupo inicial
+  private categorizeLanguages(languages: any[]): void {
+    this.languagesWithDetails = [];
+    this.languagesWithoutDetails = [];
 
-    if (languages.length === 0) {
+    languages.forEach(language => {
+      const hasProficiency = language.proficiency && 
+                           language.proficiency.trim() !== '' && 
+                           language.proficiency !== 'No especificado';
+      const hasCertification = language.certification && 
+                             language.certification.trim() !== '' && 
+                             language.certification !== 'No especificado';
+
+      if (hasProficiency || hasCertification) {
+        this.languagesWithDetails.push(language);
+      } else {
+        this.languagesWithoutDetails.push(language);
+      }
+    });
+  }
+
+  private populateForm(): void {
+    const formArray = this.languagesArray;
+    formArray.clear();
+
+    // Combinamos ambas listas (con detalles primero)
+    const allLanguages = [...this.languagesWithDetails, ...this.languagesWithoutDetails];
+
+    if (allLanguages.length === 0) {
+      formArray.push(this.fb.group({
+        name: ['Sin idiomas registrados'],
+        proficiency: [''],
+        certification: [''],
+      }));
     } else {
-      languages.forEach(lang => {
+      allLanguages.forEach(language => {
         formArray.push(this.fb.group({
-          name: [lang.name || ''],
-          proficiency: [lang.proficiency || ''],
-          certification: [lang.certification || ''],
+          name: [language.name || ''],
+          proficiency: [language.proficiency || ''],
+          certification: [language.certification || ''],
         }));
       });
     }

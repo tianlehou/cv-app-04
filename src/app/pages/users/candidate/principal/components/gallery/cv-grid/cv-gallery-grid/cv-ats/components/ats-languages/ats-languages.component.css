@@ -1,32 +1,75 @@
-/* Contenedor principal */
+/* Contenedor principal - Manteniendo consistencia con skills */
 .profile-container {
-  max-width: 600px;
-  margin: 10px 0;
-  padding: 20px;
-  border: 1px solid #999;
-  background: #f9f9f9;
-}
-
-.form-row {
-  gap: 3em;
-}
-
-/* Grupos de formulario */
-.form-group {
-  margin-bottom: 15px;
-  text-align: left;
-}
-
-label {
-  display: block;
-  margin: 0.5em 0 0 1em;
+  max-width: 1200px;
   font-weight: 500;
+  font-size: clamp(12px, 2.5vw, 16px);
+  text-align: left;
+  margin: 0 10px;
+  border: none;
+  background: none;
+  padding: 0;
 }
 
-.profile-container p {
-  white-space: pre-wrap;
-  border: 1px solid #ccc;
-  padding: 10px;
-  background-color: #f9f9f9;
+.bar {
+  display: flex;
+  justify-content: center;
+  padding: 3px;
+  margin: 5px 0 0;
+  color: white;
+  background-color: var(--clr-blue-dark);
   border-radius: 4px;
+}
+
+/* Estilo para idiomas con detalles */
+.languages-list.detailed-view {
+  padding: 0;
+  margin: 0 1rem;
+}
+
+.languages-list.detailed-view li {
+  display: flex;
+  justify-content: space-between;
+}
+
+.languages-list.detailed-view .item {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.languages-list.detailed-view .language-detail {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.languages-list.detailed-view span {
+  font-weight: 700;
+  margin-right: 0.25rem;
+}
+
+/* Estilo para idiomas sin detalles */
+.languages-list.compact-view {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  padding: 0;
+  margin: 0;
+}
+
+.languages-list.compact-view .item {
+  display: inline-flex;
+  margin: 0;
+  padding: 8px 12px;
+}
+
+.languages-list.compact-view .language-detail p {
+  white-space: nowrap;
+  margin: 0;
+}
+
+.no-languages {
+  color: #666;
+  font-style: italic;
 }

@@ -2,6 +2,13 @@
   max-width: 800px;
   margin: 0 auto;
   font-family: 'Calibri', 'Helvetica', sans-serif;
-  border: 1px solid var(--bg-light);
+  /* border: 1px solid var(--bg-light); */
   margin: 1rem 0.5rem;
+  padding: 3rem 0;
+  background-color: white;
+}
+
+.section {
+  /* margin-bottom: 1.5rem; */
+  page-break-inside: avoid;
 }
