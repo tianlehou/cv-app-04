@@ -31,22 +31,14 @@
         <div class="line"></div>
 
         <div formArrayName="experience">
-          <div *ngFor="let exp of experienceArray.controls; let i = index" [formGroupName]="i" class="experience-group">
+          <div class="experience-group" *ngFor="let exp of experienceArray.controls; let i = index" [formGroupName]="i">
             <!-- Rol o Cargo -->
             <div class="form-group">
-              <div style="
-                  display: flex;
-                  justify-content: space-between;
-                  margin-bottom: 5px;
-                ">
+              <div style="display: flex; justify-content: space-between;">
                 <label for="role">Rol:</label>
-                <button type="button" class="btn delete-btn" style="width: fit-content"
-                  (click)="confirmDeleteExperience(i)">
-                  <i class="fas fa-trash"><span>Eliminar</span></i>
-                </button>
+                <app-delete-button-b (deleteClick)="confirmDeleteExperience(i)"></app-delete-button-b>
               </div>
-              <input type="text" id="role" formControlName="role" [readonly]="!editableFields['experience']"
-                class="form-control" />
+              <input class="form-control" type="text" id="role" formControlName="role" [readonly]="!editableFields['experience']"/>
             </div>
 
             <div class="form-row">

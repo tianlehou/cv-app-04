@@ -12,11 +12,12 @@ import { ConfirmationModalService } from '../../../../../../../../../../shared/s
 import { User } from '@angular/fire/auth';
 import { ExperienceInfoComponent } from './experience-info/experience-info.component';
 import { ToastService } from '../../../../../../../../../../shared/services/toast.service';
+import { DeleteButtonBComponent } from '../../../../../../../../../../shared/components/buttons/delete-button/delete-button.component';
 
 @Component({
   selector: 'app-edit-experience',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule, ExperienceInfoComponent],
+  imports: [ReactiveFormsModule, CommonModule, ExperienceInfoComponent, DeleteButtonBComponent],
   templateUrl: './edit-experience.component.html',
   styleUrls: ['./edit-experience.component.css'],
 })
@@ -172,20 +173,26 @@ export class EditExperienceComponent implements OnInit {
 
   confirmDeleteExperience(index: number): void {
     this.experienceIndexToDelete = index;
+    
     this.ConfirmationModalService.show(
       {
         title: 'Eliminar experiencia',
-        message: '¿Estás seguro de que deseas eliminar esta experiencia?',
+        message: '¿Estás seguro de que deseas eliminar esta experiencia?', // Mensaje correcto
+        confirmText: 'Eliminar',
+        cancelText: 'Cancelar'
       },
-      () => this.onDeleteConfirmed()
+      () => {
+        // Lógica al confirmar
+        if (this.experienceIndexToDelete !== null) {
+          this.removeExperience(this.experienceIndexToDelete);
+          this.experienceIndexToDelete = null;
+        }
+      },
+      () => {
+        // Lógica al cancelar (opcional)
+        this.experienceIndexToDelete = null;
+      }
     );
-  }
-
-  onDeleteConfirmed(): void {
-    if (this.experienceIndexToDelete !== null) {
-      this.removeExperience(this.experienceIndexToDelete);
-    }
-    this.experienceIndexToDelete = null;
   }
 
   // método para abrir about-me-info

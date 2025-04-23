@@ -8,6 +8,13 @@ header {
   text-align: left;
 }
 
+.display-flex-space-between {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
 label {
   display: block;
   margin: 0.5em 0 0 1em;
@@ -54,12 +61,17 @@ button:disabled {
   cursor: not-allowed;
 }
 
-/* Estructura flexible */
-.display-flex-space-between {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
+/* linea divisoria */
+.line {
+  border-bottom: 1px solid #ccc;
+  margin: 1em 0;
+}
+
+.experience-group {
+  position: relative;
+}
+app-delete-button-b {
+  margin-top: -5px;
 }
 
 .form-row {
@@ -95,9 +107,4 @@ textarea {
 .text-danger {
   color: #e74c3c;
   font-size: 0.875em;
-}
-
-.line {
-  border-bottom: 1px solid #ccc;
-  margin: 1em 0;
 }

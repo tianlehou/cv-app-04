@@ -1,0 +1,24 @@
+/* delete-button.component.css */
+.delete-button {
+    /* position: absolute;
+    top: 8px;
+    right: 8px; */
+    background: var(--clr-red);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease; /* Transición para hover/efectos */
+    z-index: 3;
+}
+
+/* Opcional: Efecto hover para feedback visual */
+.delete-button:hover {
+    background: var(--clr-red-dark); /* Usa un tono más oscuro si está definido */
+    transform: scale(1.1);
+}
