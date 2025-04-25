@@ -1,0 +1,11 @@
+<div class="button-row" [class.editing]="isEditing">
+    <button class="cancel-button" (click)="onCancel.emit()">
+        <i class="fas fa-times"></i>
+    </button>
+    <button class="edit-save-button" [disabled]="isEditing && !hasChanges" (click)="onEditSave.emit()">
+        <i class="fas" [ngClass]="isEditing ? 'fa-save' : 'fa-pencil-alt'"></i>
+    </button>
+    <button class="add-btn" [disabled]="isEditing" (click)="handleAddClick($event)">
+        <i class="fas fa-plus"></i>
+    </button>
+</div>

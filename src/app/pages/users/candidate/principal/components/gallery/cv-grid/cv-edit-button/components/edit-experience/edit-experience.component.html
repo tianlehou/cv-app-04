@@ -8,60 +8,61 @@
   </header>
 
   <body>
-    <form [formGroup]="profileForm" (ngSubmit)="onSubmit()">
+    <form [formGroup]="profileForm" (ngSubmit)="onSubmit($event)">
       <!-- Experiencia -->
       <div class="form-group">
         <div class="display-flex-space-between">
           <label for="experience">Experiencia(s):</label>
-          <div>
-            <button type="button" class="edit-save-button" (click)="toggleEdit('experience')"
-              [class.editing]="editableFields['experience']">
-              <i class="fas" [ngClass]="
-                  editableFields['experience'] ? 'fa-save' : 'fa-pencil-alt'
-                " style="margin-right: 5px;"></i>
-              {{ editableFields["experience"] ? "Guardar" : "Editar" }}
-            </button>
-
-            <button type="button" class="add-button" id="experience-btn" (click)="addExperience()">
-              Agregar
-            </button>
-          </div>
+          <app-cv-edit-button-row 
+          [isEditing]="editableFields['experience']"
+          [hasChanges]="formHasChanges"
+          (onCancel)="onCancel()"
+          (onEditSave)="toggleEdit('experience')"
+          (onAdd)="addExperience()">
+        </app-cv-edit-button-row>
         </div>
 
         <div class="line"></div>
 
         <div formArrayName="experience">
-          <div class="experience-group" *ngFor="let exp of experienceArray.controls; let i = index" [formGroupName]="i">
-            <!-- Rol o Cargo -->
-            <div class="form-group">
-              <div style="display: flex; justify-content: space-between;">
-                <label for="role">Rol:</label>
-                <app-delete-button-b (deleteClick)="confirmDeleteExperience(i)"></app-delete-button-b>
-              </div>
-              <input class="form-control" type="text" id="role" formControlName="role" [readonly]="!editableFields['experience']"/>
-            </div>
-
-            <div class="form-row">
-              <!-- Empresa -->
-              <div class="form-group three-quarters-width">
-                <label for="company">Empresa:</label>
-                <input type="text" id="company" formControlName="company" [readonly]="!editableFields['experience']"
-                  class="form-control" />
-              </div>
-              <!-- Año -->
-              <div class="form-group quarter-width">
-                <label for="year">Año:</label>
-                <input type="text" id="year" formControlName="year" [readonly]="!editableFields['experience']"
-                  class="form-control" />
-              </div>
-            </div>
-
-            <!-- Destalles o Descripción -->
-            <label>Detalle(s):</label>
-            <textarea formControlName="description" class="form-control"
-              [readonly]="!editableFields['experience']"></textarea>
-            <div class="line"></div>
-          </div>
+          <div class="experience-group" 
+          *ngFor="let exp of experienceArray.controls; let i = index" 
+          [formGroupName]="i"
+          (mouseenter)="showDeleteButton(i)"
+          (mouseleave)="hideDeleteButton(i)"
+          (click)="showDeleteButton(i)">
+          
+       <!-- Rol o Cargo -->
+       <div class="form-group">
+         <label for="role">Rol:</label>
+         <input class="form-control" type="text" id="role" formControlName="role" [readonly]="!editableFields['experience']"/>
+       </div>
+     
+       <div class="form-row">
+         <!-- Empresa -->
+         <div class="form-group three-quarters-width">
+           <label for="company">Empresa:</label>
+           <input type="text" id="company" formControlName="company" [readonly]="!editableFields['experience']" class="form-control" />
+         </div>
+         <!-- Año -->
+         <div class="form-group quarter-width">
+           <label for="year">Año:</label>
+           <input type="text" id="year" formControlName="year" [readonly]="!editableFields['experience']" class="form-control" />
+         </div>
+       </div>
+     
+       <!-- Detalles o Descripción -->
+       <label>Detalle(s):</label>
+       <textarea formControlName="description" class="form-control" [readonly]="!editableFields['experience']"></textarea>
+     
+       <app-delete-button-b 
+         *ngIf="activeDeleteButton === i"
+         (deleteClick)="confirmDeleteExperience(i); $event.stopPropagation()"
+         class="experience-delete-button">
+       </app-delete-button-b>
+     
+       <div class="line"></div>
+     </div>
         </div>
       </div>
     </form>

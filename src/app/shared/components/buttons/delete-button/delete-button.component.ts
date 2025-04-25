@@ -7,9 +7,10 @@ import { Component, EventEmitter, Output } from '@angular/core';
   styleUrls: ['./delete-button.component.css']
 })
 export class DeleteButtonBComponent {
-  @Output() deleteClick = new EventEmitter<void>();
+  @Output() deleteClick = new EventEmitter<Event>();
 
-  handleClick() {
-    this.deleteClick.emit();
+  onClick(event: Event) {
+    event.preventDefault();
+    this.deleteClick.emit(event);
   }
 }

@@ -5,7 +5,44 @@ header {
 /* Grupos de formulario */
 .form-group {
   margin-bottom: 15px;
-  text-align: left; /* Asegura que los elementos dentro no estén centrados */
+  text-align: left;
+}
+
+.language-group {
+  position: relative;
+  padding: 15px;
+  transition: background-color 0.3s ease;
+  border-radius: 8px;
+}
+
+.language-group:hover {
+  background-color: rgba(0, 0, 0, 0.03);
+}
+
+.language-delete-button {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  opacity: 0;
+  transition: opacity 1s ease-in-out;
+}
+
+.language-group:hover .language-delete-button,
+.language-group:focus-within .language-delete-button {
+  opacity: 1;
+}
+
+app-delete-button-b {
+  position: absolute;
+  top: 0;
+  right: 0;
+  margin-top: -5px;
+}
+
+/* Agregar también la clase line si no está definida */
+.line {
+  border-bottom: 1px solid #ccc;
+  margin: 1em 0;
 }
 
 label {
@@ -62,12 +99,4 @@ button {
 
 .three-quarters-width {
   flex: 3; /* Ocupa 3 partes del espacio disponible */
-}
-
-.button-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 0.5em;
-  gap: 2em;
 }

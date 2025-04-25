@@ -1,0 +1,84 @@
+.button-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0;
+    position: relative;
+}
+
+button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: white !important;
+    cursor: pointer;
+    border: 1px solid var(--clr-white);
+    font-size: 1rem;
+    height: 2rem;
+    width: 2.5rem;
+}
+
+/* Estilo para botones deshabilitados */
+button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+button:disabled i:hover {
+    transform: none;
+}
+
+i {
+    transition: all 0.1s ease-in-out;
+}
+
+i:hover {
+    transform: scale(1.25) rotate(-15deg);
+}
+
+/* Estilos para el botón cancelar */
+.cancel-button {
+    color: var(--clr-red);
+    border-radius: 0.5rem 0 0 0.5rem;
+    position: absolute;
+    left: 0;
+    top: 0;
+    opacity: 0;
+    transform: translateX(20px);
+    transition: all 1s ease-in-out; 
+    z-index: -1;
+}
+
+/* Cuando está en modo edición */
+.button-row.editing .cancel-button {
+    position: static;
+    opacity: 1;
+    transform: translateY(0);
+    z-index: auto;
+}
+
+/* Ajuste para los otros botones cuando cancelar está visible */
+.button-row.editing .edit-save-button {
+    border-radius: 0;
+}
+
+.button-row.editing .add-btn {
+    border-radius: 0 0.5rem 0.5rem 0;
+}
+
+.edit-save-button {
+    border-radius: 0;
+}
+
+.fa-pencil-alt {
+    color: var(--clr-blue);
+}
+
+.fa-save {
+    color: var(--clr-green);
+}
+
+.add-btn {
+    border-radius: 0 0.5rem 0.5rem 0;
+    color: var(--clr-purple);
+}

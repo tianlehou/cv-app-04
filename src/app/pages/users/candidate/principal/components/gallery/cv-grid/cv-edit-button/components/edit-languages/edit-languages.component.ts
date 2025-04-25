@@ -1,4 +1,5 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, OnDestroy } from '@angular/core';
+import { Subscription } from 'rxjs';
 import {
   FormBuilder,
   FormGroup,
@@ -12,21 +13,33 @@ import { ConfirmationModalService } from '../../../../../../../../../../shared/s
 import { User } from '@angular/fire/auth';
 import { LanguagesInfoComponent } from './languages-info/languages-info.component';
 import { ToastService } from '../../../../../../../../../../shared/services/toast.service';
+import { CvEditButtonRowComponent } from '../../cv-edit-button-row/cv-edit-button-row.component';
+import { DeleteButtonBComponent } from '../../../../../../../../../../shared/components/buttons/delete-button/delete-button.component';
 
 @Component({
   selector: 'app-edit-languages',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule, LanguagesInfoComponent],
+  imports: [
+    ReactiveFormsModule, 
+    CommonModule, 
+    LanguagesInfoComponent,
+    CvEditButtonRowComponent,
+    DeleteButtonBComponent
+  ],
   templateUrl: './edit-languages.component.html',
   styleUrls: ['./edit-languages.component.css'],
 })
-export class EditLanguagesComponent implements OnInit {
+export class EditLanguagesComponent implements OnInit, OnDestroy {
   @Input() currentUser: User | null = null;
   profileForm!: FormGroup;
   userEmail: string | null = null;
   editableFields: { [key: string]: boolean } = {};
   languageIndexToDelete: number | null = null;
+  activeDeleteButton: number | null = null;
   showInfoComponent = false;
+  formHasChanges: boolean = false;
+  private initialFormValue: any;
+  private formSubscription: Subscription | null = null;
 
   constructor(
     private fb: FormBuilder,
@@ -44,6 +57,22 @@ export class EditLanguagesComponent implements OnInit {
     }
   }
 
+  ngOnDestroy(): void {
+    if (this.formSubscription) {
+      this.formSubscription.unsubscribe();
+    }
+  }
+
+  showDeleteButton(index: number): void {
+    this.activeDeleteButton = index;
+  }
+
+  hideDeleteButton(index: number): void {
+    if (this.activeDeleteButton === index) {
+      this.activeDeleteButton = null;
+    }
+  }
+
   private initializeForm(): void {
     this.profileForm = this.fb.group({
       languages: this.fb.array([]),
@@ -51,23 +80,18 @@ export class EditLanguagesComponent implements OnInit {
   }
 
   private setEditableFields(): void {
-    this.editableFields = {
-      languages: false,
-    };
+    this.editableFields = { languages: false };
   }
 
   private async loadUserData(): Promise<void> {
-    if (!this.userEmail) {
-      console.error('Error: Usuario no autenticado.');
-      return;
-    }
+    if (!this.userEmail) return;
 
     try {
       const userData = await this.firebaseService.getUserData(this.userEmail);
-      const profileData = userData?.profileData || {};
-      this.populateLanguages(profileData.languages || []);
+      this.populateLanguages(userData?.profileData?.languages || []);
     } catch (error) {
-      console.error('Error al cargar los datos del usuario:', error);
+      console.error('Error loading languages:', error);
+      this.toastService.show('Error al cargar los datos de idiomas', 'error');
     }
   }
 
@@ -75,25 +99,59 @@ export class EditLanguagesComponent implements OnInit {
     const formArray = this.languagesArray;
     formArray.clear();
     languageList.forEach((language) => {
-      const languageGroup = this.fb.group({
-        name: [language.name || '', Validators.required],
-        proficiency: [language.proficiency || ''],
-        certification: [language.certification || ''],
-      });
-      formArray.push(languageGroup);
+      formArray.push(
+        this.fb.group({
+          name: [language.name || '', Validators.required],
+          proficiency: [language.proficiency || ''],
+          certification: [language.certification || ''],
+        })
+      );
     });
   }
 
-  toggleEdit(field: string): void {
+  toggleEdit(field: string, event?: Event): void {
+    if (event) {
+      event.preventDefault();
+    }
+
+    const wasEditing = this.editableFields[field];
     this.editableFields[field] = !this.editableFields[field];
-    if (!this.editableFields[field]) {
-      this.onSubmit();
+
+    if (this.formSubscription) {
+      this.formSubscription.unsubscribe();
+      this.formSubscription = null;
+    }
+
+    if (!wasEditing) {
+      this.toastService.show('Modo edición habilitado', 'info');
+      this.initialFormValue = JSON.parse(
+        JSON.stringify(this.profileForm.getRawValue())
+      );
+      this.formHasChanges = false;
+
+      this.formSubscription = this.profileForm.valueChanges.subscribe(() => {
+        this.formHasChanges = !this.areObjectsEqual(
+          this.initialFormValue,
+          this.profileForm.getRawValue()
+        );
+      });
+    } else {
+      this.onSubmit().then(() => {
+        this.toastService.show('Datos actualizados exitosamente', 'success');
+      });
     }
   }
 
-  async onSubmit(): Promise<void> {
+  private areObjectsEqual(obj1: any, obj2: any): boolean {
+    return JSON.stringify(obj1) === JSON.stringify(obj2);
+  }
+
+  async onSubmit(event?: Event): Promise<void> {
+    if (event) {
+      event.preventDefault();
+    }
     if (!this.profileForm.valid || !this.userEmail) {
-      this.toastService.show('Error en los datos o usuario no autenticado.', 'error');
+      this.toastService.show('Debes completar los campos vacíos.', 'error');
       return;
     }
 
@@ -110,12 +168,13 @@ export class EditLanguagesComponent implements OnInit {
         profileData: updatedProfileData,
       });
 
-      this.toastService.show('Datos actualizados exitosamente.', 'success');
-
       await this.loadUserData();
     } catch (error) {
       console.error('Error al actualizar el perfil:', error);
-      this.toastService.show('Error al guardar datos. Intenta nuevamente.', 'error');
+      this.toastService.show(
+        'Error al guardar datos. Intenta nuevamente.',
+        'error'
+      );
     }
   }
 
@@ -130,6 +189,10 @@ export class EditLanguagesComponent implements OnInit {
       certification: [''],
     });
     this.languagesArray.push(languageGroup);
+    this.toastService.show(
+      'Se ha agregado nuevo campo de idioma',
+      'success'
+    );
   }
 
   async removeLanguage(index: number): Promise<void> {
@@ -153,48 +216,69 @@ export class EditLanguagesComponent implements OnInit {
         await this.firebaseService.updateUserData(this.userEmail, {
           profileData: updatedProfileData,
         });
-
-        console.log(
-          'Idioma eliminado y datos sincronizados con la base de datos.'
-        );
       } catch (error) {
         console.error(
           'Error al sincronizar los datos con la base de datos:',
           error
         );
+        throw error;
       }
     } else {
       console.error(
         'Usuario no autenticado. No se puede actualizar la base de datos.'
       );
+      throw new Error('Usuario no autenticado');
     }
   }
 
-  confirmDeleteLanguage(index: number): void {
+  confirmDeleteLanguage(index: number, event?: Event): void {
+    if (event) {
+      event.stopPropagation();
+    }
     this.languageIndexToDelete = index;
     this.ConfirmationModalService.show(
       {
         title: 'Eliminar Idioma',
         message: '¿Estás seguro de que deseas eliminar este idioma?',
+        confirmText: 'Eliminar',
+        cancelText: 'Cancelar',
       },
-      () => this.onDeleteConfirmed()
+      async () => {
+        if (this.languageIndexToDelete !== null) {
+          try {
+            await this.removeLanguage(this.languageIndexToDelete);
+            this.toastService.show(
+              'Idioma eliminado exitosamente.',
+              'success'
+            );
+            this.languageIndexToDelete = null;
+          } catch (error) {
+            this.toastService.show('Error al eliminar el idioma', 'error');
+          }
+        }
+      },
+      () => {
+        this.languageIndexToDelete = null;
+      }
     );
   }
 
-  onDeleteConfirmed(): void {
-    if (this.languageIndexToDelete !== null) {
-      this.removeLanguage(this.languageIndexToDelete);
-    }
-    this.languageIndexToDelete = null;
+  openInfoModal(): void {
+    this.showInfoComponent = true;
   }
 
-    // método para abrir componente-info
-    openInfoModal(): void {
-      this.showInfoComponent = true;
+  toggleInfoView(): void {
+    this.showInfoComponent = !this.showInfoComponent;
+  }
+
+  onCancel(): void {
+    this.editableFields['languages'] = false;
+    this.loadUserData();
+    this.formHasChanges = false;
+
+    if (this.formSubscription) {
+      this.formSubscription.unsubscribe();
+      this.formSubscription = null;
     }
-  
-    // método para cerrar componente-info
-    toggleInfoView(): void {
-      this.showInfoComponent = !this.showInfoComponent;
-    }
+  }
 }

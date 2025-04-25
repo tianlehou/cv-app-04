@@ -12,38 +12,38 @@
       <div class="form-group">
         <div class="display-flex-space-between">
           <label for="skills">Habilidades:</label>
-          <button type="button" class="add-button" id="skills-btn" (click)="addSkill()">
-            Agregar
-          </button>
+          <app-cv-edit-button-row [isEditing]="editableFields['skills']" [hasChanges]="formHasChanges"
+            (onCancel)="onCancel()" (onEditSave)="toggleEdit('skills')" (onAdd)="addSkill()">
+          </app-cv-edit-button-row>
         </div>
 
         <div class="line"></div>
 
         <div formArrayName="skills">
-          <div *ngFor="let skill of skillsArray.controls; let i = index" [formGroupName]="i" class="skill-group">
+          <div *ngFor="let skill of skillsArray.controls; let i = index" [formGroupName]="i" class="skill-group"
+            (mouseenter)="showDeleteButton(i)" (mouseleave)="hideDeleteButton(i)" (click)="showDeleteButton(i)">
+
             <div class="form-row">
               <div class="form-group quarter-width">
                 <label for="name">Habilidad:</label>
-                <input type="text" id="name" formControlName="name" class="form-control" />
+                <input type="text" id="name" formControlName="name" class="form-control"
+                  [readonly]="!editableFields['skills']" />
               </div>
               <div class="form-group quarter-width">
                 <label for="proficiency">Nivel:</label>
-                <input type="text" id="proficiency" formControlName="proficiency" class="form-control" />
+                <input type="text" id="proficiency" formControlName="proficiency" class="form-control"
+                  [readonly]="!editableFields['skills']" />
               </div>
               <div class="form-group quarter-width">
                 <label for="certification">Certificación:</label>
-                <input type="text" id="certification" formControlName="certification" class="form-control" />
+                <input type="text" id="certification" formControlName="certification" class="form-control"
+                  [readonly]="!editableFields['skills']" />
               </div>
             </div>
 
-            <div class="button-row">
-              <button type="button" class="delete-btn" (click)="confirmDeleteSkill(i)">
-                Eliminar
-              </button>
-              <button type="button" class="edit-save-button" (click)="toggleEdit('skills')" [class.editing]="editableFields['skills']">
-                {{ editableFields["skills"] ? "Guardar" : "Editar" }}
-              </button>
-            </div>
+            <app-delete-button-b *ngIf="activeDeleteButton === i"
+              (deleteClick)="confirmDeleteSkill(i); $event.stopPropagation()" class="skill-delete-button">
+            </app-delete-button-b>
 
             <div class="line"></div>
           </div>

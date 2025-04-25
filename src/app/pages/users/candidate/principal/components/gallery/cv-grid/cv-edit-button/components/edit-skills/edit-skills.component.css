@@ -15,6 +15,38 @@ label {
   font-weight: 500;
 }
 
+.skill-group {
+  position: relative;
+  padding: 15px;
+  transition: background-color 0.3s ease;
+  border-radius: 8px;
+}
+
+.skill-group:hover {
+  background-color: rgba(0, 0, 0, 0.03);
+}
+
+.skill-delete-button {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.skill-group:hover .skill-delete-button,
+.skill-group:focus-within .skill-delete-button {
+  opacity: 1;
+}
+
+/* Eliminar estilos antiguos del delete button */
+app-delete-button-b {
+  position: absolute;
+  top: 0;
+  right: 0;
+  margin-top: -5px;
+}
+
 /* Inputs, textareas y botones */
 input,
 textarea,
@@ -72,12 +104,4 @@ button {
 .three-quarters-width {
   flex: 3;
   /* Ocupa 3 partes del espacio disponible */
-}
-
-.button-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 0.5em;
-  gap: 2em;
 }

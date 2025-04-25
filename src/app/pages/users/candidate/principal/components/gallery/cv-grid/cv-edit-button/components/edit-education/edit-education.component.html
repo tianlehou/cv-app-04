@@ -13,86 +13,48 @@
       <div class="form-group">
         <div class="display-flex-space-between">
           <label for="education">Educación:</label>
-          <button
-            type="button"
-            class="add-button"
-            id="education-btn"
-            (click)="addEducation()"
-          >
-            Agregar
-          </button>
+          <app-cv-edit-button-row [isEditing]="editableFields['education']" [hasChanges]="formHasChanges"
+            (onCancel)="onCancel()" (onEditSave)="toggleEdit('education')" (onAdd)="addEducation()">
+          </app-cv-edit-button-row>
         </div>
 
         <div class="line"></div>
 
         <div formArrayName="education">
-          <div
-            *ngFor="
-              let educationItem of educationArray.controls;
-              let i = index
-            "
-            [formGroupName]="i"
-            class="education-group"
-          >
-            <div class="form-row">
-              <!-- Year -->
-              <div class="form-group quarter-width">
-                <label for="year">Año:</label>
-                <input
-                  type="text"
-                  id="year"
-                  formControlName="year"
-                  [readonly]="!editableFields['education']"
-                  class="form-control"
-                />
-              </div>
-              <!-- Institution -->
-              <div class="form-group three-quarters-width">
-                <label for="institution">Instituto/Universidad:</label>
-                <input
-                  type="text"
-                  id="institution"
-                  formControlName="institution"
-                  [readonly]="!editableFields['education']"
-                  class="form-control"
-                />
-              </div>
-            </div>
-
-            <!-- Degree -->
-            <div class="form-group">
-              <label for="degree">Título:</label>
-              <input
-                type="text"
-                id="degree"
-                formControlName="degree"
-                [readonly]="!editableFields['education']"
-                class="form-control"
-              />
-            </div>
-
-            <!-- Buttons -->
-            <div class="button-row">
-              <button
-                type="button"
-                class="btn btn-danger delete-btn"
-                (click)="confirmDeleteEducation(i)"
-              >
-                Eliminar
-              </button>
-
-              <button
-                type="button"
-                class="edit-save-button"
-                (click)="toggleEdit('education')"
-                [class.editing]="editableFields['education']"
-              >
-                {{ editableFields["education"] ? "Guardar" : "Editar" }}
-              </button>
-            </div>
-
-            <div class="line"></div>
-          </div>
+          <div *ngFor="let educationItem of educationArray.controls; let i = index" 
+          [formGroupName]="i" 
+          class="education-group"
+          (mouseenter)="showDeleteButton(i)" 
+          (mouseleave)="hideDeleteButton(i)"
+          (click)="showDeleteButton(i)">
+          
+       <div class="form-row">
+         <!-- Year -->
+         <div class="form-group quarter-width">
+           <label for="year">Año:</label>
+           <input type="text" id="year" formControlName="year" [readonly]="!editableFields['education']" class="form-control" />
+         </div>
+         <!-- Institution -->
+         <div class="form-group three-quarters-width">
+           <label for="institution">Instituto/Universidad:</label>
+           <input type="text" id="institution" formControlName="institution" [readonly]="!editableFields['education']" class="form-control" />
+         </div>
+       </div>
+     
+       <!-- Degree -->
+       <div class="form-group">
+         <label for="degree">Título:</label>
+         <input type="text" id="degree" formControlName="degree" [readonly]="!editableFields['education']" class="form-control" />
+       </div>
+     
+       <app-delete-button-b 
+         *ngIf="activeDeleteButton === i"
+         (deleteClick)="confirmDeleteEducation(i); $event.stopPropagation()"
+         class="education-delete-button">
+       </app-delete-button-b>
+     
+       <div class="line"></div>
+     </div>
         </div>
       </div>
     </form>

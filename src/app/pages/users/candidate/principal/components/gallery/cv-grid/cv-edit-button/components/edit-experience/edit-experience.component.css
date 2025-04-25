@@ -21,20 +21,14 @@ label {
   font-weight: 500;
 }
 
-.edit-save-button {
-  width: fit-content;
-  margin-right: 10px;
-  padding: 8px;
-}
 
 /* Inputs, textareas y botones */
 input,
-textarea,
-button {
+textarea {
   width: 100%;
   padding: 10px;
   border: 1px solid #ccc;
-  border-radius: 5px;
+  border-radius: 8px;
 }
 
 input[readonly],
@@ -49,18 +43,6 @@ textarea:not([readonly]) {
   border: 1px solid #007bff;
 }
 
-button {
-  background-color: var(--clr-green);
-  color: white;
-  font-weight: 300;
-  cursor: pointer;
-}
-
-button:disabled {
-  background-color: var(--clr-green);
-  cursor: not-allowed;
-}
-
 /* linea divisoria */
 .line {
   border-bottom: 1px solid #ccc;
@@ -69,7 +51,29 @@ button:disabled {
 
 .experience-group {
   position: relative;
+  padding: 15px;
+  transition: background-color 0.3s ease;
+  border-radius: 8px;
 }
+
+.experience-group:hover {
+  background-color: rgba(0, 0, 0, 0.03);
+}
+
+.experience-delete-button {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.experience-group:hover .experience-delete-button,
+.experience-group:focus-within .experience-delete-button {
+  opacity: 1;
+}
+
+/* Eliminar estilos antiguos del delete button */
 app-delete-button-b {
   margin-top: -5px;
 }
@@ -94,14 +98,6 @@ app-delete-button-b {
 
 textarea {
   height: 150px;
-}
-
-.button-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 0.5em;
-  gap: 2em;
 }
 
 .text-danger {

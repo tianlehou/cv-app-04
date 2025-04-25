@@ -1,4 +1,5 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, OnDestroy } from '@angular/core';
+import { Subscription } from 'rxjs';
 import {
   FormBuilder,
   FormGroup,
@@ -12,21 +13,33 @@ import { FirebaseService } from '../../../../../../../../../../shared/services/f
 import { ConfirmationModalService } from '../../../../../../../../../../shared/services/confirmation-modal.service';
 import { ToastService } from '../../../../../../../../../../shared/services/toast.service';
 import { EducationInfoComponent } from './education-info/education-info.component';
+import { CvEditButtonRowComponent } from '../../cv-edit-button-row/cv-edit-button-row.component';
+import { DeleteButtonBComponent } from '../../../../../../../../../../shared/components/buttons/delete-button/delete-button.component';
 
 @Component({
   selector: 'app-edit-education',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule, EducationInfoComponent],
+  imports: [
+    ReactiveFormsModule,
+    CommonModule,
+    EducationInfoComponent,
+    CvEditButtonRowComponent,
+    DeleteButtonBComponent,
+  ],
   templateUrl: './edit-education.component.html',
   styleUrls: ['./edit-education.component.css'],
 })
-export class EditEducationComponent implements OnInit {
+export class EditEducationComponent implements OnInit, OnDestroy {
   @Input() currentUser: User | null = null;
   profileForm!: FormGroup;
   userEmail: string | null = null;
   editableFields: { [key: string]: boolean } = {};
   educationIndexToDelete: number | null = null;
+  activeDeleteButton: number | null = null;
   showInfoComponent = false;
+  formHasChanges: boolean = false;
+  private initialFormValue: any;
+  private formSubscription: Subscription | null = null;
 
   constructor(
     private fb: FormBuilder,
@@ -44,6 +57,22 @@ export class EditEducationComponent implements OnInit {
     }
   }
 
+  ngOnDestroy(): void {
+    if (this.formSubscription) {
+      this.formSubscription.unsubscribe();
+    }
+  }
+
+  showDeleteButton(index: number): void {
+    this.activeDeleteButton = index;
+  }
+
+  hideDeleteButton(index: number): void {
+    if (this.activeDeleteButton === index) {
+      this.activeDeleteButton = null;
+    }
+  }
+
   private initializeForm(): void {
     this.profileForm = this.fb.group({
       education: this.fb.array([]),
@@ -51,23 +80,17 @@ export class EditEducationComponent implements OnInit {
   }
 
   private setEditableFields(): void {
-    this.editableFields = {
-      education: false,
-    };
+    this.editableFields = { education: false };
   }
 
   private async loadUserData(): Promise<void> {
-    if (!this.userEmail) {
-      console.error('Error: Usuario no autenticado.');
-      return;
-    }
+    if (!this.userEmail) return;
 
     try {
       const userData = await this.firebaseService.getUserData(this.userEmail);
-      const profileData = userData?.profileData || {};
-      this.populateEducation(profileData.education || []);
+      this.populateEducation(userData?.profileData?.education || []);
     } catch (error) {
-      console.error('Error al cargar los datos del usuario:', error);
+      console.error('Error loading education:', error);
       this.toastService.show('Error al cargar los datos de educación', 'error');
     }
   }
@@ -76,28 +99,59 @@ export class EditEducationComponent implements OnInit {
     const formArray = this.educationArray;
     formArray.clear();
     educationList.forEach((educationItem) => {
-      const educationGroup = this.fb.group({
-        year: [educationItem.year || '', Validators.required],
-        institution: [educationItem.institution || '', Validators.required],
-        degree: [educationItem.degree || '', Validators.required],
-      });
-      formArray.push(educationGroup);
+      formArray.push(
+        this.fb.group({
+          year: [educationItem.year || '', Validators.required],
+          institution: [educationItem.institution || '', Validators.required],
+          degree: [educationItem.degree || '', Validators.required],
+        })
+      );
     });
   }
 
-  toggleEdit(field: string): void {
+  toggleEdit(field: string, event?: Event): void {
+    if (event) {
+      event.preventDefault();
+    }
+
+    const wasEditing = this.editableFields[field];
     this.editableFields[field] = !this.editableFields[field];
-    if (!this.editableFields[field]) {
-      this.onSubmit();
+
+    if (this.formSubscription) {
+      this.formSubscription.unsubscribe();
+      this.formSubscription = null;
+    }
+
+    if (!wasEditing) {
+      this.toastService.show('Modo edición habilitado', 'info');
+      this.initialFormValue = JSON.parse(
+        JSON.stringify(this.profileForm.getRawValue())
+      );
+      this.formHasChanges = false;
+
+      this.formSubscription = this.profileForm.valueChanges.subscribe(() => {
+        this.formHasChanges = !this.areObjectsEqual(
+          this.initialFormValue,
+          this.profileForm.getRawValue()
+        );
+      });
+    } else {
+      this.onSubmit().then(() => {
+        this.toastService.show('Datos actualizados exitosamente', 'success');
+      });
     }
   }
 
-  async onSubmit(): Promise<void> {
+  private areObjectsEqual(obj1: any, obj2: any): boolean {
+    return JSON.stringify(obj1) === JSON.stringify(obj2);
+  }
+
+  async onSubmit(event?: Event): Promise<void> {
+    if (event) {
+      event.preventDefault();
+    }
     if (!this.profileForm.valid || !this.userEmail) {
-      this.toastService.show(
-        'Datos inválidos o usuario no autenticado',
-        'error'
-      );
+      this.toastService.show('Debes completar los campos vacíos.', 'error');
       return;
     }
 
@@ -114,10 +168,6 @@ export class EditEducationComponent implements OnInit {
         profileData: updatedProfileData,
       });
 
-      this.toastService.show(
-        'Datos de educación actualizados correctamente',
-        'success'
-      );
       await this.loadUserData();
     } catch (error) {
       console.error('Error al actualizar el perfil:', error);
@@ -139,6 +189,10 @@ export class EditEducationComponent implements OnInit {
       degree: ['', Validators.required],
     });
     this.educationArray.push(educationGroup);
+    this.toastService.show(
+      'Se ha agregado nuevo campo de educación',
+      'success'
+    );
   }
 
   async removeEducation(index: number): Promise<void> {
@@ -169,40 +223,60 @@ export class EditEducationComponent implements OnInit {
           'Error al sincronizar los datos con la base de datos:',
           error
         );
-        this.toastService.show('Error al eliminar la educación', 'error');
+        throw error;
       }
     } else {
       console.error(
         'Usuario no autenticado. No se puede actualizar la base de datos.'
       );
+      throw new Error('Usuario no autenticado');
     }
   }
 
-  confirmDeleteEducation(index: number): void {
+  confirmDeleteEducation(index: number, event?: Event): void {
+    if (event) {
+      event.stopPropagation();
+    }
     this.educationIndexToDelete = index;
     this.confirmationModalService.show(
       {
         title: 'Eliminar Educación',
         message: '¿Estás seguro de que deseas eliminar esta educación?',
+        confirmText: 'Eliminar',
+        cancelText: 'Cancelar',
       },
-      () => this.onDeleteConfirmed()
+      async () => {
+        if (this.educationIndexToDelete !== null) {
+          try {
+            await this.removeEducation(this.educationIndexToDelete);
+            this.educationIndexToDelete = null;
+          } catch (error) {
+            this.toastService.show('Error al eliminar la educación', 'error');
+          }
+        }
+      },
+      () => {
+        this.educationIndexToDelete = null;
+      }
     );
   }
 
-  onDeleteConfirmed(): void {
-    if (this.educationIndexToDelete !== null) {
-      this.removeEducation(this.educationIndexToDelete);
-    }
-    this.educationIndexToDelete = null;
-  }
-
-  // método para abrir about-me-info
   openInfoModal(): void {
     this.showInfoComponent = true;
   }
 
-  // método para cerrar about-me-info
   toggleInfoView(): void {
     this.showInfoComponent = !this.showInfoComponent;
+  }
+
+  onCancel(): void {
+    this.editableFields['education'] = false;
+    this.loadUserData();
+    this.formHasChanges = false;
+
+    if (this.formSubscription) {
+      this.formSubscription.unsubscribe();
+      this.formSubscription = null;
+    }
   }
 }

@@ -8,6 +8,38 @@ header {
   /* Asegura que los elementos dentro no estén centrados */
 }
 
+.education-group {
+  position: relative;
+  padding: 15px;
+  transition: background-color 0.3s ease;
+  border-radius: 8px;
+}
+
+.education-group:hover {
+  background-color: rgba(0, 0, 0, 0.03);
+}
+
+.education-delete-button {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.education-group:hover .education-delete-button,
+.education-group:focus-within .education-delete-button {
+  opacity: 1;
+}
+
+/* Eliminar estilos antiguos del delete button */
+app-delete-button-b {
+  position: absolute;
+  top: 0;
+  right: 0;
+  margin-top: -5px;
+}
+
 label {
   display: block;
   margin: 0.5em 0 0 1em;
