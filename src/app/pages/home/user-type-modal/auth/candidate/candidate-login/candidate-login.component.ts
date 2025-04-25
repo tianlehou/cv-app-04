@@ -104,7 +104,7 @@ export class CandidateLoginComponent {
             if (user?.role === 'admin') {
               this.router.navigate(['/main']);
             } else {
-              this.router.navigate(['/principal']);
+              this.router.navigate(['/candidate']);
             }
           }, 3000);
         })
@@ -133,7 +133,7 @@ export class CandidateLoginComponent {
   handleGoogleSuccess() {
     this.successMessage = 'Autenticación con Google exitosa';
     setTimeout(() => {
-      this.router.navigate(['/profile']);
+      this.router.navigate(['/candidate']);
     }, 2000);
   }
 

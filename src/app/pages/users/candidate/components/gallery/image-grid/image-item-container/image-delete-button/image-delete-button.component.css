@@ -1,0 +1,23 @@
+/* delete-button.component.css */
+.delete-button {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: var(--clr-red);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 3;
+}
+
+:host-context(.image-item:hover) .delete-button {
+    opacity: 1;
+}

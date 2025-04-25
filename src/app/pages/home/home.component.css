@@ -3,4 +3,8 @@ app-custom-button {
     top: 25px;
     right: 25px;
     z-index: 9999;
+    border-radius: 0.5em;
+    color: var(--clr-green);
+    border: 2px solid var(--clr-green);
+    background-color: white;
 }

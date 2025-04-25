@@ -8,7 +8,9 @@
     <app-hero></app-hero>
     <app-features></app-features>
     <app-testimonials></app-testimonials>
-    <app-call-to-action></app-call-to-action>
+    <app-call-to-action
+      (userTypeSelected)="onUserTypeSelected($event)"
+    ></app-call-to-action>
     <app-footer></app-footer>
 
     <app-user-type-modal

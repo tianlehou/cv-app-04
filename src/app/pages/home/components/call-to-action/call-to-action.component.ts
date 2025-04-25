@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Output, EventEmitter, ViewChild } from '@angular/core';
 import { UserTypeModalComponent } from '../../user-type-modal/user-type-modal.component';
 
 @Component({
@@ -9,5 +9,14 @@ import { UserTypeModalComponent } from '../../user-type-modal/user-type-modal.co
   styleUrl: './call-to-action.component.css'
 })
 export class CallToActionComponent {
+  @ViewChild(UserTypeModalComponent) userTypeModal!: UserTypeModalComponent;
+  @Output() userTypeSelected = new EventEmitter<'candidate' | 'company'>();
 
+  openUserTypeModal() {
+    this.userTypeModal.openModal();
+  }
+
+  onUserTypeSelected(type: 'candidate' | 'company') {
+    this.userTypeSelected.emit(type);
+  }
 }
