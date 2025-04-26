@@ -1,22 +1,21 @@
 <div class="profile-container">
   <div class="form-group" [formGroup]="profileForm">
-    <p id="fullName">{{ profileForm.get("fullName")?.value || "No especificado" }}</p>
-    <p id="profesion">{{ profileForm.get("profesion")?.value || "No especificado" }}</p>
+    <p id="fullName" *ngIf="profileForm.get('fullName')?.value">{{ profileForm.get("fullName")?.value }}</p>
+    <p id="profesion" *ngIf="profileForm.get('profesion')?.value">{{ profileForm.get("profesion")?.value }}</p>
 
-    <div class="icon-field">
+    <div class="icon-field" *ngIf="profileForm.get('phone')?.value">
       <i class="fas fa-phone" style="color: var(--clr-green);"></i>
-      <p id="phone">{{ profileForm.get("phone")?.value || "No especificado" }}</p>
+      <p id="phone">{{ profileForm.get("phone")?.value }}</p>
     </div>
 
-    <div class="icon-field">
+    <div class="icon-field" *ngIf="profileForm.get('editableEmail')?.value">
       <i class="fas fa-envelope" style="color: var(--clr-green);"></i>
-      <p id="editableEmail">{{ profileForm.get("editableEmail")?.value || "No especificado" }}</p>
+      <p id="editableEmail">{{ profileForm.get("editableEmail")?.value }}</p>
     </div>
 
-    <div class="icon-field">
+    <div class="icon-field" *ngIf="profileForm.get('direction')?.value">
       <i class="fas fa-map-marker-alt" style="color: var(--clr-green);"></i>
-      <p id="direction">{{ profileForm.get("direction")?.value || "No especificado" }}</p>
+      <p id="direction">{{ profileForm.get("direction")?.value }}</p>
     </div>
-
   </div>
 </div>

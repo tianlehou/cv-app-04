@@ -24,7 +24,7 @@ export class PersonalDataComponent implements OnInit, OnDestroy {
     private fb: FormBuilder,
     private firebaseService: FirebaseService,
     private profileService: ProfileService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.initializeForm();
@@ -32,8 +32,7 @@ export class PersonalDataComponent implements OnInit, OnDestroy {
       this.userEmail = this.currentUser.email?.replaceAll('.', '_') || null;
       this.loadUserData();
     }
-  
-    // Suscribirse a los cambios
+
     this.subscription = this.profileService.personalDataUpdated$.subscribe(
       (updatedData) => {
         if (updatedData) {
@@ -49,17 +48,6 @@ export class PersonalDataComponent implements OnInit, OnDestroy {
     }
   }
 
-  private updateFormWithNewData(updatedData: any): void {
-    console.log('Datos recibidos:', updatedData);
-    this.profileForm.patchValue({
-      fullName: updatedData?.fullName || this.profileForm.value.fullName || '',
-      profesion: updatedData?.profesion || this.profileForm.value.profesion || '',
-      phone: updatedData?.phone || this.profileForm.value.phone || '',
-      editableEmail: updatedData?.editableEmail || this.profileForm.value.editableEmail || '',
-      direction: updatedData?.direction || this.profileForm.value.direction || '',
-    });
-  }
-
   private initializeForm(): void {
     this.profileForm = this.fb.group({
       fullName: [''],
@@ -70,17 +58,28 @@ export class PersonalDataComponent implements OnInit, OnDestroy {
     });
   }
 
+  private updateFormWithNewData(updatedData: any): void {
+    console.log('Datos recibidos:', updatedData);
+    this.profileForm.patchValue({
+      fullName: updatedData?.fullName || this.profileForm.value.fullName || null,
+      profesion: updatedData?.profesion || this.profileForm.value.profesion || null,
+      phone: updatedData?.phone || this.profileForm.value.phone || null,
+      editableEmail: updatedData?.editableEmail || this.profileForm.value.editableEmail || null,
+      direction: updatedData?.direction || this.profileForm.value.direction || null,
+    });
+  }
+
   private async loadUserData(): Promise<void> {
     if (!this.userEmail) return;
 
     try {
       const userData = await this.firebaseService.getUserData(this.userEmail);
       this.profileForm.patchValue({
-        fullName: userData?.fullName || '',
-        profesion: userData?.profileData?.personalData?.profesion || '',
-        phone: userData?.profileData?.personalData?.phone || '',
-        editableEmail: userData?.profileData?.personalData?.editableEmail || '',
-        direction: userData?.profileData?.personalData?.direction || '',
+        fullName: userData?.fullName || null,
+        profesion: userData?.profileData?.personalData?.profesion || null,
+        phone: userData?.profileData?.personalData?.phone || null,
+        editableEmail: userData?.profileData?.personalData?.editableEmail || null,
+        direction: userData?.profileData?.personalData?.direction || null,
       });
     } catch (error) {
       console.error('Error loading user data:', error);

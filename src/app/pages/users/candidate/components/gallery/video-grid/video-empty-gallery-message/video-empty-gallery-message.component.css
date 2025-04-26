@@ -1,0 +1,27 @@
+.empty-videos-message {
+  text-align: center;
+  padding: 2rem;
+  margin: 2rem auto;
+  max-width: 500px;
+  border: 2px dashed #ccc;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  grid-column: 1 / -1;
+}
+
+.empty-videos-message h3 {
+  color: #333;
+  margin-bottom: 1rem;
+}
+
+.empty-videos-message p {
+  color: #666;
+  margin-bottom: 0.5rem;
+}
+
+.instructions {
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #eee;
+  font-size: 0.9rem;
+}

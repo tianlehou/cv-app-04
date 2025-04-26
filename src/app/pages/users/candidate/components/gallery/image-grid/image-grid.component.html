@@ -1,3 +1,4 @@
+<!-- image-grid.component.html -->
 <div class="top-row">
     <app-image-info-bar [userImages]="userImages"></app-image-info-bar>
     <app-image-upload-button [userEmailKey]="userEmailKey" (uploadComplete)="handleUploadComplete($event)">
@@ -5,7 +6,10 @@
 </div>
 
 <div class="gallery-grid">
-    <!-- Images Item Container -->
+    <!-- Mostrar imágenes si existen -->
     <app-image-item-container *ngFor="let image of userImages" [imageUrl]="image" [currentUser]="currentUser"
         [userEmailKey]="userEmailKey" (imageDeleted)="onImageDeleted($event)"></app-image-item-container>
+    
+    <!-- Mostrar mensaje cuando no hay imágenes -->
+    <app-image-empty-gallery-message *ngIf="userImages.length === 0"></app-image-empty-gallery-message>
 </div>

@@ -1,3 +1,4 @@
+<!-- video-grid.component.html -->
 <div class="top-row">
     <app-video-info-bar [totalUploadedMB]="state.totalUploadedMB"></app-video-info-bar>
     <app-video-upload-button [userEmailKey]="userEmailKey" [currentUser]="currentUser"
@@ -25,6 +26,9 @@
             <i class="fas fa-trash"></i>
         </button>
     </div>
+
+    <!-- Empty State Message -->
+    <app-video-empty-gallery-message *ngIf="!state.isLoading && state.userVideos.length === 0"></app-video-empty-gallery-message>
 
     <!-- Loading State -->
     <div *ngIf="state.isLoading" class="loading-spinner">

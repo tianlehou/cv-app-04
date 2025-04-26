@@ -13,6 +13,7 @@ import { FirebaseService } from '../../../../../../shared/services/firebase.serv
 import { ImageInfoBarComponent } from './image-info-bar/image-info-bar.component';
 import { ImageUploadButtonComponent } from './image-upload-button/image-upload-button.component';
 import { ImageItemContainerComponent } from './image-item-container/image-item-container.component';
+import { ImageEmptyGalleryMessageComponent } from './image-empty-gallery-message/image-empty-gallery-message.component';
 
 @Component({
   selector: 'app-image-grid',
@@ -22,6 +23,7 @@ import { ImageItemContainerComponent } from './image-item-container/image-item-c
     ImageInfoBarComponent,
     ImageUploadButtonComponent,
     ImageItemContainerComponent,
+    ImageEmptyGalleryMessageComponent
   ],
   templateUrl: './image-grid.component.html',
   styleUrls: ['./image-grid.component.css'],

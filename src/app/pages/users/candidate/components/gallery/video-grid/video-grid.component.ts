@@ -34,6 +34,7 @@ import { VideoService } from './video.service';
 import { VideoInfoBarComponent } from './video-info-bar/video-info-bar.component';
 import { VideoUploadButtonComponent } from './video-upload-button/video-upload-button.component';
 import { VideoUploadProgressBarComponent } from './video-upload-progress-bar/video-upload-progress-bar.component';
+import { VideoEmptyGalleryMessageComponent } from './video-empty-gallery-message/video-empty-gallery-message.component';
 
 @Component({
   selector: 'app-video-grid',
@@ -43,6 +44,7 @@ import { VideoUploadProgressBarComponent } from './video-upload-progress-bar/vid
     VideoInfoBarComponent,
     VideoUploadButtonComponent,
     VideoUploadProgressBarComponent,
+    VideoEmptyGalleryMessageComponent
   ],
   templateUrl: './video-grid.component.html',
   styleUrls: ['./video-grid.component.css'],
