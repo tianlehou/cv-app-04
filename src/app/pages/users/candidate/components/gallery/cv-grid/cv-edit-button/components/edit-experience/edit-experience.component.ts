@@ -297,5 +297,6 @@ export class EditExperienceComponent implements OnInit, OnDestroy {
       this.formSubscription.unsubscribe();
       this.formSubscription = null;
     }
+    this.toastService.show('Modo edición deshabilitado', 'error');
   }
 }

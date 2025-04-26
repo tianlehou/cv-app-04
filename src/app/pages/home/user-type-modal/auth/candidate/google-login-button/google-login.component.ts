@@ -96,7 +96,7 @@ export class GoogleLoginComponent {
         await this.firebaseService.saveUserData(user.email, userData);
       }
 
-      await this.router.navigate(['/profile']);
+      await this.router.navigate(['/candidate']);
       setTimeout(() => {
         window.location.reload();
       }, 100);

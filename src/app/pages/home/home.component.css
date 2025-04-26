@@ -1,4 +1,4 @@
-app-custom-button {
+.custom-button {
     position: fixed;
     top: 25px;
     right: 25px;
@@ -7,4 +7,8 @@ app-custom-button {
     color: var(--clr-green);
     border: 2px solid var(--clr-green);
     background-color: white;
+}
+
+.custom-button:hover {
+    color: white;
 }

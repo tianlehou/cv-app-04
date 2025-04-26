@@ -1,9 +1,8 @@
 <ng-container *ngIf="showHomeSection">
   <section #home>
-    <app-custom-button
+    <button class="custom-button"
       (click)="openUserTypeModal()"
-      label="Ingresar"
-    ></app-custom-button>
+    >Ingresar</button>
 
     <app-hero></app-hero>
     <app-features></app-features>

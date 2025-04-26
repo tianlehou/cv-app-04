@@ -1,6 +1,5 @@
 import { Component, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { CustomButtonComponent } from '../../shared/components/buttons/custom-button/custom-button.component';
 import { UserTypeModalComponent } from './user-type-modal/user-type-modal.component';
 
 import { HeroComponent } from './components/hero/hero.component';
@@ -17,7 +16,6 @@ import { CandidateForgotPasswordComponent } from './user-type-modal/auth/candida
   standalone: true,
   imports: [
     CommonModule,
-    CustomButtonComponent,
     UserTypeModalComponent,
     HeroComponent,
     FeaturesComponent,

@@ -1,21 +1,128 @@
-/* h2 {
-    color: var(--clr-green);
-} */
+:host {
+    display: block;
+    overflow: hidden;
+    position: relative;
+}
 
+.container {
+    padding: 2rem 0;
+    position: relative;
+}
+
+h2 {
+    margin-bottom: 2rem;
+    font-size: 2rem;
+    color: #333;
+}
+
+.row {
+    display: flex;
+    align-items: stretch;
+    gap: 2rem;
+    padding: 1rem 0;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+}
+
+.row::-webkit-scrollbar {
+    display: none;
+}
+
+.col-md-4 {
+    flex: 0 0 300px;
+    scroll-snap-align: start;
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.col-md-4:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+}
+
+i {
+    margin-bottom: 1.5rem;
+    font-size: 2.5rem;
+}
+
+h4 {
+    margin-bottom: 1rem;
+    font-size: 1.25rem;
+}
+
+p {
+    margin-bottom: 0;
+    color: #555;
+}
+
+/* Nuevos colores para las cards */
 .box-1 {
-    i, h4 {
-        color: var(--clr-yellow);
-    }
+    background-color: var(--bg-yellow);
+    border: 1px solid rgba(255, 193, 7, 0.2);
+}
+
+.box-1 i {
+    color: var(--clr-yellow);
 }
 
 .box-2 {
-    i, h4 {
-        color: var(--clr-red);
-    }
+    background-color: var(--bg-red);
+    border: 1px solid rgba(220, 53, 69, 0.2);
+}
+
+.box-2 i {
+    color: var(--clr-red);
 }
 
 .box-3 {
-    i, h4 {
-        color: var(--clr-purple);
+    background-color: var(--bg-purple);
+    border: 1px solid rgba(111, 66, 193, 0.2);
+}
+
+.box-3 i {
+    color: var(--clr-purple);
+}
+
+.box-4 {
+    background-color: var(--bg-green);
+    border: 1px solid rgba(40, 167, 69, 0.2);
+}
+
+.box-4 i {
+    color: var(--clr-green);
+}
+
+.box-5 {
+    background-color: var(--bg-blue);
+    border: 1px solid rgba(23, 162, 184, 0.2);
+}
+
+.box-5 i {
+    color: var(--clr-blue);
+}
+
+/* Efecto de carrusel infinito mejorado */
+.row.infinite {
+    display: flex;
+    width: max-content;
+    animation: scroll 60s linear infinite;
+}
+
+@keyframes scroll {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(calc(-300px * 12));
     }
 }
