@@ -24,7 +24,7 @@ export class SubscriptionComponent {
       id: 'anualidad',
       nombre: 'Candidato Estrella',
       descripcion: 'Ideal para todo candidato.',
-      precio: 4.99,
+      precio: 9.99,
       duracion: 365, // En días
     },
     {

@@ -38,10 +38,7 @@
 
 /* Tablet */
 @media (max-width: 768px) {
-  #fullName {
-    font-size: 1.2rem;
-  }
-  
+
   .icon-field {
     gap: 6px;
   }
@@ -49,10 +46,6 @@
 
 /* Móvil */
 @media (max-width: 480px) {
-  #fullName {
-    font-size: 1.2rem;
-  }
-  
   #profesion {
     font-size: 0.8rem;
   }

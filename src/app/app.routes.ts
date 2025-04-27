@@ -19,7 +19,7 @@ export const routes: Routes = [
   { path: 'main', component: MainComponent, canMatch: [AuthGuard], data: {role: 'admin'}},
 
   // Person Section
-  { path: 'candidate', component: CandidateComponent, canMatch: [AuthGuard], data: {role: 'user'}},
+  { path: 'candidate', component: CandidateComponent, canMatch: [AuthGuard], data: {role: 'candidate'}},
 
   // Others Section
   { path: 'suscripciones', component: SubscriptionComponent },

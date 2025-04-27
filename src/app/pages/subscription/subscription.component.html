@@ -1,20 +1,19 @@
 <!-- app/pages/subcription.component.html -->
 <div class="subscription-container">
-    <h1 class="title">Suscripciones</h1>
-    <div class="plans">
-      <div class="plan-card" *ngFor="let plan of plans" (click)="selectPlan(plan)">
-        <h2>{{ plan.nombre }}</h2>
-        <p>{{ plan.descripcion }}</p>
-        <p class="price">{{ plan.precio | currency:'USD' }}</p>
-        <p *ngIf="plan.duracion !== 'ilimitado'">
-          Duración: {{ plan.duracion }} días
-        </p>
-        <button class="subscribe-button">Seleccionar</button>
-      </div>
-    </div>
-    <div *ngIf="selectedPlan" class="selected-plan">
-      <h2>Has seleccionado el {{ selectedPlan.nombre }}</h2>
-      <button class="confirm-button" (click)="subscribe()">Confirmar Suscripción</button>
+  <h1 class="title">Suscripciones</h1>
+  <div class="plans">
+    <div class="plan-card" *ngFor="let plan of plans" (click)="selectPlan(plan)">
+      <h2>{{ plan.nombre }}</h2>
+      <p>{{ plan.descripcion }}</p>
+      <p class="price">{{ plan.precio | currency:'USD' }}</p>
+      <p *ngIf="plan.duracion !== 'ilimitado'">
+        Duración: {{ plan.duracion }} días
+      </p>
+      <button class="subscribe-button">Seleccionar</button>
     </div>
   </div>
-  
+  <div *ngIf="selectedPlan" class="selected-plan">
+    <h2>Has seleccionado el {{ selectedPlan.nombre }}</h2>
+    <button class="confirm-button" (click)="subscribe()">Confirmar Suscripción</button>
+  </div>
+</div>

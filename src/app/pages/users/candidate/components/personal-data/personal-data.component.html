@@ -3,19 +3,21 @@
     <p id="fullName" *ngIf="profileForm.get('fullName')?.value">{{ profileForm.get("fullName")?.value }}</p>
     <p id="profesion" *ngIf="profileForm.get('profesion')?.value">{{ profileForm.get("profesion")?.value }}</p>
 
-    <div class="icon-field" *ngIf="profileForm.get('phone')?.value">
-      <i class="fas fa-phone" style="color: var(--clr-green);"></i>
-      <p id="phone">{{ profileForm.get("phone")?.value }}</p>
-    </div>
+    <section style="display: grid; justify-content: center;">
+      <div class="icon-field" *ngIf="profileForm.get('phone')?.value">
+        <i class="fas fa-phone" style="color: var(--clr-green);"></i>
+        <p id="phone">{{ profileForm.get("phone")?.value }}</p>
+      </div>
 
-    <div class="icon-field" *ngIf="profileForm.get('editableEmail')?.value">
-      <i class="fas fa-envelope" style="color: var(--clr-green);"></i>
-      <p id="editableEmail">{{ profileForm.get("editableEmail")?.value }}</p>
-    </div>
+      <div class="icon-field" *ngIf="profileForm.get('editableEmail')?.value">
+        <i class="fas fa-envelope" style="color: var(--clr-green);"></i>
+        <p id="editableEmail">{{ profileForm.get("editableEmail")?.value }}</p>
+      </div>
 
-    <div class="icon-field" *ngIf="profileForm.get('direction')?.value">
-      <i class="fas fa-map-marker-alt" style="color: var(--clr-green);"></i>
-      <p id="direction">{{ profileForm.get("direction")?.value }}</p>
-    </div>
+      <div class="icon-field" *ngIf="profileForm.get('direction')?.value">
+        <i class="fas fa-map-marker-alt" style="color: var(--clr-green);"></i>
+        <p id="direction">{{ profileForm.get("direction")?.value }}</p>
+      </div>
+    </section>
   </div>
 </div>

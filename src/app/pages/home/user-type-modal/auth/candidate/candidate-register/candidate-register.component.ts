@@ -76,7 +76,7 @@ export class CandidateRegisterComponent {
           const userData = {
             fullName,
             email,
-            role: 'user',
+            role: 'candidate',
             enabled: true,
             createdAt: new Date().toISOString(),
           };

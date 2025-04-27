@@ -87,7 +87,7 @@ export class GoogleLoginComponent {
         const userData = {
           fullName: user.displayName || 'Usuario Google',
           email: user.email,
-          role: 'user',
+          role: 'candidate',
           enabled: true,
           createdAt: currentDate,
           lastLogin: currentDate,
