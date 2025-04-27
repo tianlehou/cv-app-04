@@ -1,31 +1,29 @@
-<app-ats-download-pdf containerId="pdf-content"></app-ats-download-pdf>
 <!-- cv-ats.component.html -->
-<div class="ats-container" *ngIf="currentUser; else loadingTemplate" id="pdf-content">
-  <div class="section">
-    <app-ats-personal-data [currentUser]="currentUser"></app-ats-personal-data>
-  </div>
+<app-ats-download-pdf containerId="pdf-content"></app-ats-download-pdf>
+<div class="responsive-wrapper">
+  <div class="ats-container" id="pdf-content">
+    <div class="section">
+      <app-ats-personal-data [currentUser]="currentUser"></app-ats-personal-data>
+    </div>
 
-  <div class="section">
-    <app-ats-about-me [currentUser]="currentUser"></app-ats-about-me>
-  </div>
+    <div class="section">
+      <app-ats-about-me [currentUser]="currentUser"></app-ats-about-me>
+    </div>
 
-  <div class="section">
-    <app-ats-experience [currentUser]="currentUser"></app-ats-experience>
-  </div>
+    <div class="section">
+      <app-ats-experience [currentUser]="currentUser"></app-ats-experience>
+    </div>
 
-  <div class="section">
-    <app-ats-skills [currentUser]="currentUser"></app-ats-skills>
-  </div>
+    <div class="section">
+      <app-ats-skills [currentUser]="currentUser"></app-ats-skills>
+    </div>
 
-  <div class="section">
-    <app-ats-education [currentUser]="currentUser"></app-ats-education>
-  </div>
+    <div class="section">
+      <app-ats-education [currentUser]="currentUser"></app-ats-education>
+    </div>
 
-  <div class="section">
-    <app-ats-languages [currentUser]="currentUser"></app-ats-languages>
+    <div class="section">
+      <app-ats-languages [currentUser]="currentUser"></app-ats-languages>
+    </div>
   </div>
 </div>
-
-<ng-template #loadingTemplate>
-  <p>Cargando datos del usuario...</p>
-</ng-template>

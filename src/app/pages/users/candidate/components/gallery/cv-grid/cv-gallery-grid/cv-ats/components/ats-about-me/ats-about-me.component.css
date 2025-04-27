@@ -1,14 +1,7 @@
 /* Contenedor principal */
 .profile-container {
-  max-width: 1200px;
   text-align: justify;
-  padding: 20px;
-  margin: 0;
-}
-
-span {
-  white-space: pre-wrap;
-  font-size: clamp(10px, 2.5vw, 16px);
+  padding: 0.5rem 3rem;
 }
 
 label {

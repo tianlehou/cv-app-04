@@ -59,7 +59,7 @@ export class AdminDashboardComponent implements OnInit {
 
   updateStats() {
     this.totalUsers = this.users.length;
-    this.totalCandidates = this.users.filter(u => u.role === 'user').length;
+    this.totalCandidates = this.users.filter(u => u.role === 'candidate').length;
     this.totalCompanies = this.users.filter(u => u.role === 'company').length;
   }
 

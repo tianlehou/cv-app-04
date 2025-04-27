@@ -1,14 +1,16 @@
-.ats-container {
-  max-width: 800px;
-  margin: 0 auto;
-  font-family: 'Calibri', 'Helvetica', sans-serif;
-  /* border: 1px solid var(--bg-light); */
-  margin: 1rem 0.5rem;
-  padding: 3rem 0;
-  background-color: white;
+.responsive-wrapper {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  box-sizing: border-box;
 }
 
-.section {
-  /* margin-bottom: 1.5rem; */
-  page-break-inside: avoid;
+.ats-container {
+  width: 800px;
+  height: 1100px;
+  margin: 0 auto;
+  font-size: 14px;
+  font-family: 'Calibri', 'Helvetica', sans-serif;
+  padding: 3rem 0;
+  background-color: white;
 }

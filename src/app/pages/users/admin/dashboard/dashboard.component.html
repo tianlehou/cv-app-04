@@ -19,7 +19,7 @@
     <div class="filters">
         <select [(ngModel)]="userTypeFilter" (change)="applyFilters()">
             <option value="all">Todos</option>
-            <option value="user">Candidatos</option>
+            <option value="candidate">Candidatos</option>
             <option value="company">Empresas</option>
         </select>
 
@@ -45,7 +45,7 @@
                     <td>{{ user.fullName || 'N/A' }}</td>
                     <td>{{ user.email }}</td>
                     <td>
-                        {{ user.role === 'user' ? 'Candidato' :
+                        {{ user.role === 'candidate' ? 'Candidato' :
                            user.role === 'company' ? 'Empresa' :
                            user.role === 'admin' ? 'Administrador' : 'Desconocido' }}
                     </td>

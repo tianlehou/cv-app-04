@@ -1,4 +1,4 @@
-<div class="profile-container">
+<div class="profile-container border-red">
   <div class="form-group" [formGroup]="profileForm">
     <label class="bar">Experiencia Profesional:</label>
     @if (experienceArray.length > 0) {
@@ -15,8 +15,9 @@
             </div>
           </section>
           <div>
-            <span style="padding-right: 0.25rem;">Empresa:</span>{{ exp.get("company")?.value }} <br>
-              {{ exp.get("description")?.value }}
+            <label style="padding-right: 0.5rem;">Empresa:</label>
+            <span>{{ exp.get("company")?.value }}</span><br>
+            <div class="description-text">{{ exp.get("description")?.value }}</div>
           </div>
         </div>
       </li>
