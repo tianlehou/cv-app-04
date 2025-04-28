@@ -1,11 +1,11 @@
-<div class="profile-container border-red">
+<div class="profile-container">
   <div class="form-group" [formGroup]="profileForm">
     <label class="bar">Experiencia Profesional:</label>
     @if (experienceArray.length > 0) {
     <ul class="experience-list">
       @for (exp of experienceArray.controls; track $index) {
       <li>
-        <div class="item">
+        <div>
           <section class="top-body">
             <div>
               <span>{{ exp.get("role")?.value }}</span>

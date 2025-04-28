@@ -4,9 +4,8 @@ import { CommonModule } from '@angular/common';
 import { AtsPersonalDataComponent } from './components/ats-personal-data/ats-personal-data.component';
 import { AtsAboutMeComponent } from './components/ats-about-me/ats-about-me.component';
 import { AtsExperienceComponent } from './components/ats-experience/ats-experience.component';
-import { AtsSkillsComponent } from './components/ats-skills/ats-skills.component';
 import { AtsEducationComponent } from './components/ats-education/ats-education.component';
-import { AtsLanguagesComponent } from './components/ats-languages/ats-languages.component';
+import { AtsSkillsComponent } from './components/ats-skills/ats-skills.component';
 import { AtsDownloadPdfComponent } from '../../../../../../../../shared/components/ats-download-pdf/ats-download-pdf.component';
 
 @Component({
@@ -19,7 +18,6 @@ import { AtsDownloadPdfComponent } from '../../../../../../../../shared/componen
     AtsExperienceComponent,
     AtsSkillsComponent,
     AtsEducationComponent,
-    AtsLanguagesComponent,
     AtsDownloadPdfComponent
   ],
   templateUrl: './cv-ats.component.html',

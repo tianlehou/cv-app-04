@@ -3,75 +3,22 @@
   text-align: left;
 }
 
+/* Grupos de formulario */
+.form-group {
+  margin-bottom: 15px;
+  text-align: left;
+}
+
 .bar {
   display: flex;
   justify-content: center;
   padding: 3px;
-  margin: 0.5rem 2rem;
   color: white;
   font-weight: 500;
   background-color: var(--clr-blue-dark);
 }
 
-/* Estilo para habilidades con detalles */
-.skills-list.detailed-view {
-  padding: 0;
-  margin: 0 1rem;
-}
-
-.skills-list.detailed-view li {
-  display: flex;
-  justify-content: space-between;
-}
-
-.skills-list.detailed-view .item {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-}
-
-.skills-list.detailed-view .skill-detail-inline {
-  display: flex;
-  align-items: baseline;
-  gap: 0.5rem;
-  flex-wrap: wrap;
-}
-
-.skills-list.detailed-view .proficiency {
-  font-weight: 500;
-  color: #333;
-}
-
-.skills-list.detailed-view span {
-  font-weight: 700;
-  margin-right: 0.25rem;
-}
-
-.skills-list.compact-view li:first-child {
-  list-style: none;
-}
-
-/* Estilo para habilidades sin detalles */
-.skills-list.compact-view {
-  display: flex;
-  justify-content: center;
-  gap: 1.5rem;
-  padding: 0;
-  margin: 0;
-}
-
-.skills-list.compact-view .item {
-  display: inline-flex;
-  margin: 0;
-  padding: 8px 12px;
-}
-
-.skills-list.compact-view .skill-detail p {
-  white-space: nowrap;
-  margin: 0;
-}
-
-.no-skills {
-  color: #666;
-  font-style: italic;
+.profile-container p {
+  white-space: pre-wrap;
+  padding: 10px;
 }

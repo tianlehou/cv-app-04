@@ -1,4 +1,4 @@
-import { Component, Output, EventEmitter } from '@angular/core';
+import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -9,9 +9,4 @@ import { CommonModule } from '@angular/common';
   styleUrls: ['./skills-info.component.css']
 })
 export class SkillsInfoComponent {
-  @Output() back = new EventEmitter<void>();
-
-  goBack(): void {
-    this.back.emit();
-  }
 }

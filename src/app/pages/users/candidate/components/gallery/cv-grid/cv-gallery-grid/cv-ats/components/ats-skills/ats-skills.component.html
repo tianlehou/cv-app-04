@@ -1,51 +1,18 @@
 <div class="profile-container">
-  <div class="form-group" [formGroup]="profileForm">
-    <label class="bar">Habilidades/Conocimientos:</label>
-    @if (skillsArray.length > 0) {
-
-    <!-- Habilidades sin detalles -->
-    @if (skillsWithoutDetails.length > 0) {
-    <ul class="skills-list compact-view">
-      @for (skill of skillsWithoutDetails; track $index) {
-      <li>
-        <div class="item">
-          <div class="skill-detail">
-            <p>{{ skill.name || 'Sin especificar' }}</p>
-          </div>
-        </div>
-      </li>
-      }
-    </ul>
-    }
-
-    <!-- Habilidades con detalles -->
-    @if (skillsWithDetails.length > 0) {
-    <ul class="skills-list detailed-view">
-      @for (skill of skillsWithDetails; track $index) {
-      <li>
-        <div class="item">
-          <div class="skill-detail">
-            <span>Habilidad:</span>{{ skill.name || 'Sin especificar' }}
-          </div>
-          @if (skill.proficiency) {
-          <div class="skill-detail">
-            <span>(Nivel:</span>{{ skill.proficiency }})
-          </div>
-          }
-        </div>
-        @if (skill.certification) {
-          <div class="skill-detail">
-            <span>Certificado:</span>{{ skill.certification }}
-          </div>
-          }
-        @if (!$last) {
-        }
-      </li>
-      }
-    </ul>
-    }
-    } @else {
-    <p class="no-skills">No se encontraron habilidades</p>
-    }
-  </div>
+  <form [formGroup]="profileForm">
+    <div class="form-group">
+      <label class="bar">Habilidades:</label>
+        <ul class="skills-list">
+          <li *ngFor="let skill of profileForm.get('skills')?.value">
+            <div class="skill-item">
+              <div class="skill-detail">
+                <label>Habilidad:</label>
+                <p class="form-control-static">{{ skill.name || "No especificado" }}</p>
+              </div>
+            </div>
+            <div class="line"></div>
+          </li>
+        </ul>
+    </div>
+  </form>
 </div>

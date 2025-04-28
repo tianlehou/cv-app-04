@@ -7,20 +7,18 @@
   display: flex;
   justify-content: center;
   padding: 3px;
-  margin: 0.5rem 2rem;
   color: white;
   font-weight: 500;
   background-color: var(--clr-blue-dark);
 }
 
 .experience-list {
-  margin: 0 3rem 0 1rem;
+  margin-right: 1rem;
 }
 
 .top-body {
   display: flex;
   justify-content: space-between;
-
 }
 
 span {
@@ -30,5 +28,4 @@ span {
 .description-text {
   white-space: pre-line;
   text-align: justify;
-  margin-bottom: 0.5rem;
 }

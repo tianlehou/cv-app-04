@@ -1,5 +1,10 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { FormBuilder, FormGroup, FormArray, ReactiveFormsModule } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  FormArray,
+  ReactiveFormsModule,
+} from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { FirebaseService } from '../../../../../../../../../../shared/services/firebase.service';
 import { User } from '@angular/fire/auth';
@@ -7,7 +12,10 @@ import { User } from '@angular/fire/auth';
 @Component({
   selector: 'app-ats-skills',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule],
+  imports: [
+    ReactiveFormsModule,
+    CommonModule,
+  ],
   templateUrl: './ats-skills.component.html',
   styleUrls: ['./ats-skills.component.css'],
 })
@@ -15,20 +23,17 @@ export class AtsSkillsComponent implements OnInit {
   @Input() currentUser: User | null = null;
   profileForm!: FormGroup;
   userEmail: string | null = null;
-  
-  // Propiedades para manejar las habilidades categorizadas
-  skillsWithDetails: any[] = [];
-  skillsWithoutDetails: any[] = [];
+
 
   constructor(
     private fb: FormBuilder,
     private firebaseService: FirebaseService
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.initializeForm();
     if (this.currentUser) {
-      this.userEmail = this.currentUser.email?.replace(/\./g, '_') || null;
+      this.userEmail = this.currentUser.email?.replaceAll('.', '_') || null;
       this.loadUserData();
     }
   }
@@ -41,62 +46,30 @@ export class AtsSkillsComponent implements OnInit {
 
   private async loadUserData(): Promise<void> {
     if (!this.userEmail) {
-      console.error('Error: Email de usuario no disponible');
+      console.error('Error: Usuario no autenticado.');
       return;
     }
 
     try {
       const userData = await this.firebaseService.getUserData(this.userEmail);
-      const skills = userData?.profileData?.skills || [];
-      this.categorizeSkills(skills);
-      this.populateForm();
+      const profileData = userData?.profileData || {};
+      this.populateSkills(profileData.skills || []);
     } catch (error) {
-      console.error('Error al cargar habilidades:', error);
+      console.error('Error al cargar los datos del usuario:', error);
     }
   }
 
-  private categorizeSkills(skills: any[]): void {
-    this.skillsWithDetails = [];
-    this.skillsWithoutDetails = [];
-
-    skills.forEach(skill => {
-      const hasProficiency = skill.proficiency && 
-                           skill.proficiency.trim() !== '' && 
-                           skill.proficiency !== 'No especificado';
-      const hasCertification = skill.certification && 
-                             skill.certification.trim() !== '' && 
-                             skill.certification !== 'No especificado';
-
-      if (hasProficiency || hasCertification) {
-        this.skillsWithDetails.push(skill);
-      } else {
-        this.skillsWithoutDetails.push(skill);
-      }
-    });
-  }
-
-  private populateForm(): void {
+  private populateSkills(skillList: any[]): void {
     const formArray = this.skillsArray;
     formArray.clear();
-
-    // Combinamos ambas listas (con detalles primero)
-    const allSkills = [...this.skillsWithDetails, ...this.skillsWithoutDetails];
-
-    if (allSkills.length === 0) {
-      formArray.push(this.fb.group({
-        name: ['Sin habilidades registradas'],
-        proficiency: [''],
-        certification: [''],
-      }));
-    } else {
-      allSkills.forEach(skill => {
-        formArray.push(this.fb.group({
-          name: [skill.name || ''],
-          proficiency: [skill.proficiency || ''],
-          certification: [skill.certification || ''],
-        }));
+    skillList.forEach((skill) => {
+      const skillGroup = this.fb.group({
+        name: [skill.name || ''],
+        proficiency: [skill.proficiency || ''],
+        certification: [skill.certification || ''],
       });
-    }
+      formArray.push(skillGroup);
+    });
   }
 
   get skillsArray(): FormArray {

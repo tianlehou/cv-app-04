@@ -3,14 +3,15 @@
   margin: 0;
   background: white;
   color: var(--text-color);
+  padding-bottom: 1rem;
 }
 
 .profile-container p {
   flex: 1;
-  font-size: 24px;
+  font-size: 28px;
   font-weight: 700;
   color: var(--clr-blue-dark);
-  margin-bottom: 0;
+  margin: 0;
 }
 
 .point {
@@ -32,7 +33,7 @@ label {
   display: flex;
   justify-content: center;
   padding: 3px;
-  margin: 0.5rem 2rem;
+  margin: 0;
   color: white;
   font-weight: 500;
   background-color: var(--clr-blue-dark);
