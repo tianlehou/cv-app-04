@@ -81,12 +81,14 @@
             </div>
 
             <!-- Detalles o Descripción -->
-            <label>Detalle(s):</label>
+            <label>* Detalles:</label>
             <textarea
               formControlName="description"
               class="form-control"
               [readonly]="!editableFields['experience']"
             ></textarea>
+
+            <label>(*) = Campo obligatorio</label>
 
             <app-delete-button-b
               *ngIf="activeDeleteButton === i"

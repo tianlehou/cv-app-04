@@ -1,26 +1,27 @@
 <div class="profile-container">
-  <div class="form-group" [formGroup]="profileForm">
-    <label class="bar">Experiencia Profesional:</label>
-    @if (experienceArray.length > 0) {
-    <ul class="experience-list">
-      @for (exp of experienceArray.controls; track $index) {
-      <li>
-        <div>
-          <span>{{ exp.get("role")?.value }}</span
-          ><br />
-          <label style="padding-right: 0.5rem">Empresa:</label>
-          <span>{{ exp.get("company")?.value }} </span>
-          <label>{{ exp.get("place")?.value }}</label>
-          ({{ exp.get("year")?.value }})<br />
-          <div class="description-text">
-            {{ exp.get("description")?.value }}
-          </div>
+  <label class="bar">Experiencia Profesional:</label>
+  <form [formGroup]="profileForm">
+    <div class="form-group">
+      <div *ngFor="let exp of profileForm.get('experience')?.value">
+
+        <!-- Puesto -->
+        <div *ngIf="exp.role">
+          <strong>{{ exp.role || "No especificado" }}</strong>
         </div>
-      </li>
-      }
-    </ul>
-    } @else {
-    <p class="no-experience">No se encontraron experiencias laborales</p>
-    }
-  </div>
+
+        <!-- Empresa - Lugar - Año -->
+        <div>
+          <span *ngIf="exp.company" style="padding-left: 1rem;">Empresa:
+          <label>{{ exp.company || "No especificado" }}</label></span>
+          <label *ngIf="exp.place"><span style="padding: 0 1rem;">|</span>{{ exp.place || "No especificado" }}</label>
+          <label *ngIf="exp.year"><span style="padding: 0 1rem;">|</span>{{ exp.year || "No especificado" }}</label>
+        </div>
+
+        <!-- Descripción / Detalles -->
+        <div class="description-text">
+          <span>{{ formatDescription(exp.description) }}</span>
+        </div>
+      </div>
+    </div>
+  </form>
 </div>

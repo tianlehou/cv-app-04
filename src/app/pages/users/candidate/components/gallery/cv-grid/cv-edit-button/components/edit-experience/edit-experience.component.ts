@@ -100,10 +100,10 @@ export class EditExperienceComponent implements OnInit, OnDestroy {
     experiences.forEach((exp) => {
       formArray.push(
         this.fb.group({
-          role: [exp.role || '', Validators.required],
-          company: [exp.company || '', Validators.required],
+          role: [exp.role || ''],
+          company: [exp.company || ''],
           place: [exp.place || ''],
-          year: [exp.year || '', Validators.required],
+          year: [exp.year || ''],
           description: [exp.description || '', Validators.required],
         })
       );
@@ -179,8 +179,6 @@ export class EditExperienceComponent implements OnInit, OnDestroy {
         profileData: updatedProfileData,
       });
 
-      // this.toastService.show('Datos actualizados exitosamente.', 'success');
-
       // Restaurar estado
       await this.loadUserData();
     } catch (error) {
@@ -198,9 +196,10 @@ export class EditExperienceComponent implements OnInit, OnDestroy {
 
   addExperience(): void {
     const experienceGroup = this.fb.group({
-      year: ['', Validators.required],
-      company: ['', Validators.required],
-      role: ['', Validators.required],
+      role: [''],
+      company: [''],
+      place: [''],
+      year: [''],
       description: ['', Validators.required],
     });
     this.experienceArray.push(experienceGroup);
