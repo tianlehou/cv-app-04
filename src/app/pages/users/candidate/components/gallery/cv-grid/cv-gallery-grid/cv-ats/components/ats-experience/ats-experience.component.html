@@ -6,18 +6,14 @@
       @for (exp of experienceArray.controls; track $index) {
       <li>
         <div>
-          <section class="top-body">
-            <div>
-              <span>{{ exp.get("role")?.value }}</span>
-            </div>
-            <div>
-              <span>{{ exp.get("year")?.value }}</span>
-            </div>
-          </section>
-          <div>
-            <label style="padding-right: 0.5rem;">Empresa:</label>
-            <span>{{ exp.get("company")?.value }}</span><br>
-            <div class="description-text">{{ exp.get("description")?.value }}</div>
+          <span>{{ exp.get("role")?.value }}</span
+          ><br />
+          <label style="padding-right: 0.5rem">Empresa:</label>
+          <span>{{ exp.get("company")?.value }} </span>
+          <label>{{ exp.get("place")?.value }}</label>
+          ({{ exp.get("year")?.value }})<br />
+          <div class="description-text">
+            {{ exp.get("description")?.value }}
           </div>
         </div>
       </li>

@@ -1,5 +1,9 @@
 header {
-  background: linear-gradient(135deg, var(--clr-blue-dark) 0%, var(--clr-purple-dark) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--clr-blue-dark) 0%,
+    var(--clr-purple-dark) 100%
+  );
 }
 
 /* Formulario general */
@@ -20,7 +24,6 @@ label {
   margin: 0.5em 0 0 1em;
   font-weight: 500;
 }
-
 
 /* Inputs, textareas y botones */
 input,
@@ -51,19 +54,14 @@ textarea:not([readonly]) {
 
 .experience-group {
   position: relative;
-  padding: 15px;
   transition: background-color 0.3s ease;
   border-radius: 8px;
 }
 
-.experience-group:hover {
-  background-color: rgba(0, 0, 0, 0.03);
-}
-
 .experience-delete-button {
   position: absolute;
-  top: 15px;
-  right: 15px;
+  top: -5px;
+  right: 5px;
   opacity: 0;
   transition: opacity 0.3s ease;
 }
@@ -76,20 +74,6 @@ textarea:not([readonly]) {
 /* Eliminar estilos antiguos del delete button */
 app-delete-button-b {
   margin-top: -5px;
-}
-
-.form-row {
-  display: flex;
-  gap: 1em;
-  align-items: center;
-}
-
-.quarter-width {
-  flex: 2;
-}
-
-.three-quarters-width {
-  flex: 3;
 }
 
 .form-control {

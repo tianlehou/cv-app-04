@@ -36,7 +36,6 @@ export class EditExperienceComponent implements OnInit, OnDestroy {
   editableFields: { [key: string]: boolean } = {};
   experienceIndexToDelete: number | null = null;
   activeDeleteButton: number | null = null;
-  showInfoComponent = false;
   formHasChanges: boolean = false;
   private initialFormValue: any;
   private formSubscription: Subscription | null = null;
@@ -101,9 +100,10 @@ export class EditExperienceComponent implements OnInit, OnDestroy {
     experiences.forEach((exp) => {
       formArray.push(
         this.fb.group({
-          year: [exp.year || '', Validators.required],
-          company: [exp.company || '', Validators.required],
           role: [exp.role || '', Validators.required],
+          company: [exp.company || '', Validators.required],
+          place: [exp.place || ''],
+          year: [exp.year || '', Validators.required],
           description: [exp.description || '', Validators.required],
         })
       );
@@ -275,16 +275,6 @@ export class EditExperienceComponent implements OnInit, OnDestroy {
         this.experienceIndexToDelete = null;
       }
     );
-  }
-
-  // método para abrir about-me-info
-  openInfoModal(): void {
-    this.showInfoComponent = true;
-  }
-
-  // método para cerrar about-me-info
-  toggleInfoView(): void {
-    this.showInfoComponent = !this.showInfoComponent;
   }
 
   onCancel(): void {

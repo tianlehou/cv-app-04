@@ -3,6 +3,7 @@
   width: 100% !important;
   min-width: 300px;
   max-width: 800px;
+  margin-top: 2rem;
   background: white;
   border-radius: 8px;
   overflow: hidden;
@@ -28,48 +29,6 @@
   .fa-info-circle {
     font-size: 2rem;
     color: var(--clr-blue);
-  }
-}
-
-header {
-  display: flex;
-  align-items: center;
-  padding: 18px 24px;
-  background: linear-gradient(135deg, var(--clr-blue-dark) 0%, var(--clr-purple-dark) 100%);
-  color: var(--clr-white);
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-
-  button {
-    display: flex;
-    align-items: center;
-    border: none;
-    background: rgba(255, 255, 255, 0.2);
-    color: var(--clr-white);
-    padding: 0px;
-    border-radius: 50%;
-    cursor: pointer;
-    transition: all 0.3s ease;
-
-    i {
-      font-size: 1.2rem;
-    }
-  }
-
-  button:hover {
-    background: rgba(255, 255, 255, 0.3);
-    transform: translateX(-3px);
-  }
-
-  h3 {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    margin: 0;
-    font-size: 1.3rem;
-
-    i {
-      font-size: 2rem;
-    }
   }
 }
 

@@ -60,17 +60,19 @@ export class AtsExperienceComponent implements OnInit {
     
     if (experiences.length === 0) {
       formArray.push(this.fb.group({
-        year: ['No especificado'],
-        company: ['No especificado'],
         role: ['No especificado'],
+        company: ['No especificado'],
+        place: ['No especificado'],
+        year: ['No especificado'],
         description: ['No especificado'],
       }));
     } else {
       experiences.forEach(exp => {
         formArray.push(this.fb.group({
-          year: [exp.year || 'No especificado'],
-          company: [exp.company || 'No especificado'],
           role: [exp.role || 'No especificado'],
+          company: [exp.company || 'No especificado'],
+          place: [exp.place || 'No especificado'],
+          year: [exp.year || 'No especificado'],
           description: [exp.description || 'No especificado'],
         }));
       });

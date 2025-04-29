@@ -86,6 +86,7 @@ export class EditSkillsComponent implements OnInit, OnDestroy {
         this.fb.group({
           hardSkills: [skill.hardSkills || '', Validators.required],
           softSkills: [skill.softSkills || ''],
+          languages: [skill.languages || ''],
           certification: [skill.certification || ''],
         })
       );

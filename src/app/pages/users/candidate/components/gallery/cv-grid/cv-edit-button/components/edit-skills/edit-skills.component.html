@@ -46,6 +46,17 @@
               </div>
 
               <div class="form-group">
+                <label for="name">Idiomas: (opcional)</label>
+                <textarea
+                  type="text"
+                  id="languages"
+                  formControlName="languages"
+                  class="form-control"
+                  [readonly]="!editableFields['skills']"
+                ></textarea>
+              </div>
+
+              <div class="form-group">
                 <label for="name">Certificaciones: (opcional)</label>
                 <textarea
                   type="text"

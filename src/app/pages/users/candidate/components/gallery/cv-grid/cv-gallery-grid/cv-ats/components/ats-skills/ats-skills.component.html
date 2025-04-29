@@ -7,12 +7,19 @@
           <strong>Habilidades Técnica:</strong>
           <label>{{ skill.hardSkills || "No especificado" }}</label>
         </span>
+
         <span>
           <strong>Habilidades Blandas:</strong>
           <label>{{ skill.softSkills || "No especificado" }}</label>
         </span>
-        <span>
-          <strong>Certificacion(es):</strong>
+
+        <span *ngIf="skill.languages">
+          <strong>Idiomas:</strong>
+          <label>{{ skill.languages || "No especificado" }}</label>
+        </span>
+
+        <span *ngIf="skill.certification">
+          <strong>Certificaciones:</strong>
           <label>{{ skill.certification || "No especificado" }}</label>
         </span>
       </div>
