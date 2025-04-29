@@ -9,12 +9,10 @@ import {
 } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { FirebaseService } from '../../../../../../../../../shared/services/firebase.service';
-import { ConfirmationModalService } from '../../../../../../../../../shared/services/confirmation-modal.service';
 import { User } from '@angular/fire/auth';
 import { SkillsInfoComponent } from './skills-info/skills-info.component';
 import { ToastService } from '../../../../../../../../../shared/services/toast.service';
 import { CvEditButtonRowComponent } from '../../cv-edit-button-row/cv-edit-button-row.component';
-import { DeleteButtonBComponent } from '../../../../../../../../../shared/components/buttons/delete-button/delete-button.component';
 
 @Component({
   selector: 'app-edit-skills',
@@ -24,7 +22,6 @@ import { DeleteButtonBComponent } from '../../../../../../../../../shared/compon
     CommonModule,
     SkillsInfoComponent,
     CvEditButtonRowComponent,
-    DeleteButtonBComponent,
   ],
   templateUrl: './edit-skills.component.html',
   styleUrls: ['./edit-skills.component.css'],
@@ -35,7 +32,6 @@ export class EditSkillsComponent implements OnInit, OnDestroy {
   userEmail: string | null = null;
   editableFields: { [key: string]: boolean } = {};
   skillIndexToDelete: number | null = null;
-  activeDeleteButton: number | null = null;
   formHasChanges: boolean = false;
   private initialFormValue: any;
   private formSubscription: Subscription | null = null;
@@ -43,7 +39,6 @@ export class EditSkillsComponent implements OnInit, OnDestroy {
   constructor(
     private fb: FormBuilder,
     private firebaseService: FirebaseService,
-    private ConfirmationModalService: ConfirmationModalService,
     private toastService: ToastService
   ) {}
 
@@ -59,16 +54,6 @@ export class EditSkillsComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     if (this.formSubscription) {
       this.formSubscription.unsubscribe();
-    }
-  }
-
-  showDeleteButton(index: number): void {
-    this.activeDeleteButton = index;
-  }
-
-  hideDeleteButton(index: number): void {
-    if (this.activeDeleteButton === index) {
-      this.activeDeleteButton = null;
     }
   }
 
@@ -99,8 +84,8 @@ export class EditSkillsComponent implements OnInit, OnDestroy {
     skills.forEach((skill) => {
       formArray.push(
         this.fb.group({
-          name: [skill.name || '', Validators.required],
-          proficiency: [skill.proficiency || ''],
+          hardSkills: [skill.hardSkills || '', Validators.required],
+          softSkills: [skill.softSkills || ''],
           certification: [skill.certification || ''],
         })
       );
@@ -178,88 +163,6 @@ export class EditSkillsComponent implements OnInit, OnDestroy {
 
   get skillsArray(): FormArray {
     return this.profileForm.get('skills') as FormArray;
-  }
-
-  addSkill(): void {
-    const skillGroup = this.fb.group({
-      name: ['', Validators.required],
-      proficiency: [''],
-      certification: [''],
-    });
-    this.skillsArray.push(skillGroup);
-    this.toastService.show(
-      'Se ha agregado nuevo campo de habilidad',
-      'success'
-    );
-  }
-
-  async removeSkill(index: number): Promise<void> {
-    if (index < 0 || index >= this.skillsArray.length) {
-      console.error('Índice inválido al intentar eliminar una habilidad.');
-      return;
-    }
-
-    this.skillsArray.removeAt(index);
-
-    if (this.userEmail) {
-      try {
-        const userData = await this.firebaseService.getUserData(this.userEmail);
-        const currentProfileData = userData?.profileData || {};
-
-        const updatedProfileData = {
-          ...currentProfileData,
-          skills: this.skillsArray.value,
-        };
-
-        await this.firebaseService.updateUserData(this.userEmail, {
-          profileData: updatedProfileData,
-        });
-      } catch (error) {
-        console.error(
-          'Error al sincronizar los datos con la base de datos:',
-          error
-        );
-        throw error;
-      }
-    } else {
-      console.error(
-        'Usuario no autenticado. No se puede actualizar la base de datos.'
-      );
-      throw new Error('Usuario no autenticado');
-    }
-  }
-
-  confirmDeleteSkill(index: number, event?: Event): void {
-    if (event) {
-      event.stopPropagation();
-    }
-    this.skillIndexToDelete = index;
-
-    this.ConfirmationModalService.show(
-      {
-        title: 'Eliminar habilidad',
-        message: '¿Estás seguro de que deseas eliminar esta habilidad?',
-        confirmText: 'Eliminar',
-        cancelText: 'Cancelar',
-      },
-      async () => {
-        if (this.skillIndexToDelete !== null) {
-          try {
-            await this.removeSkill(this.skillIndexToDelete);
-            this.toastService.show(
-              'Habilidad eliminada exitosamente.',
-              'success'
-            );
-            this.skillIndexToDelete = null;
-          } catch (error) {
-            this.toastService.show('Error al eliminar la habilidad', 'error');
-          }
-        }
-      },
-      () => {
-        this.skillIndexToDelete = null;
-      }
-    );
   }
 
   onCancel(): void {

@@ -4,8 +4,7 @@
     @if (educationArray.length > 0) {
     <ul class="education-list">
       @for (edu of educationArray.controls; track $index) {
-      <li class="item">
-
+      <li>
         <section class="top-body">
           <div>
             <span>{{ edu.get('degree')?.value }}</span>
@@ -14,7 +13,6 @@
             <span>{{ edu.get("year")?.value }}</span>
           </div>
         </section>
-
         <div>
           {{ edu.get('institution')?.value }} <br>
         </div>

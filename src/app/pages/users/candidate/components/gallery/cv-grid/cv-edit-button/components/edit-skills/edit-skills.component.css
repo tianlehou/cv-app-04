@@ -6,7 +6,6 @@ header {
 .form-group {
   margin-bottom: 15px;
   text-align: left;
-  /* Asegura que los elementos dentro no estén centrados */
 }
 
 label {
@@ -17,40 +16,13 @@ label {
 
 .skill-group {
   position: relative;
-  padding: 15px;
-  transition: background-color 0.3s ease;
   border-radius: 8px;
-}
-
-.skill-group:hover {
-  background-color: rgba(0, 0, 0, 0.03);
-}
-
-.skill-delete-button {
-  position: absolute;
-  top: 15px;
-  right: 15px;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-
-.skill-group:hover .skill-delete-button,
-.skill-group:focus-within .skill-delete-button {
-  opacity: 1;
-}
-
-/* Eliminar estilos antiguos del delete button */
-app-delete-button-b {
-  position: absolute;
-  top: 0;
-  right: 0;
-  margin-top: -5px;
 }
 
 /* Inputs, textareas y botones */
 textarea {
   width: 100%;
-  height: 300px;
+  height: 100px;
 }
 
 /* Mensajes de error */
@@ -71,4 +43,16 @@ textarea {
   justify-content: space-between;
   align-items: center;
   width: 100%;
+}
+
+:host ::ng-deep app-cv-edit-button-row .add-btn {
+  opacity: 0.5 !important;
+  cursor: not-allowed !important;
+  pointer-events: none !important;
+  background-color: #f5f5f5 !important;
+  border-color: #ddd !important;
+}
+
+:host ::ng-deep app-cv-edit-button-row .add-btn i {
+  color: var(--clr-gray) !important;
 }

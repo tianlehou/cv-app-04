@@ -1,18 +1,21 @@
 <div class="profile-container">
+  <label class="bar">Habilidades:</label>
   <form [formGroup]="profileForm">
     <div class="form-group">
-      <label class="bar">Habilidades:</label>
-        <ul class="skills-list">
-          <li *ngFor="let skill of profileForm.get('skills')?.value">
-            <div class="skill-item">
-              <div class="skill-detail">
-                <label>Habilidad:</label>
-                <p class="form-control-static">{{ skill.name || "No especificado" }}</p>
-              </div>
-            </div>
-            <div class="line"></div>
-          </li>
-        </ul>
+      <div *ngFor="let skill of profileForm.get('skills')?.value">
+        <span>
+          <strong>Habilidades Técnica:</strong>
+          <label>{{ skill.hardSkills || "No especificado" }}</label>
+        </span>
+        <span>
+          <strong>Habilidades Blandas:</strong>
+          <label>{{ skill.softSkills || "No especificado" }}</label>
+        </span>
+        <span>
+          <strong>Certificacion(es):</strong>
+          <label>{{ skill.certification || "No especificado" }}</label>
+        </span>
+      </div>
     </div>
   </form>
 </div>

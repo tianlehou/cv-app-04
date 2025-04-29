@@ -1,7 +1,7 @@
 <!-- cv-ats.component.html -->
 <app-ats-download-pdf containerId="pdf-content"></app-ats-download-pdf>
 <div class="responsive-wrapper">
-  <div class="ats-container border-red" id="pdf-content">
+  <div class="ats-container" id="pdf-content">
     <div class="section">
       <app-ats-personal-data [currentUser]="currentUser"></app-ats-personal-data>
     </div>
@@ -11,15 +11,15 @@
     </div>
 
     <div class="section">
+      <app-ats-skills [currentUser]="currentUser"></app-ats-skills>
+    </div>
+
+    <div class="section">
       <app-ats-experience [currentUser]="currentUser"></app-ats-experience>
     </div>
 
     <div class="section">
       <app-ats-education [currentUser]="currentUser"></app-ats-education>
-    </div>
-
-    <div class="section">
-      <app-ats-skills [currentUser]="currentUser"></app-ats-skills>
     </div>
   </div>
 </div>
