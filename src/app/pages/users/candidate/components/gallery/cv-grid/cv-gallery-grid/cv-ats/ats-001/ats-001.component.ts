@@ -6,10 +6,10 @@ import { AtsAboutMeComponent } from './components/ats-about-me/ats-about-me.comp
 import { AtsExperienceComponent } from './components/ats-experience/ats-experience.component';
 import { AtsEducationComponent } from './components/ats-education/ats-education.component';
 import { AtsSkillsComponent } from './components/ats-skills/ats-skills.component';
-import { AtsDownloadPdfComponent } from '../../../../../../../../shared/components/ats-download-pdf/ats-download-pdf.component';
+import { AtsDownloadPdfComponent } from '../../../../../../../../../shared/components/ats-download-pdf/ats-download-pdf.component';
 
 @Component({
-  selector: 'app-cv-ats',
+  selector: 'app-ats-001',
   standalone: true,
   imports: [
     CommonModule, 
@@ -20,9 +20,9 @@ import { AtsDownloadPdfComponent } from '../../../../../../../../shared/componen
     AtsEducationComponent,
     AtsDownloadPdfComponent
   ],
-  templateUrl: './cv-ats.component.html',
-  styleUrl: './cv-ats.component.css',
+  templateUrl: './ats-001.component.html',
+  styleUrl: './ats-001.component.css',
 })
-export class CvAtsComponent {
+export class Ats001Component {
   @Input() currentUser: User | null = null;
 }

@@ -12,14 +12,14 @@
       <div class="personal-data-field">
         <label>{{ profileForm.get("phone")?.value }}</label>
       </div>
-      <div class="point"></div>
-      <div class="personal-data-field">
-        <label>{{ profileForm.get("editableEmail")?.value }}</label>
-      </div>
-      <div class="point"></div>
-      <div class="personal-data-field">
-        <label>{{ profileForm.get("direction")?.value }}</label>
-      </div>
+
+      <label class="personal-data-field">
+        <span style="padding: 0 1rem;">|</span>{{ profileForm.get("editableEmail")?.value }}
+      </label>
+
+      <label class="personal-data-field">
+        <span style="padding: 0 1rem;">|</span>{{ profileForm.get("direction")?.value }}
+      </label>
     </div>
   </div>
 </div>

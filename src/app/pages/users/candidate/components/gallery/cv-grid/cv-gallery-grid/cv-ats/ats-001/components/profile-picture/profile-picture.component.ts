@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { FirebaseService } from '../../../../../../../../../../shared/services/firebase.service';
+import { FirebaseService } from '../../../../../../../../../../../shared/services/firebase.service';
 import { User } from '@angular/fire/auth';
 
 @Component({

@@ -6,7 +6,7 @@ import {
   ReactiveFormsModule,
 } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { FirebaseService } from '../../../../../../../../../../shared/services/firebase.service';
+import { FirebaseService } from '../../../../../../../../../../../shared/services/firebase.service';
 import { User } from '@angular/fire/auth';
 
 @Component({
@@ -66,6 +66,7 @@ export class AtsSkillsComponent implements OnInit {
       const skillGroup = this.fb.group({
         hardSkills: [skill.hardSkills || ''],
         softSkills: [skill.softSkills || ''],
+        languages: [skill.languages || ''],
         certification: [skill.certification || ''],
       });
       formArray.push(skillGroup);

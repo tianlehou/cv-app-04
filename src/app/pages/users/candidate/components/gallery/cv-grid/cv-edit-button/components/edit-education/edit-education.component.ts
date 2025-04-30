@@ -36,7 +36,6 @@ export class EditEducationComponent implements OnInit, OnDestroy {
   editableFields: { [key: string]: boolean } = {};
   educationIndexToDelete: number | null = null;
   activeDeleteButton: number | null = null;
-  showInfoComponent = false;
   formHasChanges: boolean = false;
   private initialFormValue: any;
   private formSubscription: Subscription | null = null;
@@ -101,9 +100,11 @@ export class EditEducationComponent implements OnInit, OnDestroy {
     educationList.forEach((educationItem) => {
       formArray.push(
         this.fb.group({
-          year: [educationItem.year || '', Validators.required],
-          institution: [educationItem.institution || '', Validators.required],
           degree: [educationItem.degree || '', Validators.required],
+          institution: [educationItem.institution || '', Validators.required],
+          place: [educationItem.place || ''],
+          year: [educationItem.year || '', Validators.required],
+          achievements: [educationItem.achievements || ''],
         })
       );
     });
@@ -184,9 +185,11 @@ export class EditEducationComponent implements OnInit, OnDestroy {
 
   addEducation(): void {
     const educationGroup = this.fb.group({
-      year: ['', Validators.required],
-      institution: ['', Validators.required],
       degree: ['', Validators.required],
+      institution: ['', Validators.required],
+      place: [''],
+      year: ['', Validators.required],
+      achievements: [''],
     });
     this.educationArray.push(educationGroup);
     this.toastService.show(
@@ -259,14 +262,6 @@ export class EditEducationComponent implements OnInit, OnDestroy {
         this.educationIndexToDelete = null;
       }
     );
-  }
-
-  openInfoModal(): void {
-    this.showInfoComponent = true;
-  }
-
-  toggleInfoView(): void {
-    this.showInfoComponent = !this.showInfoComponent;
   }
 
   onCancel(): void {

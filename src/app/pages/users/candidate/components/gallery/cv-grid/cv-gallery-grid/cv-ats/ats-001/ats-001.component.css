@@ -3,7 +3,7 @@
   max-width: 100%;
   overflow-x: auto;
   box-sizing: border-box;
-  padding: 2rem;
+  padding: 10px;
   background-color: white;
 }
 
@@ -12,26 +12,24 @@
   min-height: 1130px;
   margin: 0 auto;
   font-size: 16px;
-  font-family: 'Calibri', 'Helvetica', sans-serif;
+  font-family: "Calibri", "Helvetica", sans-serif;
   padding: 3rem 2rem;
   background-color: white;
   border: 1px solid #e0e0e0;
-  box-shadow: 
-    0 1px 3px rgba(0,0,0,0.12),
-    0 1px 2px rgba(0,0,0,0.24);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
   position: relative;
 }
 
 /* Efecto de hoja de papel con esquinas ligeramente dobladas */
 .ats-container::before,
 .ats-container::after {
-  content: '';
+  content: "";
   position: absolute;
   background: white;
-  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   z-index: -1;
 }
-
+/* 
 .ats-container::before {
   top: 10px;
   bottom: 10px;
@@ -44,4 +42,4 @@
   bottom: 5px;
   left: 10px;
   right: 10px;
-}
+} */

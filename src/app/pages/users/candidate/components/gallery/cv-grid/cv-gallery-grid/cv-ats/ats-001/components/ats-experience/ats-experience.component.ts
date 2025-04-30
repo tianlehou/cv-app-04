@@ -6,7 +6,7 @@ import {
   ReactiveFormsModule,
 } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { FirebaseService } from '../../../../../../../../../../shared/services/firebase.service';
+import { FirebaseService } from '../../../../../../../../../../../shared/services/firebase.service';
 import { User } from '@angular/fire/auth';
 
 @Component({
