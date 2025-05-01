@@ -1,25 +1,14 @@
 /* Contenedor principal - Estilo profesional ATS */
 .profile-container {
-  margin: 0;
-  background: white;
-  color: var(--text-color);
-  padding-bottom: 1rem;
+  margin-top: 1rem;
 }
 
 .profile-container p {
   flex: 1;
   font-size: 28px;
   font-weight: 700;
-  color: var(--clr-blue-dark);
+  color: var(--text-color);
   margin: 0;
-}
-
-.point {
-  width: 5px;
-  height: 5px;
-  margin: 5px;
-  background-color: var(--text-color);
-  border-radius: 50%;
 }
 
 label {

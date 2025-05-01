@@ -1,0 +1,66 @@
+<div class="style-control-panel" *ngIf="visible">
+  <div class="panel-header">
+    <h3>Ajustes</h3>
+    <button class="close-btn" (click)="toggleVisibility()">
+      <i class="fas fa-times"></i>
+    </button>
+  </div>
+
+  <!-- Nuevo control para tipo de fuente -->
+  <div class="control-group">
+    <label>Tipo de fuente:</label>
+    <div class="options">
+      <button
+        *ngFor="let option of fontFamilyOptions"
+        [class.active]="selectedFontFamily === option.value"
+        (click)="onFontFamilyChange(option.value)"
+        [style.font-family]="option.value"
+      >
+        {{ option.label }}
+      </button>
+    </div>
+  </div>
+
+  <div class="control-group">
+    <label>Tamaño de fuente:</label>
+    <div class="options">
+      <button
+        *ngFor="let option of fontSizeOptions"
+        [class.active]="selectedFontSize === option.value"
+        (click)="onFontSizeChange(option.value)"
+      >
+        {{ option.label }}
+      </button>
+    </div>
+  </div>
+
+  <div class="control-group">
+    <label>Espaciado:</label>
+    <div class="options">
+      <button
+        *ngFor="let option of paddingOptions"
+        [class.active]="selectedPadding === option.value"
+        (click)="onPaddingChange(option.value)"
+      >
+        {{ option.label }}
+      </button>
+    </div>
+  </div>
+
+  <div class="control-group">
+    <label>Color de barra:</label>
+    <div class="options">
+      <button
+        *ngFor="let option of barColorOptions"
+        [class.active]="selectedBarColor === option.value"
+        (click)="onBarColorChange(option.value)"
+        [style.background-color]="option.value"
+        class="color-option"
+      ></button>
+    </div>
+  </div>
+</div>
+
+<button class="settings-btn" *ngIf="!visible" (click)="toggleVisibility()">
+  <i class="fas fa-cog"></i>
+</button>

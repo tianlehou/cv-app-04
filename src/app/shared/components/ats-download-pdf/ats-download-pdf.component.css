@@ -2,7 +2,7 @@
 .downloadPDF-btn {
     background-color: var(--bg-red);
     color:  var(--clr-red);
-    border: 1px solid var(--clr-red) !important;
+    border: 1px solid var(--clr-red-light) !important;
     border: none;
     padding: 10px 20px;
     border-radius: 5px;

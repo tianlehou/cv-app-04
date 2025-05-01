@@ -1,7 +1,9 @@
-<!-- cv-ats.component.html -->
+<app-style-control (styleChange)="onStyleChange($event)"></app-style-control>
 <app-ats-download-pdf containerId="pdf-content"></app-ats-download-pdf>
-<div class="responsive-wrapper">
-  <div class="ats-container" id="pdf-content">
+
+<div class="responsive-wrapper" [style.font-size]="currentStyles.fontSize">
+  <div class="ats-container" id="pdf-content" [style.padding]="currentStyles.padding"
+    [style.font-family]="currentStyles.fontFamily">
     <div class="section">
       <app-ats-personal-data [currentUser]="currentUser"></app-ats-personal-data>
     </div>
@@ -23,3 +25,5 @@
     </div>
   </div>
 </div>
+
+<div class="bar" [style.background-color]="currentStyles.barColor"></div>
