@@ -8,9 +8,6 @@ import { MainComponent } from './pages/users/admin/main.component';
 // Person Section
 import { CandidateComponent } from './pages/users/candidate/candidate.component';
 
-// Others Section
-import { SubscriptionComponent } from './pages/subscription/subscription.component';
-
 export const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
   { path: 'home', component: HomeComponent },
@@ -22,6 +19,5 @@ export const routes: Routes = [
   { path: 'candidate', component: CandidateComponent, canMatch: [AuthGuard], data: {role: 'candidate'}},
 
   // Others Section
-  { path: 'suscripciones', component: SubscriptionComponent },
   { path: '**', redirectTo: 'home' },
 ];

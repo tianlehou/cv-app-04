@@ -1,66 +1,100 @@
-<div class="style-control-panel" *ngIf="visible">
+<div
+  class="style-control-panel"
+  [class.visible]="visible"
+  [class.hiding]="hiding"
+  *ngIf="!hiding || visible"
+>
   <div class="panel-header">
-    <h3>Ajustes</h3>
+    <h4>Ajustes</h4>
     <button class="close-btn" (click)="toggleVisibility()">
       <i class="fas fa-times"></i>
     </button>
   </div>
 
-  <!-- Nuevo control para tipo de fuente -->
+  <!-- Control para tipo de fuente -->
   <div class="control-group">
-    <label>Tipo de fuente:</label>
-    <div class="options">
-      <button
+    <label for="fontFamily">Tipo de fuente:</label>
+    <select
+      id="fontFamily"
+      class="form-select"
+      [(ngModel)]="selectedFontFamily"
+      (change)="onFontFamilyChange(selectedFontFamily)"
+    >
+      <option
         *ngFor="let option of fontFamilyOptions"
-        [class.active]="selectedFontFamily === option.value"
-        (click)="onFontFamilyChange(option.value)"
+        [value]="option.value"
         [style.font-family]="option.value"
       >
         {{ option.label }}
-      </button>
-    </div>
+      </option>
+    </select>
   </div>
 
+  <!-- Control para tamaño de fuente -->
   <div class="control-group">
-    <label>Tamaño de fuente:</label>
-    <div class="options">
-      <button
-        *ngFor="let option of fontSizeOptions"
-        [class.active]="selectedFontSize === option.value"
-        (click)="onFontSizeChange(option.value)"
-      >
+    <label for="fontSize">Tamaño de fuente:</label>
+    <select
+      id="fontSize"
+      class="form-select"
+      [(ngModel)]="selectedFontSize"
+      (change)="onFontSizeChange(selectedFontSize)"
+    >
+      <option *ngFor="let option of fontSizeOptions" [value]="option.value">
         {{ option.label }}
-      </button>
-    </div>
+      </option>
+    </select>
   </div>
 
+  <!-- Control para espaciado -->
   <div class="control-group">
-    <label>Espaciado:</label>
-    <div class="options">
-      <button
-        *ngFor="let option of paddingOptions"
-        [class.active]="selectedPadding === option.value"
-        (click)="onPaddingChange(option.value)"
-      >
+    <label for="padding">Espaciado:</label>
+    <select
+      id="padding"
+      class="form-select"
+      [(ngModel)]="selectedPadding"
+      (change)="onPaddingChange(selectedPadding)"
+    >
+      <option *ngFor="let option of paddingOptions" [value]="option.value">
         {{ option.label }}
-      </button>
-    </div>
+      </option>
+    </select>
   </div>
 
+  <!-- Control para color de barra -->
   <div class="control-group">
-    <label>Color de barra:</label>
-    <div class="options">
-      <button
+    <label for="barColor">Color de barra:</label>
+    <select
+      id="barColor"
+      class="form-select"
+      [(ngModel)]="selectedBarColor"
+      (change)="onBarColorChange(selectedBarColor)"
+    >
+      <option
         *ngFor="let option of barColorOptions"
-        [class.active]="selectedBarColor === option.value"
-        (click)="onBarColorChange(option.value)"
+        [value]="option.value"
         [style.background-color]="option.value"
-        class="color-option"
-      ></button>
-    </div>
+      >
+        {{ option.label }}
+      </option>
+    </select>
+  </div>
+
+    <!-- Botón de Guardar ajustes -->
+    <div
+    class="control-group"
+    style="justify-content: center; margin-top: 1.5rem"
+  >
+    <button class="save-btn" (click)="saveStyles()">
+      <i class="fas fa-save"></i> Guardar ajustes
+    </button>
   </div>
 </div>
 
-<button class="settings-btn" *ngIf="!visible" (click)="toggleVisibility()">
+<button
+  class="settings-btn"
+  [class.panel-visible]="visible"
+  *ngIf="!visible"
+  (click)="toggleVisibility()"
+>
   <i class="fas fa-cog"></i>
 </button>

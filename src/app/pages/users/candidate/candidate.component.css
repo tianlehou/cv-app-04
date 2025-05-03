@@ -52,3 +52,7 @@ app-custom-button {
     height: 150px;
   }
 }
+
+#candidate, #subscription {
+  transition: opacity 0.3s ease-in-out;
+}

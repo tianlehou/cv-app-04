@@ -13,6 +13,7 @@ import {
 } from '@angular/fire/auth';
 import { Database, ref, set, get, update } from '@angular/fire/database';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { ComponentStyles } from '../models/component-styles.model';
 
 @Injectable({
   providedIn: 'root',
@@ -76,8 +77,6 @@ export class FirebaseService {
       if (user?.email) {
         const userEmailKey = this.formatEmailKey(user.email);
         const userRef = ref(this.db, `cv-app/users/${userEmailKey}`);
-
-        // Corrección clave para línea 81
         const snapshot = await runInInjectionContext(this.injector, () =>
           get(userRef)
         );
@@ -103,6 +102,15 @@ export class FirebaseService {
         console.error('Error al obtener datos:', error);
         throw error;
       }
+    });
+  }
+
+  async getComponentStyles(email: string, componentName: string): Promise<ComponentStyles | null> {
+    return runInInjectionContext(this.injector, async () => {
+      const userEmailKey = this.formatEmailKey(email);
+      const stylesRef = ref(this.db, `cv-app/users/${userEmailKey}/cv-styles/${componentName}`);
+      const snapshot = await get(stylesRef);
+      return snapshot.exists() ? snapshot.val() as ComponentStyles : null;
     });
   }
 
@@ -135,6 +143,9 @@ export class FirebaseService {
         skills?: string;
       };
       role: string;
+      'cv-styles'?: {
+        [key: string]: ComponentStyles;
+      };
     }>
   ): Promise<void> {
     return runInInjectionContext(this.injector, async () => {

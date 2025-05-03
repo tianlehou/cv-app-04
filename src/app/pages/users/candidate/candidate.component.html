@@ -1,11 +1,21 @@
 <div class="profile-header">
-  <app-sidebar></app-sidebar>
+  <app-sidebar
+    [activeSection]="activeSection"
+    (homeClicked)="showHome()" 
+    (subscriptionClicked)="toggleSubscription()"
+  ></app-sidebar>
 </div>
 
-<div class="profile-container">
-  <div class="profile-components-row">
-    <app-profile-picture *ngIf="currentUser" [currentUser]="currentUser"></app-profile-picture>
-    <app-personal-data *ngIf="currentUser" [currentUser]="currentUser"></app-personal-data>
+<section id="candidate" *ngIf="!showSubscription">
+  <div class="profile-container">
+    <div class="profile-components-row">
+      <app-profile-picture *ngIf="currentUser" [currentUser]="currentUser"></app-profile-picture>
+      <app-personal-data *ngIf="currentUser" [currentUser]="currentUser"></app-personal-data>
+    </div>
+    <app-gallery *ngIf="currentUser" [currentUser]="currentUser"></app-gallery>
   </div>
-  <app-gallery *ngIf="currentUser" [currentUser]="currentUser"></app-gallery>
-</div>
+</section>
+
+<section id="subscription" *ngIf="showSubscription">
+  <app-subscription></app-subscription>
+</section>

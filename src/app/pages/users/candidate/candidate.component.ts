@@ -3,13 +3,14 @@ import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FirebaseService } from '../../../shared/services/firebase.service';
 
-// Custom components
-import { SidebarComponent } from '../../../shared/components/buttons/sidebar/sidebar.component';
-
 // Components
 import { ProfilePictureComponent } from './components/profile-picture/profile-picture.component';
 import { PersonalDataComponent } from './components/personal-data/personal-data.component';
 import { GalleryComponent } from './components/gallery/gallery.component';
+
+// Others components
+import { SidebarComponent } from './components/sidebar/sidebar.component';
+import { SubscriptionComponent } from './components/sidebar/subscription/subscription.component';
 
 @Component({
   selector: 'app-candidate',
@@ -20,7 +21,8 @@ import { GalleryComponent } from './components/gallery/gallery.component';
     SidebarComponent,
     ProfilePictureComponent,
     PersonalDataComponent,
-    GalleryComponent
+    GalleryComponent,
+    SubscriptionComponent,
   ],
   templateUrl: './candidate.component.html',
   styleUrls: ['./candidate.component.css'],
@@ -28,11 +30,12 @@ import { GalleryComponent } from './components/gallery/gallery.component';
 export class CandidateComponent implements OnInit {
   currentUser: any = null;
   userRole: string | null = null;
+  showSubscription = false;
+  activeSection: 'home' | 'subscription' = 'home';
 
   constructor(private firebaseService: FirebaseService) {}
 
   async ngOnInit(): Promise<void> {
-
     // Usa el método del servicio para obtener el estado de autenticación
     this.firebaseService
       .isAuthenticated()
@@ -51,5 +54,14 @@ export class CandidateComponent implements OnInit {
           console.error('Usuario no autenticado.');
         }
       });
+  }
+  toggleSubscription() {
+    this.showSubscription = !this.showSubscription;
+    this.activeSection = this.showSubscription ? 'subscription' : 'home';
+  }
+
+  showHome() {
+    this.showSubscription = false;
+    this.activeSection = 'home';
   }
 }
