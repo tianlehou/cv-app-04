@@ -16,10 +16,16 @@ import { ToastService } from '../../../../../../../../shared/services/toast.serv
 export class StyleControlComponent implements OnInit {
   @Input() componentName!: string;
   @Output() styleChange = new EventEmitter<ComponentStyles>();
-  
+
   visible = false;
   hiding = false;
   isLoading = true;
+  showColorPicker = false;
+  customBarColor = '#000000';
+  userColorFavorites: string[] = [];
+  isAddingColor = false;
+  newFavoriteColor = '#000000';
+  selectedColorIndex: number | null = null;
 
   // Opciones de configuración
   fontFamilyOptions = [
@@ -45,14 +51,13 @@ export class StyleControlComponent implements OnInit {
   ];
 
   barColorOptions = [
-    { value: 'var(--clr-blue-dark)', label: 'Defecto' },
-    { value: '#dc3545', label: 'Rojo' },
-    { value: '#0d6efd', label: 'Azul' },
-    { value: '#ffc107', label: 'Amarillo' },
-    { value: '#6f42c1', label: 'Púrpura' },
-    { value: '#198754', label: 'Verde' },
-    { value: '#ff9800', label: 'Naranja' },
-    { value: '#6c757d', label: 'Gris' },
+    { value: '#dc3545', label: 'Rojo #dc3545' },
+    { value: '#ff9800', label: 'Naranja #ff9800' },
+    { value: '#ffc107', label: 'Amarillo #ffc107' },
+    { value: '#198754', label: 'Verde #198754' },
+    { value: '#0d6efd', label: 'Azul #0d6efd' },
+    { value: '#6f42c1', label: 'Púrpura #6f42c1' },
+    { value: '#6c757d', label: 'Gris #6c757d' },
   ];
 
   // Valores seleccionados con valores por defecto
@@ -67,6 +72,7 @@ export class StyleControlComponent implements OnInit {
 
   async ngOnInit() {
     await this.loadSavedStyles();
+    await this.loadColorFavorites();
     this.isLoading = false;
   }
 
@@ -81,7 +87,7 @@ export class StyleControlComponent implements OnInit {
 
         if (savedStyles) {
           this.applySavedStyles(savedStyles);
-          this.emitStyleChanges(); // Notificar a los componentes padres
+          this.emitStyleChanges();
         }
       }
     } catch (error) {
@@ -94,21 +100,53 @@ export class StyleControlComponent implements OnInit {
     // Font Family
     const fontFamilyOption = this.fontFamilyOptions.find(opt => opt.value === styles.fontFamily);
     this.selectedFontFamily = fontFamilyOption ? fontFamilyOption.value : 'Arial, sans-serif';
-
+  
     // Font Size
     const fontSizeOption = this.fontSizeOptions.find(opt => opt.value === styles.fontSize);
     this.selectedFontSize = fontSizeOption ? fontSizeOption.value : '12px';
-
+  
     // Padding
     const paddingOption = this.paddingOptions.find(opt => opt.value === styles.padding);
     this.selectedPadding = paddingOption ? paddingOption.value : '2rem 2rem';
-
+  
     // Bar Color
-    const barColorOption = this.barColorOptions.find(opt => opt.value === styles.barColor);
-    this.selectedBarColor = barColorOption ? barColorOption.value : 'var(--clr-blue-dark)';
+    const isCustomColor = styles.barColor && !this.barColorOptions.some(opt => opt.value === styles.barColor);
+    if (isCustomColor) {
+      this.selectedBarColor = styles.barColor;
+      this.showColorPicker = true;
+      this.customBarColor = styles.barColor;
+    } else {
+      const barColorOption = this.barColorOptions.find(opt => opt.value === styles.barColor);
+      this.selectedBarColor = barColorOption ? barColorOption.value : 'var(--clr-blue-dark)';
+      this.showColorPicker = false;
+    }
   }
 
-  // Resto de los métodos permanecen igual...
+  async loadColorFavorites() {
+    try {
+      const currentUser = await this.firebaseService.getCurrentUser();
+      if (currentUser?.email) {
+        this.userColorFavorites = await this.firebaseService.getColorFavorites(currentUser.email);
+      }
+    } catch (error) {
+      console.error('Error loading color favorites:', error);
+      this.toastService.show('Error al cargar colores favoritos', 'error');
+    }
+  }
+
+  async saveColorFavorites() {
+    try {
+      const currentUser = await this.firebaseService.getCurrentUser();
+      if (currentUser?.email) {
+        await this.firebaseService.saveColorFavorites(currentUser.email, this.userColorFavorites);
+        this.toastService.show('Colores favoritos guardados', 'success');
+      }
+    } catch (error) {
+      console.error('Error saving color favorites:', error);
+      this.toastService.show('Error al guardar colores favoritos', 'error');
+    }
+  }
+
   toggleVisibility() {
     if (this.visible) {
       this.hiding = true;
@@ -132,13 +170,46 @@ export class StyleControlComponent implements OnInit {
   }
 
   onBarColorChange(color: string) {
-    this.selectedBarColor = color;
+    if (color === 'custom') {
+      this.showColorPicker = true;
+      this.customBarColor = this.selectedBarColor.startsWith('#') ? this.selectedBarColor : '#000000';
+      this.selectedBarColor = this.customBarColor;
+      this.emitStyleChanges();
+    } else {
+      this.showColorPicker = false;
+      this.selectedBarColor = color;
+      this.emitStyleChanges();
+    }
+  }
+
+  onCustomColorChange() {
+    this.selectedBarColor = this.customBarColor;
     this.emitStyleChanges();
   }
 
   onFontFamilyChange(fontFamily: string): void {
     this.selectedFontFamily = fontFamily;
     this.emitStyleChanges();
+  }
+
+  addToFavorites(color: string) {
+    if (!this.userColorFavorites.includes(color)) {
+      this.userColorFavorites.push(color);
+      this.saveColorFavorites();
+      this.isAddingColor = false;
+      this.newFavoriteColor = '#000000';
+    }
+  }
+
+  selectFavoriteColor(color: string) {
+    this.selectedBarColor = color;
+    this.showColorPicker = false;
+    this.emitStyleChanges();
+  }
+
+  removeFavorite(index: number) {
+    this.userColorFavorites.splice(index, 1);
+    this.saveColorFavorites();
   }
 
   private emitStyleChanges() {
@@ -157,7 +228,7 @@ export class StyleControlComponent implements OnInit {
       padding: this.selectedPadding,
       barColor: this.selectedBarColor
     };
-
+  
     this.confirmationModal.show(
       {
         title: 'Guardar ajustes',
@@ -168,13 +239,20 @@ export class StyleControlComponent implements OnInit {
       async () => {
         try {
           const currentUser = await this.firebaseService.getCurrentUser();
-          
+  
           if (currentUser && currentUser.email) {
-            await this.firebaseService.updateUserData(currentUser.email, {
+            // Primero obtenemos los estilos actuales para no sobrescribir los colores favoritos
+            const currentData = await this.firebaseService.getUserData(this.firebaseService.formatEmailKey(currentUser.email));
+            
+            // Creamos el objeto de actualización manteniendo los datos existentes
+            const updateData = {
               'cv-styles': {
-                [this.componentName]: styles
+                ...(currentData?.['cv-styles'] || {}), // Mantenemos todos los estilos existentes
+                [this.componentName]: styles // Actualizamos solo los estilos del componente actual
               }
-            });
+            };
+  
+            await this.firebaseService.updateUserData(currentUser.email, updateData);
             this.toastService.show('Ajustes guardados correctamente', 'success');
           }
         } catch (error) {

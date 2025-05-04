@@ -29,3 +29,10 @@
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   z-index: -1;
 }
+
+.bar {
+  height: 4px;
+  width: 100%;
+  margin: 10px 0;
+  transition: background-color 1s ease;
+}

@@ -1,9 +1,4 @@
-<div
-  class="style-control-panel"
-  [class.visible]="visible"
-  [class.hiding]="hiding"
-  *ngIf="!hiding || visible"
->
+<div class="style-control-panel" [class.visible]="visible" [class.hiding]="hiding" *ngIf="!hiding || visible">
   <div class="panel-header">
     <h4>Ajustes</h4>
     <button class="close-btn" (click)="toggleVisibility()">
@@ -14,17 +9,9 @@
   <!-- Control para tipo de fuente -->
   <div class="control-group">
     <label for="fontFamily">Tipo de fuente:</label>
-    <select
-      id="fontFamily"
-      class="form-select"
-      [(ngModel)]="selectedFontFamily"
-      (change)="onFontFamilyChange(selectedFontFamily)"
-    >
-      <option
-        *ngFor="let option of fontFamilyOptions"
-        [value]="option.value"
-        [style.font-family]="option.value"
-      >
+    <select id="fontFamily" class="form-select" [(ngModel)]="selectedFontFamily"
+      (change)="onFontFamilyChange(selectedFontFamily)">
+      <option *ngFor="let option of fontFamilyOptions" [value]="option.value" [style.font-family]="option.value">
         {{ option.label }}
       </option>
     </select>
@@ -33,12 +20,8 @@
   <!-- Control para tamaño de fuente -->
   <div class="control-group">
     <label for="fontSize">Tamaño de fuente:</label>
-    <select
-      id="fontSize"
-      class="form-select"
-      [(ngModel)]="selectedFontSize"
-      (change)="onFontSizeChange(selectedFontSize)"
-    >
+    <select id="fontSize" class="form-select" [(ngModel)]="selectedFontSize"
+      (change)="onFontSizeChange(selectedFontSize)">
       <option *ngFor="let option of fontSizeOptions" [value]="option.value">
         {{ option.label }}
       </option>
@@ -48,12 +31,7 @@
   <!-- Control para espaciado -->
   <div class="control-group">
     <label for="padding">Espaciado:</label>
-    <select
-      id="padding"
-      class="form-select"
-      [(ngModel)]="selectedPadding"
-      (change)="onPaddingChange(selectedPadding)"
-    >
+    <select id="padding" class="form-select" [(ngModel)]="selectedPadding" (change)="onPaddingChange(selectedPadding)">
       <option *ngFor="let option of paddingOptions" [value]="option.value">
         {{ option.label }}
       </option>
@@ -63,38 +41,55 @@
   <!-- Control para color de barra -->
   <div class="control-group">
     <label for="barColor">Color de barra:</label>
-    <select
-      id="barColor"
-      class="form-select"
-      [(ngModel)]="selectedBarColor"
-      (change)="onBarColorChange(selectedBarColor)"
-    >
-      <option
-        *ngFor="let option of barColorOptions"
-        [value]="option.value"
-        [style.background-color]="option.value"
-      >
-        {{ option.label }}
-      </option>
-    </select>
+    <div style="display: flex; gap: 8px">
+      <input *ngIf="showColorPicker" type="color" [(ngModel)]="customBarColor" (change)="onCustomColorChange()"
+        style="width: 40px; height: 38px; cursor: pointer" />
+      <select id="barColor" class="form-select" [(ngModel)]="selectedBarColor"
+        (change)="onBarColorChange(selectedBarColor)">
+        <option value="custom" [style.color]="showColorPicker ? customBarColor : 'black'" [selected]="showColorPicker">
+          {{ showColorPicker ? customBarColor : 'Personalizado...' }}
+        </option>
+        <option *ngFor="let option of barColorOptions" [value]="option.value" [style.color]="option.value">
+          {{ option.label }}
+        </option>
+      </select>
+    </div>
   </div>
 
-    <!-- Botón de Guardar ajustes -->
-    <div
-    class="control-group"
-    style="justify-content: center; margin-top: 1.5rem"
-  >
+  <!-- Sección de colores favoritos -->
+  <div class="control-group">
+    <!-- *ngIf="userColorFavorites.length > 0" -->
+    <label>Mis colores:</label>
+    <div class="control-group" style="display: flex; justify-content: space-between; gap: 8px;">
+      <div *ngIf="isAddingColor" style="display: flex; gap: 8px; align-items: center;">
+        <input type="color" [(ngModel)]="newFavoriteColor" style="width: 40px; height: 38px;">
+        <button class="save-btn" (click)="addToFavorites(newFavoriteColor)" style="width: 40px; height: 38px;">
+          <i class="fas fa-save"></i>
+        </button>
+      </div>
+      <button class="add-btn" [class.cancel-btn]="isAddingColor" (click)="isAddingColor = !isAddingColor">
+        <i class="fas" [class.fa-plus]="!isAddingColor" [class.fa-times]="isAddingColor"></i>
+        {{isAddingColor ? 'Cancelar' : 'Añadir color'}}
+      </button>
+    </div>
+  </div>
+
+  <div class="color-favorites">
+    <div *ngFor="let color of userColorFavorites; let i = index" class="color-swatch"
+      [class.selected]="selectedBarColor === color" [style.background-color]="color"
+      (click)="selectFavoriteColor(color)" [title]="color">
+      <i class="fas fa-times remove-icon" (click)="removeFavorite(i); $event.stopPropagation()"></i>
+    </div>
+  </div>
+
+  <!-- Botón de Guardar ajustes -->
+  <div class="control-group" style="justify-content: center; margin-top: 1.5rem">
     <button class="save-btn" (click)="saveStyles()">
       <i class="fas fa-save"></i> Guardar ajustes
     </button>
   </div>
 </div>
 
-<button
-  class="settings-btn"
-  [class.panel-visible]="visible"
-  *ngIf="!visible"
-  (click)="toggleVisibility()"
->
+<button class="settings-btn" [class.panel-visible]="visible" *ngIf="!visible" (click)="toggleVisibility()">
   <i class="fas fa-cog"></i>
 </button>

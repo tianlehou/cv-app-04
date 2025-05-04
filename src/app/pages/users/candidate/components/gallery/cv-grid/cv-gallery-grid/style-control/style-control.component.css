@@ -1,8 +1,15 @@
+:root {
+  --clr-green: #28a745;
+  --clr-green-dark: #218838;
+  --clr-red: #dc3545;
+  --clr-red-dark: #c82333;
+}
+
 .style-control-panel {
   position: fixed;
   top: 0;
   right: 0;
-  width: 325px;
+  width: 345px;
   background-color: white;
   padding: 1rem;
   border-radius: 8px 0 8px 8px;
@@ -142,8 +149,8 @@ option[style*="background-color"] {
   align-items: center;
 }
 
-.save-btn {
-  background-color: var(--clr-blue-dark);
+.add-btn {
+  background-color: var(--clr-blue); /* Cambiar a verde */
   color: white;
   border: none;
   border-radius: 4px;
@@ -156,10 +163,112 @@ option[style*="background-color"] {
   gap: 0.5rem;
 }
 
+.save-btn {
+  background-color: var(--clr-green); /* Cambiar a verde */
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.add-btn:hover {
+  background-color: var(--clr-blue-dark); /* Verde más oscuro al pasar el mouse */
+}
+
 .save-btn:hover {
-  background-color: #0a58ca;
+  background-color: var(--clr-green-dark); /* Verde más oscuro al pasar el mouse */
+}
+
+.add-btn.cancel-btn {
+  background-color: var(--clr-red); /* Rojo para cancelar */
+}
+
+.add-btn.cancel-btn:hover {
+  background-color: var(--clr-red-dark); /* Rojo más oscuro al pasar el mouse */
 }
 
 .save-btn i {
   font-size: 0.9rem;
+}
+
+input[type="color"] {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 0;
+  background: none;
+}
+
+input[type="color"]::-webkit-color-swatch {
+  border: none;
+  border-radius: 3px;
+}
+
+input[type="color"]::-moz-color-swatch {
+  border: none;
+  border-radius: 3px;
+}
+
+.color-favorites {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.color-swatch {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.color-swatch:hover {
+  transform: scale(1.1);
+  border-color: #333;
+}
+
+.color-swatch.selected {
+  border-color: #333;
+  box-shadow: 0 0 0 2px white, 0 0 0 4px #333;
+}
+
+.remove-icon {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: white;
+  border-radius: 50%;
+  width: 16px;
+  height: 16px;
+  display: none;
+  justify-content: center;
+  align-items: center;
+  font-size: 10px;
+  color: red;
+  border: 1px solid #ccc;
+}
+
+.color-swatch:hover .remove-icon {
+  display: flex;
+}
+
+.add-color-container {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-top: 8px;
+  width: 100%;
+  justify-content: flex-end;
 }

@@ -46,9 +46,12 @@ export class Ats001Component implements OnInit {
       );
 
       if (savedStyles) {
+        // Asegúrate de que el color personalizado se cargue correctamente
         this.currentStyles = {
-          ...this.currentStyles,
-          ...savedStyles
+          fontSize: savedStyles.fontSize || this.currentStyles.fontSize,
+          padding: savedStyles.padding || this.currentStyles.padding,
+          barColor: savedStyles.barColor || this.currentStyles.barColor,
+          fontFamily: savedStyles.fontFamily || this.currentStyles.fontFamily
         };
         this.applyStyles();
       }
@@ -56,6 +59,7 @@ export class Ats001Component implements OnInit {
   }
 
   private applyStyles() {
+    // Aplica el color de barra (ya sea personalizado o predefinido)
     document.querySelectorAll('.bar').forEach((el: Element) => {
       (el as HTMLElement).style.backgroundColor = this.currentStyles.barColor;
     });
@@ -63,18 +67,13 @@ export class Ats001Component implements OnInit {
     const container = document.querySelector('.ats-container');
     if (container) {
       (container as HTMLElement).style.fontFamily = this.currentStyles.fontFamily;
+      (container as HTMLElement).style.padding = this.currentStyles.padding;
+      (container as HTMLElement).style.fontSize = this.currentStyles.fontSize;
     }
   }
 
   onStyleChange(styles: ComponentStyles) {
     this.currentStyles = styles;
-    document.querySelectorAll('.bar').forEach((el: Element) => {
-      (el as HTMLElement).style.backgroundColor = styles.barColor;
-    });
-    
-    const container = document.querySelector('.ats-container');
-    if (container) {
-      (container as HTMLElement).style.fontFamily = styles.fontFamily;
-    }
+    this.applyStyles();
   }
 }

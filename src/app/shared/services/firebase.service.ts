@@ -105,12 +105,41 @@ export class FirebaseService {
     });
   }
 
-  async getComponentStyles(email: string, componentName: string): Promise<ComponentStyles | null> {
+  async getComponentStyles(
+    email: string,
+    componentName: string
+  ): Promise<ComponentStyles | null> {
     return runInInjectionContext(this.injector, async () => {
       const userEmailKey = this.formatEmailKey(email);
-      const stylesRef = ref(this.db, `cv-app/users/${userEmailKey}/cv-styles/${componentName}`);
+      const stylesRef = ref(
+        this.db,
+        `cv-app/users/${userEmailKey}/cv-styles/${componentName}`
+      );
       const snapshot = await get(stylesRef);
-      return snapshot.exists() ? snapshot.val() as ComponentStyles : null;
+      return snapshot.exists() ? (snapshot.val() as ComponentStyles) : null;
+    });
+  }
+
+  async getColorFavorites(email: string): Promise<string[]> {
+    return runInInjectionContext(this.injector, async () => {
+      const userEmailKey = this.formatEmailKey(email);
+      const favoritesRef = ref(
+        this.db,
+        `cv-app/users/${userEmailKey}/cv-styles/color-favorites`
+      );
+      const snapshot = await get(favoritesRef);
+      return snapshot.exists() ? (snapshot.val() as string[]) : [];
+    });
+  }
+
+  async saveColorFavorites(email: string, colors: string[]): Promise<void> {
+    return runInInjectionContext(this.injector, async () => {
+      const userEmailKey = this.formatEmailKey(email);
+      const favoritesRef = ref(
+        this.db,
+        `cv-app/users/${userEmailKey}/cv-styles/color-favorites`
+      );
+      await set(favoritesRef, colors);
     });
   }
 
