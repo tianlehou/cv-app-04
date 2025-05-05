@@ -1,10 +1,10 @@
-<div class="edit-profile-container" *ngIf="!showInfoComponent">
+<div class="edit-profile-container">
   <header>
     <h3>
       <i class="fas fa-id-card"></i>
       <span>Datos de Contacto</span>
     </h3>
-    <i class="fas fa-info-circle info-icon" title="Información" (click)="openInfoModal()"></i>
+    <app-cv-edit-button-row></app-cv-edit-button-row>
   </header>
 
   <body>
@@ -112,4 +112,4 @@
   </body>
 </div>
 
-<app-personal-data-info *ngIf="showInfoComponent" (back)="toggleInfoView()"></app-personal-data-info>
+<app-personal-data-info></app-personal-data-info>

@@ -150,9 +150,10 @@ option[style*="background-color"] {
 }
 
 .add-btn {
-  background-color: var(--clr-blue); /* Cambiar a verde */
+  background-color: var(--clr-blue);
   color: white;
   border: none;
+  height: 40px;
   border-radius: 4px;
   padding: 0.5rem 1rem;
   font-size: 0.9rem;
@@ -164,7 +165,7 @@ option[style*="background-color"] {
 }
 
 .save-btn {
-  background-color: var(--clr-green); /* Cambiar a verde */
+  background-color: var(--clr-green);
   color: white;
   border: none;
   border-radius: 4px;
@@ -220,13 +221,12 @@ input[type="color"]::-moz-color-swatch {
 .color-favorites {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 8px;
+  gap: 12px;
 }
 
 .color-swatch {
-  width: 30px;
-  height: 30px;
+  width: 35px;
+  height: 35px;
   border-radius: 50%;
   cursor: pointer;
   border: 2px solid transparent;
@@ -262,13 +262,4 @@ input[type="color"]::-moz-color-swatch {
 
 .color-swatch:hover .remove-icon {
   display: flex;
-}
-
-.add-color-container {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-  margin-top: 8px;
-  width: 100%;
-  justify-content: flex-end;
 }

@@ -30,72 +30,14 @@ header {
   outline: none;
 }
 
-/* Fila de botones - Mejorada con espaciado y alineación */
-.edit-profile-container .button-row {
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  margin-top: 20px;
-  gap: 15px;
+:host ::ng-deep app-cv-edit-button-row .add-btn {
+  opacity: 0.5 !important;
+  cursor: not-allowed !important;
+  pointer-events: none !important;
+  background-color: #f5f5f5 !important;
+  border-color: #ddd !important;
 }
 
-/* Botones - Estilo impactante como en cv-edit-button */
-.edit-profile-container .btn {
-  padding: 10px 20px;
-  border-radius: 8px;
-  font-size: 1rem;
-  cursor: pointer;
-  min-width: 100px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-}
-
-.edit-profile-container .btn i {
-  font-size: 0.9rem;
-}
-
-.edit-profile-container .btn-edit {
-  border: 1px solid var(--clr-blue);
-  background-color: white;
-  color: var(--clr-blue);
-  transition: all 0.5s ease-in-out;
-}
-
-.edit-profile-container .btn-edit:hover {
-  color: white;
-  background-color: var(--clr-blue);
-}
-
-.edit-profile-container .btn-cancel {
-  color: var(--clr-red);
-  background-color: var(--clr-white);
-  border: 1px solid var(--clr-red);
-  transition: all 0.5s ease-in-out;
-}
-
-.edit-profile-container .btn-cancel:hover {
-  background-color: var(--clr-red);
-  color: var(--clr-white);
-}
-
-.edit-profile-container .btn-save {
-  background-color: var(--clr-white);
-  border: 1px solid var(--clr-green);
-  color: var(--clr-green);
-  transition: all 0.5s ease-in-out;
-}
-
-.edit-profile-container .btn-save:hover {
-  background-color: var(--clr-green);
-  color: var(--clr-white);
-}
-
-.edit-profile-container .btn-save:disabled {
-  background-color: var(--bg-dark);
-  color: var(--text-color-light);
-  cursor: not-allowed;
-  transform: none;
-  box-shadow: none;
+:host ::ng-deep app-cv-edit-button-row .add-btn i {
+  color: var(--clr-gray) !important;
 }

@@ -38,10 +38,11 @@ export class StyleControlComponent implements OnInit {
   ];
 
   fontSizeOptions = [
-    { value: '10px', label: 'Pequeño (10px)' },
+    { value: '10px', label: 'Extra chico (10px)' },
+    { value: '11px', label: 'Chico (11px)' },
     { value: '12px', label: 'Mediano (12px)' },
-    { value: '14px', label: 'Grande (14px)' },
-    { value: '16px', label: 'Extra grande (16px)' },
+    { value: '13px', label: 'Grande (13px)' },
+    { value: '14px', label: 'Extra grande (14px)' },
   ];
 
   paddingOptions = [

@@ -1,55 +1,45 @@
-<div class="edit-profile-container" *ngIf="!showInfoComponent">
+<div class="edit-profile-container">
   <header>
     <h3>
       <i class="fas fa-language"></i>
       <span>Idiomas</span>
     </h3>
-    <i class="fas fa-info-circle info-icon" title="Información" (click)="openInfoModal()"></i>
+    <app-cv-edit-button-row [isEditing]="editableFields['languages']" [hasChanges]="formHasChanges"
+      (onCancel)="onCancel()" (onEditSave)="toggleEdit('languages')" (onAdd)="addLanguage()">
+    </app-cv-edit-button-row>
   </header>
 
   <body>
     <form [formGroup]="profileForm" (ngSubmit)="onSubmit()">
       <div class="form-group">
-        <div class="display-flex-space-between">
-          <label for="languages">Idiomas:</label>
-          <app-cv-edit-button-row 
-            [isEditing]="editableFields['languages']"
-            [hasChanges]="formHasChanges"
-            (onCancel)="onCancel()"
-            (onEditSave)="toggleEdit('languages')"
-            (onAdd)="addLanguage()">
-          </app-cv-edit-button-row>
-        </div>
-
-        <div class="line"></div>
-
         <div formArrayName="languages">
           <div *ngFor="let language of languagesArray.controls; let i = index" [formGroupName]="i"
-          class="language-group" (mouseenter)="showDeleteButton(i)" (mouseleave)="hideDeleteButton(i)"
-          (click)="showDeleteButton(i)">
-       <div class="form-row">
-         <div class="form-group third-width">
-           <label for="name">Idioma:</label>
-           <input type="text" id="name" formControlName="name" class="form-control" [readonly]="!editableFields['languages']"/>
-         </div>
-         <div class="form-group third-width">
-           <label for="proficiency">Nivel:</label>
-           <input type="text" id="proficiency" formControlName="proficiency" class="form-control" [readonly]="!editableFields['languages']"/>
-         </div>
-         <div class="form-group third-width">
-           <label for="certification">Certificación:</label>
-           <input type="text" id="certification" formControlName="certification" class="form-control" [readonly]="!editableFields['languages']"/>
-         </div>
-       </div>
-     
-       <app-delete-button-b 
-         *ngIf="activeDeleteButton === i"
-         (deleteClick)="confirmDeleteLanguage(i); $event.stopPropagation()"
-         class="language-delete-button">
-       </app-delete-button-b>
-     
-       <div class="line"></div>
-     </div>
+            class="section-group" (mouseenter)="showDeleteButton(i)" (mouseleave)="hideDeleteButton(i)"
+            (click)="showDeleteButton(i)">
+            <div class="form-row">
+              <div class="form-group third-width">
+                <label for="name">Idioma:</label>
+                <input type="text" id="name" formControlName="name" class="form-control"
+                  [readonly]="!editableFields['languages']" />
+              </div>
+              <div class="form-group third-width">
+                <label for="proficiency">Nivel:</label>
+                <input type="text" id="proficiency" formControlName="proficiency" class="form-control"
+                  [readonly]="!editableFields['languages']" />
+              </div>
+              <div class="form-group third-width">
+                <label for="certification">Certificación:</label>
+                <input type="text" id="certification" formControlName="certification" class="form-control"
+                  [readonly]="!editableFields['languages']" />
+              </div>
+            </div>
+
+            <app-delete-button-b *ngIf="activeDeleteButton === i"
+              (deleteClick)="confirmDeleteLanguage(i); $event.stopPropagation()" class="delete-button">
+            </app-delete-button-b>
+
+            <div class="line"></div>
+          </div>
         </div>
       </div>
     </form>
@@ -57,4 +47,4 @@
 </div>
 
 
-<app-languages-info *ngIf="showInfoComponent" (back)="toggleInfoView()"></app-languages-info>
+<app-languages-info></app-languages-info>

@@ -2,17 +2,15 @@ header {
   background: linear-gradient(135deg, var(--clr-blue-dark) 0%, var(--clr-purple-dark) 100%);
 }
 
-/* Formulario general */
-.form-group {
-  margin-bottom: 15px;
-  text-align: left;
+body {
+  margin: 0;
+  padding: 0;
 }
 
-.display-flex-space-between {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
+/* Formulario general */
+.form-group {
+  text-align: left;
+
 }
 
 label {
@@ -42,34 +40,31 @@ textarea:not([readonly]) {
   border: 1px solid #007bff;
 }
 
-/* linea divisoria */
 .line {
   border-bottom: 1px solid #ccc;
-  margin: 1em 0;
+  margin: 0 !important;
 }
 
-.education-group {
+.section-group:last-child .line {
+  display: none;
+}
+
+.section-group {
   position: relative;
-  transition: background-color 0.3s ease;
-  border-radius: 8px;
+  padding: 15px;
 }
 
-.education-delete-button {
+.delete-button {
   position: absolute;
-  top: -5px;
-  right: 5px;
+  top: 10px;
+  right: 15px;
   opacity: 0;
   transition: opacity 0.3s ease;
 }
 
-.education-group:hover .education-delete-button,
-.education-group:focus-within .education-delete-button {
+.section-group:hover .delete-button,
+.section-group:focus-within .delete-button {
   opacity: 1;
-}
-
-/* Eliminar estilos antiguos del delete button */
-app-delete-button-b {
-  margin-top: -5px;
 }
 
 .form-control {

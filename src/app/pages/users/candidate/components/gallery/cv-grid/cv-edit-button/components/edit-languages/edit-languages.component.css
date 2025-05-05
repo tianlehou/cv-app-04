@@ -2,47 +2,42 @@ header {
   background: linear-gradient(135deg, var(--clr-blue-dark) 0%, var(--clr-purple-dark) 100%);
 }
 
+body {
+  margin: 0;
+  padding: 0;
+}
+
 /* Grupos de formulario */
 .form-group {
-  margin-bottom: 15px;
   text-align: left;
 }
 
-.language-group {
+.section-group {
   position: relative;
-  padding: 15px;
-  transition: background-color 0.3s ease;
-  border-radius: 8px;
+  padding: 15px 15px 0;
 }
 
-.language-group:hover {
-  background-color: rgba(0, 0, 0, 0.03);
-}
-
-.language-delete-button {
+.delete-button {
   position: absolute;
-  top: 15px;
+  top: 10px;
   right: 15px;
   opacity: 0;
   transition: opacity 1s ease-in-out;
 }
 
-.language-group:hover .language-delete-button,
-.language-group:focus-within .language-delete-button {
+.section-group:hover .delete-button,
+.section-group:focus-within .delete-button {
   opacity: 1;
-}
-
-app-delete-button-b {
-  position: absolute;
-  top: 0;
-  right: 0;
-  margin-top: -5px;
 }
 
 /* Agregar también la clase line si no está definida */
 .line {
   border-bottom: 1px solid #ccc;
-  margin: 1em 0;
+  margin: 0 !important;
+}
+
+.section-group:last-child .line {
+  display: none;
 }
 
 label {
@@ -51,16 +46,13 @@ label {
   font-weight: 500;
 }
 
-/* Inputs, textareas y botones */
-input,
-textarea,
-button {
+input {
   width: 100%;
   padding: 10px;
+  margin-bottom: 1rem;
   border: 1px solid #ccc;
   border-radius: 5px;
 }
-
 
 /* Mensajes de error */
 .text-danger {
@@ -78,19 +70,12 @@ button {
   flex: 1; /* Permite que el input ocupe todo el espacio disponible */
 }
 
-/* Experiencia */
-.display-flex-space-between {
-  display: flex;
-  justify-content: space-between; /* Distribuye los elementos con espacio entre ellos */
-  align-items: center; /* Asegura que estén alineados verticalmente */
-  width: 100%; /* Asegura que ocupe todo el ancho disponible */
-}
-
 /* Filas y columnas en la sección de experiencia */
 .form-row {
   display: flex; /* Coloca los elementos en una fila horizontal */
-  gap: 1em; /* Añade espacio entre las columnas */
   align-items: center; /* Alinea verticalmente los elementos */
+  justify-content: space-between;
+  gap: 8px;
 }
 
 .quarter-width {

@@ -12,11 +12,17 @@ import { User } from '@angular/fire/auth';
 import { ConfirmationModalService } from '../../../../../../../../../shared/services/confirmation-modal.service';
 import { ToastService } from '../../../../../../../../../shared/services/toast.service';
 import { PersonalDataInfoComponent } from './personal-data-info/personal-data-info.component';
+import { CvEditButtonRowComponent } from '../../cv-edit-button-row/cv-edit-button-row.component';
 
 @Component({
   selector: 'app-edit-personal-data',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule, PersonalDataInfoComponent],
+  imports: [
+    ReactiveFormsModule,
+    CommonModule,
+    PersonalDataInfoComponent,
+    CvEditButtonRowComponent,
+  ],
   templateUrl: './edit-personal-data.component.html',
   styleUrls: ['./edit-personal-data.component.css'],
 })
@@ -25,7 +31,6 @@ export class EditPersonalDataComponent implements OnInit {
   profileForm!: FormGroup;
   editableFields: { [key: string]: boolean } = {};
   originalValues: { [key: string]: any } = {}; // Almacena los valores originales de cada campo
-  showInfoComponent = false;
 
   // Diccionario para nombres descriptivos de campos
   private fieldNames: { [key: string]: string } = {
@@ -60,13 +65,16 @@ export class EditPersonalDataComponent implements OnInit {
     this.profileForm = this.fb.group({
       fullName: ['', [Validators.required, Validators.minLength(3)]],
       profesion: ['', [Validators.required]],
-      phone: ['', [Validators.pattern(/^\d{4}-\d{4}$/), Validators.minLength(8)]],
+      phone: [
+        '',
+        [Validators.pattern(/^\d{4}-\d{4}$/), Validators.minLength(8)],
+      ],
       editableEmail: ['', [Validators.required, Validators.email]],
       direction: ['', [Validators.required, Validators.minLength(3)]],
     });
 
     // Guardar valores iniciales
-    Object.keys(this.profileForm.controls).forEach(field => {
+    Object.keys(this.profileForm.controls).forEach((field) => {
       this.originalValues[field] = this.profileForm.get(field)?.value;
     });
   }
@@ -106,7 +114,7 @@ export class EditPersonalDataComponent implements OnInit {
       });
 
       // Actualizar valores originales después de cargar los datos
-      Object.keys(this.profileForm.controls).forEach(field => {
+      Object.keys(this.profileForm.controls).forEach((field) => {
         this.originalValues[field] = this.profileForm.get(field)?.value;
       });
     } catch (error) {
@@ -303,7 +311,7 @@ export class EditPersonalDataComponent implements OnInit {
       if (field) {
         this.originalValues[field] = this.profileForm.get(field)?.value;
       } else {
-        Object.keys(this.profileForm.controls).forEach(field => {
+        Object.keys(this.profileForm.controls).forEach((field) => {
           this.originalValues[field] = this.profileForm.get(field)?.value;
         });
       }
@@ -317,15 +325,5 @@ export class EditPersonalDataComponent implements OnInit {
         3000
       );
     }
-  }
-  
-  // método para abrir about-me-info
-  openInfoModal(): void {
-    this.showInfoComponent = true;
-  }
-
-  // método para cerrar about-me-info
-  toggleInfoView(): void {
-    this.showInfoComponent = !this.showInfoComponent;
   }
 }

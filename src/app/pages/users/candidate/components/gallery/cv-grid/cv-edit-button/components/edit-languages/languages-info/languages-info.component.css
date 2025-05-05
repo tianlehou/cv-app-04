@@ -6,6 +6,7 @@
   background: white;
   border-radius: 8px;
   overflow: hidden;
+  margin-top: 2rem;
 
   /* uso general */
   .info-card {

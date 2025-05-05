@@ -4,29 +4,24 @@
       <i class="fas fa-graduation-cap"></i>
       <span>Educación</span>
     </h3>
+    <app-cv-edit-button-row
+    [isEditing]="editableFields['education']"
+    [hasChanges]="formHasChanges"
+    (onCancel)="onCancel()"
+    (onEditSave)="toggleEdit('education')"
+    (onAdd)="addEducation()"
+  >
+  </app-cv-edit-button-row>
   </header>
 
   <body>
     <form [formGroup]="profileForm" (ngSubmit)="onSubmit($event)">
       <!-- Educación -->
       <div class="form-group">
-        <div class="display-flex-space-between">
-          <label for="education">Educación:</label>
-          <app-cv-edit-button-row
-            [isEditing]="editableFields['education']"
-            [hasChanges]="formHasChanges"
-            (onCancel)="onCancel()"
-            (onEditSave)="toggleEdit('education')"
-            (onAdd)="addEducation()"
-          >
-          </app-cv-edit-button-row>
-        </div>
-
-        <div class="line"></div>
 
         <div formArrayName="education">
           <div
-            class="education-group"
+            class="section-group"
             *ngFor="let educationItem of educationArray.controls; let i = index"
             [formGroupName]="i"
             (mouseenter)="showDeleteButton(i)"
@@ -86,6 +81,7 @@
               formControlName="achievements"
               class="form-control"
               [readonly]="!editableFields['education']"
+              style="margin-bottom: 1rem;"
             ></textarea>
 
             <app-delete-button-b
@@ -93,7 +89,7 @@
               (deleteClick)="
                 confirmDeleteEducation(i); $event.stopPropagation()
               "
-              class="education-delete-button"
+              class="delete-button"
             >
             </app-delete-button-b>
 
