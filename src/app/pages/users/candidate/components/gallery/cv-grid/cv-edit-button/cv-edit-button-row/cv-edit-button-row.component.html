@@ -1,5 +1,5 @@
-<div class="button-row" [class.editing]="isEditing">
-    <button class="cancel-button" (click)="onCancel.emit()">
+<div class="button-row" [class.editing]="isEditing" [class.closing]="closing">
+    <button class="cancel-button" (click)="handleCancelClick()">
         <i class="fas fa-times"></i>
     </button>
     <button class="edit-save-button" [disabled]="isEditing && !hasChanges" (click)="onEditSave.emit()">

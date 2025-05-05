@@ -1,0 +1,50 @@
+<!-- user-table.component.html -->
+<div class="responsive-wrapper">
+  <div class="user-table">
+    <table>
+      <thead>
+        <tr>
+          <th>Nombre</th>
+          <th>Email</th>
+          <th>Tipo</th>
+          <th>Registro</th>
+          <th>Último acceso</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let user of users">
+          <td>{{ user.fullName || "N/A" }}</td>
+          <td>{{ user.email }}</td>
+          <td>
+            {{
+              user.role === "candidate"
+                ? "Candidato"
+                : user.role === "company"
+                ? "Empresa"
+                : user.role === "admin"
+                ? "Administrador"
+                : "Desconocido"
+            }}
+          </td>
+          <td>{{ formatDate(user.createdAt) }}</td>
+          <td>{{ formatDate(user.lastLogin) }}</td>
+          <td>
+            <span class="status-badge" [class.active]="user.enabled">
+              {{ user.enabled ? "Activo" : "Inactivo" }}
+            </span>
+          </td>
+          <td>
+            <button
+              (click)="toggleUserStatus(user)"
+              [class.btn-inactive]="!user.enabled"
+            >
+              {{ user.enabled ? "Desactivar" : "Activar" }}
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

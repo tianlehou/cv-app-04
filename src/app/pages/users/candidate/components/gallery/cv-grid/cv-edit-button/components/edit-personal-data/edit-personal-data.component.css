@@ -22,45 +22,6 @@
     font-size: 1em;
   }
 
-  button {
-    width: 85px;
-    color: white;
-    font-weight: 500;
-    cursor: pointer;
-    border: none;
-    padding: 8px 0;
-    border-radius: 4px;
-    margin-left: 8px;
-    transition: all 0.3s ease;
-  }
-
-  /* Estilo para botón Editar */
-  button:not(.editing) {
-    background-color: var(--clr-blue);
-  }
-
-  button:not(.editing):hover {
-    background-color: var(--clr-blue-dark);
-  }
-
-  /* Estilo para botón Guardar */
-  button.editing {
-    background-color: var(--clr-green);
-  }
-
-  button.editing:hover {
-    background-color: var(--clr-green-dark);
-  }
-
-  /* Estilo para botón Cancelar */
-  button.cancel {
-    background-color: var(--clr-red);
-  }
-
-  button.cancel:hover {
-    background-color: var(--clr-red-dark);
-  }
-
   /* Mensajes de error */
   .text-danger {
     color: var(--clr-red);
@@ -88,4 +49,18 @@ input[type="email"] {
 
 .invalid-field {
   border: 1px solid var(--clr-red) !important;
+}
+
+
+/* Inhabilita el boton de "Agregar" */
+:host ::ng-deep app-cv-edit-button-row .add-btn {
+  opacity: 0.5 !important;
+  cursor: not-allowed !important;
+  pointer-events: none !important;
+  background-color: #f5f5f5 !important;
+  border-color: #ddd !important;
+}
+
+:host ::ng-deep app-cv-edit-button-row .add-btn i {
+  color: var(--clr-gray) !important;
 }

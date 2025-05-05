@@ -4,12 +4,15 @@ import { FormsModule } from '@angular/forms';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
 import { get, ref, update } from 'firebase/database';
 import { FirebaseService } from '../../../../shared/services/firebase.service';
-import { PaginationComponent } from '../pagination/pagination.component';
+import { PaginationComponent } from './components/pagination/pagination.component';
+import { StatsGridComponent } from './components/stats-grid/stats-grid.component';
+import { FiltersComponent } from './components/filters/filters.component';
+import { UserTableComponent } from './components/user-table/user-table.component';
 
 @Component({
   selector: 'app-admin-dashboard',
   standalone: true,
-  imports: [CommonModule, FormsModule, NgxChartsModule, PaginationComponent],
+  imports: [CommonModule, FormsModule, NgxChartsModule, PaginationComponent, StatsGridComponent, FiltersComponent, UserTableComponent,],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css']
 })
@@ -18,12 +21,12 @@ export class AdminDashboardComponent implements OnInit {
   filteredUsers: any[] = [];
   userTypeFilter: string = 'all';
   searchQuery: string = '';
-  
+
   // Estadísticas
   totalUsers: number = 0;
   totalCandidates: number = 0;
   totalCompanies: number = 0;
-  
+
   // Paginación
   currentPage: number = 1;
   pageSize: number = 5;
@@ -34,7 +37,7 @@ export class AdminDashboardComponent implements OnInit {
     domain: ['#5AA454', '#A10A28', '#C7B42C']
   };
 
-  constructor(private firebaseService: FirebaseService) {}
+  constructor(private firebaseService: FirebaseService) { }
 
   async ngOnInit() {
     await this.loadUsers();
@@ -65,10 +68,10 @@ export class AdminDashboardComponent implements OnInit {
 
   applyFilters() {
     this.filteredUsers = this.users.filter(user => {
-      const matchesType = this.userTypeFilter === 'all' || 
-                         user.role === this.userTypeFilter;
+      const matchesType = this.userTypeFilter === 'all' ||
+        user.role === this.userTypeFilter;
       const matchesSearch = user.email.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
-                            user.fullName?.toLowerCase().includes(this.searchQuery.toLowerCase());
+        user.fullName?.toLowerCase().includes(this.searchQuery.toLowerCase());
       return matchesType && matchesSearch;
     });
     this.currentPage = 1;
@@ -80,7 +83,7 @@ export class AdminDashboardComponent implements OnInit {
       enabled: !user.enabled,
       lastUpdated: new Date().toISOString()
     };
-    
+
     await update(ref(this.firebaseService['db'], `cv-app/users/${user.key}`), updates);
     user.enabled = !user.enabled;
   }
@@ -103,5 +106,21 @@ export class AdminDashboardComponent implements OnInit {
   get paginatedUsers(): any[] {
     const startIndex = (this.currentPage - 1) * this.pageSize;
     return this.filteredUsers.slice(startIndex, startIndex + this.pageSize);
+  }
+
+  // Método para manejar cambios en los filtros
+  onFilterChange() {
+    this.applyFilters();
+  }
+
+  onFiltersApplied(filters: { userTypeFilter: string; searchQuery: string }) {
+    this.userTypeFilter = filters.userTypeFilter;
+    this.searchQuery = filters.searchQuery;
+    this.applyFilters(); // Tu método existente que filtra los usuarios
+  }
+
+  // Método para manejar el cambio de estado
+  onStatusToggled(user: any) {
+    this.toggleUserStatus(user);
   }
 }

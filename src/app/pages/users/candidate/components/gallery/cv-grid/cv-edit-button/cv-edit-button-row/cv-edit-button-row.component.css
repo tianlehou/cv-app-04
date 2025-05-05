@@ -1,3 +1,4 @@
+/* cv-edit-button-row.component.css */
 .button-row {
     display: flex;
     justify-content: space-between;
@@ -45,7 +46,7 @@ i:hover {
     top: 0;
     opacity: 0;
     transform: translateX(20px);
-    transition: all 1s ease-in-out; 
+    transition: all 1.5s ease;
     z-index: -1;
 }
 
@@ -53,8 +54,15 @@ i:hover {
 .button-row.editing .cancel-button {
     position: static;
     opacity: 1;
-    transform: translateY(0);
+    transform: translateX(0);
     z-index: auto;
+}
+
+/* Cuando se está cerrando */
+.button-row.closing .cancel-button {
+    opacity: 0;
+    transform: translateX(20px);
+    transition: all 1.5s ease;
 }
 
 /* Ajuste para los otros botones cuando cancelar está visible */

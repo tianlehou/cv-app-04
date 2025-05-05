@@ -13,9 +13,18 @@ export class CvEditButtonRowComponent {
   @Output() onCancel = new EventEmitter<void>();
   @Output() onEditSave = new EventEmitter<void>();
   @Output() onAdd = new EventEmitter<void>();
+  closing: boolean = false;
 
   handleAddClick(event: Event): void {
     event.preventDefault(); // Previene el submit del formulario
     this.onAdd.emit();
+  }
+
+  handleCancelClick(): void {
+    this.closing = true;
+    setTimeout(() => {
+      this.onCancel.emit();
+      this.closing = false;
+    }, 1500); // Match the CSS transition duration
   }
 }
