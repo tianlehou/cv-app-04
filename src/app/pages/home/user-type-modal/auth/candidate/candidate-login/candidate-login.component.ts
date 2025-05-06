@@ -95,6 +95,7 @@ export class CandidateLoginComponent {
       this.firebaseService
         .loginWithEmail(email, password)
         .then((user) => {
+          // Actualizar lastLogin en la ubicación de metadatos
           this.firebaseService.updateUserData(user.email, {
             lastLogin: new Date().toISOString(),
           });

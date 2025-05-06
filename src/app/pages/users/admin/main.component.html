@@ -4,5 +4,5 @@
 
 <div class="main-container">
   <h1>Panel de Administración</h1>
+  <app-admin-dashboard *ngIf="userRole === 'admin'"></app-admin-dashboard>
 </div>
-<app-admin-dashboard *ngIf="userRole === 'admin'"></app-admin-dashboard>

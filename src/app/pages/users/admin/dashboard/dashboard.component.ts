@@ -48,15 +48,31 @@ export class AdminDashboardComponent implements OnInit {
     const usersRef = ref(this.firebaseService['db'], 'cv-app/users');
     const snapshot = await get(usersRef);
     this.users = [];
-    snapshot.forEach((childSnapshot) => {
-      const user = childSnapshot.val();
-      this.users.push({
-        key: childSnapshot.key,
-        ...user,
-        createdAt: user.createdAt ? new Date(user.createdAt) : null,
-        lastLogin: user.lastLogin ? new Date(user.lastLogin) : null
+    
+    if (snapshot.exists()) {
+      // Obtener todos los usuarios como objeto
+      const usersObject = snapshot.val();
+      
+      // Procesar cada usuario
+      const userPromises = Object.keys(usersObject).map(async (userKey) => {
+        const userData = usersObject[userKey];
+        
+        // Obtener metadatos
+        const metadataRef = ref(this.firebaseService['db'], `cv-app/users/${userKey}/metadata`);
+        const metadataSnapshot = await get(metadataRef);
+        const metadata = metadataSnapshot.exists() ? metadataSnapshot.val() : {};
+        
+        return {
+          key: userKey,
+          ...userData,
+          createdAt: metadata.createdAt ? new Date(metadata.createdAt) : null,
+          lastLogin: metadata.lastLogin ? new Date(metadata.lastLogin) : null
+        };
       });
-    });
+      
+      this.users = await Promise.all(userPromises);
+    }
+    
     this.applyFilters();
   }
 

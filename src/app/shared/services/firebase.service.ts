@@ -11,7 +11,7 @@ import {
   sendPasswordResetEmail,
   signInWithEmailAndPassword,
 } from '@angular/fire/auth';
-import { Database, ref, set, get, update } from '@angular/fire/database';
+import { Database, ref, set, get, update, remove } from '@angular/fire/database';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { ComponentStyles } from '../models/component-styles.model';
 
@@ -59,11 +59,28 @@ export class FirebaseService {
     );
   }
 
-  saveUserData(email: string, data: { fullName: string; email: string }) {
-    return runInInjectionContext(this.injector, () => {
+  async saveUserData(email: string, data: { fullName: string; email: string; role: string; enabled: boolean; createdAt: string; lastLogin: string }) {
+    return runInInjectionContext(this.injector, async () => {
       const userEmailKey = this.formatEmailKey(email);
+      
+      // Extraer metadatos
+      const metadata = {
+        createdAt: data.createdAt,
+        lastLogin: data.lastLogin
+      };
+      
+      // Eliminar metadatos del objeto principal
+      const { createdAt, lastLogin, ...userDataWithoutMetadata } = data;
+      
+      // Crear referencia para datos de usuario y metadatos
       const userRef = ref(this.db, `cv-app/users/${userEmailKey}`);
-      return set(userRef, data);
+      const metadataRef = ref(this.db, `cv-app/users/${userEmailKey}/metadata`);
+      
+      // Guardar datos de usuario (sin metadatos)
+      await set(userRef, userDataWithoutMetadata);
+      
+      // Guardar metadatos en la ruta específica
+      await set(metadataRef, metadata);
     });
   }
 
@@ -77,10 +94,26 @@ export class FirebaseService {
       if (user?.email) {
         const userEmailKey = this.formatEmailKey(user.email);
         const userRef = ref(this.db, `cv-app/users/${userEmailKey}`);
+        const metadataRef = ref(this.db, `cv-app/users/${userEmailKey}/metadata`);
+        
         const snapshot = await runInInjectionContext(this.injector, () =>
           get(userRef)
         );
-        return snapshot.exists() ? snapshot.val() : null;
+        
+        const metadataSnapshot = await runInInjectionContext(this.injector, () =>
+          get(metadataRef)
+        );
+        
+        if (snapshot.exists()) {
+          const userData = snapshot.val();
+          // Agregar metadatos si existen
+          if (metadataSnapshot.exists()) {
+            const metadata = metadataSnapshot.val();
+            return { ...userData, ...metadata };
+          }
+          return userData;
+        }
+        return null;
       }
       return null;
     });
@@ -93,11 +126,20 @@ export class FirebaseService {
   async getUserData(emailKey: string): Promise<any> {
     return runInInjectionContext(this.injector, async () => {
       const userRef = ref(this.db, `cv-app/users/${emailKey}`);
+      const metadataRef = ref(this.db, `cv-app/users/${emailKey}/metadata`);
+      
       try {
-        const snapshot = await runInInjectionContext(this.injector, () =>
-          get(userRef)
-        );
-        return snapshot.exists() ? snapshot.val() : null;
+        const [snapshot, metadataSnapshot] = await Promise.all([
+          get(userRef),
+          get(metadataRef)
+        ]);
+        
+        if (snapshot.exists()) {
+          const userData = snapshot.val();
+          const metadata = metadataSnapshot.exists() ? metadataSnapshot.val() : {};
+          return { ...userData, ...metadata };
+        }
+        return null;
       } catch (error) {
         console.error('Error al obtener datos:', error);
         throw error;
@@ -146,12 +188,11 @@ export class FirebaseService {
   async updateUserData(
     originalEmail: string,
     data: Partial<{
-      createdAt: string;
       email: string;
       enabled: boolean;
       fullName: string;
+      role: string;
       lastLogin?: string;
-      lastUpdated?: string;
       profileData: {
         direction?: string;
         editableEmail?: string;
@@ -171,7 +212,6 @@ export class FirebaseService {
         personalData?: string;
         skills?: string;
       };
-      role: string;
       'cv-styles'?: {
         [key: string]: ComponentStyles;
       };
@@ -179,9 +219,32 @@ export class FirebaseService {
   ): Promise<void> {
     return runInInjectionContext(this.injector, async () => {
       const userEmailKey = this.formatEmailKey(originalEmail);
-      const userRef = ref(this.db, `cv-app/users/${userEmailKey}`);
+      
       try {
-        await runInInjectionContext(this.injector, () => update(userRef, data));
+        // Si hay lastLogin, actualizarlo en metadata
+        if (data.lastLogin) {
+          const metadataRef = ref(this.db, `cv-app/users/${userEmailKey}/metadata`);
+          const metadataSnapshot = await get(metadataRef);
+          
+          if (metadataSnapshot.exists()) {
+            // Actualizar lastLogin en metadata existente
+            await update(metadataRef, { lastLogin: data.lastLogin });
+          } else {
+            // Crear metadata con lastLogin
+            await set(metadataRef, { lastLogin: data.lastLogin });
+          }
+          
+          // Eliminar lastLogin del objeto de actualización principal
+          const { lastLogin, ...dataWithoutLastLogin } = data;
+          data = dataWithoutLastLogin;
+        }
+        
+        // Actualizar los demás datos si hay algo que actualizar
+        if (Object.keys(data).length > 0) {
+          const userRef = ref(this.db, `cv-app/users/${userEmailKey}`);
+          await update(userRef, data);
+        }
+        
         console.log('Datos actualizados exitosamente');
       } catch (error) {
         console.error('Error al actualizar:', error);
@@ -189,4 +252,5 @@ export class FirebaseService {
       }
     });
   }
+
 }

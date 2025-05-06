@@ -79,6 +79,7 @@ export class CandidateRegisterComponent {
             role: 'candidate',
             enabled: true,
             createdAt: new Date().toISOString(),
+            lastLogin: new Date().toISOString(),
           };
 
           return this.firebaseService.saveUserData(email, userData);
