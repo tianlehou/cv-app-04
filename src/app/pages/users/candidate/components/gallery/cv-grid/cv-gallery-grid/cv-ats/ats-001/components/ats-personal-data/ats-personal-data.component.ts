@@ -48,7 +48,7 @@ export class AtsPersonalDataComponent implements OnInit {
     try {
       const userData = await this.firebaseService.getUserData(this.userEmail);
       this.profileForm.patchValue({
-        fullName: userData?.fullName || 'No especificado',
+        fullName: userData?.profileData?.personalData?.fullName || 'No especificado',
         profesion: userData?.profileData?.personalData?.profesion || 'No especificado',
         phone: userData?.profileData?.personalData?.phone || 'No especificado',
         editableEmail: userData?.profileData?.personalData?.editableEmail || 'No especificado',

@@ -36,7 +36,6 @@ export class CandidateComponent implements OnInit {
   constructor(private firebaseService: FirebaseService) {}
 
   async ngOnInit(): Promise<void> {
-    // Usa el método del servicio para obtener el estado de autenticación
     this.firebaseService
       .isAuthenticated()
       .subscribe(async (isAuthenticated) => {
@@ -45,16 +44,16 @@ export class CandidateComponent implements OnInit {
           console.log('Usuario autenticado:', this.currentUser.email);
 
           // Obtener el rol usando firebase.service
-          const userData = await this.firebaseService.getUserData(
-            this.currentUser.email.replace(/\./g, '_')
-          );
-          this.userRole = userData?.role || null;
+          const userEmailKey = this.firebaseService.formatEmailKey(this.currentUser.email);
+          const userData = await this.firebaseService.getUserData(userEmailKey);
+          this.userRole = userData?.metadata?.role || null;
           console.log('Rol del usuario:', this.userRole);
         } else {
           console.error('Usuario no autenticado.');
         }
       });
   }
+
   toggleSubscription() {
     this.showSubscription = !this.showSubscription;
     this.activeSection = this.showSubscription ? 'subscription' : 'home';

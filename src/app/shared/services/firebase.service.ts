@@ -17,7 +17,6 @@ import {
   set,
   get,
   update,
-  remove,
 } from '@angular/fire/database';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { ComponentStyles } from '../models/component-styles.model';
@@ -89,7 +88,6 @@ export class FirebaseService {
     });
   }
 
-  // Nuevo método específico para guardar el nombre completo
   async saveFullName(email: string, fullName: string) {
     return runInInjectionContext(this.injector, async () => {
       const userEmailKey = this.formatEmailKey(email);
@@ -135,20 +133,20 @@ export class FirebaseService {
   async getUserData(emailKey: string): Promise<any> {
     return runInInjectionContext(this.injector, async () => {
       try {
-        const metadataRef = ref(this.db, `cv-app/users/${emailKey}/metadata`);
-        const metadataSnapshot = await get(metadataRef);
+        const userRef = ref(this.db, `cv-app/users/${emailKey}`);
+        const userSnapshot = await get(userRef);
   
-        if (!metadataSnapshot.exists()) {
+        if (!userSnapshot.exists()) {
           throw new Error('Datos de usuario no encontrados');
         }
         
-        return metadataSnapshot.val();
+        return userSnapshot.val();
       } catch (error) {
         console.error('Error al obtener datos:', error);
         throw new Error('No tienes permisos para acceder a estos datos');
       }
     });
-  }
+}
 
   async getComponentStyles(
     email: string,

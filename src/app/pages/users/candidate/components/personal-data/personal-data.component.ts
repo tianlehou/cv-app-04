@@ -75,7 +75,7 @@ export class PersonalDataComponent implements OnInit, OnDestroy {
     try {
       const userData = await this.firebaseService.getUserData(this.userEmail);
       this.profileForm.patchValue({
-        fullName: userData?.fullName || null,
+        fullName: userData?.profileData?.personalData?.fullName || null,
         profesion: userData?.profileData?.personalData?.profesion || null,
         phone: userData?.profileData?.personalData?.phone || null,
         editableEmail: userData?.profileData?.personalData?.editableEmail || null,

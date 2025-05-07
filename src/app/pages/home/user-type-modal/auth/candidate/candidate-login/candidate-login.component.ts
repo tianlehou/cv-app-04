@@ -86,15 +86,12 @@ export class CandidateLoginComponent {
       const fullName = userData?.profileData?.personalData?.fullName || 'Usuario';
       const userRole = userData?.metadata?.role || 'candidate';
   
-      // 3. Actualizar último acceso
       await this.firebaseService.updateUserData(email, {
         metadata: { lastLogin: new Date().toISOString() }
       });
   
       this.toastService.show(`Bienvenido ${fullName}`, 'success', 3000);
       
-      // 4. Redirigir según rol - Eliminamos el setTimeout
-      console.log('Role:', userRole);
       this.router.navigateByUrl('/', {skipLocationChange: true}).then(() => {
         this.router.navigate([userRole === 'admin' ? '/main' : '/candidate']);
       });

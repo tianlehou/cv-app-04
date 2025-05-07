@@ -37,7 +37,7 @@ export class ImageGridComponent implements OnInit, OnDestroy {
     private firebaseService: FirebaseService,
     private toast: ToastService,
     private cdr: ChangeDetectorRef
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     if (this.currentUser?.email) {
@@ -46,7 +46,7 @@ export class ImageGridComponent implements OnInit, OnDestroy {
     }
   }
 
-  ngOnDestroy(): void {}
+  ngOnDestroy(): void { }
 
   public async handleUploadComplete(imageUrl: string): Promise<void> {
     await this.updateUserImages(imageUrl);
@@ -66,10 +66,9 @@ export class ImageGridComponent implements OnInit, OnDestroy {
     if (!this.userEmailKey) return;
 
     try {
-      const userData = await this.firebaseService.getUserData(
-        this.userEmailKey
-      );
-      let images = userData?.profileData?.multimedia?.galleryImages || [];
+      const userData = await this.firebaseService.getUserData(this.userEmailKey);
+      const multimediaData = userData?.profileData?.multimedia || {};
+      let images = multimediaData.galleryImages || [];
 
       if (addedImageUrl && !images.includes(addedImageUrl)) {
         images = [...images, addedImageUrl];
@@ -97,22 +96,31 @@ export class ImageGridComponent implements OnInit, OnDestroy {
   private async updateUserImages(imageUrl: string): Promise<void> {
     if (!this.userEmailKey || !this.currentUser?.email) return;
 
-    const currentData = await this.firebaseService.getUserData(this.userEmailKey);
-    const updatedData = {
-      profileData: {
-        ...(currentData?.profileData || {}),
-        multimedia: {
-          ...(currentData?.profileData?.multimedia || {}),
-          galleryImages: [
-            ...(currentData?.profileData?.multimedia?.galleryImages || []),
-            imageUrl,
-          ],
-        },
-      },
-    };
-    await this.firebaseService.updateUserData(
-      this.currentUser.email,
-      updatedData
-    );
+    try {
+      const currentData = await this.firebaseService.getUserData(this.userEmailKey);
+
+      // Verificar si existe la estructura multimedia/galleryImages
+      const currentMultimedia = currentData?.profileData?.multimedia || {};
+      const currentGalleryImages = currentMultimedia.galleryImages || [];
+
+      // Crear la estructura completa de actualización
+      const updatedData = {
+        profileData: {
+          ...(currentData?.profileData || {}),
+          multimedia: {
+            ...currentMultimedia,
+            galleryImages: [...currentGalleryImages, imageUrl]
+          }
+        }
+      };
+
+      await this.firebaseService.updateUserData(
+        this.currentUser.email,
+        updatedData
+      );
+    } catch (error) {
+      console.error('Error updating user images:', error);
+      this.toast.show('Error al actualizar las imágenes', 'error');
+    }
   }
 }
