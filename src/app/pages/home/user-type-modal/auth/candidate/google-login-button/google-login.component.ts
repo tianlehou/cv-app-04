@@ -80,7 +80,10 @@ export class GoogleLoginComponent {
       if (existingUser) {
         // Actualizar solo lastLogin
         await this.firebaseService.updateUserData(user.email, {
-          lastLogin: currentDate,
+          metadata: {
+            ...existingUser.metadata,
+            lastLogin: currentDate,
+          },
         });
       } else {
         // Crear nuevo usuario con createdAt y lastLogin

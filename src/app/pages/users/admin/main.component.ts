@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FirebaseService } from '../../../shared/services/firebase.service';
-import { SidebarComponent } from '../../../shared/components/buttons/sidebar/sidebar.component';
 import { AdminDashboardComponent } from './dashboard/dashboard.component';
+import { SidebarComponent } from './sidebar/sidebar.component';
 
 @Component({
   selector: 'app-main',

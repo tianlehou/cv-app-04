@@ -1,0 +1,34 @@
+<!-- sidebar.component.html -->
+<!-- Icono para abrir el menú -->
+<span class="sidebar-icon" (click)="toggleMenu()">☰</span>
+
+<!-- Menú lateral -->
+<div class="sidebar-menu" [class.open]="isMenuOpen" (click)="preventClose($event)">
+  <!-- Ícono de cierre -->
+  <div class="sidebar-header">
+    <h2 class="sidebar-title">menu</h2>
+    <span class="close-icon" (click)="toggleMenu()">&times;</span>
+  </div>
+  <nav>
+    <ul class="main-menu">
+      <li>
+        <a routerLink="/suscripciones" (click)="toggleMenu()">
+          <i class="fas fa-id-card-alt" style="color: var(--clr-green);"></i>
+          <span>Suscripciones</span>
+        </a>
+      </li>
+    </ul>
+
+    <ul class="logout-menu">
+      <li>
+        <a href="#" (click)="logout()">
+          <i class="fas fa-sign-out-alt" style="color: var(--clr-red);"></i>
+          <span>Cerrar Sesión</span>
+        </a>
+      </li>
+    </ul>
+  </nav>
+</div>
+
+<!-- Capa para detectar clics fuera del menú -->
+<div class="overlay" *ngIf="isMenuOpen" (click)="toggleMenu()"></div>

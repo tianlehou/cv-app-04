@@ -15,27 +15,30 @@ export class AuthGuard implements CanMatch {
 
   async canMatch(route: Route): Promise<boolean> {
     return this.ngZone.run(async () => {
-      // Check authentication state
       const user = await firstValueFrom(authState(this.auth));
       if (!user || !user.email) {
-        return this.redirect();
+        this.router.navigate(['/home']); // Redirigir a home en lugar de login-person
+        return false;
       }
-
-      // Prepare database key
+  
       const emailKey = user.email.replace(/\./g, '_');
-
-      // Fetch user data from database
-      const snapshot = await runInInjectionContext(this.injectionContext, () => get(ref(this.db, `cv-app/users/${emailKey}`)));
-
-      // Check role and decide
-      return snapshot.exists() && snapshot.val().role === route.data?.['role']
-        ? true
-        : this.redirect();
+      const snapshot = await runInInjectionContext(this.injectionContext, 
+        () => get(ref(this.db, `cv-app/users/${emailKey}/metadata`))); // Cambiar la ruta a metadata
+  
+      if (!snapshot.exists()) {
+        this.router.navigate(['/home']);
+        return false;
+      }
+  
+      const userRole = snapshot.val().role;
+      const requiredRole = route.data?.['role'];
+      
+      if (userRole === requiredRole) {
+        return true;
+      } else {
+        this.router.navigate([userRole === 'admin' ? '/main' : '/candidate']);
+        return false;
+      }
     });
-  }
-
-  private redirect(): boolean {
-    this.router.navigate(['/login-person']);
-    return false;
   }
 }

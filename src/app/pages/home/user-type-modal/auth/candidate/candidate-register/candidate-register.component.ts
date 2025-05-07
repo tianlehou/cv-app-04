@@ -8,6 +8,7 @@ import {
 } from '@angular/forms';
 import { FirebaseService } from '../../../../../../shared/services/firebase.service';
 import { Router, RouterModule } from '@angular/router';
+import { ToastService } from '../../../../../../shared/services/toast.service';
 
 @Component({
   selector: 'app-candidate-register',
@@ -18,19 +19,15 @@ import { Router, RouterModule } from '@angular/router';
 })
 export class CandidateRegisterComponent {
   registerForm: FormGroup;
-  showPassword = false; // Controla la visibilidad de la contraseña
-  showConfirmPassword = false; // Controla la visibilidad de la confirmación de contraseña
-  errorMessage: string | null = null; // Mensaje de error
-  successMessage: string | null = null; // Mensaje de éxito
-  emailErrorMessage: string | null = null; // Mensaje de error para el correo
-  passwordErrorMessage: string | null = null; // Mensaje de error para la contraseña
-  confirmPasswordErrorMessage: string | null = null; // Mensaje de error para la confirmación de contraseña
+  showPassword = false;
+  showConfirmPassword = false;
   @Output() showLogin = new EventEmitter<void>();
 
   constructor(
     private fb: FormBuilder,
     private firebaseService: FirebaseService,
-    private router: Router
+    private router: Router,
+    public toastService: ToastService
   ) {
     this.registerForm = this.fb.group({
       fullName: ['', Validators.required],
@@ -40,7 +37,6 @@ export class CandidateRegisterComponent {
     });
   }
 
-  // Métodos para manejar los clicks
   onLoginClick() {
     this.showLogin.emit();
   }
@@ -53,72 +49,60 @@ export class CandidateRegisterComponent {
     this.showConfirmPassword = !this.showConfirmPassword;
   }
 
-  register() {
+  async register() {
     if (this.registerForm.valid) {
       const { fullName, email, password, confirmPassword } =
         this.registerForm.value;
 
-      // Limpiar mensajes anteriores
-      this.successMessage = null;
-      this.emailErrorMessage = null;
-      this.passwordErrorMessage = null;
-      this.confirmPasswordErrorMessage = null;
-
       // Validar que las contraseñas coincidan
       if (password !== confirmPassword) {
-        this.confirmPasswordErrorMessage = 'La contraseña no coincide.';
+        this.toastService.show('Las contraseñas no coinciden', 'error', 5000);
         return;
       }
 
-      this.firebaseService
-        .registerWithEmail(email, password)
-        .then((userCredential) => {
-          const userData = {
-            fullName,
-            email,
-            role: 'candidate',
-            enabled: true,
-            createdAt: new Date().toISOString(),
-            lastLogin: new Date().toISOString(),
-          };
+      try {
+        // 1. Registrar usuario en Firebase Auth
+        await this.firebaseService.registerWithEmail(email, password);
 
-          return this.firebaseService.saveUserData(email, userData);
-        })
-        .then(() => {
-          // Mostrar mensaje de éxito
-          this.successMessage = 'Usuario registrado con éxito';
-
-          // Redirigir después de 3 segundos
-          setTimeout(() => {
-            this.router.navigate(['/login-person']);
-          }, 3000);
-        })
-        .catch((error: { code: string }) => {
-          console.error(error);
-
-          // Mapeo de errores de Firebase
-          const errorMessages: { [key: string]: string } = {
-            'auth/email-already-in-use': '¡Este correo ya está en uso!',
-            'auth/invalid-email':
-              'Correo inválido. Verifica que esté bien escrito.',
-            'auth/weak-password':
-              'Contraseña débil. Usa al menos 8 caracteres con letras y números.',
-          };
-
-          // Obtener el mensaje de error específico o uno genérico
-          const message =
-            errorMessages[error.code as keyof typeof errorMessages] ||
-            '¡Ocurrió un error inesperado!';
-
-          // Asignar el mensaje de error al campo correspondiente
-          if (error.code === 'auth/invalid-email') {
-            this.emailErrorMessage = message;
-          } else if (error.code === 'auth/weak-password') {
-            this.passwordErrorMessage = message;
-          } else {
-            this.errorMessage = message; // Mensaje genérico para otros errores
-          }
+        // 2. Guardar datos básicos en metadata
+        await this.firebaseService.saveUserData(email, {
+          email,
+          role: 'candidate',
+          enabled: true,
+          createdAt: new Date().toISOString(),
         });
+
+        // 3. Guardar fullName en profileData/personalData
+        await this.firebaseService.saveFullName(email, fullName);
+
+        // Mostrar toast de éxito
+        this.toastService.show('Usuario registrado con éxito', 'success', 5000);
+
+        // Cambiar a vista de login después de 3 segundos
+        setTimeout(() => {
+          this.showLogin.emit();
+        }, 500);
+
+      } catch (error: any) {
+        console.error(error);
+
+        // Mapeo de errores de Firebase
+        const errorMessages: { [key: string]: string } = {
+          'auth/email-already-in-use': '¡Este correo ya está en uso!',
+          'auth/invalid-email': 'Correo inválido. Verifica que esté bien escrito.',
+          'auth/weak-password': 'Contraseña débil. Usa al menos 8 caracteres con letras y números.',
+          'auth/network-request-failed': 'Error de conexión. Verifica tu conexión a internet.',
+        };
+
+        const message = errorMessages[error.code as keyof typeof errorMessages] || 
+                       '¡Ocurrió un error inesperado durante el registro!';
+
+        // Mostrar mensaje de error con toast
+        this.toastService.show(message, 'error', 5000);
+      }
+    } else {
+      // Mostrar error de validación de formulario
+      this.toastService.show('Por favor completa todos los campos requeridos correctamente', 'error', 5000);
     }
   }
 }

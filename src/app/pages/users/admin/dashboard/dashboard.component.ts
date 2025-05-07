@@ -50,20 +50,22 @@ export class AdminDashboardComponent implements OnInit {
     this.users = [];
     
     if (snapshot.exists()) {
-      // Obtener todos los usuarios como objeto
       const usersObject = snapshot.val();
       
-      // Procesar cada usuario
       const userPromises = Object.keys(usersObject).map(async (userKey) => {
         const userData = usersObject[userKey];
         
-        // Obtener metadatos
         const metadataRef = ref(this.firebaseService['db'], `cv-app/users/${userKey}/metadata`);
         const metadataSnapshot = await get(metadataRef);
         const metadata = metadataSnapshot.exists() ? metadataSnapshot.val() : {};
         
+        // Asegurar que los campos básicos existan
         return {
           key: userKey,
+          email: metadata.email || '', // Valor por defecto si no existe
+          fullName: userData?.profileData?.personalData?.fullName || '', // Valor por defecto si no existe
+          role: metadata.role || 'candidate', // Valor por defecto si no existe
+          enabled: metadata.enabled !== undefined ? metadata.enabled : true, // Valor por defecto si no existe
           ...userData,
           createdAt: metadata.createdAt ? new Date(metadata.createdAt) : null,
           lastLogin: metadata.lastLogin ? new Date(metadata.lastLogin) : null
@@ -100,7 +102,7 @@ export class AdminDashboardComponent implements OnInit {
       lastUpdated: new Date().toISOString()
     };
 
-    await update(ref(this.firebaseService['db'], `cv-app/users/${user.key}`), updates);
+    await update(ref(this.firebaseService['db'], `cv-app/users/${user.key}/metadata`), updates);
     user.enabled = !user.enabled;
   }
 

@@ -51,9 +51,6 @@
       >
         Introduce un correo válido.
       </div>
-      <div class="invalid-feedback" *ngIf="emailErrorMessage">
-        {{ emailErrorMessage }}
-      </div>
     </div>
 
     <!-- Contraseña -->
@@ -86,8 +83,11 @@
       >
         La contraseña es obligatoria.
       </div>
-      <div class="invalid-feedback" *ngIf="passwordErrorMessage">
-        {{ passwordErrorMessage }}
+      <div
+        class="invalid-feedback"
+        *ngIf="registerForm.get('password')?.errors?.['minlength']"
+      >
+        La contraseña debe tener al menos 8 caracteres.
       </div>
     </div>
 
@@ -121,18 +121,13 @@
       >
         Confirma tu contraseña.
       </div>
-      <div class="invalid-feedback" *ngIf="confirmPasswordErrorMessage">
-        {{ confirmPasswordErrorMessage }}
-      </div>
     </div>
 
-    <!-- Mensajes de éxito y error -->
-    <div id="signInSuccess" class="success-message" *ngIf="successMessage">
-      {{ successMessage }}
-    </div>
-    <div id="signInError" class="error-message" *ngIf="errorMessage">
-      {{ errorMessage }}
-    </div>
+    <ng-container *ngIf="toastService.getToasts() | async as toasts">
+      <div *ngFor="let toast of toasts" class="toast toast-{{toast.type}}">
+        {{ toast.message }}
+      </div>
+    </ng-container>
 
     <!-- Botones -->
     <button

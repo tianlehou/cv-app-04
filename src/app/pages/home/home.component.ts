@@ -45,7 +45,7 @@ export class HomeComponent {
     if (type === 'candidate') {
       this.showHomeSection = false;
       this.showCandidateSection = true;
-      this.currentCandidateView = 'login'; // Mostrar login por defecto
+      this.currentCandidateView = 'login';
       this.cd.detectChanges();
     }
   }
