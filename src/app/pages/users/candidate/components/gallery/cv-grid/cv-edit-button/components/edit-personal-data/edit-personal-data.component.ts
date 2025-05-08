@@ -1,15 +1,14 @@
-// edit-personal-data.component.ts
 import { Component, OnInit, Input, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { FirebaseService } from '../../../../../../../../../shared/services/firebase.service';
-import { ProfileService } from '../../../../../../services/profile.service';
 import { User } from '@angular/fire/auth';
+import { Subscription } from 'rxjs';
 import { ConfirmationModalService } from '../../../../../../../../../shared/services/confirmation-modal.service';
 import { ToastService } from '../../../../../../../../../shared/services/toast.service';
 import { PersonalDataInfoComponent } from './personal-data-info/personal-data-info.component';
 import { CvEditButtonRowComponent } from '../../cv-edit-button-row/cv-edit-button-row.component';
-import { Subscription } from 'rxjs';
+import { PersonalDataService } from '../../../../../../services/personal-data.service';
+import { ProfileService } from '../../../../../../services/profile.service';
 
 @Component({
   selector: 'app-edit-personal-data',
@@ -33,7 +32,7 @@ export class EditPersonalDataComponent implements OnInit, OnDestroy {
 
   constructor(
     private fb: FormBuilder,
-    private firebaseService: FirebaseService,
+    private personalDataService: PersonalDataService,
     private profileService: ProfileService,
     private confirmationModal: ConfirmationModalService,
     private toastService: ToastService
@@ -47,13 +46,7 @@ export class EditPersonalDataComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    if (this.formSubscription) {
-      this.formSubscription.unsubscribe();
-    }
-  }
-
-  private formatEmailKey(email: string): string {
-    return email.replace(/\./g, '_');
+    this.formSubscription?.unsubscribe();
   }
 
   private initializeForm(): void {
@@ -77,35 +70,18 @@ export class EditPersonalDataComponent implements OnInit, OnDestroy {
   }
 
   private async loadUserData(): Promise<void> {
-    if (!this.currentUser?.email) return;
-
     try {
-      const userEmailKey = this.formatEmailKey(this.currentUser.email);
-      const userData = await this.firebaseService.getUserData(userEmailKey);
-
-      this.profileForm.patchValue({
-        fullName: userData?.profileData?.personalData?.fullName || '',
-        profesion: userData?.profileData?.personalData?.profesion || '',
-        phone: userData?.profileData?.personalData?.phone || '',
-        editableEmail: userData?.profileData?.personalData?.editableEmail || '',
-        direction: userData?.profileData?.personalData?.direction || '',
-      });
-
-      // Save initial form value for change detection
+      const personalData = await this.personalDataService.loadUserData(this.currentUser);
+      this.profileForm.patchValue(personalData || {});
       this.initialFormValue = JSON.parse(JSON.stringify(this.profileForm.value));
     } catch (error) {
       console.error('Error loading user data:', error);
-      this.toastService.show(
-        'Error al cargar los datos del usuario',
-        'error',
-        3000
-      );
+      this.toastService.show('Error al cargar los datos del usuario', 'error', 3000);
     }
   }
 
   toggleEdit(): void {
     if (!this.isEditing) {
-      // Entering edit mode
       this.isEditing = true;
       this.initialFormValue = JSON.parse(JSON.stringify(this.profileForm.value));
       this.formHasChanges = false;
@@ -119,7 +95,6 @@ export class EditPersonalDataComponent implements OnInit, OnDestroy {
       
       this.toastService.show('Modo edición habilitado', 'info');
     } else {
-      // Already in edit mode - save changes
       if (this.formHasChanges) {
         this.confirmationModal.show(
           {
@@ -145,12 +120,8 @@ export class EditPersonalDataComponent implements OnInit, OnDestroy {
     this.isEditing = false;
     this.profileForm.patchValue(this.initialFormValue);
     this.formHasChanges = false;
-    
-    if (this.formSubscription) {
-      this.formSubscription.unsubscribe();
-      this.formSubscription = null;
-    }
-    
+    this.formSubscription?.unsubscribe();
+    this.formSubscription = null;
     this.toastService.show('Modo edición deshabilitado', 'error');
   }
 
@@ -166,44 +137,23 @@ export class EditPersonalDataComponent implements OnInit, OnDestroy {
     }
 
     try {
-      const userEmailKey = this.formatEmailKey(this.currentUser.email);
-      const userData = await this.firebaseService.getUserData(userEmailKey);
-
+      const userEmailKey = this.personalDataService.formatEmailKey(this.currentUser.email);
       const updatedData = {
         profileData: {
-          ...userData?.profileData,
-          personalData: {
-            ...userData?.profileData?.personalData,
-            fullName: this.profileForm.value.fullName,
-            profesion: this.profileForm.value.profesion,
-            phone: this.profileForm.value.phone,
-            editableEmail: this.profileForm.value.editableEmail,
-            direction: this.profileForm.value.direction,
-          },
-        },
+          personalData: this.profileForm.value
+        }
       };
 
-      await this.firebaseService.updateUserData(userEmailKey, updatedData);
+      await this.personalDataService.updateUserData(userEmailKey, updatedData);
 
-      this.profileService.notifyPersonalDataUpdate({
-        fullName: this.profileForm.value.fullName,
-        profesion: this.profileForm.value.profesion,
-        phone: this.profileForm.value.phone,
-        editableEmail: this.profileForm.value.editableEmail,
-        direction: this.profileForm.value.direction,
-      });
-
+      this.profileService.notifyPersonalDataUpdate(this.profileForm.value);
       this.toastService.show('Datos actualizados exitosamente!', 'success', 3000);
       
-      // Update initial form value with new data
       this.initialFormValue = JSON.parse(JSON.stringify(this.profileForm.value));
       this.isEditing = false;
       this.formHasChanges = false;
-      
-      if (this.formSubscription) {
-        this.formSubscription.unsubscribe();
-        this.formSubscription = null;
-      }
+      this.formSubscription?.unsubscribe();
+      this.formSubscription = null;
     } catch (error) {
       console.error('Error:', error);
       this.toastService.show(

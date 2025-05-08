@@ -42,6 +42,10 @@ export class FirebaseService {
     });
   }
 
+  isAuthenticated(): Observable<boolean> {
+    return this.authState.asObservable();
+  }
+
   public formatEmailKey(email: string): string {
     return email.replace(/\./g, '_');
   }
@@ -63,6 +67,10 @@ export class FirebaseService {
     return runInInjectionContext(this.injector, () =>
       sendPasswordResetEmail(this.auth, email)
     );
+  }
+
+  logout() {
+    runInInjectionContext(this.injector, () => this.auth.signOut());
   }
 
   async saveUserData(
@@ -102,10 +110,6 @@ export class FirebaseService {
     });
   }
 
-  isAuthenticated(): Observable<boolean> {
-    return this.authState.asObservable();
-  }
-
   async getCurrentUser() {
     return runInInjectionContext(this.injector, async () => {
       const user = this.auth.currentUser;
@@ -124,10 +128,6 @@ export class FirebaseService {
       }
       return null;
     });
-  }
-
-  logout() {
-    runInInjectionContext(this.injector, () => this.auth.signOut());
   }
 
   async getUserData(emailKey: string): Promise<any> {

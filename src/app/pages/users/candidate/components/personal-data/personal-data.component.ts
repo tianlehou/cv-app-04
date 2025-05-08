@@ -3,8 +3,8 @@ import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { User } from '@angular/fire/auth';
 import { Subscription } from 'rxjs';
-import { FirebaseService } from '../../../../../shared/services/firebase.service';
 import { ProfileService } from '../../services/profile.service';
+import { PersonalDataService } from '../../services/personal-data.service';
 
 @Component({
   selector: 'app-personal-data',
@@ -16,36 +16,28 @@ import { ProfileService } from '../../services/profile.service';
 export class PersonalDataComponent implements OnInit, OnDestroy {
   @Input() currentUser: User | null = null;
   profileForm!: FormGroup;
-  userEmail: string | null = null;
   editableFields: { [key: string]: boolean } = {};
   private subscription!: Subscription;
 
   constructor(
     private fb: FormBuilder,
-    private firebaseService: FirebaseService,
-    private profileService: ProfileService
+    private profileService: ProfileService,
+    private personalDataService: PersonalDataService,
   ) { }
 
   ngOnInit(): void {
     this.initializeForm();
     if (this.currentUser) {
-      this.userEmail = this.currentUser.email?.replaceAll('.', '_') || null;
       this.loadUserData();
     }
 
     this.subscription = this.profileService.personalDataUpdated$.subscribe(
-      (updatedData) => {
-        if (updatedData) {
-          this.updateFormWithNewData(updatedData);
-        }
-      }
+      (updatedData) => this.profileForm.patchValue(updatedData || {})
     );
   }
 
   ngOnDestroy(): void {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-    }
+    this.subscription?.unsubscribe();
   }
 
   private initializeForm(): void {
@@ -58,29 +50,10 @@ export class PersonalDataComponent implements OnInit, OnDestroy {
     });
   }
 
-  private updateFormWithNewData(updatedData: any): void {
-    console.log('Datos recibidos:', updatedData);
-    this.profileForm.patchValue({
-      fullName: updatedData?.fullName || this.profileForm.value.fullName || null,
-      profesion: updatedData?.profesion || this.profileForm.value.profesion || null,
-      phone: updatedData?.phone || this.profileForm.value.phone || null,
-      editableEmail: updatedData?.editableEmail || this.profileForm.value.editableEmail || null,
-      direction: updatedData?.direction || this.profileForm.value.direction || null,
-    });
-  }
-
   private async loadUserData(): Promise<void> {
-    if (!this.userEmail) return;
-
     try {
-      const userData = await this.firebaseService.getUserData(this.userEmail);
-      this.profileForm.patchValue({
-        fullName: userData?.profileData?.personalData?.fullName || null,
-        profesion: userData?.profileData?.personalData?.profesion || null,
-        phone: userData?.profileData?.personalData?.phone || null,
-        editableEmail: userData?.profileData?.personalData?.editableEmail || null,
-        direction: userData?.profileData?.personalData?.direction || null,
-      });
+      const personalData = await this.personalDataService.loadUserData(this.currentUser);
+      this.profileForm.patchValue(personalData || {});
     } catch (error) {
       console.error('Error loading user data:', error);
     }
