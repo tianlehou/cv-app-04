@@ -6,7 +6,7 @@ import { CvEditButtonComponent } from './cv-edit-button/cv-edit-button.component
 
 // Grid-Components
 import { CurriculumTypesInfoComponent } from './cv-gallery-grid/curriculum-types-info/curriculum-types-info.component';
-import { CvCanvasComponent } from './cv-gallery-grid/cv-canvas/cv-canvas.component';
+import { Canvas001Component } from './cv-gallery-grid/cv-canvas/canvas-001/canvas-001.component';
 import { Ats001Component } from "./cv-gallery-grid/cv-ats/ats-001/ats-001.component";
 
 // Edit-Components
@@ -26,7 +26,7 @@ import { EditSkillsComponent } from './cv-edit-button/components/edit-skills/edi
     CvInfoBarComponent,
     CvEditButtonComponent,
     CurriculumTypesInfoComponent,
-    CvCanvasComponent,
+    Canvas001Component,
     Ats001Component,
     EditAboutMeComponent,
     EditEducationComponent,

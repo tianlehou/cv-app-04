@@ -1,0 +1,44 @@
+<app-style-control (styleChange)="onStyleChange($event)" [componentName]="'canvas-001'">
+</app-style-control>
+<app-download-pdf containerId="pdf-content"></app-download-pdf>
+
+<div class="responsive-wrapper" [style.font-size]="currentStyles.fontSize">
+  <div class="cv-container" id="pdf-content" [style.padding]="currentStyles.padding"
+    [style.font-family]="currentStyles.fontFamily">
+
+    <aside class="sidebar bar">
+      <app-canvas-001-profile-picture [currentUser]="currentUser"></app-canvas-001-profile-picture>
+
+      <section class="contact">
+        <h2>Contacto</h2>
+        <app-canvas-001-personal-data [currentUser]="currentUser" displayMode="sidebar"></app-canvas-001-personal-data>
+      </section>
+      
+      <section class="skills">
+        <h2>Habilidades</h2>
+        <app-canvas-001-skills [currentUser]="currentUser"></app-canvas-001-skills>
+      </section>
+    </aside>
+
+    <main class="main-content">
+      <header>
+        <app-canvas-001-personal-data [currentUser]="currentUser" displayMode="header"></app-canvas-001-personal-data>
+      </header>
+
+      <section class="about">
+        <h3>Acerca de mí</h3>
+        <app-canvas-001-about-me [currentUser]="currentUser"></app-canvas-001-about-me>
+      </section>
+
+      <section class="experience">
+        <h3>Experiencia Laboral</h3>
+        <app-canvas-001-experience [currentUser]="currentUser"></app-canvas-001-experience>
+      </section>
+
+      <section class="education">
+        <h3>Educación</h3>
+        <app-canvas-001-education [currentUser]="currentUser"></app-canvas-001-education>
+      </section>
+    </main>
+  </div>
+</div>

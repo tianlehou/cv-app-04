@@ -1,33 +1,35 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { User } from '@angular/fire/auth';
 import { CommonModule } from '@angular/common';
-import { AtsPersonalDataComponent } from './components/ats-personal-data/ats-personal-data.component';
-import { AtsAboutMeComponent } from './components/ats-about-me/ats-about-me.component';
-import { AtsExperienceComponent } from './components/ats-experience/ats-experience.component';
-import { AtsEducationComponent } from './components/ats-education/ats-education.component';
-import { AtsSkillsComponent } from './components/ats-skills/ats-skills.component';
+import { Canvas001ProfilePictureComponent } from './components/canvas-001-profile-picture/canvas-001-profile-picture.component';
+import { Canvas001PersonalDataComponent } from './components/canvas-001-personal-data/canvas-001-personal-data.component';
+import { Canvas001AboutMeComponent } from './components/canvas-001-about-me/canvas-001-about-me.component';
+import { Canvas001ExperienceComponent } from './components/canvas-001-experience/canvas-001-experience.component';
+import { Canvas001EducationComponent } from './components/canvas-001-education/canvas-001-education.component';
+import { Canvas001SkillsComponent } from './components/canvas-001-skills/canvas-001-skills.component';
 import { DownloadPdfComponent } from '../../../../../../../../../shared/components/download-pdf/download-pdf.component';
-import { StyleControlComponent } from '../../style-control/style-control.component';
 import { FirebaseService } from '../../../../../../../../../shared/services/firebase.service';
 import { ComponentStyles } from '../../../../../../../../../shared/models/component-styles.model';
+import { StyleControlComponent } from '../../style-control/style-control.component';
 
 @Component({
-  selector: 'app-ats-001',
+  selector: 'app-canvas-001',
   standalone: true,
   imports: [
     CommonModule,
-    AtsPersonalDataComponent,
-    AtsAboutMeComponent,
-    AtsExperienceComponent,
-    AtsSkillsComponent,
-    AtsEducationComponent,
     DownloadPdfComponent,
     StyleControlComponent,
+    Canvas001ProfilePictureComponent,
+    Canvas001PersonalDataComponent,
+    Canvas001AboutMeComponent,
+    Canvas001ExperienceComponent,
+    Canvas001SkillsComponent,
+    Canvas001EducationComponent,
   ],
-  templateUrl: './ats-001.component.html',
-  styleUrl: './ats-001.component.css',
+  templateUrl: './canvas-001.component.html',
+  styleUrl: './canvas-001.component.css',
 })
-export class Ats001Component implements OnInit {
+export class Canvas001Component implements OnInit {
   @Input() currentUser: User | null = null;
   currentStyles: ComponentStyles = {
     fontSize: '12px',
@@ -42,7 +44,7 @@ export class Ats001Component implements OnInit {
     if (currentUser?.email) {
       const savedStyles = await this.firebaseService.getComponentStyles(
         currentUser.email,
-        'ats-001'
+        'canvas-001'
       );
 
       if (savedStyles) {

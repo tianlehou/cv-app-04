@@ -1,0 +1,18 @@
+<div class="profile-container">
+  <div class="form-group" [formGroup]="profileForm">
+    <ng-container *ngIf="displayMode === 'header'; else sidebarContent">
+      <div class="personal-data-field">
+        <h1>{{ profileForm.get("fullName")?.value }}</h1>
+      </div>
+      <div class="personal-data-field">
+        <h2>{{ profileForm.get("profesion")?.value }}</h2>
+      </div>
+    </ng-container>
+
+    <ng-template #sidebarContent>
+      <label><i class="fas fa-phone"></i>{{ profileForm.get("phone")?.value }}</label>
+      <label><i class="fas fa-envelope"></i>{{ profileForm.get("editableEmail")?.value }}</label>
+      <label><i class="fas fa-map-marker-alt"></i>{{ profileForm.get("direction")?.value }}</label>
+    </ng-template>
+  </div>
+</div>

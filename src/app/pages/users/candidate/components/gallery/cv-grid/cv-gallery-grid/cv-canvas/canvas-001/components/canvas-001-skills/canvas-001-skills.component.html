@@ -1,0 +1,27 @@
+<!-- canvas-001-skills.component.html -->
+<div class="profile-container">
+  <form [formGroup]="profileForm">
+    <div class="form-group" *ngFor="let skill of profileForm.get('skills')?.value">
+
+      <span>
+        <div>Técnicas:</div>
+        <label>{{ skill.hardSkills | formatList }}</label>
+      </span>
+
+      <span>
+        <div>Blandas:</div>
+        <label>{{ skill.softSkills | formatList }}</label>
+      </span>
+
+      <span *ngIf="skill.languages">
+        <div>Idiomas:</div>
+        <label>{{ skill.languages | formatList }}</label>
+      </span>
+
+      <span *ngIf="skill.certification">
+        <div>Certificaciones:</div>
+        <label>{{ skill.certification | formatList }}</label>
+      </span>
+    </div>
+  </form>
+</div>

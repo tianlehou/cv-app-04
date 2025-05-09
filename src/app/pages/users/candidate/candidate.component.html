@@ -3,10 +3,11 @@
     [activeSection]="activeSection"
     (homeClicked)="showHome()" 
     (subscriptionClicked)="toggleSubscription()"
+    (referClicked)="toggleRefer()"
   ></app-sidebar>
 </div>
 
-<section id="candidate" *ngIf="!showSubscription">
+<section id="candidate" *ngIf="activeSection === 'home'">
   <div class="profile-container">
     <div class="profile-components-row">
       <app-profile-picture *ngIf="currentUser" [currentUser]="currentUser"></app-profile-picture>
@@ -16,6 +17,10 @@
   </div>
 </section>
 
-<section id="subscription" *ngIf="showSubscription">
+<section id="subscription" *ngIf="activeSection === 'subscription'">
   <app-subscription></app-subscription>
+</section>
+
+<section id="refer" *ngIf="activeSection === 'refer'">
+  <app-refer></app-refer>
 </section>

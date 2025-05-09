@@ -12,7 +12,7 @@
 <ng-container *ngIf="showPrincipalSection">
   <section #principal>
     <app-curriculum-types-info *ngIf="showCurriculumInfo"></app-curriculum-types-info>
-    <app-cv-canvas *ngIf="showCanvas"></app-cv-canvas>
+    <app-canvas-001 *ngIf="showCanvas" [currentUser]="currentUser"></app-canvas-001>
     <app-ats-001 *ngIf="showAts" [currentUser]="currentUser"></app-ats-001>
   </section>
 </ng-container>
@@ -20,17 +20,11 @@
 <section class="gallery-grid" *ngIf="showGalleryGrid">
   <app-edit-profile-picture *ngIf="shouldShowComponent('foto-perfil')"
     [currentUser]="currentUser"></app-edit-profile-picture>
-
   <app-edit-personal-data *ngIf="shouldShowComponent('datos-personales')"
     [currentUser]="currentUser"></app-edit-personal-data>
-
   <app-edit-about-me *ngIf="shouldShowComponent('sobre-mi')" [currentUser]="currentUser"></app-edit-about-me>
-
   <app-edit-education *ngIf="shouldShowComponent('educacion')" [currentUser]="currentUser"></app-edit-education>
-
   <app-edit-experience *ngIf="shouldShowComponent('experiencias')" [currentUser]="currentUser"></app-edit-experience>
-
   <app-edit-languages *ngIf="shouldShowComponent('idiomas')" [currentUser]="currentUser"></app-edit-languages>
-
   <app-edit-skills *ngIf="shouldShowComponent('habilidades')" [currentUser]="currentUser"></app-edit-skills>
 </section>

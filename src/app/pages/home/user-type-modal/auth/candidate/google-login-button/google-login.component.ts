@@ -19,7 +19,7 @@ import { FirebaseService } from '../../../../../../shared/services/firebase.serv
       .google-login-btn {
         width: 100%;
         padding: 10px 15px;
-        background-color: var(--clr-white);
+        background-color: white;
         border: 1px solid var(--clr-green);
         color: var(--clr-green);
         border-radius: 4px;
@@ -33,7 +33,7 @@ import { FirebaseService } from '../../../../../../shared/services/firebase.serv
       }
 
       .google-login-btn:hover {
-        color: var(--clr-white);
+        color: white;
         background-color: var(--clr-green);
         border: 1px solid var(--clr-green);
       }

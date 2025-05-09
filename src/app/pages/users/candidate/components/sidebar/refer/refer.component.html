@@ -1,0 +1,18 @@
+<!-- refer.component.html -->
+<div class="refer-container">
+  <h2>Referir a un amigo</h2>
+  <p>Comparte este enlace con tus contactos:</p>
+  <div class="referral-link">
+    <input type="text" [value]="referralLink" readonly>
+    <button (click)="copyToClipboard()">Copiar</button>
+    <button (click)="shareLink()" class="share-button">Compartir</button>
+  </div>
+  <div class="social-share" *ngIf="!canShare">
+    <button (click)="shareVia('whatsapp')">
+      <i class="fab fa-whatsapp"></i> WhatsApp
+    </button>
+    <button (click)="shareVia('email')">
+      <i class="fas fa-envelope"></i> Email
+    </button>
+  </div>
+</div>

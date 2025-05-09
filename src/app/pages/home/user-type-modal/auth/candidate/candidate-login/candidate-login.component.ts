@@ -90,7 +90,7 @@ export class CandidateLoginComponent {
         metadata: { lastLogin: new Date().toISOString() }
       });
   
-      this.toastService.show(`Bienvenido ${fullName}`, 'success', 3000);
+      this.toastService.show(`Bienvenido ${fullName}`, 'success', 5000);
       
       this.router.navigateByUrl('/', {skipLocationChange: true}).then(() => {
         this.router.navigate([userRole === 'admin' ? '/main' : '/candidate']);
@@ -113,10 +113,10 @@ export class CandidateLoginComponent {
   }
 
   handleGoogleSuccess() {
-    this.toastService.show('Autenticación con Google exitosa', 'success', 2000);
+    this.toastService.show('Autenticación con Google exitosa', 'success', 5000);
     setTimeout(() => {
       this.router.navigate(['/candidate']);
-    }, 2000);
+    }, 500);
   }
 
   handleGoogleError(error: any) {

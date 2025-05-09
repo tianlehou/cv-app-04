@@ -1,0 +1,14 @@
+.form-group {
+  text-align: left;
+}
+
+.profile-container span {
+  display: grid;
+  padding-bottom: 10px;
+}
+
+.profile-container label {
+  white-space: pre-line; /* Mantiene los saltos de línea */
+  padding-left: 20px;
+  line-height: 1.5; /* Mejor espaciado entre líneas */
+}

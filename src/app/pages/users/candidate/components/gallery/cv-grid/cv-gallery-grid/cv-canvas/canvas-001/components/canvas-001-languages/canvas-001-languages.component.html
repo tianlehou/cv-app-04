@@ -1,0 +1,51 @@
+<div class="profile-container">
+  <div class="form-group" [formGroup]="profileForm">
+    <label class="bar">Idiomas:</label>
+    @if (languagesArray.length > 0) {
+
+    <!-- Idiomas sin detalles -->
+    @if (languagesWithoutDetails.length > 0) {
+    <ul class="languages-list compact-view">
+      @for (language of languagesWithoutDetails; track $index) {
+      <li>
+        <div class="item">
+          <div class="language-detail">
+            <p>{{ language.name || 'Sin especificar' }}</p>
+          </div>
+        </div>
+      </li>
+      }
+    </ul>
+    }
+
+    <!-- Idiomas con detalles -->
+    @if (languagesWithDetails.length > 0) {
+    <ul class="languages-list detailed-view">
+      @for (language of languagesWithDetails; track $index) {
+      <li>
+        <div class="item">
+          <div class="language-detail">
+            <span>Idioma:</span>{{ language.name || 'Sin especificar' }}
+          </div>
+          @if (language.proficiency) {
+          <div class="language-detail">
+            <span>(Nivel:</span>{{ language.proficiency }})
+          </div>
+          }
+        </div>
+        @if (language.certification) {
+          <div class="language-detail">
+            <span>Certificación:</span>{{ language.certification }}
+          </div>
+          }
+        @if (!$last) {
+        }
+      </li>
+      }
+    </ul>
+    }
+    } @else {
+    <p class="no-languages">No se encontraron idiomas</p>
+    }
+  </div>
+</div>

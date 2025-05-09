@@ -1,0 +1,26 @@
+<div class="profile-container">
+  <form [formGroup]="profileForm">
+    <div class="form-group">
+      <div *ngFor="let exp of profileForm.get('experience')?.value">
+
+        <!-- Puesto -->
+        <div *ngIf="exp.role">
+          <strong>{{ exp.role || "No especificado" }}</strong>
+        </div>
+
+        <!-- Empresa - Lugar - Año -->
+        <div>
+          <span *ngIf="exp.company" style="padding-left: 1rem;">
+          <label>{{ exp.company || "No especificado" }}</label></span>
+          <label *ngIf="exp.place"><span style="padding: 0 1rem;">|</span>{{ exp.place || "No especificado" }}</label>
+          <label *ngIf="exp.year"><span style="padding: 0 1rem;">|</span>{{ exp.year || "No especificado" }}</label>
+        </div>
+
+        <!-- Descripción / Detalles -->
+        <div class="description-text">
+          <span>{{ formatDescription(exp.description) }}</span>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>

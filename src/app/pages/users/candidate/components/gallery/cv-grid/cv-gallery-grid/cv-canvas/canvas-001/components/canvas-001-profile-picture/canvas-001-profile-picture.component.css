@@ -1,0 +1,8 @@
+.profile-picture-preview {
+  width: 200px;
+  height: 200px;
+  margin: 0 auto 20px;
+  background-size: cover;
+  border-radius: 50%;
+  border: 3px solid #fff;
+}

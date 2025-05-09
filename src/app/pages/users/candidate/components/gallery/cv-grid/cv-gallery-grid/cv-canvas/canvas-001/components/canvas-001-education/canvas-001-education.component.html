@@ -1,0 +1,25 @@
+<div class="profile-container">
+  <form [formGroup]="profileForm">
+    <div class="form-group">
+      <div *ngFor="let edu of profileForm.get('education')?.value">
+
+        <!-- Título -->
+        <div *ngIf="edu.degree">
+          <strong>{{ edu.degree || "No especificado" }}</strong>
+        </div>
+
+        <!-- Universidad - Lugar - Año -->
+        <div style="padding-left: 1rem; display: grid;">
+          <label *ngIf="edu.institution">{{ edu.institution || "No especificado" }}</label>
+          <label *ngIf="edu.place">{{ edu.place || "No especificado" }}</label>
+          <label *ngIf="edu.year">{{ edu.year || "No especificado" }}</label>
+        </div>
+
+        <!-- Logros -->
+        <div *ngIf="edu.achievements" class="description-text">
+          <span>{{ formatDescription(edu.achievements) }}</span>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>

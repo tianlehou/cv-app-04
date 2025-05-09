@@ -7,7 +7,7 @@
   background-color: white;
 }
 
-.ats-container {
+.cv-container {
   width: 780px;
   min-height: 1130px;
   margin: 0 auto;
@@ -21,8 +21,8 @@
 }
 
 /* Efecto de hoja de papel con esquinas ligeramente dobladas */
-.ats-container::before,
-.ats-container::after {
+.cv-container::before,
+.cv-container::after {
   content: "";
   position: absolute;
   background: white;

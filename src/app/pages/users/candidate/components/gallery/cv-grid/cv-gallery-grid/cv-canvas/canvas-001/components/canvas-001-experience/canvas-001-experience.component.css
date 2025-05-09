@@ -1,0 +1,10 @@
+/* Contenedor principal */
+.profile-container {
+  text-align: left;
+}
+
+.description-text {
+  white-space: pre-line;
+  text-align: justify;
+  padding: 1rem 0 1rem 1rem;
+}

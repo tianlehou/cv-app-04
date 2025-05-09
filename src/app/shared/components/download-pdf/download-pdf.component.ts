@@ -4,12 +4,12 @@ import * as jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 
 @Component({
-  selector: 'app-ats-download-pdf',
+  selector: 'app-download-pdf',
   standalone: true,
-  templateUrl: './ats-download-pdf.component.html',
-  styleUrls: ['./ats-download-pdf.component.css'],
+  templateUrl: './download-pdf.component.html',
+  styleUrls: ['./download-pdf.component.css'],
 })
-export class AtsDownloadPdfComponent {
+export class DownloadPdfComponent {
   @Input() containerId: string = 'pdf-content'; // ID del contenedor a capturar
 
   downloadPDF(): void {

@@ -53,6 +53,6 @@ app-custom-button {
   }
 }
 
-#candidate, #subscription {
+#candidate, #subscription, #refer {
   transition: opacity 0.3s ease-in-out;
 }

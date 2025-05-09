@@ -13,9 +13,10 @@ import { FirebaseService } from '../../../../../shared/services/firebase.service
 })
 export class SidebarComponent {
   isMenuOpen = false;
-  @Input() activeSection: 'home' | 'subscription' = 'home';
+  @Input() activeSection: 'home' | 'subscription' | 'refer' = 'home'; 
   @Output() homeClicked = new EventEmitter<void>();
   @Output() subscriptionClicked = new EventEmitter<void>();
+  @Output() referClicked = new EventEmitter<void>();
 
   constructor(private firebaseService: FirebaseService) {}
 
@@ -34,7 +35,12 @@ export class SidebarComponent {
 
   onSubscriptionClick() {
     this.subscriptionClicked.emit();
-    this.toggleMenu(); // Opcional: cerrar el menú después de hacer clic
+    this.toggleMenu();
+  }
+
+  onReferClick() {
+    this.referClicked.emit();
+    this.toggleMenu();
   }
 
   // Llama al método logout de firebase.service

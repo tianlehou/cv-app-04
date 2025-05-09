@@ -11,6 +11,7 @@ import { GalleryComponent } from './components/gallery/gallery.component';
 // Others components
 import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { SubscriptionComponent } from './components/sidebar/subscription/subscription.component';
+import { ReferComponent } from './components/sidebar/refer/refer.component';
 
 @Component({
   selector: 'app-candidate',
@@ -23,6 +24,7 @@ import { SubscriptionComponent } from './components/sidebar/subscription/subscri
     PersonalDataComponent,
     GalleryComponent,
     SubscriptionComponent,
+    ReferComponent,
   ],
   templateUrl: './candidate.component.html',
   styleUrls: ['./candidate.component.css'],
@@ -31,7 +33,7 @@ export class CandidateComponent implements OnInit {
   currentUser: any = null;
   userRole: string | null = null;
   showSubscription = false;
-  activeSection: 'home' | 'subscription' = 'home';
+  activeSection: 'home' | 'subscription' | 'refer' = 'home';
 
   constructor(private firebaseService: FirebaseService) {}
 
@@ -52,6 +54,10 @@ export class CandidateComponent implements OnInit {
           console.error('Usuario no autenticado.');
         }
       });
+  }
+
+  toggleRefer() {
+    this.activeSection = this.activeSection === 'refer' ? 'home' : 'refer';
   }
 
   toggleSubscription() {

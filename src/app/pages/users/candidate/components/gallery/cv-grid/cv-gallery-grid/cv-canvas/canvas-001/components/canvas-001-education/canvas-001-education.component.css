@@ -1,0 +1,10 @@
+.profile-container {
+  text-align: left;
+}
+
+.description-text {
+  white-space: pre-line;
+  text-align: justify;
+  padding-left: 1rem;
+  margin-bottom: 10px;
+}

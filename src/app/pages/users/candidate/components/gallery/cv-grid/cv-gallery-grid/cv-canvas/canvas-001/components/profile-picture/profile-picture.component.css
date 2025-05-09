@@ -1,0 +1,27 @@
+/* Contenedor principal */
+.profile-container {
+  max-width: 600px;
+  margin: 10px 0;
+  padding: 20px;
+  border: 1px solid #999;
+  background: #f9f9f9;
+}
+
+.profile-container label {
+  display: block;
+  margin-bottom: 0.5em;
+  font-weight: 500;
+  flex: 1;
+  max-width: 25%;
+  text-align: left;
+}
+
+.profile-container .profile-picture-preview {
+  flex: 3;
+  max-width: 75%;
+  height: auto;
+  object-fit: cover;
+  margin-left: auto;
+  margin-top: 10px;
+  border-radius: 50%;
+}

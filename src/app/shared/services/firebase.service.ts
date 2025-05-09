@@ -116,12 +116,30 @@ export class FirebaseService {
       if (user) {
         const userEmailKey = this.formatEmailKey(user.email!);
         const userRef = ref(this.db, `cv-app/users/${userEmailKey}`);
-        
+
         const userSnapshot = await get(userRef);
         if (userSnapshot.exists()) {
+          const userData = userSnapshot.val();
+
+          // Si no existe un ID, generamos uno
+          if (!userData.metadata?.userId) {
+            const userId = this.generateUserId();
+            await update(ref(this.db, `cv-app/users/${userEmailKey}/metadata`), {
+              userId: userId
+            });
+            return {
+              ...userData,
+              email: user.email,
+              metadata: {
+                ...userData.metadata,
+                userId: userId
+              }
+            };
+          }
+
           return {
-            ...userSnapshot.val(),
-            email: user.email // Ensure email is included
+            ...userData,
+            email: user.email
           };
         }
         return null;
@@ -130,23 +148,27 @@ export class FirebaseService {
     });
   }
 
+  private generateUserId(): string {
+    return 'user_' + Math.random().toString(36).substr(2, 9);
+  }
+
   async getUserData(emailKey: string): Promise<any> {
     return runInInjectionContext(this.injector, async () => {
       try {
         const userRef = ref(this.db, `cv-app/users/${emailKey}`);
         const userSnapshot = await get(userRef);
-  
+
         if (!userSnapshot.exists()) {
           throw new Error('Datos de usuario no encontrados');
         }
-        
+
         return userSnapshot.val();
       } catch (error) {
         console.error('Error al obtener datos:', error);
         throw new Error('No tienes permisos para acceder a estos datos');
       }
     });
-}
+  }
 
   async getComponentStyles(
     email: string,
@@ -189,7 +211,7 @@ export class FirebaseService {
   async updateUserData(
     originalEmail: string,
     data: Partial<{
-      metadata?: Partial<{ 
+      metadata?: Partial<{
         createdAt?: string;
         email: string;
         enabled: boolean;
