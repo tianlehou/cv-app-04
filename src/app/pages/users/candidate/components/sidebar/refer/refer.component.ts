@@ -9,24 +9,26 @@ import { ToastService } from '../../../../../../shared/services/toast.service';
   standalone: true,
   imports: [CommonModule],
   templateUrl: './refer.component.html',
-  styleUrls: ['./refer.component.css']
+  styleUrls: ['./refer.component.css'],
 })
 export class ReferComponent implements OnInit {
   referralLink = '';
   currentUser: any;
+  isCopied = false;
   get canShare(): boolean {
     return !!window.navigator.share;
   }
 
-  constructor(private firebaseService: FirebaseService, private toastService: ToastService) {
-    console.log('FirebaseService:', this.firebaseService);
-  }
+  constructor(
+    private firebaseService: FirebaseService,
+    private toastService: ToastService
+  ) {}
 
   async ngOnInit() {
     try {
       this.currentUser = await this.firebaseService.getCurrentUser();
       if (this.currentUser?.metadata?.userId) {
-        this.referralLink = `https://cv-app-02.vercel.app/registro?ref=${this.currentUser.metadata.userId}`;
+        this.referralLink = `https://cv-app-04.vercel.app/?ref=${this.currentUser.metadata.userId}&view=register`;
       } else {
         console.warn('No user ID found for current user');
       }
@@ -38,6 +40,8 @@ export class ReferComponent implements OnInit {
   copyToClipboard() {
     navigator.clipboard.writeText(this.referralLink).then(() => {
       this.toastService.show('Enlace copiado al portapeles', 'success');
+      this.isCopied = true;
+      setTimeout(() => this.isCopied = false, 2000);
     }).catch(err => {
       console.error('Error al copiar: ', err);
       this.toastService.show('Error al copiar el enlace', 'error');
@@ -46,12 +50,14 @@ export class ReferComponent implements OnInit {
 
   private showDesktopShareOptions() {
     const shareText = `Regístrate usando mi enlace: ${this.referralLink}`;
-    const emailUrl = `_streams://localhost:4200?subject=Únete a esta aplicación&body=${encodeURIComponent(shareText)}`;
+    const emailUrl = `_streams://localhost:4200?subject=Únete a esta aplicación&body=${encodeURIComponent(
+      shareText
+    )}`;
     const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(shareText)}`;
-  
+
     this.toastService.show(
-      'Enlace listo para compartir. Puedes pegarlo donde quieras.', 
-      'info', 
+      'Enlace listo para compartir. Puedes pegarlo donde quieras.',
+      'info',
       3000
     );
     this.copyToClipboard(); // Copia automáticamente al mostrar las opciones
@@ -63,14 +69,15 @@ export class ReferComponent implements OnInit {
         await navigator.share({
           title: 'Únete a esta aplicación',
           text: 'Regístrate usando mi enlace de referido',
-          url: this.referralLink
+          url: this.referralLink,
         });
         this.toastService.show('Enlace compartido con éxito', 'success');
       } else {
         this.showDesktopShareOptions();
       }
     } catch (err) {
-      if ((err as Error).name !== 'AbortError') { // No mostrar error si el usuario cancela
+      if ((err as Error).name !== 'AbortError') {
+        // No mostrar error si el usuario cancela
         console.error('Error al compartir:', err);
         this.toastService.show('Error al compartir el enlace', 'error');
       }
@@ -82,16 +89,34 @@ export class ReferComponent implements OnInit {
 
     switch (platform) {
       case 'whatsapp':
-        window.open(`https://wa.me/?text=${encodeURIComponent(shareText)}`, '_blank');
+        window.open(
+          `https://wa.me/?text=${encodeURIComponent(shareText)}`,
+          '_blank'
+        );
         break;
       case 'email':
-        window.open(`mailto:?subject=Únete a esta aplicación&body=${encodeURIComponent(shareText)}`, '_blank');
+        window.open(
+          `mailto:?subject=Únete a esta aplicación&body=${encodeURIComponent(
+            shareText
+          )}`,
+          '_blank'
+        );
         break;
       case 'facebook':
-        window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(this.referralLink)}`, '_blank');
+        window.open(
+          `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
+            this.referralLink
+          )}`,
+          '_blank'
+        );
         break;
       case 'twitter':
-        window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}`, '_blank');
+        window.open(
+          `https://twitter.com/intent/tweet?text=${encodeURIComponent(
+            shareText
+          )}`,
+          '_blank'
+        );
         break;
     }
   }

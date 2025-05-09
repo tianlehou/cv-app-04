@@ -11,13 +11,7 @@ import {
   sendPasswordResetEmail,
   signInWithEmailAndPassword,
 } from '@angular/fire/auth';
-import {
-  Database,
-  ref,
-  set,
-  get,
-  update,
-} from '@angular/fire/database';
+import { Database, ref, set, get, update } from '@angular/fire/database';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { ComponentStyles } from '../models/component-styles.model';
 
@@ -29,6 +23,8 @@ export class FirebaseService {
   private db = inject(Database);
   private authState = new BehaviorSubject<boolean>(false);
   private injector = inject(EnvironmentInjector);
+  private referralSource = new BehaviorSubject<string | null>(null);
+  currentReferral = this.referralSource.asObservable();
 
   constructor() {
     this.monitorAuthState();
@@ -80,6 +76,7 @@ export class FirebaseService {
       role: string;
       enabled: boolean;
       createdAt: string;
+      referredBy?: string;
     }
   ) {
     return runInInjectionContext(this.injector, async () => {
@@ -92,6 +89,7 @@ export class FirebaseService {
         role: data.role,
         enabled: data.enabled,
         createdAt: data.createdAt,
+        ...(data.referredBy && { referredBy: data.referredBy })
       });
     });
   }
@@ -105,7 +103,7 @@ export class FirebaseService {
       );
 
       await set(personalDataRef, {
-        fullName: fullName
+        fullName: fullName,
       });
     });
   }
@@ -124,22 +122,25 @@ export class FirebaseService {
           // Si no existe un ID, generamos uno
           if (!userData.metadata?.userId) {
             const userId = this.generateUserId();
-            await update(ref(this.db, `cv-app/users/${userEmailKey}/metadata`), {
-              userId: userId
-            });
+            await update(
+              ref(this.db, `cv-app/users/${userEmailKey}/metadata`),
+              {
+                userId: userId,
+              }
+            );
             return {
               ...userData,
               email: user.email,
               metadata: {
                 ...userData.metadata,
-                userId: userId
-              }
+                userId: userId,
+              },
             };
           }
 
           return {
             ...userData,
-            email: user.email
+            email: user.email,
           };
         }
         return null;
@@ -217,6 +218,7 @@ export class FirebaseService {
         enabled: boolean;
         lastLogin?: string;
         lastUpdated?: string;
+        referredBy?: string;
         role?: string;
       }>;
       profileData?: {
@@ -273,5 +275,21 @@ export class FirebaseService {
         throw error;
       }
     });
+  }
+
+  // método para obtener el ID de referido
+  setReferralId(referralId: string) {
+    this.referralSource.next(referralId);
+    // También puedes guardarlo en localStorage para persistencia
+    localStorage.setItem('referralId', referralId);
+  }
+
+  getStoredReferralId(): string | null {
+    return localStorage.getItem('referralId');
+  }
+
+  clearReferralId() {
+    this.referralSource.next(null);
+    localStorage.removeItem('referralId');
   }
 }

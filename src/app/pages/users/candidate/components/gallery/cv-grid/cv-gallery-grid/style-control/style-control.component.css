@@ -20,12 +20,10 @@
 }
 
 .style-control-panel.visible {
-  opacity: 1;
   transform: translateX(0);
 }
 
 .style-control-panel.hiding {
-  opacity: 0;
   transform: translateX(100%);
 }
 
@@ -104,6 +102,11 @@
   }
 }
 
+.settings-btn:hover {
+  background-color: #f5f5f5;
+}
+
+/* Resto del CSS permanece igual */
 .control-group {
   margin-bottom: 1rem;
   display: flex;

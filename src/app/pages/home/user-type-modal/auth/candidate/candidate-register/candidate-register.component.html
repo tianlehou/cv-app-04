@@ -123,6 +123,9 @@
       </div>
     </div>
 
+    <!-- Campo oculto para referido -->
+    <input type="hidden" formControlName="referredBy">
+
     <ng-container *ngIf="toastService.getToasts() | async as toasts">
       <div *ngFor="let toast of toasts" class="toast toast-{{toast.type}}">
         {{ toast.message }}

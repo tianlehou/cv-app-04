@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, Input, Output, EventEmitter, OnInit, HostListener, ElementRef } from '@angular/core';
+import { Component, inject, Input, Output, EventEmitter, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { FirebaseService } from '../../../../../../../../shared/services/firebase.service';
 import { ComponentStyles } from '../../../../../../../../shared/models/component-styles.model';
@@ -70,21 +70,11 @@ export class StyleControlComponent implements OnInit {
   private firebaseService = inject(FirebaseService);
   private confirmationModal = inject(ConfirmationModalService);
   private toastService = inject(ToastService);
-  private elementRef = inject(ElementRef); // Inject ElementRef for outside click detection
 
   async ngOnInit() {
     await this.loadSavedStyles();
     await this.loadColorFavorites();
     this.isLoading = false;
-  }
-
-  // Listen for clicks on the document
-  @HostListener('document:click', ['$event'])
-  onDocumentClick(event: MouseEvent) {
-    if (this.visible && !this.elementRef.nativeElement.contains(event.target)) {
-      // Click occurred outside the panel, close it
-      this.toggleVisibility();
-    }
   }
 
   private async loadSavedStyles() {
@@ -164,7 +154,7 @@ export class StyleControlComponent implements OnInit {
       setTimeout(() => {
         this.visible = false;
         this.hiding = false;
-      }, 300); // Reduced timeout for smoother closing
+      }, 1500);
     } else {
       this.visible = true;
     }
@@ -252,11 +242,14 @@ export class StyleControlComponent implements OnInit {
           const currentUser = await this.firebaseService.getCurrentUser();
   
           if (currentUser && currentUser.email) {
+            // Primero obtenemos los estilos actuales para no sobrescribir los colores favoritos
             const currentData = await this.firebaseService.getUserData(this.firebaseService.formatEmailKey(currentUser.email));
+            
+            // Creamos el objeto de actualización manteniendo los datos existentes
             const updateData = {
               'cv-styles': {
-                ...(currentData?.['cv-styles'] || {}),
-                [this.componentName]: styles
+                ...(currentData?.['cv-styles'] || {}), // Mantenemos todos los estilos existentes
+                [this.componentName]: styles // Actualizamos solo los estilos del componente actual
               }
             };
   
