@@ -73,7 +73,15 @@ export class CandidateRegisterComponent implements OnInit {
         // 1. Registrar usuario en Firebase Auth
         await this.firebaseService.registerWithEmail(email, password);
 
-        // 2. Crear objeto userData
+        // 2. Guardar datos básicos en metadata
+        await this.firebaseService.saveUserData(email, {
+          email,
+          role: 'candidate',
+          enabled: true,
+          createdAt: new Date().toISOString(),
+        });
+
+        // Crear objeto userData
         const userData: any = {
           email,
           role: 'candidate',
@@ -81,52 +89,50 @@ export class CandidateRegisterComponent implements OnInit {
           createdAt: new Date().toISOString(),
         };
 
-        // 3. Añadir referredBy si existe
+        // Añadir referredBy solo si existe
         if (referredBy) {
           userData.referredBy = referredBy;
-          
-          // Registrar el referido en el nodo específico
-          await this.firebaseService.trackReferral(
-            referredBy,
-            email,
-            fullName
-          );
         }
 
-        // 4. Guardar datos básicos en metadata
+        // Guardar datos básicos en metadata
         await this.firebaseService.saveUserData(email, userData);
 
-        // 5. Guardar fullName en profileData/personalData
+        // 3. Guardar fullName en profileData/personalData
         await this.firebaseService.saveFullName(email, fullName);
 
-        // 6. Limpiar el referral después de registro exitoso
+        // Limpiar el referral después de registro exitoso
         this.firebaseService.clearReferralId();
 
-        // 7. Mostrar toast de éxito
+        // Mostrar toast de éxito
         this.toastService.show('Usuario registrado con éxito', 'success', 5000);
 
-        // 8. Cambiar a vista de login después de 0.5 segundos
+        // Cambiar a vista de login después de 0.5 segundos
         setTimeout(() => {
           this.showLogin.emit();
         }, 500);
       } catch (error: any) {
-        console.error('Error en registro:', error);
+        console.error(error);
 
         // Mapeo de errores de Firebase
         const errorMessages: { [key: string]: string } = {
           'auth/email-already-in-use': '¡Este correo ya está en uso!',
-          'auth/invalid-email': 'Correo inválido. Verifica que esté bien escrito.',
-          'auth/weak-password': 'Contraseña débil. Usa al menos 8 caracteres con letras y números.',
-          'auth/network-request-failed': 'Error de conexión. Verifica tu conexión a internet.',
+          'auth/invalid-email':
+            'Correo inválido. Verifica que esté bien escrito.',
+          'auth/weak-password':
+            'Contraseña débil. Usa al menos 8 caracteres con letras y números.',
+          'auth/network-request-failed':
+            'Error de conexión. Verifica tu conexión a internet.',
         };
 
         const message =
           errorMessages[error.code as keyof typeof errorMessages] ||
           '¡Ocurrió un error inesperado durante el registro!';
 
+        // Mostrar mensaje de error con toast
         this.toastService.show(message, 'error', 5000);
       }
     } else {
+      // Mostrar error de validación de formulario
       this.toastService.show(
         'Por favor completa todos los campos requeridos correctamente',
         'error',
