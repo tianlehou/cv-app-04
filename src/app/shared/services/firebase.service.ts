@@ -89,7 +89,7 @@ export class FirebaseService {
         role: data.role,
         enabled: data.enabled,
         createdAt: data.createdAt,
-        ...(data.referredBy && { referredBy: data.referredBy })
+        ...(data.referredBy && { referredBy: data.referredBy }),
       });
     });
   }
@@ -291,5 +291,78 @@ export class FirebaseService {
   clearReferralId() {
     this.referralSource.next(null);
     localStorage.removeItem('referralId');
+  }
+
+  // Método para obtener estadísticas de referidos
+  async trackReferral(
+    referrerId: string,
+    referredEmail: string,
+    referredName: string
+  ): Promise<void> {
+    return runInInjectionContext(this.injector, async () => {
+      const referredEmailKey = this.formatEmailKey(referredEmail);
+      const referralRef = ref(
+        this.db,
+        `cv-app/referrals/${referrerId}/${referredEmailKey}`
+      );
+
+      await set(referralRef, {
+        email: referredEmail,
+        name: referredName,
+        date: new Date().toISOString(),
+        status: 'active',
+      });
+    });
+  }
+
+  async getReferralStats(userId: string): Promise<any> {
+    return runInInjectionContext(this.injector, async () => {
+      try {
+        // Verificar que el userId existe
+        const currentUser = await this.getCurrentUser();
+        if (
+          !currentUser?.metadata?.userId ||
+          currentUser.metadata.userId !== userId
+        ) {
+          throw new Error('No tienes permisos para ver estos datos');
+        }
+
+        const referralsRef = ref(this.db, `cv-app/referrals/${userId}`);
+        const snapshot = await get(referralsRef);
+
+        if (!snapshot.exists()) return { total: 0, active: 0, recent: [] };
+
+        const allReferrals = snapshot.val();
+        let total = 0;
+        let active = 0;
+        const recentReferrals: any[] = [];
+
+        for (const emailKey in allReferrals) {
+          const referral = allReferrals[emailKey];
+          total++;
+          if (referral.status === 'active') active++;
+
+          if (recentReferrals.length < 5) {
+            recentReferrals.push({
+              email: referral.email,
+              date: referral.date,
+              name: referral.name || 'Usuario anónimo',
+            });
+          }
+        }
+
+        return {
+          totalReferrals: total,
+          activeReferrals: active,
+          conversionRate: total > 0 ? Math.round((active / total) * 100) : 0,
+          recentReferrals: recentReferrals.sort(
+            (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+          ),
+        };
+      } catch (error) {
+        console.error('Error getting referral stats:', error);
+        throw error;
+      }
+    });
   }
 }
