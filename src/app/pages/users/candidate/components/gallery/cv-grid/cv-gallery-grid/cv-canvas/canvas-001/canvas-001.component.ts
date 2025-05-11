@@ -9,7 +9,7 @@ import { Canvas001EducationComponent } from './components/canvas-001-education/c
 import { Canvas001SkillsComponent } from './components/canvas-001-skills/canvas-001-skills.component';
 import { DownloadPdfComponent } from '../../../../../../../../../shared/components/download-pdf/download-pdf.component';
 import { FirebaseService } from '../../../../../../../../../shared/services/firebase.service';
-import { ComponentStyles } from '../../../../../../../../../shared/models/component-styles.model';
+import { ComponentStyles } from '../../style-control/component-styles.model';
 import { StyleControlComponent } from '../../style-control/style-control.component';
 
 @Component({

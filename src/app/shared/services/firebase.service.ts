@@ -1,3 +1,4 @@
+// firebase.service.ts
 import {
   Injectable,
   inject,
@@ -13,7 +14,7 @@ import {
 } from '@angular/fire/auth';
 import { Database, ref, set, get, update } from '@angular/fire/database';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { ComponentStyles } from '../models/component-styles.model';
+import { ComponentStyles } from '../../pages/users/candidate/components/gallery/cv-grid/cv-gallery-grid/style-control/component-styles.model';
 
 const increment = (delta: number) => {
   return (current: number) => (current || 0) + delta;
@@ -71,6 +72,23 @@ export class FirebaseService {
 
   logout() {
     runInInjectionContext(this.injector, () => this.auth.signOut());
+  }
+
+  // Métodos base para operaciones de base de datos
+  getDatabaseRef(path: string) {
+    return ref(this.db, path);
+  }
+
+  async getDatabaseValue(ref: any) {
+    return runInInjectionContext(this.injector, async () => {
+      return get(ref);
+    });
+  }
+
+  async setDatabaseValue(ref: any, value: any) {
+    return runInInjectionContext(this.injector, async () => {
+      return set(ref, value);
+    });
   }
 
   // Método corregido con runInInjectionContext
@@ -218,44 +236,6 @@ export class FirebaseService {
         console.error('Error al obtener datos:', error);
         throw new Error('No tienes permisos para acceder a estos datos');
       }
-    });
-  }
-
-  async getComponentStyles(
-    email: string,
-    componentName: string
-  ): Promise<ComponentStyles | null> {
-    return runInInjectionContext(this.injector, async () => {
-      const userEmailKey = this.formatEmailKey(email);
-      const stylesRef = ref(
-        this.db,
-        `cv-app/users/${userEmailKey}/cv-styles/${componentName}`
-      );
-      const snapshot = await get(stylesRef);
-      return snapshot.exists() ? (snapshot.val() as ComponentStyles) : null;
-    });
-  }
-
-  async getColorFavorites(email: string): Promise<string[]> {
-    return runInInjectionContext(this.injector, async () => {
-      const userEmailKey = this.formatEmailKey(email);
-      const favoritesRef = ref(
-        this.db,
-        `cv-app/users/${userEmailKey}/cv-styles/color-favorites`
-      );
-      const snapshot = await get(favoritesRef);
-      return snapshot.exists() ? (snapshot.val() as string[]) : [];
-    });
-  }
-
-  async saveColorFavorites(email: string, colors: string[]): Promise<void> {
-    return runInInjectionContext(this.injector, async () => {
-      const userEmailKey = this.formatEmailKey(email);
-      const favoritesRef = ref(
-        this.db,
-        `cv-app/users/${userEmailKey}/cv-styles/color-favorites`
-      );
-      await set(favoritesRef, colors);
     });
   }
 

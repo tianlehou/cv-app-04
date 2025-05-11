@@ -9,7 +9,7 @@ import { AtsSkillsComponent } from './components/ats-skills/ats-skills.component
 import { DownloadPdfComponent } from '../../../../../../../../../shared/components/download-pdf/download-pdf.component';
 import { StyleControlComponent } from '../../style-control/style-control.component';
 import { FirebaseService } from '../../../../../../../../../shared/services/firebase.service';
-import { ComponentStyles } from '../../../../../../../../../shared/models/component-styles.model';
+import { ComponentStyles } from '../../style-control/component-styles.model';
 
 @Component({
   selector: 'app-ats-001',

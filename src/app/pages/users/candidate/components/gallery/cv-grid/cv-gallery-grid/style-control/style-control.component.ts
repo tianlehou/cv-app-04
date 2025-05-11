@@ -2,9 +2,10 @@ import { CommonModule } from '@angular/common';
 import { Component, inject, Input, Output, EventEmitter, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { FirebaseService } from '../../../../../../../../shared/services/firebase.service';
-import { ComponentStyles } from '../../../../../../../../shared/models/component-styles.model';
+import { ComponentStyles } from './component-styles.model';
 import { ConfirmationModalService } from '../../../../../../../../shared/services/confirmation-modal.service';
 import { ToastService } from '../../../../../../../../shared/services/toast.service';
+import { StyleService } from './style-control.service';
 
 @Component({
   selector: 'app-style-control',
@@ -68,6 +69,7 @@ export class StyleControlComponent implements OnInit {
   selectedFontFamily = 'Arial, sans-serif';
 
   private firebaseService = inject(FirebaseService);
+    private styleService = inject(StyleService);
   private confirmationModal = inject(ConfirmationModalService);
   private toastService = inject(ToastService);
 
@@ -81,7 +83,7 @@ export class StyleControlComponent implements OnInit {
     try {
       const currentUser = await this.firebaseService.getCurrentUser();
       if (currentUser?.email) {
-        const savedStyles = await this.firebaseService.getComponentStyles(
+        const savedStyles = await this.styleService.getComponentStyles(
           currentUser.email,
           this.componentName
         );
@@ -127,7 +129,7 @@ export class StyleControlComponent implements OnInit {
     try {
       const currentUser = await this.firebaseService.getCurrentUser();
       if (currentUser?.email) {
-        this.userColorFavorites = await this.firebaseService.getColorFavorites(currentUser.email);
+        this.userColorFavorites = await this.styleService.getColorFavorites(currentUser.email);
       }
     } catch (error) {
       console.error('Error loading color favorites:', error);
@@ -139,7 +141,7 @@ export class StyleControlComponent implements OnInit {
     try {
       const currentUser = await this.firebaseService.getCurrentUser();
       if (currentUser?.email) {
-        await this.firebaseService.saveColorFavorites(currentUser.email, this.userColorFavorites);
+        await this.styleService.saveColorFavorites(currentUser.email, this.userColorFavorites);
         this.toastService.show('Colores favoritos guardados', 'success');
       }
     } catch (error) {
