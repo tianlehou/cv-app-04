@@ -5,16 +5,10 @@ import {
   runInInjectionContext,
   EnvironmentInjector,
 } from '@angular/core';
-import {
-  Auth,
-  createUserWithEmailAndPassword,
-  onAuthStateChanged,
-  sendPasswordResetEmail,
-  signInWithEmailAndPassword,
-} from '@angular/fire/auth';
 import { Database, ref, set, get, update } from '@angular/fire/database';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { ComponentStyles } from '../../pages/users/candidate/components/gallery/cv-grid/cv-gallery-grid/style-control/component-styles.model';
+import { AuthService } from '../../pages/home/user-type-modal/auth/auth.service';
 
 const increment = (delta: number) => {
   return (current: number) => (current || 0) + delta;
@@ -24,54 +18,14 @@ const increment = (delta: number) => {
   providedIn: 'root',
 })
 export class FirebaseService {
-  private auth = inject(Auth);
   private db = inject(Database);
-  private authState = new BehaviorSubject<boolean>(false);
   private injector = inject(EnvironmentInjector);
+  private authService = inject(AuthService);
   private referralSource = new BehaviorSubject<string | null>(null);
   currentReferral = this.referralSource.asObservable();
 
-  constructor() {
-    this.monitorAuthState();
-  }
-
-  private monitorAuthState() {
-    runInInjectionContext(this.injector, () => {
-      onAuthStateChanged(this.auth, (user) => {
-        this.authState.next(!!user);
-      });
-    });
-  }
-
-  isAuthenticated(): Observable<boolean> {
-    return this.authState.asObservable();
-  }
-
   public formatEmailKey(email: string): string {
     return email.replace(/\./g, '_');
-  }
-
-  registerWithEmail(email: string, password: string) {
-    return runInInjectionContext(this.injector, () =>
-      createUserWithEmailAndPassword(this.auth, email, password)
-    );
-  }
-
-  async loginWithEmail(email: string, password: string) {
-    return runInInjectionContext(this.injector, async () => {
-      await signInWithEmailAndPassword(this.auth, email, password);
-      return this.getCurrentUser();
-    });
-  }
-
-  sendPasswordResetEmail(email: string) {
-    return runInInjectionContext(this.injector, () =>
-      sendPasswordResetEmail(this.auth, email)
-    );
-  }
-
-  logout() {
-    runInInjectionContext(this.injector, () => this.auth.signOut());
   }
 
   // Métodos base para operaciones de base de datos
@@ -122,7 +76,6 @@ export class FirebaseService {
 
       // Logs de diagnóstico
       console.log('Guardando metadata para:', email);
-      console.log('Usuario autenticado:', this.auth.currentUser?.email);
       console.log('Ruta metadata:', `cv-app/users/${userEmailKey}/metadata`);
 
       const metadataRef = ref(this.db, `cv-app/users/${userEmailKey}/metadata`);
@@ -178,9 +131,9 @@ export class FirebaseService {
 
   async getCurrentUser() {
     return runInInjectionContext(this.injector, async () => {
-      const user = this.auth.currentUser;
-      if (user) {
-        const userEmailKey = this.formatEmailKey(user.email!);
+      const user = this.authService.getCurrentAuthUser();
+      if (user && user.email) {
+        const userEmailKey = this.formatEmailKey(user.email);
         const userRef = ref(this.db, `cv-app/users/${userEmailKey}`);
 
         const userSnapshot = await get(userRef);
@@ -211,7 +164,6 @@ export class FirebaseService {
             email: user.email,
           };
         }
-        return null;
       }
       return null;
     });

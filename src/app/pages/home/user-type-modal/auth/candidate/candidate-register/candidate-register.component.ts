@@ -6,14 +6,14 @@ import {
   FormGroup,
   Validators,
 } from '@angular/forms';
+import { AuthService } from '../../auth.service';
 import { FirebaseService } from '../../../../../../shared/services/firebase.service';
-import { Router, RouterModule } from '@angular/router';
 import { ToastService } from '../../../../../../shared/services/toast.service';
 
 @Component({
   selector: 'app-candidate-register',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterModule],
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './candidate-register.component.html',
   styleUrls: ['./candidate-register.component.css'],
 })
@@ -26,8 +26,8 @@ export class CandidateRegisterComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
+    private authService: AuthService,
     private firebaseService: FirebaseService,
-    private router: Router,
     public toastService: ToastService
   ) {
     this.registerForm = this.fb.group({
@@ -70,7 +70,7 @@ export class CandidateRegisterComponent implements OnInit {
 
       try {
         // 1. Registrar usuario en Firebase Auth
-        const userCredential = await this.firebaseService.registerWithEmail(
+        const userCredential = await this.authService.registerWithEmail(
           email,
           password
         );

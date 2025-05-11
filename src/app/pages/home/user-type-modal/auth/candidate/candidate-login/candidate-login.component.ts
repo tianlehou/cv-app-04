@@ -6,6 +6,7 @@ import {
   FormGroup,
   Validators,
 } from '@angular/forms';
+import { AuthService } from '../../auth.service';
 import { FirebaseService } from '../../../../../../shared/services/firebase.service';
 import { Router, RouterModule } from '@angular/router';
 import { GoogleLoginComponent } from '../google-login-button/google-login.component';
@@ -33,6 +34,7 @@ export class CandidateLoginComponent {
   constructor(
     private fb: FormBuilder,
     private firebaseService: FirebaseService,
+    private authService: AuthService,
     private router: Router,
     private toastService: ToastService
   ) {
@@ -78,7 +80,7 @@ export class CandidateLoginComponent {
     const { email, password } = this.loginForm.value;
   
     try {
-      await this.firebaseService.loginWithEmail(email, password);
+      await this.authService.loginWithEmail(email, password);
       const userData = await this.firebaseService.getCurrentUser();
       
       if (!userData) throw new Error('No se obtuvieron datos');

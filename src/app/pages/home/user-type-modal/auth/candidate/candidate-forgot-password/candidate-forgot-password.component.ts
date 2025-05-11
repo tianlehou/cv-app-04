@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FirebaseService } from '../../../../../../shared/services/firebase.service';
+import { AuthService } from '../../auth.service';
 
 @Component({
   selector: 'app-candidate-forgot-password',
@@ -15,7 +16,7 @@ export class CandidateForgotPasswordComponent {
   forgotPasswordForm: FormGroup;
   @Output() showLogin = new EventEmitter<void>();
 
-  constructor(private fb: FormBuilder, private firebaseService: FirebaseService) {
+  constructor(private fb: FormBuilder, private firebaseService: FirebaseService, private authService: AuthService) {
     this.forgotPasswordForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
     });
@@ -29,7 +30,7 @@ export class CandidateForgotPasswordComponent {
   recoverPassword() {
     const email = this.forgotPasswordForm.get('email')?.value;
     if (email) {
-      this.firebaseService
+      this.authService
         .sendPasswordResetEmail(email)
         .then(() => {
           alert('Enlace de recuperación enviado. Revisa tu correo.');
