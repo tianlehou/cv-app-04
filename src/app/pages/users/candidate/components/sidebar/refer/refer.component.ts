@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FirebaseService } from '../../../../../../shared/services/firebase.service';
 import { ToastService } from '../../../../../../shared/services/toast.service';
+import { UrlService } from './url.service';
 
 @Component({
   selector: 'app-refer',
@@ -21,14 +22,18 @@ export class ReferComponent implements OnInit {
 
   constructor(
     private firebaseService: FirebaseService,
-    private toastService: ToastService
+    private toastService: ToastService,
+    private urlService: UrlService
   ) {}
 
   async ngOnInit() {
     try {
       this.currentUser = await this.firebaseService.getCurrentUser();
       if (this.currentUser?.metadata?.userId) {
-        this.referralLink = `https://cv-app-04.vercel.app/?ref=${this.currentUser.metadata.userId}&view=register`;
+        // Usar UrlService para generar el link
+        this.referralLink = this.urlService.generateReferralLink(
+          this.currentUser.metadata.userId
+        );
       } else {
         console.warn('No user ID found for current user');
       }
@@ -38,14 +43,17 @@ export class ReferComponent implements OnInit {
   }
 
   copyToClipboard() {
-    navigator.clipboard.writeText(this.referralLink).then(() => {
-      this.toastService.show('Enlace copiado al portapeles', 'success');
-      this.isCopied = true;
-      setTimeout(() => this.isCopied = false, 2000);
-    }).catch(err => {
-      console.error('Error al copiar: ', err);
-      this.toastService.show('Error al copiar el enlace', 'error');
-    });
+    navigator.clipboard
+      .writeText(this.referralLink)
+      .then(() => {
+        this.toastService.show('Enlace copiado al portapeles', 'success');
+        this.isCopied = true;
+        setTimeout(() => (this.isCopied = false), 2000);
+      })
+      .catch((err) => {
+        console.error('Error al copiar: ', err);
+        this.toastService.show('Error al copiar el enlace', 'error');
+      });
   }
 
   private showDesktopShareOptions() {

@@ -15,6 +15,10 @@ import { Database, ref, set, get, update } from '@angular/fire/database';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { ComponentStyles } from '../models/component-styles.model';
 
+const increment = (delta: number) => {
+  return (current: number) => (current || 0) + delta;
+};
+
 @Injectable({
   providedIn: 'root',
 })
@@ -69,6 +73,22 @@ export class FirebaseService {
     runInInjectionContext(this.injector, () => this.auth.signOut());
   }
 
+  // Método corregido con runInInjectionContext
+  async initializeUserData(
+    email: string,
+    userData: {
+      profileData?: any;
+      metadata?: any;
+      [key: string]: any;
+    }
+  ): Promise<void> {
+    return runInInjectionContext(this.injector, async () => {
+      const userKey = this.formatEmailKey(email);
+      // Inicializa toda la estructura del usuario de una vez
+      return set(ref(this.db, `cv-app/users/${userKey}`), userData);
+    });
+  }
+
   async saveUserData(
     email: string,
     data: {
@@ -82,15 +102,24 @@ export class FirebaseService {
     return runInInjectionContext(this.injector, async () => {
       const userEmailKey = this.formatEmailKey(email);
 
-      // Guardar TODOS los datos en metadata
+      // Logs de diagnóstico
+      console.log('Guardando metadata para:', email);
+      console.log('Usuario autenticado:', this.auth.currentUser?.email);
+      console.log('Ruta metadata:', `cv-app/users/${userEmailKey}/metadata`);
+
       const metadataRef = ref(this.db, `cv-app/users/${userEmailKey}/metadata`);
       await set(metadataRef, {
         email: data.email,
         role: data.role,
         enabled: data.enabled,
         createdAt: data.createdAt,
-        ...(data.referredBy && { referredBy: data.referredBy })
+        ...(data.referredBy && { referredBy: data.referredBy }),
+        referralCount: 0,
       });
+
+      if (data.referredBy) {
+        await this.addReferral(data.referredBy, email);
+      }
     });
   }
 
@@ -102,9 +131,30 @@ export class FirebaseService {
         `cv-app/users/${userEmailKey}/profileData/personalData`
       );
 
-      await set(personalDataRef, {
-        fullName: fullName,
-      });
+      let attempts = 0;
+      const maxAttempts = 3;
+      let lastError;
+
+      while (attempts < maxAttempts) {
+        try {
+          await set(personalDataRef, {
+            fullName: fullName,
+          });
+          return; // Éxito, salimos del método
+        } catch (error) {
+          lastError = error;
+          attempts++;
+          if (attempts < maxAttempts) {
+            await new Promise((resolve) =>
+              setTimeout(resolve, 1000 * attempts)
+            ); // Espera exponencial
+          }
+        }
+      }
+
+      // Si llegamos aquí, todos los intentos fallaron
+      console.error('Error después de múltiples intentos:', lastError);
+      throw lastError;
     });
   }
 
@@ -220,6 +270,7 @@ export class FirebaseService {
         lastUpdated?: string;
         referredBy?: string;
         role?: string;
+        userId?: string;
       }>;
       profileData?: {
         aboutMe?: string;
@@ -291,5 +342,83 @@ export class FirebaseService {
   clearReferralId() {
     this.referralSource.next(null);
     localStorage.removeItem('referralId');
+  }
+
+  async addReferral(referrerId: string, referredEmail: string): Promise<void> {
+    return runInInjectionContext(this.injector, async () => {
+      const referredEmailKey = this.formatEmailKey(referredEmail);
+      const timestamp = new Date().toISOString();
+
+      // 1. Primero obtener el conteo actual
+      const referralRef = ref(this.db, `cv-app/referrals/${referrerId}`);
+      const snapshot = await get(referralRef);
+      const currentCount = snapshot.exists() ? snapshot.val().count || 0 : 0;
+
+      // 2. Actualizar con el nuevo valor calculado
+      await update(referralRef, {
+        count: currentCount + 1,
+        [`referrals/${referredEmailKey}`]: {
+          email: referredEmail,
+          timestamp: timestamp,
+          converted: true,
+        },
+      });
+
+      // 3. Actualizar contador en metadata del referente
+      const referrerEmailKey = await this.getEmailKeyByUserId(referrerId);
+      if (referrerEmailKey) {
+        const userRef = ref(
+          this.db,
+          `cv-app/users/${referrerEmailKey}/metadata`
+        );
+        const userSnapshot = await get(
+          ref(this.db, `cv-app/users/${referrerEmailKey}/metadata`)
+        );
+        const currentUserCount = userSnapshot.exists()
+          ? userSnapshot.val().referralCount || 0
+          : 0;
+
+        await update(userRef, {
+          referralCount: currentUserCount + 1,
+        });
+      }
+    });
+  }
+
+  private async getEmailKeyByUserId(userId: string): Promise<string | null> {
+    return runInInjectionContext(this.injector, async () => {
+      if (!userId) return null;
+
+      const usersRef = ref(this.db, 'cv-app/users');
+      const snapshot = await get(usersRef);
+
+      if (snapshot.exists()) {
+        const users = snapshot.val();
+        for (const emailKey in users) {
+          if (users[emailKey]?.metadata?.userId === userId) {
+            return emailKey;
+          }
+        }
+      }
+      return null;
+    });
+  }
+
+  async getReferralStats(
+    userId: string
+  ): Promise<{ count: number; referrals: any[] }> {
+    return runInInjectionContext(this.injector, async () => {
+      const referralRef = ref(this.db, `cv-app/referrals/${userId}`);
+      const snapshot = await get(referralRef);
+
+      if (snapshot.exists()) {
+        const data = snapshot.val();
+        return {
+          count: data.count || 0,
+          referrals: Object.values(data.referrals || {}),
+        };
+      }
+      return { count: 0, referrals: [] };
+    });
   }
 }

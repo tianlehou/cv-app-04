@@ -124,10 +124,14 @@
     </div>
 
     <!-- Campo oculto para referido -->
-    <input type="hidden" formControlName="referredBy">
+    <input type="hidden" formControlName="referredBy" />
+    <div *ngIf="referredBy" class="referred-by-banner">
+      <i class="bi bi-people-fill"></i>
+      <span>Estás siendo referido por un usuario de nuestra comunidad</span>
+    </div>
 
     <ng-container *ngIf="toastService.getToasts() | async as toasts">
-      <div *ngFor="let toast of toasts" class="toast toast-{{toast.type}}">
+      <div *ngFor="let toast of toasts" class="toast toast-{{ toast.type }}">
         {{ toast.message }}
       </div>
     </ng-container>

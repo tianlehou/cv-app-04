@@ -10,4 +10,7 @@ export const environment = {
     appId: "1:773394034188:web:57e60ed4a8203f61e8c829",
     measurementId: "G-371ZE54HGP"
   },
+  environmentType: 'production'
 };
+
+// cv-app.vercel.app

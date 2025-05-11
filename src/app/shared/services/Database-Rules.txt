@@ -1,0 +1,63 @@
+{
+  "rules": {
+    "cv-app": {
+      "users": {
+        // Reglas generales para el nodo users (solo lectura para admin)
+        ".read": "auth != null && root.child('cv-app/users/' + auth.token.email.replace('.', '_') + '/metadata/role').val() === 'admin'",
+        ".write": false, // No permitir escritura en el nodo raíz
+        
+        // Reglas para cada usuario individual
+        "$userEmailKey": {
+          ".read": "auth != null && (auth.token.email.replace('.', '_') == $userEmailKey || root.child('cv-app/users/' + auth.token.email.replace('.', '_') + '/metadata/role').val() === 'admin')",
+          
+          // Modificación clave: Permitir escritura inicial si el nodo no existe (durante registro)
+          ".write": "auth != null &&
+            (auth.token.email.replace('.', '_') == $userEmailKey &&
+            (!data.exists() || 
+                root.child('cv-app/users/'+$userEmailKey+'/metadata').exists()) ||
+                root.child('cv-app/users/' + auth.token.email.replace('.', '_') + '/metadata/role').val() === 'admin'
+            )",
+
+          // Subnodos específicos
+          "metadata": {
+            ".read": "auth != null",
+            ".write": "auth != null && (auth.token.email.replace('.', '_') == $userEmailKey || root.child('cv-app/users/' + auth.token.email.replace('.', '_') + '/metadata/role').val() === 'admin')",
+            "referralCount": {
+              ".validate": "newData.isNumber() && newData.val() >= 0"
+            }
+          },
+
+          "profileData": {
+            ".read": "auth != null",
+            ".write": "auth != null && auth.token.email.replace('.', '_') == $userEmailKey"
+          },
+          
+          "cv-styles": {
+            ".read": "auth != null",
+            ".write": "auth != null && auth.token.email.replace('.', '_') == $userEmailKey"
+          }
+        }
+      },
+      
+      "referrals": {
+        ".read": "auth != null",
+        ".write": "auth != null",
+        
+        "$referrerId": {
+          ".read": "auth != null",
+          ".write": "auth != null && (auth.token.uid == $referrerId || root.child('cv-app/users/' + auth.token.email.replace('.', '_') + '/metadata/role').val() === 'admin')",
+          
+          "count": {
+            ".validate": "newData.isNumber() && newData.val() >= 0"
+          },
+          
+          "referrals": {
+            "$referredEmailKey": {
+              ".validate": "newData.hasChildren(['email', 'timestamp']) && newData.child('email').isString() && newData.child('timestamp').isString()"
+            }
+          }
+        }
+      }
+    }
+  }
+}

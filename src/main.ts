@@ -16,13 +16,10 @@ bootstrapApplication(AppComponent, {
   ...appConfig,
   providers: [
     provideRouter(routes, withComponentInputBinding()),
-    provideFirebaseApp(() => {
-      const app = initializeApp(environment.firebaseConfig);
-      return app;
-    }),
+    provideFirebaseApp(() => initializeApp(environment.firebaseConfig)),
     provideAuth(() => getAuth()),
     provideFirestore(() => getFirestore()),
     provideStorage(() => getStorage()),
     provideDatabase(() => getDatabase()),
-  ]
+  ],
 }).catch((err) => console.error('Error during app bootstrap:', err));
