@@ -9,6 +9,7 @@ import { Database, ref, set, get, update } from '@angular/fire/database';
 import { BehaviorSubject } from 'rxjs';
 import { ComponentStyles } from '../../pages/users/candidate/components/gallery/cv-grid/cv-gallery-grid/style-control/component-styles.model';
 import { AuthService } from '../../pages/home/user-type-modal/auth/auth.service';
+import { FirebaseConfigService } from './firebase-config.service';
 
 const increment = (delta: number) => {
   return (current: number) => (current || 0) + delta;
@@ -21,11 +22,17 @@ export class FirebaseService {
   private db = inject(Database);
   private injector = inject(EnvironmentInjector);
   private authService = inject(AuthService);
+  private firebaseConfig = inject(FirebaseConfigService);
   private referralSource = new BehaviorSubject<string | null>(null);
   currentReferral = this.referralSource.asObservable();
 
   public formatEmailKey(email: string): string {
     return email.replace(/\./g, '_');
+  }
+
+  // You can now access the current environment type with:
+  getCurrentEnvironment() {
+    return this.firebaseConfig.getEnvironmentType();
   }
 
   // Métodos base para operaciones de base de datos
