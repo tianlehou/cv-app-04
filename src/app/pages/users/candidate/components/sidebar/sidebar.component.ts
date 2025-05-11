@@ -3,6 +3,7 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FirebaseService } from '../../../../../shared/services/firebase.service';
+import { AuthService } from 'src/app/pages/home/user-type-modal/auth/auth.service';
 
 @Component({
   selector: 'app-sidebar',
@@ -18,7 +19,10 @@ export class SidebarComponent {
   @Output() subscriptionClicked = new EventEmitter<void>();
   @Output() referClicked = new EventEmitter<void>();
 
-  constructor(private firebaseService: FirebaseService) {}
+  constructor(
+    private firebaseService: FirebaseService,
+    private authService: AuthService,
+  ) {}
 
   toggleMenu() {
     this.isMenuOpen = !this.isMenuOpen;
@@ -45,6 +49,6 @@ export class SidebarComponent {
 
   // Llama al método logout de firebase.service
   logout() {
-    this.firebaseService.logout();
+    this.authService.logout();
   }
 }

@@ -11,6 +11,7 @@ import { DownloadPdfComponent } from '../../../../../../../../../shared/componen
 import { FirebaseService } from '../../../../../../../../../shared/services/firebase.service';
 import { ComponentStyles } from '../../style-control/component-styles.model';
 import { StyleControlComponent } from '../../style-control/style-control.component';
+import { StyleService } from '../../style-control/style-control.service';
 
 @Component({
   selector: 'app-canvas-001',
@@ -37,12 +38,15 @@ export class Canvas001Component implements OnInit {
     barColor: '#0d6efd',
     fontFamily: 'Arial, sans-serif'
   };
-  constructor(private firebaseService: FirebaseService) { }
+  constructor(
+    private firebaseService: FirebaseService,
+    private styleService: StyleService,
+  ) { }
 
   async ngOnInit() {
     const currentUser = await this.firebaseService.getCurrentUser();
     if (currentUser?.email) {
-      const savedStyles = await this.firebaseService.getComponentStyles(
+      const savedStyles = await this.styleService.getComponentStyles(
         currentUser.email,
         'canvas-001'
       );

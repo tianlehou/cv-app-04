@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FirebaseService } from '../../../shared/services/firebase.service';
 import { AdminDashboardComponent } from './dashboard/dashboard.component';
 import { SidebarComponent } from './sidebar/sidebar.component';
+import { AuthService } from '../../home/user-type-modal/auth/auth.service';
 
 @Component({
   selector: 'app-main',
@@ -15,10 +16,15 @@ export class MainComponent implements OnInit {
   currentUser: any = null;
   userRole: string | null = null;
 
-  constructor(private firebaseService: FirebaseService) {}
+  constructor(
+    private firebaseService: FirebaseService,
+    private authService: AuthService,
+
+
+  ) {}
 
   async ngOnInit(): Promise<void> {
-    this.firebaseService
+    this.authService
       .isAuthenticated()
       .subscribe(async (isAuthenticated) => {
         if (isAuthenticated) {

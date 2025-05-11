@@ -12,6 +12,7 @@ import { GalleryComponent } from './components/gallery/gallery.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { SubscriptionComponent } from './components/sidebar/subscription/subscription.component';
 import { ReferComponent } from './components/sidebar/refer/refer.component';
+import { AuthService } from '../../home/user-type-modal/auth/auth.service';
 
 @Component({
   selector: 'app-candidate',
@@ -35,10 +36,13 @@ export class CandidateComponent implements OnInit {
   showSubscription = false;
   activeSection: 'home' | 'subscription' | 'refer' = 'home';
 
-  constructor(private firebaseService: FirebaseService) {}
+  constructor(
+    private firebaseService: FirebaseService,
+    private authService: AuthService,
+  ) {}
 
   async ngOnInit(): Promise<void> {
-    this.firebaseService
+    this.authService
       .isAuthenticated()
       .subscribe(async (isAuthenticated) => {
         if (isAuthenticated) {
