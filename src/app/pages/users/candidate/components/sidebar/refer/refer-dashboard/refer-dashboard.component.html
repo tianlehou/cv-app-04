@@ -1,0 +1,32 @@
+<div class="dashboard-container">
+  <!-- Estadísticas -->
+  <app-refer-stats-grid
+    [totalUsers]="totalUsers"
+    [totalCandidates]="totalCandidates"
+    [totalCompanies]="totalCompanies"
+  >
+  </app-refer-stats-grid>
+
+  <!-- Filtros -->
+  <app-refer-filters
+    [userTypeFilter]="userTypeFilter"
+    [searchQuery]="searchQuery"
+    (filtersApplied)="onFiltersApplied($event)"
+  >
+  </app-refer-filters>
+
+  <!-- Lista de usuarios -->
+  <app-refer-user-table
+    [users]="paginatedUsers"
+    (statusToggled)="onStatusToggled($event)"
+  >
+  </app-refer-user-table>
+
+  <!-- Paginación -->
+  <app-refer-pagination
+    [currentPage]="currentPage"
+    [totalItems]="filteredUsers.length"
+    [pageSize]="pageSize"
+    (pageChange)="onPageChange($event)"
+  ></app-refer-pagination>
+</div>
