@@ -1,0 +1,71 @@
+{
+  "rules": {
+    "cv-app": {
+      "users": {
+        // Reglas generales para el nodo users (solo lectura para admin)
+        ".read": "auth != null &&
+        root.child('cv-app/users/' + auth.token.email.replace('.', '_') + '/metadata/role').val() === 'admin'",
+        ".write": false, // No permitir escritura en el nodo raíz
+        
+        // Reglas para cada usuario individual
+        "$userEmailKey": {
+          ".read": "auth != null && (auth.token.email.replace('.', '_') == $userEmailKey ||
+          root.child('cv-app/users/' + auth.token.email.replace('.', '_') + '/metadata/role').val() === 'admin')",
+          
+          // Permitir escritura inicial si el nodo no existe (durante registro)
+          ".write": "auth != null &&
+            (auth.token.email.replace('.', '_') == $userEmailKey &&
+            (!data.exists() || 
+                root.child('cv-app/users/'+$userEmailKey+'/metadata').exists()) ||
+                root.child('cv-app/users/' + auth.token.email.replace('.', '_') + '/metadata/role').val() === 'admin'
+            )",
+
+          // Subnodos específicos
+          "metadata": {
+            ".read": "auth != null",
+            ".write": "auth != null && (auth.token.email.replace('.', '_') == $userEmailKey ||
+            root.child('cv-app/users/' + auth.token.email.replace('.', '_') + '/metadata/role').val() === 'admin')"
+          },
+
+          "profileData": {
+            ".read": "auth != null",
+            ".write": "auth != null && auth.token.email.replace('.', '_') == $userEmailKey"
+          },
+          
+          "cv-styles": {
+            ".read": "auth != null",
+            ".write": "auth != null && auth.token.email.replace('.', '_') == $userEmailKey"
+          }
+        }
+      },
+
+      // Nuevo nodo para el índice de userId a emailKey
+      "userIndex": {
+        "userId-to-emailKey": {
+          ".read": "auth != null",
+          "$userId": {
+            ".write": "auth != null && 
+            (root.child('cv-app/users/' + auth.token.email.replace('.','_') + '/metadata/role').val() === 'admin' ||
+            root.child('cv-app/users/' + newData.val() + '/metadata/userId').val() === $userId)"
+          }
+        }
+      },
+
+      "referrals": {
+        // Permitir lectura para todos los usuarios autenticados
+        ".read": "auth != null",
+        
+        // Permitir creación de nuevos nodos referrals (importante para el primer referido)
+        ".write": "auth != null",
+        
+        // Reglas para cada nodo de referral
+        "$userEmailKey": {
+          // Permitir escritura si:
+          // 1. El usuario está autenticado (necesario para permitir actualización durante registro)
+          // Esta regla más permisiva permite actualizar durante el proceso de registro
+          ".write": "auth != null"
+        }
+      }
+    }
+  }
+}

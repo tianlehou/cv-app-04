@@ -1,9 +1,9 @@
 import { Component, ViewChild, ChangeDetectorRef, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
-import { UserTypeModalComponent } from './user-type-modal/user-type-modal.component';
-import { FirebaseService } from '../../shared/services/firebase.service';
+import { ReferralService } from '../users/candidate/components/sidebar/refer/referral.service';
 
+import { UserTypeModalComponent } from './user-type-modal/user-type-modal.component';
 import { HeroComponent } from './components/hero/hero.component';
 import { FeaturesComponent } from './components/features/features.component';
 import { CallToActionComponent } from './components/call-to-action/call-to-action.component';
@@ -42,7 +42,7 @@ export class HomeComponent implements OnInit {
   constructor(
     private cd: ChangeDetectorRef,
     private route: ActivatedRoute,
-    private firebaseService: FirebaseService,
+    private referralService: ReferralService,
   ) { }
 
 ngOnInit() {
@@ -51,7 +51,7 @@ ngOnInit() {
       const view = params.get('view');
       
       if (ref) {
-        this.firebaseService.setReferralId(ref);
+        this.referralService.setReferralId(ref);
       }
 
       // Mostrar directamente la sección de registro si viene con view=register
@@ -62,7 +62,7 @@ ngOnInit() {
         this.cd.detectChanges();
         
         // Si no hay ref pero sí view=register, igual mostrar el registro
-      } else if (this.firebaseService.getStoredReferralId()) {
+      } else if (this.referralService.getStoredReferralId()) {
         // Si hay un referral almacenado pero no viene en la URL (por ejemplo, al recargar)
         this.showHomeSection = false;
         this.showCandidateSection = true;

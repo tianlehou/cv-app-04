@@ -11,10 +11,6 @@ import { ComponentStyles } from '../../pages/users/candidate/components/gallery/
 import { AuthService } from '../../pages/home/user-type-modal/auth/auth.service';
 import { FirebaseConfigService } from './firebase-config.service';
 
-const increment = (delta: number) => {
-  return (current: number) => (current || 0) + delta;
-};
-
 @Injectable({
   providedIn: 'root',
 })
@@ -52,20 +48,41 @@ export class FirebaseService {
     });
   }
 
+  public generateUserId(): string {
+    return 'user_' + Math.random().toString(36).substr(2, 9);
+  }
+
   // Método corregido con runInInjectionContext
-  async initializeUserData(
-    email: string,
-    userData: {
-      profileData?: any;
-      metadata?: any;
-      [key: string]: any;
+  async initializeUserData(email: string, userData: any): Promise<void> {
+    const userKey = this.formatEmailKey(email);
+    const userId = userData.metadata?.userId || this.generateUserId();
+
+    // Asegurar que metadata existe
+    if (!userData.metadata) {
+      userData.metadata = {};
     }
-  ): Promise<void> {
-    return runInInjectionContext(this.injector, async () => {
-      const userKey = this.formatEmailKey(email);
-      // Inicializa toda la estructura del usuario de una vez
-      return set(ref(this.db, `cv-app/users/${userKey}`), userData);
-    });
+    userData.metadata.userId = userId;
+
+    // 1. Crear usuario
+    await set(ref(this.db, `cv-app/users/${userKey}`), userData);
+
+    // 2. Crear índice (con retry si falla)
+    let attempts = 0;
+    while (attempts < 3) {
+      try {
+        await set(
+          ref(this.db, `cv-app/userIndex/userId-to-emailKey/${userId}`),
+          userKey
+        );
+        break;
+      } catch (err) {
+        attempts++;
+        if (attempts >= 3) {
+          console.error('Error creando índice después de 3 intentos:', err);
+        }
+        await new Promise((resolve) => setTimeout(resolve, 500 * attempts));
+      }
+    }
   }
 
   async saveUserData(
@@ -80,6 +97,7 @@ export class FirebaseService {
   ) {
     return runInInjectionContext(this.injector, async () => {
       const userEmailKey = this.formatEmailKey(email);
+      const userId = this.generateUserId();
 
       // Logs de diagnóstico
       console.log('Guardando metadata para:', email);
@@ -92,12 +110,15 @@ export class FirebaseService {
         enabled: data.enabled,
         createdAt: data.createdAt,
         ...(data.referredBy && { referredBy: data.referredBy }),
+        userId: userId,
         referralCount: 0,
       });
 
-      if (data.referredBy) {
-        await this.addReferral(data.referredBy, email);
-      }
+      // Crear entrada en el índice
+      await set(
+        ref(this.db, `cv-app/userIndex/userId-to-emailKey/${userId}`),
+        userEmailKey
+      );
     });
   }
 
@@ -156,6 +177,13 @@ export class FirebaseService {
                 userId: userId,
               }
             );
+
+            // Actualizar índice
+            await set(
+              ref(this.db, `cv-app/userIndex/userId-to-emailKey/${userId}`),
+              userEmailKey
+            );
+
             return {
               ...userData,
               email: user.email,
@@ -174,10 +202,6 @@ export class FirebaseService {
       }
       return null;
     });
-  }
-
-  private generateUserId(): string {
-    return 'user_' + Math.random().toString(36).substr(2, 9);
   }
 
   async getUserData(emailKey: string): Promise<any> {
@@ -207,6 +231,7 @@ export class FirebaseService {
         enabled: boolean;
         lastLogin?: string;
         lastUpdated?: string;
+        referralCount?: number;
         referredBy?: string;
         role?: string;
         userId?: string;
@@ -241,6 +266,17 @@ export class FirebaseService {
       const userEmailKey = this.formatEmailKey(originalEmail);
 
       try {
+        // Si hay cambio de userId, actualizar el índice
+        if (data.metadata?.userId) {
+          await set(
+            ref(
+              this.db,
+              `cv-app/userIndex/userId-to-emailKey/${data.metadata.userId}`
+            ),
+            userEmailKey
+          );
+        }
+
         // Si hay datos de metadata, actualizarlos en la ruta metadata
         if (data.metadata) {
           const metadataRef = ref(
@@ -264,100 +300,6 @@ export class FirebaseService {
         console.error('Error al actualizar:', error);
         throw error;
       }
-    });
-  }
-
-  // método para obtener el ID de referido
-  setReferralId(referralId: string) {
-    this.referralSource.next(referralId);
-    // También puedes guardarlo en localStorage para persistencia
-    localStorage.setItem('referralId', referralId);
-  }
-
-  getStoredReferralId(): string | null {
-    return localStorage.getItem('referralId');
-  }
-
-  clearReferralId() {
-    this.referralSource.next(null);
-    localStorage.removeItem('referralId');
-  }
-
-  async addReferral(referrerId: string, referredEmail: string): Promise<void> {
-    return runInInjectionContext(this.injector, async () => {
-      const referredEmailKey = this.formatEmailKey(referredEmail);
-      const timestamp = new Date().toISOString();
-
-      // 1. Primero obtener el conteo actual
-      const referralRef = ref(this.db, `cv-app/referrals/${referrerId}`);
-      const snapshot = await get(referralRef);
-      const currentCount = snapshot.exists() ? snapshot.val().count || 0 : 0;
-
-      // 2. Actualizar con el nuevo valor calculado
-      await update(referralRef, {
-        count: currentCount + 1,
-        [`referrals/${referredEmailKey}`]: {
-          email: referredEmail,
-          timestamp: timestamp,
-          converted: true,
-        },
-      });
-
-      // 3. Actualizar contador en metadata del referente
-      const referrerEmailKey = await this.getEmailKeyByUserId(referrerId);
-      if (referrerEmailKey) {
-        const userRef = ref(
-          this.db,
-          `cv-app/users/${referrerEmailKey}/metadata`
-        );
-        const userSnapshot = await get(
-          ref(this.db, `cv-app/users/${referrerEmailKey}/metadata`)
-        );
-        const currentUserCount = userSnapshot.exists()
-          ? userSnapshot.val().referralCount || 0
-          : 0;
-
-        await update(userRef, {
-          referralCount: currentUserCount + 1,
-        });
-      }
-    });
-  }
-
-  private async getEmailKeyByUserId(userId: string): Promise<string | null> {
-    return runInInjectionContext(this.injector, async () => {
-      if (!userId) return null;
-
-      const usersRef = ref(this.db, 'cv-app/users');
-      const snapshot = await get(usersRef);
-
-      if (snapshot.exists()) {
-        const users = snapshot.val();
-        for (const emailKey in users) {
-          if (users[emailKey]?.metadata?.userId === userId) {
-            return emailKey;
-          }
-        }
-      }
-      return null;
-    });
-  }
-
-  async getReferralStats(
-    userId: string
-  ): Promise<{ count: number; referrals: any[] }> {
-    return runInInjectionContext(this.injector, async () => {
-      const referralRef = ref(this.db, `cv-app/referrals/${userId}`);
-      const snapshot = await get(referralRef);
-
-      if (snapshot.exists()) {
-        const data = snapshot.val();
-        return {
-          count: data.count || 0,
-          referrals: Object.values(data.referrals || {}),
-        };
-      }
-      return { count: 0, referrals: [] };
     });
   }
 }
