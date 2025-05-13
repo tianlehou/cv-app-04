@@ -40,7 +40,11 @@ export class ReferralService {
     localStorage.removeItem('referralId');
   }
 
-  async addReferral(referrerId: string, referredEmail: string): Promise<void> {
+  async addReferral(
+    referrerId: string,
+    referredEmail: string,
+    referredFullName: string
+  ): Promise<void> {
     return runInInjectionContext(this.injector, async () => {
       try {
         const referredEmailKey =
@@ -88,7 +92,12 @@ export class ReferralService {
               this.db,
               `cv-app/referrals/${referrerEmailKey}/referrals/${referredEmailKey}`
             ),
-            { email: referredEmail, timestamp, converted: true }
+            {
+              email: referredEmail,
+              fullName: referredFullName,
+              timestamp,
+              converted: true,
+            }
           );
         });
 
@@ -195,31 +204,28 @@ export class ReferralService {
   async getUserBasicInfo(
     emailKey: string
   ): Promise<{ email: string; fullName: string | null }> {
- return runInInjectionContext(this.injector, async () => {
+    return runInInjectionContext(this.injector, async () => {
       try {
-        const metadataRef = ref(this.db, `cv-app/users/${emailKey}/metadata`);
-        const profileRef = ref(
-          this.db,
-          `cv-app/users/${emailKey}/profileData/personalData`
-        );
+        const referralInfoRef = ref(this.db, `cv-app/referrals/${emailKey}`);
 
         // Ensure each get call is explicitly within the injection context
- const metadataSnapshot = await runInInjectionContext(
- this.injector,
- async () => await get(metadataRef)
- );
-        const profileSnapshot = await runInInjectionContext(
- this.injector,
- async () => await get(profileRef)
- );
+        const referralSnapshot = await runInInjectionContext(
+          this.injector,
+          async () => await get(referralInfoRef)
+        );
 
- return {
-          email: metadataSnapshot.val()?.email || '',
-          fullName: profileSnapshot.val()?.fullName || null,
+        const data = referralSnapshot.val();
+
+        return {
+          email: data?.email || '',
+          fullName: data?.fullName || null,
         };
       } catch (error) {
         console.error('Error getting user basic info:', error);
-        return { email: '', fullName: null };
+        // Fallback to current user's info if getting referral info fails
+        const currentUser = await this.authService.getCurrentAuthUser();
+        const email = currentUser?.email || '';
+        return { email, fullName: null }; // fullName might not be available here easily
       }
     });
   }

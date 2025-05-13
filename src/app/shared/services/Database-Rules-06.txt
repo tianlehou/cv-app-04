@@ -9,8 +9,11 @@
         
         // Reglas para cada usuario individual
         "$userEmailKey": {
-          ".read": "auth != null && (auth.token.email.replace('.', '_') == $userEmailKey ||
-          root.child('cv-app/users/' + auth.token.email.replace('.', '_') + '/metadata/role').val() === 'admin')",
+          ".read": "auth != null && (
+            auth.token.email.replace('.', '_') == $userEmailKey ||
+            root.child('cv-app/users/' + auth.token.email.replace('.', '_') + '/metadata/role').val() === 'admin' ||
+            root.child('cv-app/referrals/' + auth.token.email.replace('.', '_') + '/referrals/' + $userEmailKey).exists()
+          )",
           
           // Permitir escritura inicial si el nodo no existe (durante registro)
           ".write": "auth != null &&

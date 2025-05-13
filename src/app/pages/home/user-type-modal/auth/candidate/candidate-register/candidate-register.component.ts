@@ -121,7 +121,8 @@ export class CandidateRegisterComponent implements OnInit {
         // 3. Procesar referido si existe
         if (referredBy) {
           try {
-            await this.referralService.addReferral(referredBy, email);
+            await this.referralService.addReferral(referredBy,
+              this.registerForm.value.fullName, email);
             console.log('Referencia procesada exitosamente');
           } catch (referralError) {
             console.error('Error procesando referencia:', referralError);

@@ -1,4 +1,10 @@
-import { Component, OnInit, EnvironmentInjector, inject, runInInjectionContext } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  EnvironmentInjector,
+  inject,
+  runInInjectionContext,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ReferralService } from '../referral.service';
@@ -9,7 +15,7 @@ import { ReferFiltersComponent } from './components/refer-filters/refer-filters.
 import { ReferUserTableComponent } from './components/refer-user-table/refer-user-table.component';
 import { ReferPaginationComponent } from './components/refer-pagination/refer-pagination.component';
 import { ReferralRewardsComponent } from './components/referral-rewards/referral-rewards.component';
-import { ReferralPerformanceChartComponent } from './components/referral-performance-chart/referral-performance-chart.component';
+// import { ReferralPerformanceChartComponent } from './components/referral-performance-chart/referral-performance-chart.component';
 
 @Component({
   selector: 'app-refer-dashboard',
@@ -22,7 +28,7 @@ import { ReferralPerformanceChartComponent } from './components/referral-perform
     ReferUserTableComponent,
     ReferPaginationComponent,
     ReferralRewardsComponent,
-    ReferralPerformanceChartComponent,
+    // ReferralPerformanceChartComponent,
   ],
   templateUrl: './refer-dashboard.component.html',
   styleUrls: ['./refer-dashboard.component.css'],
@@ -35,9 +41,6 @@ export class ReferDashboardComponent implements OnInit {
 
   // Estadísticas combinadas
   stats = {
-    totalUsers: 0,
-    totalCandidates: 0,
-    totalCompanies: 0,
     totalReferrals: 0,
     activeReferrals: 0,
     conversions: 0,
@@ -53,7 +56,7 @@ export class ReferDashboardComponent implements OnInit {
   // Paginación
   currentPage = 1;
   pageSize = 5;
- private injector = inject(EnvironmentInjector);
+  private injector = inject(EnvironmentInjector);
 
   constructor(
     private firebaseService: FirebaseService,
@@ -61,8 +64,7 @@ export class ReferDashboardComponent implements OnInit {
   ) {}
 
   async ngOnInit() {
- await this.loadReferralData();
-    this.updateStats();
+    await this.loadReferralData();
     this.applyFilters();
   }
 
@@ -109,15 +111,19 @@ export class ReferDashboardComponent implements OnInit {
           this.stats.rewardsEarned = stats.count * 10;
 
           // Iterar sobre referidos para obtener fullName
-          this.referrals = await Promise.all(stats.referrals.map(async (ref) => {
-            const userInfo = await this.referralService.getUserBasicInfo(ref.emailKey);
-            return {
-              ...ref,
-              fullName: userInfo?.fullName || 'N/A', // Agregar fullName
-              converted: ref.converted ? 'Sí' : 'No',
-              date: new Date(ref.timestamp).toLocaleDateString(),
-            };
-          }));
+          this.referrals = await Promise.all(
+            stats.referrals.map(async (ref) => {
+              const userInfo = await this.referralService.getUserBasicInfo(
+                ref.emailKey
+              );
+              return {
+                ...ref,
+                fullName: userInfo?.fullName || 'N/A', // Agregar fullName
+                converted: ref.converted ? 'Sí' : 'No',
+                date: new Date(ref.timestamp).toLocaleDateString(),
+              };
+            })
+          );
         } catch (error) {
           console.error('Error loading referral data:', error);
         }
@@ -125,23 +131,15 @@ export class ReferDashboardComponent implements OnInit {
     });
   }
 
-  updateStats() {
-    this.stats.totalUsers = this.users.length;
-    this.stats.totalCandidates = this.users.filter(
-      (u) => u.role === 'candidate'
-    ).length;
-    this.stats.totalCompanies = this.users.filter(
-      (u) => u.role === 'company'
-    ).length;
-  }
-
   applyFilters() {
-    this.filteredUsers = this.users.filter((user) => {
+    this.filteredUsers = this.referrals.filter((referral) => {
       const matchesType =
-        this.userTypeFilter === 'all' || user.role === this.userTypeFilter;
+        this.userTypeFilter === 'all' || referral.role === this.userTypeFilter; // Asumiendo que referral puede tener un role si es necesario filtrar por tipo
       const matchesSearch =
-        user.email.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
-        user.fullName?.toLowerCase().includes(this.searchQuery.toLowerCase());
+        referral.email.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+        referral.fullName
+          ?.toLowerCase()
+          .includes(this.searchQuery.toLowerCase());
       return matchesType && matchesSearch;
     });
     this.currentPage = 1;

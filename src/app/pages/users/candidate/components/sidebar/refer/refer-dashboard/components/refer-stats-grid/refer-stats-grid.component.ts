@@ -6,9 +6,6 @@ import { Component, Input } from '@angular/core';
   styleUrls: ['./refer-stats-grid.component.css']
 })
 export class ReferStatsGridComponent {
-  @Input() totalUsers: number = 0;
-  @Input() totalCandidates: number = 0;
-  @Input() totalCompanies: number = 0;
   @Input() totalReferrals: number = 0;
   @Input() activeReferrals: number = 0;
   @Input() conversions: number = 0;

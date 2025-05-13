@@ -2,9 +2,6 @@
   <!-- Sección de estadísticas combinadas -->
   <div class="stats-section">
     <app-refer-stats-grid 
-      [totalUsers]="stats.totalUsers"
-      [totalCandidates]="stats.totalCandidates"
-      [totalCompanies]="stats.totalCompanies"
       [totalReferrals]="stats.totalReferrals"
       [activeReferrals]="stats.activeReferrals"
       [conversions]="stats.conversions">
@@ -14,7 +11,7 @@
   </div>
 
   <!-- Sección de gráficos -->
-  <app-referral-performance-chart [referrals]="referrals"></app-referral-performance-chart>
+  <!-- <app-referral-performance-chart [referrals]="referrals"></app-referral-performance-chart> -->
 
   <!-- Sección de filtros -->
   <app-refer-filters
