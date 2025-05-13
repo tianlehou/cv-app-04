@@ -192,6 +192,38 @@ export class ReferralService {
     });
   }
 
+  async getUserBasicInfo(
+    emailKey: string
+  ): Promise<{ email: string; fullName: string | null }> {
+ return runInInjectionContext(this.injector, async () => {
+      try {
+        const metadataRef = ref(this.db, `cv-app/users/${emailKey}/metadata`);
+        const profileRef = ref(
+          this.db,
+          `cv-app/users/${emailKey}/profileData/personalData`
+        );
+
+        // Ensure each get call is explicitly within the injection context
+ const metadataSnapshot = await runInInjectionContext(
+ this.injector,
+ async () => await get(metadataRef)
+ );
+        const profileSnapshot = await runInInjectionContext(
+ this.injector,
+ async () => await get(profileRef)
+ );
+
+ return {
+          email: metadataSnapshot.val()?.email || '',
+          fullName: profileSnapshot.val()?.fullName || null,
+        };
+      } catch (error) {
+        console.error('Error getting user basic info:', error);
+        return { email: '', fullName: null };
+      }
+    });
+  }
+
   async getReferralStats(
     userId: string
   ): Promise<{ count: number; referrals: any[] }> {

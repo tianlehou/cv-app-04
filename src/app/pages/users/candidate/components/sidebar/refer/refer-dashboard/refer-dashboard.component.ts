@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, EnvironmentInjector, inject, runInInjectionContext } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ReferralService } from '../referral.service';
@@ -53,6 +53,7 @@ export class ReferDashboardComponent implements OnInit {
   // Paginación
   currentPage = 1;
   pageSize = 5;
+ private injector = inject(EnvironmentInjector);
 
   constructor(
     private firebaseService: FirebaseService,
@@ -60,8 +61,7 @@ export class ReferDashboardComponent implements OnInit {
   ) {}
 
   async ngOnInit() {
-    await this.loadUsers();
-    await this.loadReferralData();
+ await this.loadReferralData();
     this.updateStats();
     this.applyFilters();
   }
@@ -94,24 +94,35 @@ export class ReferDashboardComponent implements OnInit {
   }
 
   async loadReferralData() {
-    const currentUser = await this.firebaseService.getCurrentUser();
-    if (currentUser?.metadata?.userId) {
-      const stats = await this.referralService.getReferralStats(
-        currentUser.metadata.userId
-      );
-      this.stats.totalReferrals = stats.count;
-      this.stats.activeReferrals = stats.referrals.filter(
-        (r) => r.converted
-      ).length;
-      this.stats.conversions = stats.referrals.length;
-      this.stats.rewardsEarned = stats.count * 10;
+    return runInInjectionContext(this.injector, async () => {
+      const currentUser = await this.firebaseService.getCurrentUser();
+      if (currentUser?.metadata?.userId) {
+        try {
+          const stats = await this.referralService.getReferralStats(
+            currentUser.metadata.userId
+          );
+          this.stats.totalReferrals = stats.count;
+          this.stats.activeReferrals = stats.referrals.filter(
+            (r) => r.converted
+          ).length;
+          this.stats.conversions = stats.referrals.length;
+          this.stats.rewardsEarned = stats.count * 10;
 
-      this.referrals = stats.referrals.map((ref) => ({
-        ...ref,
-        converted: ref.converted ? 'Sí' : 'No',
-        date: new Date(ref.timestamp).toLocaleDateString(),
-      }));
-    }
+          // Iterar sobre referidos para obtener fullName
+          this.referrals = await Promise.all(stats.referrals.map(async (ref) => {
+            const userInfo = await this.referralService.getUserBasicInfo(ref.emailKey);
+            return {
+              ...ref,
+              fullName: userInfo?.fullName || 'N/A', // Agregar fullName
+              converted: ref.converted ? 'Sí' : 'No',
+              date: new Date(ref.timestamp).toLocaleDateString(),
+            };
+          }));
+        } catch (error) {
+          console.error('Error loading referral data:', error);
+        }
+      }
+    });
   }
 
   updateStats() {

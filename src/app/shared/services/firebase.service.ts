@@ -294,8 +294,6 @@ export class FirebaseService {
             ...(data['cv-styles'] && { 'cv-styles': data['cv-styles'] }),
           });
         }
-
-        console.log('Datos actualizados exitosamente');
       } catch (error) {
         console.error('Error al actualizar:', error);
         throw error;
