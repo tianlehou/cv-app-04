@@ -1,13 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { NgxChartsModule } from '@swimlane/ngx-charts';
-import { get, ref, update } from 'firebase/database';
+import { ReferralService } from '../referral.service';
 import { FirebaseService } from 'src/app/shared/services/firebase.service';
 import { ReferStatsGridComponent } from './components/refer-stats-grid/refer-stats-grid.component';
+import { ref, get, update } from 'firebase/database';
 import { ReferFiltersComponent } from './components/refer-filters/refer-filters.component';
 import { ReferUserTableComponent } from './components/refer-user-table/refer-user-table.component';
 import { ReferPaginationComponent } from './components/refer-pagination/refer-pagination.component';
+import { ReferralRewardsComponent } from './components/referral-rewards/referral-rewards.component';
+import { ReferralPerformanceChartComponent } from './components/referral-performance-chart/referral-performance-chart.component';
 
 @Component({
   selector: 'app-refer-dashboard',
@@ -15,41 +17,53 @@ import { ReferPaginationComponent } from './components/refer-pagination/refer-pa
   imports: [
     CommonModule,
     FormsModule,
-    NgxChartsModule,
     ReferStatsGridComponent,
     ReferFiltersComponent,
     ReferUserTableComponent,
     ReferPaginationComponent,
+    ReferralRewardsComponent,
+    ReferralPerformanceChartComponent,
   ],
   templateUrl: './refer-dashboard.component.html',
   styleUrls: ['./refer-dashboard.component.css'],
 })
 export class ReferDashboardComponent implements OnInit {
+  // Datos combinados (usuarios y referidos)
   users: any[] = [];
+  referrals: any[] = [];
   filteredUsers: any[] = [];
-  userTypeFilter: string = 'all';
-  searchQuery: string = '';
 
-  // Estadísticas
-  totalUsers: number = 0;
-  totalCandidates: number = 0;
-  totalCompanies: number = 0;
-
-  // Paginación
-  currentPage: number = 1;
-  pageSize: number = 5;
-
-  // Gráfico
-  view: [number, number] = [700, 400];
-  colorScheme = {
-    domain: ['#5AA454', '#A10A28', '#C7B42C'],
+  // Estadísticas combinadas
+  stats = {
+    totalUsers: 0,
+    totalCandidates: 0,
+    totalCompanies: 0,
+    totalReferrals: 0,
+    activeReferrals: 0,
+    conversions: 0,
+    rewardsEarned: 0,
   };
 
-  constructor(private firebaseService: FirebaseService) {}
+  // Filtros
+  userTypeFilter = 'all';
+  searchQuery = '';
+  timeFilter = 'all';
+  statusFilter = 'all';
+
+  // Paginación
+  currentPage = 1;
+  pageSize = 5;
+
+  constructor(
+    private firebaseService: FirebaseService,
+    private referralService: ReferralService
+  ) {}
 
   async ngOnInit() {
     await this.loadUsers();
+    await this.loadReferralData();
     this.updateStats();
+    this.applyFilters();
   }
 
   async loadUsers() {
@@ -59,44 +73,55 @@ export class ReferDashboardComponent implements OnInit {
 
     if (snapshot.exists()) {
       const usersObject = snapshot.val();
+      this.users = await Promise.all(
+        Object.keys(usersObject).map(async (userKey) => {
+          const userData = usersObject[userKey];
+          const metadata = userData.metadata || {};
 
-      const userPromises = Object.keys(usersObject).map(async (userKey) => {
-        const userData = usersObject[userKey];
-
-        const metadataRef = ref(
-          this.firebaseService['db'],
-          `cv-app/users/${userKey}/metadata`
-        );
-        const metadataSnapshot = await get(metadataRef);
-        const metadata = metadataSnapshot.exists()
-          ? metadataSnapshot.val()
-          : {};
-
-        // Asegurar que los campos básicos existan
-        return {
-          key: userKey,
-          email: metadata.email || '', // Valor por defecto si no existe
-          fullName: userData?.profileData?.personalData?.fullName || '', // Valor por defecto si no existe
-          role: metadata.role || 'candidate', // Valor por defecto si no existe
-          enabled: metadata.enabled !== undefined ? metadata.enabled : true, // Valor por defecto si no existe
-          ...userData,
-          createdAt: metadata.createdAt ? new Date(metadata.createdAt) : null,
-          lastLogin: metadata.lastLogin ? new Date(metadata.lastLogin) : null,
-        };
-      });
-
-      this.users = await Promise.all(userPromises);
+          return {
+            key: userKey,
+            email: metadata.email || '',
+            fullName: userData?.profileData?.personalData?.fullName || '',
+            role: metadata.role || 'candidate',
+            enabled: metadata.enabled !== undefined ? metadata.enabled : true,
+            ...userData,
+            createdAt: metadata.createdAt ? new Date(metadata.createdAt) : null,
+            lastLogin: metadata.lastLogin ? new Date(metadata.lastLogin) : null,
+          };
+        })
+      );
     }
+  }
 
-    this.applyFilters();
+  async loadReferralData() {
+    const currentUser = await this.firebaseService.getCurrentUser();
+    if (currentUser?.metadata?.userId) {
+      const stats = await this.referralService.getReferralStats(
+        currentUser.metadata.userId
+      );
+      this.stats.totalReferrals = stats.count;
+      this.stats.activeReferrals = stats.referrals.filter(
+        (r) => r.converted
+      ).length;
+      this.stats.conversions = stats.referrals.length;
+      this.stats.rewardsEarned = stats.count * 10;
+
+      this.referrals = stats.referrals.map((ref) => ({
+        ...ref,
+        converted: ref.converted ? 'Sí' : 'No',
+        date: new Date(ref.timestamp).toLocaleDateString(),
+      }));
+    }
   }
 
   updateStats() {
-    this.totalUsers = this.users.length;
-    this.totalCandidates = this.users.filter(
+    this.stats.totalUsers = this.users.length;
+    this.stats.totalCandidates = this.users.filter(
       (u) => u.role === 'candidate'
     ).length;
-    this.totalCompanies = this.users.filter((u) => u.role === 'company').length;
+    this.stats.totalCompanies = this.users.filter(
+      (u) => u.role === 'company'
+    ).length;
   }
 
   applyFilters() {
@@ -109,7 +134,16 @@ export class ReferDashboardComponent implements OnInit {
       return matchesType && matchesSearch;
     });
     this.currentPage = 1;
-    this.updateStats();
+  }
+
+  onFiltersApplied(filters: { userTypeFilter: string; searchQuery: string }) {
+    this.userTypeFilter = filters.userTypeFilter;
+    this.searchQuery = filters.searchQuery;
+    this.applyFilters();
+  }
+
+  onStatusToggled(user: any) {
+    this.toggleUserStatus(user);
   }
 
   async toggleUserStatus(user: any) {
@@ -125,6 +159,15 @@ export class ReferDashboardComponent implements OnInit {
     user.enabled = !user.enabled;
   }
 
+  get paginatedUsers(): any[] {
+    const startIndex = (this.currentPage - 1) * this.pageSize;
+    return this.filteredUsers.slice(startIndex, startIndex + this.pageSize);
+  }
+
+  onPageChange(page: number): void {
+    this.currentPage = page;
+  }
+
   formatDate(date: Date | null): string {
     return date
       ? date.toLocaleDateString('es-ES', {
@@ -135,31 +178,5 @@ export class ReferDashboardComponent implements OnInit {
           minute: '2-digit',
         })
       : 'Nunca';
-  }
-
-  // Métodos de paginación
-  onPageChange(page: number): void {
-    this.currentPage = page;
-  }
-
-  get paginatedUsers(): any[] {
-    const startIndex = (this.currentPage - 1) * this.pageSize;
-    return this.filteredUsers.slice(startIndex, startIndex + this.pageSize);
-  }
-
-  // Método para manejar cambios en los filtros
-  onFilterChange() {
-    this.applyFilters();
-  }
-
-  onFiltersApplied(filters: { userTypeFilter: string; searchQuery: string }) {
-    this.userTypeFilter = filters.userTypeFilter;
-    this.searchQuery = filters.searchQuery;
-    this.applyFilters(); // Tu método existente que filtra los usuarios
-  }
-
-  // Método para manejar el cambio de estado
-  onStatusToggled(user: any) {
-    this.toggleUserStatus(user);
   }
 }

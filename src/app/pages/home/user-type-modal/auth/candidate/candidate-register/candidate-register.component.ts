@@ -85,25 +85,19 @@ export class CandidateRegisterComponent implements OnInit {
       }
 
       try {
-        console.log('Iniciando proceso de registro para:', email);
-
         // 1. Registrar usuario en Firebase Auth
-        console.log('Creando usuario en Firebase Auth...');
         const userCredential = await this.authService.registerWithEmail(
           email,
           password
         );
-        console.log('Usuario registrado en Auth:', userCredential.user?.email);
 
         // Pequeña pausa para asegurar propagación
         await new Promise((resolve) => setTimeout(resolve, 800));
 
         // Generar userId temprano para usarlo en todo el proceso
         const userId = this.firebaseService.generateUserId();
-        console.log('UserId generado:', userId);
 
         // 2. Inicializar datos del usuario en Realtime Database
-        console.log('Inicializando datos en Realtime DB...');
         await this.firebaseService.initializeUserData(email, {
           profileData: {
             personalData: {
@@ -120,7 +114,6 @@ export class CandidateRegisterComponent implements OnInit {
             referralCount: 0,
           },
         });
-        console.log('Datos de usuario inicializados correctamente');
 
         // Esperar un poco más para asegurar indexación
         await new Promise((resolve) => setTimeout(resolve, 500));
@@ -128,7 +121,6 @@ export class CandidateRegisterComponent implements OnInit {
         // 3. Procesar referido si existe
         if (referredBy) {
           try {
-            console.log('Procesando referencia con ID:', referredBy);
             await this.referralService.addReferral(referredBy, email);
             console.log('Referencia procesada exitosamente');
           } catch (referralError) {

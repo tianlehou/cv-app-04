@@ -1,25 +1,32 @@
 <div class="dashboard-container">
-  <!-- Estadísticas -->
-  <app-refer-stats-grid
-    [totalUsers]="totalUsers"
-    [totalCandidates]="totalCandidates"
-    [totalCompanies]="totalCompanies"
-  >
-  </app-refer-stats-grid>
+  <!-- Sección de estadísticas combinadas -->
+  <div class="stats-section">
+    <app-refer-stats-grid 
+      [totalUsers]="stats.totalUsers"
+      [totalCandidates]="stats.totalCandidates"
+      [totalCompanies]="stats.totalCompanies"
+      [totalReferrals]="stats.totalReferrals"
+      [activeReferrals]="stats.activeReferrals"
+      [conversions]="stats.conversions">
+    </app-refer-stats-grid>
+    
+    <app-referral-rewards [rewards]="stats.rewardsEarned"></app-referral-rewards>
+  </div>
 
-  <!-- Filtros -->
+  <!-- Sección de gráficos -->
+  <app-referral-performance-chart [referrals]="referrals"></app-referral-performance-chart>
+
+  <!-- Sección de filtros -->
   <app-refer-filters
     [userTypeFilter]="userTypeFilter"
     [searchQuery]="searchQuery"
-    (filtersApplied)="onFiltersApplied($event)"
-  >
+    (filtersApplied)="onFiltersApplied($event)">
   </app-refer-filters>
 
-  <!-- Lista de usuarios -->
+  <!-- Tabla de usuarios -->
   <app-refer-user-table
     [users]="paginatedUsers"
-    (statusToggled)="onStatusToggled($event)"
-  >
+    (statusToggled)="onStatusToggled($event)">
   </app-refer-user-table>
 
   <!-- Paginación -->
@@ -27,6 +34,6 @@
     [currentPage]="currentPage"
     [totalItems]="filteredUsers.length"
     [pageSize]="pageSize"
-    (pageChange)="onPageChange($event)"
-  ></app-refer-pagination>
+    (pageChange)="onPageChange($event)">
+  </app-refer-pagination>
 </div>

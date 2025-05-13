@@ -1,0 +1,17 @@
+.chart-container {
+  display: block;
+  height: 300px;
+  margin: 20px 0;
+  padding: 20px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .chart-container {
+    height: 250px;
+    padding: 10px;
+  }
+}
