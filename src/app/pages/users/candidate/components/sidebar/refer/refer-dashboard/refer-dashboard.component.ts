@@ -118,7 +118,7 @@ export class ReferDashboardComponent implements OnInit {
               );
               return {
                 ...ref,
-                fullName: userInfo?.fullName || 'N/A', // Agregar fullName
+                fullName: userInfo?.fullName || 'N/A',
                 converted: ref.converted ? 'Sí' : 'No',
                 date: new Date(ref.timestamp).toLocaleDateString(),
               };

@@ -99,10 +99,6 @@ export class FirebaseService {
       const userEmailKey = this.formatEmailKey(email);
       const userId = this.generateUserId();
 
-      // Logs de diagnóstico
-      console.log('Guardando metadata para:', email);
-      console.log('Ruta metadata:', `cv-app/users/${userEmailKey}/metadata`);
-
       const metadataRef = ref(this.db, `cv-app/users/${userEmailKey}/metadata`);
       await set(metadataRef, {
         email: data.email,
@@ -111,7 +107,7 @@ export class FirebaseService {
         createdAt: data.createdAt,
         ...(data.referredBy && { referredBy: data.referredBy }),
         userId: userId,
-        referralCount: 0,
+        // Se eliminó referralCount: 0
       });
 
       // Crear entrada en el índice

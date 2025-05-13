@@ -109,9 +109,8 @@ export class CandidateRegisterComponent implements OnInit {
             role: 'candidate',
             enabled: true,
             createdAt: new Date().toISOString(),
-            ...(referredBy && { referredBy }), // Solo añadir si existe referredBy
-            userId: userId, // Asegurar que userId está en metadata
-            referralCount: 0,
+            ...(referredBy && { referredBy }),
+            userId: userId,
           },
         });
 
@@ -121,8 +120,11 @@ export class CandidateRegisterComponent implements OnInit {
         // 3. Procesar referido si existe
         if (referredBy) {
           try {
-            await this.referralService.addReferral(referredBy,
-              this.registerForm.value.fullName, email);
+            await this.referralService.addReferral(
+              referredBy,
+              this.registerForm.value.fullName,
+              email
+            );
             console.log('Referencia procesada exitosamente');
           } catch (referralError) {
             console.error('Error procesando referencia:', referralError);
@@ -139,7 +141,7 @@ export class CandidateRegisterComponent implements OnInit {
         const successMessage = referredBy
           ? '¡Registro exitoso! Has sido referido correctamente'
           : 'Usuario registrado con éxito';
-        
+
         this.toastService.show(successMessage, 'success', 5000);
         this.referralService.clearReferralId();
 

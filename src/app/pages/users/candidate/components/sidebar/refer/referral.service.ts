@@ -42,86 +42,91 @@ export class ReferralService {
 
   async addReferral(
     referrerId: string,
-    referredEmail: string,
-    referredFullName: string
+    referredFullName: string,
+    referredEmail: string
   ): Promise<void> {
     return runInInjectionContext(this.injector, async () => {
       try {
+        // 1. Validaciones básicas
+        if (!referrerId || !referredEmail || !referredFullName) {
+          throw new Error('Datos de referencia incompletos');
+        }
+
+        // 2. Verificar autenticación del usuario actual
+        const currentUser = await this.authService.getCurrentAuthUser();
+        if (!currentUser?.email) {
+          throw new Error('Usuario no autenticado');
+        }
+
         const referredEmailKey =
           this.firebaseService.formatEmailKey(referredEmail);
         const timestamp = new Date().toISOString();
 
-        // 1. Get referrer's email key
-        const referrerEmailKey = await runInInjectionContext(
-          this.injector,
-          async () => {
-            return await this.getEmailKeyByUserIdFromIndex(referrerId);
-          }
+        // 3. Obtener emailKey del referente
+        const referrerEmailKey = await this.getEmailKeyByUserIdFromIndex(
+          referrerId
         );
-
         if (!referrerEmailKey) {
-          throw new Error('Referrer not found in database');
+          throw new Error('Referente no encontrado en la base de datos');
         }
 
-        // 2. Initialize referrals structure if not exists
-        await runInInjectionContext(this.injector, async () => {
-          const referralRef = ref(
-            this.db,
-            `cv-app/referrals/${referrerEmailKey}`
-          );
-          const snapshot = await get(referralRef);
+        // 4. Verificar que no sea autoreferencia
+        if (
+          referrerEmailKey ===
+          this.firebaseService.formatEmailKey(currentUser.email)
+        ) {
+          throw new Error('No puedes autoreferenciarte');
+        }
 
-          if (!snapshot.exists()) {
-            await set(referralRef, { count: 0, referrals: {} });
-          }
+        // 5. Crear/verificar estructura de referidos
+        const referralRef = ref(
+          this.db,
+          `cv-app/referrals/${referrerEmailKey}`
+        );
+        const snapshot = await get(referralRef);
+
+        if (!snapshot.exists()) {
+          await set(referralRef, {
+            count: 0,
+            referrals: {},
+          });
+        }
+
+        // 6. Verificar que el referido no exista previamente
+        const existingRef = ref(
+          this.db,
+          `cv-app/referrals/${referrerEmailKey}/referrals/${referredEmailKey}`
+        );
+        const existingSnapshot = await get(existingRef);
+        if (existingSnapshot.exists()) {
+          throw new Error('Este usuario ya fue referido anteriormente');
+        }
+
+        // 7. Registrar el nuevo referido
+        await set(existingRef, {
+          email: referredEmail,
+          fullName: referredFullName,
+          timestamp,
+          converted: true,
         });
 
-        // 3. Update referral count with transaction
-        await runInInjectionContext(this.injector, async () => {
-          await this.safeTransaction(
-            ref(this.db, `cv-app/referrals/${referrerEmailKey}/count`),
-            (current) => (current || 0) + 1,
-            'Updating referral count'
-          );
-        });
+        // 8. Actualizar contador de referidos
+        await this.safeTransaction(
+          ref(this.db, `cv-app/referrals/${referrerEmailKey}/count`),
+          (current) => (current || 0) + 1,
+          'Actualizando contador de referidos'
+        );
 
-        // 4. Add new referral
-        await runInInjectionContext(this.injector, async () => {
-          await set(
-            ref(
-              this.db,
-              `cv-app/referrals/${referrerEmailKey}/referrals/${referredEmailKey}`
-            ),
-            {
-              email: referredEmail,
-              fullName: referredFullName,
-              timestamp,
-              converted: true,
-            }
-          );
-        });
-
-        // 5. Update user's referral count (with admin override)
-        await runInInjectionContext(this.injector, async () => {
-          try {
-            await this.safeTransaction(
-              ref(
-                this.db,
-                `cv-app/users/${referrerEmailKey}/metadata/referralCount`
-              ),
-              (current) => (current || 0) + 1,
-              'Updating user referral count'
-            );
-          } catch (error) {
-            console.warn(
-              'Standard referral count update failed, trying admin override'
-            );
-            await this.updateReferralCountAsAdmin(referrerEmailKey);
-          }
-        });
+        console.log('Referido registrado exitosamente');
       } catch (error) {
-        console.error('Error in addReferral:', error);
-        this.handleFirebaseError(error, 'adding referral');
+        console.error('Error en addReferral:', {
+          error,
+          referrerId,
+          referredEmail,
+          referredFullName,
+        });
+
+        this.handleFirebaseError(error, 'agregando referencia');
         throw error;
       }
     });
@@ -134,7 +139,7 @@ export class ReferralService {
       try {
         const adminRef = ref(
           this.db,
-          `cv-app/users/${referrerEmailKey}/metadata/referralCount`
+          `cv-app/referrals/${referrerEmailKey}/metadata/referralCount`
         );
         const current = (await get(adminRef)).val() || 0;
         await set(adminRef, current + 1);
