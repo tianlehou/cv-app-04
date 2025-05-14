@@ -10,7 +10,7 @@ import { FormsModule } from '@angular/forms';
 import { ReferralService } from '../referral.service';
 import { FirebaseService } from 'src/app/shared/services/firebase.service';
 import { ReferStatsGridComponent } from './components/refer-stats-grid/refer-stats-grid.component';
-import { ref, get, update } from 'firebase/database';
+import { ref, get, update } from '@angular/fire/database';
 import { ReferFiltersComponent } from './components/refer-filters/refer-filters.component';
 import { ReferUserTableComponent } from './components/refer-user-table/refer-user-table.component';
 import { ReferPaginationComponent } from './components/refer-pagination/refer-pagination.component';
@@ -103,6 +103,7 @@ export class ReferDashboardComponent implements OnInit {
           const stats = await this.referralService.getReferralStats(
             currentUser.metadata.userId
           );
+
           this.stats.totalReferrals = stats.count;
           this.stats.activeReferrals = stats.referrals.filter(
             (r) => r.converted
@@ -110,20 +111,13 @@ export class ReferDashboardComponent implements OnInit {
           this.stats.conversions = stats.referrals.length;
           this.stats.rewardsEarned = stats.count * 10;
 
-          // Iterar sobre referidos para obtener fullName
-          this.referrals = await Promise.all(
-            stats.referrals.map(async (ref) => {
-              const userInfo = await this.referralService.getUserBasicInfo(
-                ref.emailKey
-              );
-              return {
-                ...ref,
-                fullName: userInfo?.fullName || 'N/A',
-                converted: ref.converted ? 'Sí' : 'No',
-                date: new Date(ref.timestamp).toLocaleDateString(),
-              };
-            })
-          );
+          // Usar directamente los datos de referrals sin consultar users
+          this.referrals = stats.referrals.map((ref) => ({
+            email: ref.email,
+            fullName: ref.fullName || 'N/A', // Usar el fullName guardado en referrals
+            converted: ref.converted ? 'Sí' : 'No',
+            date: new Date(ref.timestamp).toLocaleDateString('es-ES'),
+          }));
         } catch (error) {
           console.error('Error loading referral data:', error);
         }
@@ -133,14 +127,12 @@ export class ReferDashboardComponent implements OnInit {
 
   applyFilters() {
     this.filteredUsers = this.referrals.filter((referral) => {
-      const matchesType =
-        this.userTypeFilter === 'all' || referral.role === this.userTypeFilter; // Asumiendo que referral puede tener un role si es necesario filtrar por tipo
       const matchesSearch =
         referral.email.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
-        referral.fullName
-          ?.toLowerCase()
-          .includes(this.searchQuery.toLowerCase());
-      return matchesType && matchesSearch;
+        (referral.fullName?.toLowerCase() || '').includes(
+          this.searchQuery.toLowerCase()
+        );
+      return matchesSearch;
     });
     this.currentPage = 1;
   }

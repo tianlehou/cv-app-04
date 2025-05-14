@@ -132,24 +132,6 @@ export class ReferralService {
     });
   }
 
-  private async updateReferralCountAsAdmin(
-    referrerEmailKey: string
-  ): Promise<void> {
-    return runInInjectionContext(this.injector, async () => {
-      try {
-        const adminRef = ref(
-          this.db,
-          `cv-app/referrals/${referrerEmailKey}/metadata/referralCount`
-        );
-        const current = (await get(adminRef)).val() || 0;
-        await set(adminRef, current + 1);
-      } catch (adminError) {
-        console.error('Admin override also failed:', adminError);
-        throw new Error('No se pudo actualizar el contador de referidos');
-      }
-    });
-  }
-
   private async safeTransaction(
     dbRef: any,
     transactionUpdate: (current: any) => any,

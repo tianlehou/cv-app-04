@@ -6,43 +6,16 @@
         <tr>
           <th>Nombre</th>
           <th>Email</th>
-          <th>Tipo</th>
-          <th>Registro</th>
-          <th>Último acceso</th>
-          <th>Estado</th>
-          <th>Acciones</th>
+          <th>Fecha de registro</th>
+          <th>Estado conversión</th>
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let user of users">
-          <td>{{ user.fullName }}</td>
-          <td>{{ user.email }}</td>
-          <td>
-            {{
-              user.role === "candidate"
-                ? "Candidato"
-                : user.role === "company"
-                ? "Empresa"
-                : user.role === "admin"
-                ? "Administrador"
-                : "Desconocido"
-            }}
-          </td>
-          <td>{{ formatDate(user.createdAt) }}</td>
-          <td>{{ formatDate(user.lastLogin) }}</td>
-          <td>
-            <span class="status-badge" [class.active]="user.enabled">
-              {{ user.enabled ? "Activo" : "Inactivo" }}
-            </span>
-          </td>
-          <td>
-            <button
-              (click)="toggleUserStatus(user)"
-              [class.btn-inactive]="!user.enabled"
-            >
-              {{ user.enabled ? "Desactivar" : "Activar" }}
-            </button>
-          </td>
+        <tr *ngFor="let referral of users">
+          <td>{{ referral.fullName }}</td>
+          <td>{{ referral.email }}</td>
+          <td>{{ referral.date }}</td>
+          <td>{{ referral.converted }}</td>
         </tr>
       </tbody>
     </table>

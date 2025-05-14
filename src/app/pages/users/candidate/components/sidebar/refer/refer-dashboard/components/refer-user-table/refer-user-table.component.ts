@@ -1,5 +1,5 @@
 // user-table.component.ts
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -11,7 +11,6 @@ import { CommonModule } from '@angular/common';
 })
 export class ReferUserTableComponent {
   @Input() users: any[] = [];
-  @Output() statusToggled = new EventEmitter<any>();
 
   formatDate(date: Date | null): string {
     return date ? date.toLocaleDateString('es-ES', {
@@ -21,9 +20,5 @@ export class ReferUserTableComponent {
       hour: '2-digit',
       minute: '2-digit'
     }) : 'Nunca';
-  }
-
-  toggleUserStatus(user: any) {
-    this.statusToggled.emit(user);
   }
 }
