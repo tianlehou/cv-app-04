@@ -41,10 +41,8 @@ export class ReferDashboardComponent implements OnInit {
 
   // Estadísticas combinadas
   stats = {
-    totalReferrals: 0,
-    activeReferrals: 0,
-    conversions: 0,
-    rewardsEarned: 0,
+    currentReferrals: 0,
+    convertedReferrals: 0
   };
 
   // Filtros
@@ -104,12 +102,10 @@ export class ReferDashboardComponent implements OnInit {
             currentUser.metadata.userId
           );
 
-          this.stats.totalReferrals = stats.count;
-          this.stats.activeReferrals = stats.referrals.filter(
+          this.stats.currentReferrals = stats.referrals.length;
+          this.stats.convertedReferrals = stats.referrals.filter(
             (r) => r.converted
           ).length;
-          this.stats.conversions = stats.referrals.length;
-          this.stats.rewardsEarned = stats.count * 10;
 
           // Usar directamente los datos de referrals sin consultar users
           this.referrals = stats.referrals.map((ref) => ({
@@ -141,23 +137,6 @@ export class ReferDashboardComponent implements OnInit {
     this.userTypeFilter = filters.userTypeFilter;
     this.searchQuery = filters.searchQuery;
     this.applyFilters();
-  }
-
-  onStatusToggled(user: any) {
-    this.toggleUserStatus(user);
-  }
-
-  async toggleUserStatus(user: any) {
-    const updates = {
-      enabled: !user.enabled,
-      lastUpdated: new Date().toISOString(),
-    };
-
-    await update(
-      ref(this.firebaseService['db'], `cv-app/users/${user.key}/metadata`),
-      updates
-    );
-    user.enabled = !user.enabled;
   }
 
   get paginatedUsers(): any[] {

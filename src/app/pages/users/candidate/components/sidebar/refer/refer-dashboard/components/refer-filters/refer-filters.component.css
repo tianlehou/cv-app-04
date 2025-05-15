@@ -1,8 +1,9 @@
 .filters {
     display: flex;
+    width: clamp(300px, 100%, 800px);
     gap: 1rem;
-    margin-bottom: 2rem;
-    align-items: center;
+    margin: 0 auto;
+    margin-bottom: 1rem;
 }
 
 .filters select {

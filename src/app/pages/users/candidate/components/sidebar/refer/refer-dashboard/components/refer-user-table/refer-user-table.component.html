@@ -1,23 +1,21 @@
 <!-- user-table.component.html -->
-<div class="responsive-wrapper display-flex-center">
-  <div class="user-table">
-    <table>
-      <thead>
-        <tr>
-          <th>Nombre</th>
-          <th>Email</th>
-          <th>Fecha de registro</th>
-          <th>Estado conversión</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let referral of users">
-          <td>{{ referral.fullName }}</td>
-          <td>{{ referral.email }}</td>
-          <td>{{ referral.date }}</td>
-          <td>{{ referral.converted }}</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
+<div class="responsive-wrapper">
+  <table class="user-table">
+    <thead>
+      <tr>
+        <th>Fecha de registro</th>
+        <th>Nombre</th>
+        <th>Email</th>
+        <th>Estado conversión</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let referral of users">
+        <td>{{ referral.date }}</td>
+        <td>{{ referral.fullName }}</td>
+        <td>{{ referral.email }}</td>
+        <td>{{ referral.converted }}</td>
+      </tr>
+    </tbody>
+  </table>
 </div>

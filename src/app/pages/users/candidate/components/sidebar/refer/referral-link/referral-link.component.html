@@ -3,14 +3,18 @@
   <h2>Referir a un amigo</h2>
   <p>Comparte este enlace con tus contactos:</p>
 
-  <div class="referral-link">
+  <div class="referral-link display-flex-center">
     <input type="text" [value]="referralLink" readonly>
-    <button (click)="copyToClipboard()" title="Copiar">
-      <i class="bi" [class.bi-copy]="!isCopied" [class.bi-check2-circle]="isCopied"></i>
-    </button>
-    <button (click)="shareLink()" class="share-button" title="Compartir">
-      <i class="bi bi-share"></i>
-    </button>
+    <div class="buttons-row">
+      <button (click)="copyToClipboard()" title="Copiar">
+        <i class="bi" [class.bi-copy]="!isCopied" [class.bi-check2-circle]="isCopied"></i>
+        <label>Copiar</label>
+      </button>
+      <button (click)="shareLink()" class="share-button" title="Compartir">
+        <i class="bi bi-share"></i>
+        <label>Compartir</label>
+      </button>
+    </div>
   </div>
 
   <div class="social-share" *ngIf="!canShare">

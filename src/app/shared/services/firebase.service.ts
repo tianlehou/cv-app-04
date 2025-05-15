@@ -227,7 +227,6 @@ export class FirebaseService {
         enabled: boolean;
         lastLogin?: string;
         lastUpdated?: string;
-        referralCount?: number;
         referredBy?: string;
         role?: string;
         userId?: string;

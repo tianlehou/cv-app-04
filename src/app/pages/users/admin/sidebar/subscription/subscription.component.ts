@@ -21,21 +21,26 @@ export class SubscriptionComponent {
       duracion: 'ilimitado',
     },
     {
-      id: 'prueba',
-      nombre: 'Plan de Prueba',
-      descripcion: 'Acceso básico.',
-      precio: 0,
-      duracion: '5 minutos',
-    },
-
-
-    {
       id: 'anualidad',
       nombre: 'Candidato Estrella',
       descripcion: 'Ideal para todo candidato.',
       precio: 9.99,
       duracion: 365, // En días
-    }
+    },
+    {
+      id: 'pequena_empresa',
+      nombre: 'Plan Pequeña Empresa',
+      descripcion: 'Ideal para pequeños negocios.',
+      precio: 29.99,
+      duracion: 30, // En días
+    },
+    {
+      id: 'empresarial',
+      nombre: 'Plan Empresarial',
+      descripcion: 'Para grandes empresas.',
+      precio: 299.99,
+      duracion: 365, // En días
+    },
   ];
 
   selectedPlan: any = null;

@@ -2,7 +2,7 @@
     display: flex;
     justify-content: center;
     gap: 0.5rem;
-    margin-top: 2rem;
+    /* margin-top: 2rem; */
     padding: 1rem;
     background: white;
     border-radius: 8px;

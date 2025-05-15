@@ -105,11 +105,11 @@ export class CandidateRegisterComponent implements OnInit {
             },
           },
           metadata: {
-            email: email,
-            role: 'candidate',
-            enabled: true,
             createdAt: new Date().toISOString(),
+            email: email,
+            enabled: true,
             ...(referredBy && { referredBy }),
+            role: 'candidate',
             userId: userId,
           },
         });

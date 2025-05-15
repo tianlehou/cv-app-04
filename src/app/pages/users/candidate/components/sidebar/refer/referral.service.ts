@@ -9,6 +9,7 @@ import {
   ref,
   get,
   set,
+  update,
   runTransaction,
 } from '@angular/fire/database';
 import { BehaviorSubject } from 'rxjs';
@@ -26,6 +27,12 @@ export class ReferralService {
   private referralSource = new BehaviorSubject<string | null>(null);
   currentReferral = this.referralSource.asObservable();
 
+  // Formatear email para claves de Firebase
+  private formatEmailKey(email: string): string {
+    return email.replace(/\./g, '_');
+  }
+
+  // Gestión del ID de referencia
   setReferralId(referralId: string) {
     this.referralSource.next(referralId);
     localStorage.setItem('referralId', referralId);
@@ -40,6 +47,7 @@ export class ReferralService {
     localStorage.removeItem('referralId');
   }
 
+  // Registrar nuevo referido
   async addReferral(
     referrerId: string,
     referredFullName: string,
@@ -47,214 +55,140 @@ export class ReferralService {
   ): Promise<void> {
     return runInInjectionContext(this.injector, async () => {
       try {
-        // 1. Validaciones básicas
+        // Validaciones básicas
         if (!referrerId || !referredEmail || !referredFullName) {
           throw new Error('Datos de referencia incompletos');
         }
 
-        // 2. Verificar autenticación del usuario actual
         const currentUser = await this.authService.getCurrentAuthUser();
-        if (!currentUser?.email) {
-          throw new Error('Usuario no autenticado');
-        }
+        if (!currentUser?.email) throw new Error('Usuario no autenticado');
 
-        const referredEmailKey =
-          this.firebaseService.formatEmailKey(referredEmail);
+        const referredEmailKey = this.formatEmailKey(referredEmail);
         const timestamp = new Date().toISOString();
 
-        // 3. Obtener emailKey del referente
-        const referrerEmailKey = await this.getEmailKeyByUserIdFromIndex(
-          referrerId
-        );
-        if (!referrerEmailKey) {
-          throw new Error('Referente no encontrado en la base de datos');
-        }
+        // Obtener emailKey del referente
+        const referrerEmailKey = await this.getEmailKeyByUserId(referrerId);
+        if (!referrerEmailKey) throw new Error('Referente no encontrado');
 
-        // 4. Verificar que no sea autoreferencia
-        if (
-          referrerEmailKey ===
-          this.firebaseService.formatEmailKey(currentUser.email)
-        ) {
+        // Prevenir autoreferencias
+        if (referrerEmailKey === this.formatEmailKey(currentUser.email)) {
           throw new Error('No puedes autoreferenciarte');
         }
 
-        // 5. Crear/verificar estructura de referidos
-        const referralRef = ref(
-          this.db,
-          `cv-app/referrals/${referrerEmailKey}`
-        );
-        const snapshot = await get(referralRef);
+        // Estructura de referencia
+        const referralPath = `cv-app/referrals/${referrerEmailKey}/referrals/${referredEmailKey}`;
+        const referralRef = ref(this.db, referralPath);
 
-        if (!snapshot.exists()) {
-          await set(referralRef, {
-            count: 0,
-            referrals: {},
-          });
+        // Verificar existencia previa
+        if ((await get(referralRef)).exists()) {
+          throw new Error('Usuario ya referido');
         }
 
-        // 6. Verificar que el referido no exista previamente
-        const existingRef = ref(
-          this.db,
-          `cv-app/referrals/${referrerEmailKey}/referrals/${referredEmailKey}`
-        );
-        const existingSnapshot = await get(existingRef);
-        if (existingSnapshot.exists()) {
-          throw new Error('Este usuario ya fue referido anteriormente');
-        }
-
-        // 7. Registrar el nuevo referido
-        await set(existingRef, {
+        // Crear registro inicial
+        await set(referralRef, {
           email: referredEmail,
           fullName: referredFullName,
           timestamp,
-          converted: true,
+          converted: false, // Estado inicial no convertido
         });
 
-        // 8. Actualizar contador de referidos
-        await this.safeTransaction(
-          ref(this.db, `cv-app/referrals/${referrerEmailKey}/count`),
-          (current) => (current || 0) + 1,
-          'Actualizando contador de referidos'
-        );
-
-        console.log('Referido registrado exitosamente');
+        // Actualizar contador
+        await this.updateCounter(referrerEmailKey);
       } catch (error) {
-        console.error('Error en addReferral:', {
-          error,
-          referrerId,
-          referredEmail,
-          referredFullName,
-        });
-
+        console.error('Error en addReferral:', error);
         this.handleFirebaseError(error, 'agregando referencia');
         throw error;
       }
     });
   }
 
-  private async safeTransaction(
-    dbRef: any,
-    transactionUpdate: (current: any) => any,
-    context: string
+  // Marcar conversión completa
+  async markAsConverted(
+    referrerId: string,
+    referredEmail: string,
+    status: boolean
   ): Promise<void> {
-    try {
-      await runTransaction(dbRef, transactionUpdate);
-    } catch (error) {
-      console.error(`Transaction failed in ${context}:`, error);
-      throw error;
-    }
-  }
-
-  private async getEmailKeyByUserIdFromIndex(
-    userId: string
-  ): Promise<string | null> {
     return runInInjectionContext(this.injector, async () => {
-      if (!userId) return null;
-
       try {
-        // 1. Try index first
-        const indexRef = ref(
+        const referrerEmailKey = await this.getEmailKeyByUserId(referrerId);
+        const referredEmailKey = this.formatEmailKey(referredEmail);
+
+        const referralRef = ref(
           this.db,
-          `cv-app/userIndex/userId-to-emailKey/${userId}`
-        );
-        const snapshot = await get(indexRef);
-
-        if (snapshot.exists()) {
-          return snapshot.val();
-        }
-
-        // 2. Fallback to direct search
-        const currentUser = await this.authService.getCurrentAuthUser();
-        if (currentUser?.email) {
-          const usersRef = ref(this.db, 'cv-app/users');
-          const usersSnapshot = await get(usersRef);
-
-          if (usersSnapshot.exists()) {
-            const users = usersSnapshot.val();
-            for (const emailKey in users) {
-              if (users[emailKey]?.metadata?.userId === userId) {
-                await set(indexRef, emailKey);
-                return emailKey;
-              }
-            }
-          }
-        }
-
-        return null;
-      } catch (err) {
-        console.error('Error finding emailKey:', err);
-        return null;
-      }
-    });
-  }
-
-  async getUserBasicInfo(
-    emailKey: string
-  ): Promise<{ email: string; fullName: string | null }> {
-    return runInInjectionContext(this.injector, async () => {
-      try {
-        const referralInfoRef = ref(this.db, `cv-app/referrals/${emailKey}`);
-
-        // Ensure each get call is explicitly within the injection context
-        const referralSnapshot = await runInInjectionContext(
-          this.injector,
-          async () => await get(referralInfoRef)
+          `cv-app/referrals/${referrerEmailKey}/referrals/${referredEmailKey}`
         );
 
-        const data = referralSnapshot.val();
-
-        return {
-          email: data?.email || '',
-          fullName: data?.fullName || null,
-        };
+        await update(referralRef, { converted: status });
       } catch (error) {
-        console.error('Error getting user basic info:', error);
-        // Fallback to current user's info if getting referral info fails
-        const currentUser = await this.authService.getCurrentAuthUser();
-        const email = currentUser?.email || '';
-        return { email, fullName: null }; // fullName might not be available here easily
+        console.error('Error actualizando conversión:', error);
+        this.handleFirebaseError(error, 'actualizando conversión');
+        throw error;
       }
     });
   }
 
+  // Obtener estadísticas de referidos
   async getReferralStats(
     userId: string
   ): Promise<{ count: number; referrals: any[] }> {
     return runInInjectionContext(this.injector, async () => {
       try {
-        const emailKey = await this.getEmailKeyByUserIdFromIndex(userId);
-        if (!emailKey) {
-          return { count: 0, referrals: [] };
-        }
+        const emailKey = await this.getEmailKeyByUserId(userId);
+        if (!emailKey) return { count: 0, referrals: [] };
 
-        const referralRef = ref(this.db, `cv-app/referrals/${emailKey}`);
+        const referralRef = ref(
+          this.db,
+          `cv-app/referrals/${emailKey}/referrals`
+        );
         const snapshot = await get(referralRef);
 
         if (snapshot.exists()) {
-          const data = snapshot.val();
+          const referrals = snapshot.val();
+          const referralList = Object.values(referrals);
           return {
-            count: data.count || 0,
-            referrals: data.referrals ? Object.values(data.referrals) : [],
+            count: referralList.length, // Ahora count refleja solo los existentes
+            referrals: referralList,
           };
         }
         return { count: 0, referrals: [] };
       } catch (error) {
-        console.error('Error getting referral stats:', error);
-        this.handleFirebaseError(error, 'fetching referral stats');
+        console.error('Error obteniendo estadísticas:', error);
         return { count: 0, referrals: [] };
       }
     });
   }
 
+  // Métodos auxiliares
+  private async getEmailKeyByUserId(userId: string): Promise<string | null> {
+    const indexRef = ref(
+      this.db,
+      `cv-app/userIndex/userId-to-emailKey/${userId}`
+    );
+
+    const snapshot = await get(indexRef);
+    return snapshot.exists() ? snapshot.val() : null;
+  }
+
+  private async updateCounter(referrerEmailKey: string): Promise<void> {
+    const counterRef = ref(
+      this.db,
+      `cv-app/referrals/${referrerEmailKey}/count`
+    );
+
+    await runTransaction(counterRef, (current) => (current || 0) + 1);
+  }
+
   private handleFirebaseError(error: any, context: string): void {
-    const errorMap: Record<string, string> = {
-      permission_denied: 'No tienes permisos para realizar esta acción',
-      'invalid-argument': 'Datos proporcionados no válidos',
-      'not-found': 'El recurso solicitado no fue encontrado',
+    const errorMessages = {
+      PERMISSION_DENIED: 'Acceso no autorizado',
+      'invalid-argument': 'Datos inválidos',
+      'not-found': 'Recurso no encontrado',
     };
 
-    const friendlyMessage = errorMap[error.code] || `Error al ${context}`;
-    console.error(`${friendlyMessage}:`, error);
-    throw new Error(friendlyMessage);
+    const message =
+      errorMessages[error.code as keyof typeof errorMessages] ||
+      `Error al ${context}`;
+    console.error(`${message}:`, error);
+    throw new Error(message);
   }
 }

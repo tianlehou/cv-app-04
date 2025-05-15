@@ -2,12 +2,11 @@
   <!-- Sección de estadísticas combinadas -->
   <div class="stats-section">
     <app-refer-stats-grid 
-      [totalReferrals]="stats.totalReferrals"
-      [activeReferrals]="stats.activeReferrals"
-      [conversions]="stats.conversions">
+      [currentReferrals]="stats.currentReferrals"
+      [convertedReferrals]="stats.convertedReferrals">
     </app-refer-stats-grid>
     
-    <app-referral-rewards [rewards]="stats.rewardsEarned"></app-referral-rewards>
+    <app-referral-rewards></app-referral-rewards>
   </div>
 
   <!-- Sección de gráficos -->

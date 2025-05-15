@@ -5,6 +5,21 @@
   border: 1px solid var(--text-color);
   border-radius: 8px;
   background: var(--clr-white);
+  transition: all 0.3s ease-in-out;
+  animation:
+    slideInUp 3s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+}
+
+@keyframes slideInUp {
+    from {
+        transform: translateY(200%);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
 }
 
 .back-button {
@@ -99,43 +114,4 @@ a {
 .login-btn:active {
   background-color: var(--clr-white);
   border: 1px solid var(--clr-green);
-}
-
-/* Estilos para mensajes de éxito y error */
-.success-message {
-  width: fit-content;
-  margin: 1rem auto;
-  color: var(--clr-green);
-  background-color: white;
-  border: 2px dashed var(--clr-green);
-  border-radius: 5px;
-  padding: 10px;
-  margin-bottom: 20px;
-  text-align: center;
-  animation: pulse 1.5s infinite;
-}
-
-.error-message {
-  width: fit-content;
-  margin: 0 auto;
-  color: var(--clr-red);
-  background-color: white;
-  border: 2px dashed var(--clr-red);
-  border-radius: 5px;
-  padding: 10px;
-  margin-bottom: 20px;
-  text-align: center;
-  animation: pulse 1.5s infinite;
-}
-
-@keyframes pulse {
-
-  0%,
-  100% {
-    transform: scale(1);
-  }
-
-  50% {
-    transform: scale(1.2);
-  }
 }
