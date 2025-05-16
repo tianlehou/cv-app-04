@@ -6,7 +6,7 @@
         <th>Fecha de registro</th>
         <th>Nombre</th>
         <th>Email</th>
-        <th>Estado conversión</th>
+        <th>Suscripción</th>
       </tr>
     </thead>
     <tbody>
@@ -14,7 +14,7 @@
         <td>{{ referral.date }}</td>
         <td>{{ referral.fullName }}</td>
         <td>{{ referral.email }}</td>
-        <td>{{ referral.converted }}</td>
+        <td>{{ referral.subscriptionAmount | currency:'USD' }}</td>
       </tr>
     </tbody>
   </table>

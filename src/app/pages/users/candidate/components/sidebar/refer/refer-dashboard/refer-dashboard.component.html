@@ -1,11 +1,9 @@
 <div class="dashboard-container">
   <!-- Sección de estadísticas combinadas -->
   <div class="stats-section">
-    <app-refer-stats-grid 
-      [currentReferrals]="stats.currentReferrals"
-      [convertedReferrals]="stats.convertedReferrals">
+    <app-refer-stats-grid [currentReferrals]="stats.currentReferrals" [subscribedReferrals]="stats.subscribedReferrals">
     </app-refer-stats-grid>
-    
+
     <app-referral-rewards></app-referral-rewards>
   </div>
 
@@ -13,22 +11,16 @@
   <!-- <app-referral-performance-chart [referrals]="referrals"></app-referral-performance-chart> -->
 
   <!-- Sección de filtros -->
-  <app-refer-filters
-    [userTypeFilter]="userTypeFilter"
-    [searchQuery]="searchQuery"
+  <app-refer-filters [userTypeFilter]="userTypeFilter" [searchQuery]="searchQuery"
     (filtersApplied)="onFiltersApplied($event)">
   </app-refer-filters>
 
   <!-- Tabla de usuarios -->
-  <app-refer-user-table
-    [users]="paginatedUsers">
+  <app-refer-user-table [users]="paginatedUsers">
   </app-refer-user-table>
 
   <!-- Paginación -->
-  <app-refer-pagination
-    [currentPage]="currentPage"
-    [totalItems]="filteredUsers.length"
-    [pageSize]="pageSize"
+  <app-refer-pagination [currentPage]="currentPage" [totalItems]="filteredUsers.length" [pageSize]="pageSize"
     (pageChange)="onPageChange($event)">
   </app-refer-pagination>
 </div>

@@ -1,4 +1,5 @@
 .login-container {
+  width: 90%;
   max-width: 400px;
   margin: 50px auto;
   padding: 20px;
@@ -6,20 +7,19 @@
   border-radius: 8px;
   background: var(--clr-white);
   transition: all 0.3s ease-in-out;
-  animation:
-    slideInUp 3s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+  animation: slideInUp 3s cubic-bezier(0.23, 1, 0.32, 1) forwards;
 }
 
 @keyframes slideInUp {
-    from {
-        transform: translateY(200%);
-        opacity: 0;
-    }
+  from {
+    transform: translateY(200%);
+    opacity: 0;
+  }
 
-    to {
-        transform: translateY(0);
-        opacity: 1;
-    }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
 
 .back-button {

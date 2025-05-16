@@ -86,10 +86,12 @@ export class ReferralService {
 
         // Crear registro inicial
         await set(referralRef, {
-          email: referredEmail,
-          fullName: referredFullName,
-          timestamp,
-          converted: false, // Estado inicial no convertido
+          email: referredEmail, // Email del referido
+          fullName: referredFullName, // Nombre completo
+          timestamp, // Fecha de referencia
+          subscriptionAmount: 0.00, // Estado inicial de suscripción
+          subscribed: false, // Estado booleano para compatibilidad
+          subscriptionDate: null // Fecha de suscripción inicial
         });
 
         // Actualizar contador
@@ -144,9 +146,13 @@ export class ReferralService {
 
         if (snapshot.exists()) {
           const referrals = snapshot.val();
-          const referralList = Object.values(referrals);
+          const referralList = Object.values(referrals).map((ref: any) => ({
+            ...ref,
+            subscriptionAmount: ref.subscriptionAmount || 0.00 // Asegurar valor por defecto
+          }));
+
           return {
-            count: referralList.length, // Ahora count refleja solo los existentes
+            count: referralList.length,
             referrals: referralList,
           };
         }
@@ -176,6 +182,43 @@ export class ReferralService {
     );
 
     await runTransaction(counterRef, (current) => (current || 0) + 1);
+  }
+
+  async updateReferralSubscription(referralEmail: string, subscriptionAmount: number) {
+    try {
+      const currentUser = await this.firebaseService.getCurrentUser();
+      if (!currentUser?.metadata?.userId || !currentUser.email) return;
+
+      // Verificar que el usuario no esté intentando autoreferenciarse
+      if (this.formatEmailKey(currentUser.email) === this.formatEmailKey(referralEmail)) {
+        console.warn('Intento de autoreferencia bloqueado');
+        return;
+      }
+
+      const referrerEmailKey = await this.getEmailKeyByUserId(currentUser.metadata.userId);
+      if (!referrerEmailKey) return;
+
+      const referralRef = ref(
+        this.db,
+        `cv-app/referrals/${referrerEmailKey}/referrals/${this.formatEmailKey(referralEmail)}`
+      );
+
+      // Verificar que la referencia exista antes de actualizar
+      const referralSnapshot = await get(referralRef);
+      if (!referralSnapshot.exists()) {
+        console.warn('No se encontró referencia para actualizar');
+        return;
+      }
+
+      await update(referralRef, {
+        subscribed: subscriptionAmount > 0,
+        subscriptionAmount: subscriptionAmount,
+        subscriptionDate: subscriptionAmount > 0 ? new Date().toISOString() : null
+      });
+    } catch (error) {
+      console.error('Error en updateReferralSubscription:', error);
+      throw error;
+    }
   }
 
   private handleFirebaseError(error: any, context: string): void {

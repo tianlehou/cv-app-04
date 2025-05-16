@@ -1,0 +1,103 @@
+{
+  "rules": {
+    "cv-app": {
+      "users": {
+        // Reglas generales para el nodo users (solo lectura para admin)
+        ".read": "auth != null &&
+        root.child('cv-app/users/' + auth.token.email.replace('.', '_') + '/metadata/role').val() === 'admin'",
+        ".write": false, // No permitir escritura en el nodo raíz
+        
+        // Reglas para cada usuario individual
+        "$userEmailKey": {
+          ".read": "auth != null && (
+            auth.token.email.replace('.', '_') == $userEmailKey ||
+            root.child('cv-app/users/' + auth.token.email.replace('.', '_') + '/metadata/role').val() === 'admin'
+          )",
+          
+          // Permitir escritura inicial si el nodo no existe (durante registro)
+          ".write": "auth != null && (
+            (auth.token.email.replace('.', '_') == $userEmailKey && !data.exists()) ||
+            root.child('cv-app/users/' + auth.token.email.replace('.', '_') + '/metadata/role').val() === 'admin'
+          )",
+
+          // Subnodos específicos
+          "metadata": {
+            ".read": "auth != null && (
+              auth.token.email.replace('.', '_') == $userEmailKey ||
+              root.child('cv-app/users/' + auth.token.email.replace('.', '_') + '/metadata/role').val() === 'admin'
+            )",
+            ".write": "auth != null && (
+              auth.token.email.replace('.', '_') == $userEmailKey ||
+              root.child('cv-app/users/' + auth.token.email.replace('.', '_') + '/metadata/role').val() === 'admin'
+            )"
+          },
+          
+          "profileData": {
+            ".read": "auth != null && (
+              auth.token.email.replace('.', '_') == $userEmailKey ||
+              root.child('cv-app/users/' + auth.token.email.replace('.', '_') + '/metadata/role').val() === 'admin'
+            )",
+            ".write": "auth != null && auth.token.email.replace('.', '_') == $userEmailKey"
+          },
+          
+          "cv-styles": {
+            ".read": "auth != null",
+            ".write": "auth != null && auth.token.email.replace('.', '_') == $userEmailKey"
+          }
+        }
+      },
+
+      // Nuevo nodo para el índice de userId a emailKey
+      "userIndex": {
+        "userId-to-emailKey": {
+          ".read": "auth != null",
+          "$userId": {
+            ".write": "auth != null && (
+              root.child('cv-app/users/' + auth.token.email.replace('.','_') + '/metadata/role').val() === 'admin' || 
+              (newData.val() != null && root.child('cv-app/users/' + newData.val() + '/metadata/userId').val() == $userId)
+            )"
+          }
+        }
+      },
+
+      "referrals": {
+        ".read": "auth != null",
+        ".write": "auth != null", // Permite escritura a cualquier usuario autenticado
+        
+        "$referrerEmailKey": {
+          ".read": "auth != null",
+          ".write": "auth != null",
+          
+          "count": {
+            ".validate": "newData.isNumber() && newData.val() >= 0"
+          },
+          
+          "referrals": {
+            "$referredEmailKey": {
+              ".validate": "newData.hasChildren(['email', 'timestamp', 'fullName', 'subscriptionAmount', 'subscribed'])",
+              
+              "email": {
+                ".validate": "newData.isString() && newData.val().matches(/^[^@]+@[^@]+\\.[^@]+$/)"
+              },
+              "timestamp": {
+                ".validate": "newData.isString()"
+              },
+              "fullName": {
+                ".validate": "newData.isString()"
+              },
+              "subscriptionAmount": {
+                ".validate": "newData.isNumber() && newData.val() >= 0"
+              },
+              "subscribed": {
+                ".validate": "newData.isBoolean()"
+              },
+              "subscriptionDate": {
+                ".validate": "newData.isString() || newData.val() == null"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

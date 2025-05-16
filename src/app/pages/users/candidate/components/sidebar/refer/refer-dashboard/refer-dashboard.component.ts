@@ -42,7 +42,7 @@ export class ReferDashboardComponent implements OnInit {
   // Estadísticas combinadas
   stats = {
     currentReferrals: 0,
-    convertedReferrals: 0
+    subscribedReferrals: 0
   };
 
   // Filtros
@@ -59,7 +59,7 @@ export class ReferDashboardComponent implements OnInit {
   constructor(
     private firebaseService: FirebaseService,
     private referralService: ReferralService
-  ) {}
+  ) { }
 
   async ngOnInit() {
     await this.loadReferralData();
@@ -103,15 +103,14 @@ export class ReferDashboardComponent implements OnInit {
           );
 
           this.stats.currentReferrals = stats.referrals.length;
-          this.stats.convertedReferrals = stats.referrals.filter(
-            (r) => r.converted
-          ).length;
+          this.stats.subscribedReferrals = stats.referrals
+            .filter(r => r.subscriptionAmount > 0)
+            .reduce((sum, r) => sum + r.subscriptionAmount, 0);
 
-          // Usar directamente los datos de referrals sin consultar users
-          this.referrals = stats.referrals.map((ref) => ({
+          this.referrals = stats.referrals.map(ref => ({
             email: ref.email,
-            fullName: ref.fullName || 'N/A', // Usar el fullName guardado en referrals
-            converted: ref.converted ? 'Sí' : 'No',
+            fullName: ref.fullName || 'N/A',
+            subscriptionAmount: ref.subscriptionAmount || 0.00,
             date: new Date(ref.timestamp).toLocaleDateString('es-ES'),
           }));
         } catch (error) {
@@ -151,12 +150,12 @@ export class ReferDashboardComponent implements OnInit {
   formatDate(date: Date | null): string {
     return date
       ? date.toLocaleDateString('es-ES', {
-          day: '2-digit',
-          month: '2-digit',
-          year: 'numeric',
-          hour: '2-digit',
-          minute: '2-digit',
-        })
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+      })
       : 'Nunca';
   }
 }

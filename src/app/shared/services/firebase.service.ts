@@ -229,8 +229,17 @@ export class FirebaseService {
         lastUpdated?: string;
         referredBy?: string;
         role?: string;
+        subscriptionStatus?: string;
         userId?: string;
       }>;
+      planes_adquiridos?: {
+        [key: string]: { 
+          estado: string;
+          fecha_fin: string;
+          fecha_inicio: string;
+          plan: string;
+        };
+      };
       profileData?: {
         aboutMe?: string;
         education?: string;

@@ -111,6 +111,7 @@ export class CandidateRegisterComponent implements OnInit {
             ...(referredBy && { referredBy }),
             role: 'candidate',
             userId: userId,
+            subscriptionStatus: 0.00, // Estado inicial de suscripción
           },
         });
 
@@ -137,15 +138,14 @@ export class CandidateRegisterComponent implements OnInit {
           }
         }
 
-        // Mensaje de éxito
+        // Mensaje de éxito y limpieza
         const successMessage = referredBy
           ? '¡Registro exitoso! Has sido referido correctamente'
           : 'Usuario registrado con éxito';
-
         this.toastService.show(successMessage, 'success', 5000);
         this.referralService.clearReferralId();
 
-        // Redirigir a login después de breve espera
+        // Redirigir a login
         setTimeout(() => this.showLogin.emit(), 800);
       } catch (error: any) {
         console.error('Error durante el registro:', error);

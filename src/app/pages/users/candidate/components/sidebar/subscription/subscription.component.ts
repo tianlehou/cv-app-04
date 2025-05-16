@@ -1,7 +1,9 @@
 import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common'; // Importa CommonModule para habilitar pipes comunes
-import { Router } from '@angular/router';
-import { Database, set, ref } from '@angular/fire/database';
+import { CommonModule } from '@angular/common';
+import { Database, set, ref, update } from '@angular/fire/database';
+import { ReferralService } from '../refer/referral.service';
+import { AuthService } from 'src/app/pages/home/user-type-modal/auth/auth.service';
+import { FirebaseService } from 'src/app/shared/services/firebase.service';
 
 @Component({
   selector: 'app-subscription',
@@ -9,7 +11,7 @@ import { Database, set, ref } from '@angular/fire/database';
   templateUrl: './subscription.component.html',
   styleUrls: ['./subscription.component.css'],
   imports: [CommonModule
-  ], // Importa CommonModule para los pipes como currency
+  ],
 })
 export class SubscriptionComponent {
   plans = [
@@ -21,26 +23,25 @@ export class SubscriptionComponent {
       duracion: 'ilimitado',
     },
     {
-      id: 'prueba',
-      nombre: 'Plan de Prueba',
-      descripcion: 'Acceso básico.',
-      precio: 0,
-      duracion: '5 minutos',
-    },
-
-
-    {
       id: 'anualidad',
       nombre: 'Candidato Estrella',
       descripcion: 'Ideal para todo candidato.',
       precio: 9.99,
-      duracion: 365, // En días
+      duracion: 365,
     }
   ];
 
   selectedPlan: any = null;
+  currentUser: any;
 
-  constructor(private db: Database, private router: Router) {}
+  constructor(
+    private db: Database,
+    private firebaseService: FirebaseService,
+    private referralService: ReferralService,
+    private authService: AuthService
+  ) {
+    this.currentUser = this.authService.getCurrentAuthUser();
+  }
 
   // Método para seleccionar un plan
   selectPlan(plan: any): void {
@@ -48,33 +49,51 @@ export class SubscriptionComponent {
   }
 
   // Método para suscribirse a un plan
-  subscribe(): void {
-    if (this.selectedPlan) {
-      const userId = 'usuario123'; // Reemplázalo con el ID del usuario autenticado
-      const fechaInicio = new Date().toISOString().split('T')[0];
-      const fechaFin =
-        this.selectedPlan.duracion === 'ilimitado'
-          ? 'ilimitado'
-          : this.calculateEndDate(fechaInicio, this.selectedPlan.duracion);
+  async subscribe(): Promise<void> {
+    if (!this.selectedPlan || !this.currentUser?.email) {
+      console.error('Datos incompletos para suscripción');
+      return;
+    }
 
-      // Guardar la suscripción en Firebase
-      set(ref(this.db, `usuarios/${userId}/planes_adquiridos/${this.selectedPlan.id}`), {
+    const emailKey = this.firebaseService.formatEmailKey(this.currentUser.email);
+    console.log('Intentando escribir en:', `cv-app/users/${emailKey}/planes_adquiridos`);
+
+    const fechaInicio = new Date().toISOString().split('T')[0];
+    const fechaFin = this.selectedPlan.duracion === 'ilimitado'
+      ? 'ilimitado'
+      : this.calculateEndDate(fechaInicio, this.selectedPlan.duracion);
+
+    try {
+      // 1. Guardar suscripción en el perfil del usuario (para todos los casos)
+      await set(ref(this.db, `cv-app/users/${emailKey}/planes_adquiridos/${this.selectedPlan.id}`), {
         plan: this.selectedPlan.id,
         fecha_inicio: fechaInicio,
         fecha_fin: fechaFin,
         estado: 'activo',
-      })
-        .then(() => {
-          alert('Suscripción realizada con éxito.');
-          this.router.navigate(['/']); // Redirige después de la suscripción
-        })
-        .catch((error) => {
-          console.error('Error al suscribirse:', error);
-        });
+      });
+
+      // 2. Actualizar estado de suscripción en metadata
+      await update(ref(this.db, `cv-app/users/${emailKey}/metadata`), {
+        subscriptionStatus: this.selectedPlan.precio
+      });
+
+      // 3. Obtener datos completos del usuario para verificar si fue referido
+      const userData = await this.firebaseService.getUserData(emailKey);
+
+      // 4. Solo actualizar referrals si el usuario fue referido
+      if (userData?.metadata?.referredBy) {
+        await this.referralService.updateReferralSubscription(
+          this.currentUser.email,
+          this.selectedPlan.precio
+        );
+      }
+
+      alert('Suscripción realizada con éxito.');
+    } catch (error) {
+      console.error('Error al suscribirse:', error);
     }
   }
 
-  // Método para calcular la fecha de vencimiento del plan
   calculateEndDate(fechaInicio: string, duracion: number): string {
     const fecha = new Date(fechaInicio);
     fecha.setDate(fecha.getDate() + duracion);

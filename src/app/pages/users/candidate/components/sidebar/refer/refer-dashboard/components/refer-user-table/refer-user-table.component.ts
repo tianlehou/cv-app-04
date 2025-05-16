@@ -1,4 +1,4 @@
-// user-table.component.ts
+// refer-user-table.component.ts
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 

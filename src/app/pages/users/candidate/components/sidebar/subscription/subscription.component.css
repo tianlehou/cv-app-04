@@ -1,70 +1,78 @@
 .subscription-container {
-    text-align: center;
-    font-family: Arial, sans-serif;
-    padding: 20px;
-    margin-bottom: 100px;
-  }
-  
-  .title {
-    font-size: 1.5rem;
-    margin-bottom: 20px;
-  }
-  
-  .plans {
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-    flex-wrap: wrap;
-  }
-  
-  .plan-card {
-    border: 1px solid #ddd;
-    border-radius: 10px;
-    width: 250px;
-    padding: 20px;
-    text-align: center;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    cursor: pointer;
-    transition: transform 0.2s ease-in-out;
-  }
-  
-  .plan-card:hover {
-    transform: scale(1.05);
-  }
-  
-  .price {
-    font-size: 1.5rem;
-    color: #28a745;
-    margin: 10px 0;
-  }
-  
-  .subscribe-button {
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    padding: 10px 15px;
-    cursor: pointer;
-  }
-  
-  .subscribe-button:hover {
-    background-color: #0056b3;
-  }
-  
-  .selected-plan {
-    margin-top: 30px;
-  }
-  
-  .confirm-button {
-    background-color: #28a745;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    padding: 10px 15px;
-    cursor: pointer;
-  }
-  
-  .confirm-button:hover {
-    background-color: #218838;
-  }
-  
+  text-align: center;
+  font-family: Arial, sans-serif;
+  padding: 20px;
+  margin-bottom: 100px;
+}
+
+.title {
+  font-size: 1.5rem;
+  margin-bottom: 20px;
+}
+
+.plans {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.plan-card {
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  width: 250px;
+  padding: 20px;
+  text-align: center;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: transform 0.2s ease-in-out;
+}
+
+.plan-card:hover {
+  transform: scale(1.05);
+}
+
+.price {
+  font-size: 1.5rem;
+  color: #28a745;
+  margin: 10px 0;
+}
+
+.subscribe-button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 15px;
+  cursor: pointer;
+}
+
+.subscribe-button:hover {
+  background-color: #0056b3;
+}
+
+.selected-plan {
+  margin-top: 30px;
+}
+
+.confirm-button {
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 15px;
+  cursor: pointer;
+}
+
+.confirm-button:hover {
+  background-color: #218838;
+}
+
+.subscribed-true {
+  color: #28a745;
+  font-weight: bold;
+}
+
+.subscribed-false {
+  color: #dc3545;
+}

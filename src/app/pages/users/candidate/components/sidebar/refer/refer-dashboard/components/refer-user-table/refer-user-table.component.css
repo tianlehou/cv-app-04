@@ -4,13 +4,13 @@
   overflow-x: auto;
   background: #e4e8f0;
   -webkit-overflow-scrolling: touch;
-  /* padding: 1rem 0; */
 }
 
 .user-table {
   display: table;
   width: auto;
   min-width: 100%;
+  margin-bottom: 1rem;
   background-color: white;
   border-collapse: collapse;
   border: 1px solid #e0e0e0;

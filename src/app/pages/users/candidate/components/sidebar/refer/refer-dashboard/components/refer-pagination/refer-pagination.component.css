@@ -2,11 +2,8 @@
     display: flex;
     justify-content: center;
     gap: 0.5rem;
-    /* margin-top: 2rem; */
     padding: 1rem;
-    background: white;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    background: #e4e8f0;
 }
 
 .pagination-button {
