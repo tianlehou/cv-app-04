@@ -108,7 +108,7 @@ export class CandidateRegisterComponent implements OnInit {
             createdAt: new Date().toISOString(),
             email: email,
             enabled: true,
-            ...(referredBy && { referredBy }),
+            ...(referredBy && { referredBy: this.firebaseService.formatEmailKey(referredBy) }),
             role: 'candidate',
             userId: userId,
             subscriptionStatus: 0.00, // Estado inicial de suscripción

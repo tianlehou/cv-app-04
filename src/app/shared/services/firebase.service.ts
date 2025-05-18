@@ -85,38 +85,37 @@ export class FirebaseService {
     }
   }
 
-  async saveUserData(
-    email: string,
-    data: {
-      email: string;
-      role: string;
-      enabled: boolean;
-      createdAt: string;
-      referredBy?: string;
-    }
-  ) {
-    return runInInjectionContext(this.injector, async () => {
-      const userEmailKey = this.formatEmailKey(email);
-      const userId = this.generateUserId();
-
-      const metadataRef = ref(this.db, `cv-app/users/${userEmailKey}/metadata`);
-      await set(metadataRef, {
-        email: data.email,
-        role: data.role,
-        enabled: data.enabled,
-        createdAt: data.createdAt,
-        ...(data.referredBy && { referredBy: data.referredBy }),
-        userId: userId,
-        // Se eliminó referralCount: 0
-      });
-
-      // Crear entrada en el índice
-      await set(
-        ref(this.db, `cv-app/userIndex/userId-to-emailKey/${userId}`),
-        userEmailKey
-      );
-    });
+async saveUserData(
+  email: string,
+  data: {
+    email: string;
+    role: string;
+    enabled: boolean;
+    createdAt: string;
+    referredBy?: string; // Esto debería ser un userId, no un email
   }
+) {
+  return runInInjectionContext(this.injector, async () => {
+    const userEmailKey = this.formatEmailKey(email);
+    const userId = this.generateUserId();
+
+    const metadataRef = ref(this.db, `cv-app/users/${userEmailKey}/metadata`);
+    await set(metadataRef, {
+      email: data.email,
+      role: data.role,
+      enabled: data.enabled,
+      createdAt: data.createdAt,
+      ...(data.referredBy && { referredBy: data.referredBy }), // Guardamos el userId tal cual
+      userId: userId,
+    });
+
+    // Crear entrada en el índice
+    await set(
+      ref(this.db, `cv-app/userIndex/userId-to-emailKey/${userId}`),
+      userEmailKey
+    );
+  });
+}
 
   async saveFullName(email: string, fullName: string) {
     return runInInjectionContext(this.injector, async () => {

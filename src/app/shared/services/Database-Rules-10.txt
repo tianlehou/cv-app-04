@@ -11,15 +11,14 @@
         "$userEmailKey": {
           ".read": "auth != null && (
             auth.token.email.replace('.', '_') == $userEmailKey ||
-            root.child('cv-app/users/' + auth.token.email.replace('.', '_') + '/metadata/role').val() === 'admin' ||
-            root.child('cv-app/referrals/' + auth.token.email.replace('.', '_') + '/referrals/' + $userEmailKey).exists()
+            root.child('cv-app/users/' + auth.token.email.replace('.', '_') + '/metadata/role').val() === 'admin'
           )",
           
           // Permitir escritura inicial si el nodo no existe (durante registro)
-          ".write": "auth != null &&
-          ((auth.token.email.replace('.', '_') == $userEmailKey &&
-          !data.exists()) ||
-          root.child('cv-app/users/' + auth.token.email.replace('.', '_') + '/metadata/role').val() === 'admin')",
+          ".write": "auth != null && (
+            (auth.token.email.replace('.', '_') == $userEmailKey && !data.exists()) ||
+            root.child('cv-app/users/' + auth.token.email.replace('.', '_') + '/metadata/role').val() === 'admin'
+          )",
 
           // Subnodos específicos
           "metadata": {
@@ -27,18 +26,15 @@
               auth.token.email.replace('.', '_') == $userEmailKey ||
               root.child('cv-app/users/' + auth.token.email.replace('.', '_') + '/metadata/role').val() === 'admin'
             )",
-            ".write": "auth != null && (auth.token.email.replace('.', '_') == $userEmailKey ||
-            root.child('cv-app/users/' + auth.token.email.replace('.', '_') + '/metadata/role').val() === 'admin')",
-            
-            "referralCount": {
-              ".write": "auth != null && 
-                (
-                  (auth.token.email.replace('.', '_') == $userEmailKey) || 
-                  (root.child('cv-app/users/' + auth.token.email.replace('.', '_') + '/metadata/role').val() === 'admin')
-                ) && 
-                newData.isNumber() && 
-                newData.val() >= (data.exists() ? data.val() : 0)"
-            }
+            ".write": "auth != null && (
+              auth.token.email.replace('.', '_') == $userEmailKey ||
+              root.child('cv-app/users/' + auth.token.email.replace('.', '_') + '/metadata/role').val() === 'admin'
+            )"
+          },
+
+          "planes_adquiridos": {
+            ".read": "auth != null && auth.token.email.replace('.', '_') == $userEmailKey",
+            ".write": "auth != null && auth.token.email.replace('.', '_') == $userEmailKey"
           },
           
           "profileData": {
@@ -61,22 +57,28 @@
         "userId-to-emailKey": {
           ".read": "auth != null",
           "$userId": {
-            ".write": "auth != null &&
-            (root.child('cv-app/users/' + auth.token.email.replace('.','_') + '/metadata/role').val() === 'admin' || (newData.val() != null && root.child('cv-app/users/' + newData.val() + '/metadata/userId').val() == $userId))"
+            ".write": "auth != null && (
+              root.child('cv-app/users/' + auth.token.email.replace('.','_') + '/metadata/role').val() === 'admin' || 
+              (newData.val() != null && root.child('cv-app/users/' + newData.val() + '/metadata/userId').val() == $userId)
+            )"
           }
         }
       },
 
       "referrals": {
-        // Permitir lectura para todos los usuarios autenticados
         ".read": "auth != null",
-        
-        // Permitir creación de nuevos nodos referrals (importante para el primer referido)
-        ".write": "auth != null",
+        ".write": "auth != null", // Permite escritura a cualquier usuario autenticado
         
         "$referrerEmailKey": {
           ".read": "auth != null",
-          ".write": "auth != null && (auth.token.email.replace('.', '_') == $referrerEmailKey || root.child('cv-app/users/' + auth.token.email.replace('.', '_') + '/metadata/role').val() === 'admin')",
+          ".write": "auth != null && (
+
+            // Permite al referente actualizar sus propios referidos
+            auth.token.email.replace('.', '_') == $referrerEmailKey ||
+            
+            // Permite al referido actualizar su propia entrada (para suscripciones)
+            newData.child('email').val() == auth.token.email
+          )",
           
           "count": {
             ".validate": "newData.isNumber() && newData.val() >= 0"
@@ -84,16 +86,34 @@
           
           "referrals": {
             "$referredEmailKey": {
-              ".validate": "newData.hasChildren(['email', 'timestamp', 'converted'])",
+              ".validate": "newData.hasChildren(['email', 'timestamp', 'fullName', 'subscriptionAmount', 'subscribed'])",
               
               "email": {
                 ".validate": "newData.isString() && newData.val().matches(/^[^@]+@[^@]+\\.[^@]+$/)"
               },
+
               "timestamp": {
                 ".validate": "newData.isString()"
               },
-              "converted": {
+
+              "fullName": {
+                ".validate": "newData.isString()"
+              },
+
+              "subscriptionAmount": {
+                ".validate": "newData.isNumber() && newData.val() >= 0"
+              },
+
+              "subscribed": {
                 ".validate": "newData.isBoolean()"
+              },
+
+              "subscriptionDate": {
+                ".validate": "newData.isString() || newData.val() == null"
+              },
+
+              "planId": {
+                ".validate": "newData.isString() || newData.val() == null"
               }
             }
           }

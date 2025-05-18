@@ -76,3 +76,17 @@
 .subscribed-false {
   color: #dc3545;
 }
+
+.active-plan-badge {
+  background-color: #4CAF50;
+  color: white;
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-size: 0.9em;
+  margin-top: 10px;
+}
+
+.subscribe-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

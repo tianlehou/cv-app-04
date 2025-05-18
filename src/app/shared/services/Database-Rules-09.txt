@@ -71,9 +71,7 @@
         
         "$referrerEmailKey": {
           ".read": "auth != null",
-          ".write": "auth != null && 
-            auth.token.email.replace('.', '_') != $referredEmailKey &&
-            root.child('cv-app/users/'+$referredEmailKey+'/metadata/referredBy').val() == auth.token.email.replace('.', '_')",
+          ".write": "auth != null",
           
           "count": {
             ".validate": "newData.isNumber() && newData.val() >= 0"

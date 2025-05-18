@@ -86,12 +86,13 @@ export class ReferralService {
 
         // Crear registro inicial
         await set(referralRef, {
-          email: referredEmail, // Email del referido
-          fullName: referredFullName, // Nombre completo
-          timestamp, // Fecha de referencia
-          subscriptionAmount: 0.00, // Estado inicial de suscripción
-          subscribed: false, // Estado booleano para compatibilidad
-          subscriptionDate: null // Fecha de suscripción inicial
+          email: referredEmail,
+          fullName: referredFullName,
+          timestamp,
+          subscriptionAmount: 0.00,
+          subscribed: false,
+          subscriptionDate: null,
+          planId: null
         });
 
         // Actualizar contador
@@ -104,26 +105,72 @@ export class ReferralService {
     });
   }
 
-  // Marcar conversión completa
-  async markAsConverted(
-    referrerId: string,
+  // Actualizar suscripción de referido
+  async updateReferralSubscription(
     referredEmail: string,
-    status: boolean
+    subscriptionAmount: number,
+    planId?: string
   ): Promise<void> {
     return runInInjectionContext(this.injector, async () => {
       try {
-        const referrerEmailKey = await this.getEmailKeyByUserId(referrerId);
+        console.log('[ReferralService] Iniciando actualización de suscripción para:', referredEmail);
+
         const referredEmailKey = this.formatEmailKey(referredEmail);
+        console.log('[ReferralService] Email key del referido:', referredEmailKey);
 
-        const referralRef = ref(
-          this.db,
-          `cv-app/referrals/${referrerEmailKey}/referrals/${referredEmailKey}`
-        );
+        // 1. Obtener referente del usuario
+        const referredUserRef = ref(this.db, `cv-app/users/${referredEmailKey}/metadata`);
+        const referredUserSnapshot = await get(referredUserRef);
 
-        await update(referralRef, { converted: status });
+        if (!referredUserSnapshot.exists()) {
+          console.warn('[ReferralService] Usuario referido no encontrado en users');
+          return;
+        }
+
+        const referredByUserId = referredUserSnapshot.val().referredBy;
+        console.log('[ReferralService] Referente encontrado (userId):', referredByUserId);
+
+        if (!referredByUserId) {
+          console.warn('[ReferralService] El usuario no tiene referente registrado en metadata');
+          return;
+        }
+
+        // 2. Convertir userId a emailKey
+        const referrerEmailKey = await this.getEmailKeyByUserId(referredByUserId);
+        console.log('[ReferralService] Email key del referente:', referrerEmailKey);
+
+        if (!referrerEmailKey) {
+          console.warn('[ReferralService] No se pudo obtener emailKey del referente');
+          return;
+        }
+
+        // 3. Construir la ruta correcta para la referencia
+        const referralPath = `cv-app/referrals/${referrerEmailKey}/referrals/${referredEmailKey}`;
+        const referralRef = ref(this.db, referralPath);
+        console.log('[ReferralService] Ruta completa de referencia:', referralPath);
+
+        // 4. Verificar que la referencia exista
+        const referralSnapshot = await get(referralRef);
+
+        if (!referralSnapshot.exists()) {
+          console.warn('[ReferralService] No se encontró referencia en:', referralPath);
+          return;
+        }
+
+        // 5. Actualizar los datos
+        const updateData = {
+          subscribed: subscriptionAmount > 0,
+          subscriptionAmount: subscriptionAmount,
+          subscriptionDate: subscriptionAmount > 0 ? new Date().toISOString() : null,
+          planId: planId || null
+        };
+
+        console.log('[ReferralService] Actualizando referencia con:', updateData);
+        await update(referralRef, updateData);
+
+        console.log('[ReferralService] Referencia actualizada exitosamente');
       } catch (error) {
-        console.error('Error actualizando conversión:', error);
-        this.handleFirebaseError(error, 'actualizando conversión');
+        console.error('[ReferralService] Error en updateReferralSubscription:', error);
         throw error;
       }
     });
@@ -170,7 +217,6 @@ export class ReferralService {
       this.db,
       `cv-app/userIndex/userId-to-emailKey/${userId}`
     );
-
     const snapshot = await get(indexRef);
     return snapshot.exists() ? snapshot.val() : null;
   }
@@ -180,45 +226,7 @@ export class ReferralService {
       this.db,
       `cv-app/referrals/${referrerEmailKey}/count`
     );
-
     await runTransaction(counterRef, (current) => (current || 0) + 1);
-  }
-
-  async updateReferralSubscription(referralEmail: string, subscriptionAmount: number) {
-    try {
-      const currentUser = await this.firebaseService.getCurrentUser();
-      if (!currentUser?.metadata?.userId || !currentUser.email) return;
-
-      // Verificar que el usuario no esté intentando autoreferenciarse
-      if (this.formatEmailKey(currentUser.email) === this.formatEmailKey(referralEmail)) {
-        console.warn('Intento de autoreferencia bloqueado');
-        return;
-      }
-
-      const referrerEmailKey = await this.getEmailKeyByUserId(currentUser.metadata.userId);
-      if (!referrerEmailKey) return;
-
-      const referralRef = ref(
-        this.db,
-        `cv-app/referrals/${referrerEmailKey}/referrals/${this.formatEmailKey(referralEmail)}`
-      );
-
-      // Verificar que la referencia exista antes de actualizar
-      const referralSnapshot = await get(referralRef);
-      if (!referralSnapshot.exists()) {
-        console.warn('No se encontró referencia para actualizar');
-        return;
-      }
-
-      await update(referralRef, {
-        subscribed: subscriptionAmount > 0,
-        subscriptionAmount: subscriptionAmount,
-        subscriptionDate: subscriptionAmount > 0 ? new Date().toISOString() : null
-      });
-    } catch (error) {
-      console.error('Error en updateReferralSubscription:', error);
-      throw error;
-    }
   }
 
   private handleFirebaseError(error: any, context: string): void {
