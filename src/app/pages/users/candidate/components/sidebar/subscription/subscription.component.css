@@ -1,8 +1,7 @@
 .subscription-container {
   text-align: center;
-  font-family: Arial, sans-serif;
   padding: 20px;
-  margin-bottom: 100px;
+  margin-bottom: 50px;
 }
 
 .title {
@@ -51,30 +50,9 @@
   background-color: #0056b3;
 }
 
-.selected-plan {
-  margin-top: 30px;
-}
-
-.confirm-button {
-  background-color: #28a745;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  padding: 10px 15px;
-  cursor: pointer;
-}
-
-.confirm-button:hover {
-  background-color: #218838;
-}
-
-.subscribed-true {
-  color: #28a745;
-  font-weight: bold;
-}
-
-.subscribed-false {
-  color: #dc3545;
+.subscribe-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .active-plan-badge {
@@ -86,7 +64,74 @@
   margin-top: 10px;
 }
 
-.subscribe-button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
+.active-plan-details {
+  margin-top: 15px;
+  padding-top: 10px;
+  border-top: 1px solid #eee;
+}
+
+.active-plan-details p {
+  margin: 5px 0;
+  font-size: 0.9rem;
+}
+
+.expiration-date {
+  color: var(--clr-red);
+  font-weight: 500;
+}
+
+.confirmation-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background-color: white;
+  padding: 30px;
+  border-radius: 10px;
+  width: 90%;
+  max-width: 400px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  text-align: center;
+}
+
+.modal-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.cancel-button {
+  background-color: var(--clr-red);
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 15px;
+  cursor: pointer;
+}
+
+.cancel-button:hover {
+  background-color: var(--clr-red-dark);
+}
+
+.confirm-button {
+  background-color: var(--clr-green);
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 15px;
+  cursor: pointer;
+}
+
+.confirm-button:hover {
+  background-color: var(--clr-green-dark);
 }

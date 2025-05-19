@@ -4,7 +4,6 @@ import { CommonModule } from '@angular/common';
 import { FirebaseService } from '../../../../../../../shared/services/firebase.service';
 import { ToastService } from '../../../../../../../shared/services/toast.service';
 import { UrlService } from '../url.service';
-import { ReferralService } from '../referral.service';
 
 @Component({
   selector: 'app-referral-link',
@@ -23,7 +22,6 @@ export class ReferralLinkComponent implements OnInit {
 
   constructor(
     private firebaseService: FirebaseService,
-    private referralService: ReferralService,
     private toastService: ToastService,
     private urlService: UrlService
   ) {}

@@ -24,24 +24,24 @@ export class SubscriptionComponent implements OnInit {
     },
     {
       id: 'mensualidad',
-      nombre: 'Candidato Estrella',
-      descripcion: 'Acceso por 30 días.',
-      precio: 1.99,
-      duracion: 30,
+      nombre: 'Plan Estrella',
+      precio: 9.99,
+      duracion: 90,
     },
     {
       id: 'anualidad',
-      nombre: 'Candidato Premium',
-      descripcion: 'Ideal para todo candidato.',
-      precio: 9.99,
+      nombre: 'Plan Premium',
+      precio: 29.99,
       duracion: 365,
     },
   ];
 
+  currentUser: any;
+  selectedPlan: any = null;
   hasActiveSubscription = false;
   activePlanId: string | null = null;
-  selectedPlan: any = null;
-  currentUser: any;
+  activePlanExpiration: string | null = null;
+  showConfirmationModal = false;
   private toastService = inject(ToastService);
 
   constructor(
@@ -66,25 +66,34 @@ export class SubscriptionComponent implements OnInit {
         if (activePlan) {
           this.hasActiveSubscription = true;
           this.activePlanId = (activePlan as { plan: string }).plan;
+          this.activePlanExpiration = (activePlan as { fecha_fin: string }).fecha_fin;
         }
       }
     }
   }
 
   selectPlan(plan: any): void {
-    this.selectedPlan = plan;
+    // No permitir seleccionar el plan gratuito o el plan actualmente activo
+    if (plan.id !== 'gratuito' && plan.id !== this.activePlanId) {
+      this.selectedPlan = plan;
+      this.showConfirmationModal = true;
+    } else {
+      this.selectedPlan = null;
+      this.showConfirmationModal = false;
+    }
+  }
+
+  cancelSubscription(): void {
+    this.showConfirmationModal = false;
+    this.selectedPlan = null;
   }
 
   async subscribe(): Promise<void> {
-    if (!this.selectedPlan || !this.currentUser?.email) {
-      this.toastService?.show('Datos incompletos para suscripción', 'error');
-      return;
-    }
+    if (!this.selectedPlan || !this.currentUser?.email) return;
 
-    const emailKey = this.firebaseService.formatEmailKey(this.currentUser.email);
-    
     try {
       // 1. Guardar suscripción en el usuario
+      const emailKey = this.firebaseService.formatEmailKey(this.currentUser.email);
       const fechaInicio = new Date().toISOString().split('T')[0];
       const fechaFin = this.selectedPlan.duracion === 'ilimitado'
         ? 'ilimitado'
@@ -105,7 +114,6 @@ export class SubscriptionComponent implements OnInit {
       // 3. Actualizar referencia si existe
       const userData = await this.firebaseService.getUserData(emailKey);
       if (userData?.metadata?.referredBy) {
-        console.log('Actualizando referencia para:', userData.metadata.referredBy);
         await this.referralService.updateReferralSubscription(
           this.currentUser.email,
           this.selectedPlan.precio,
@@ -113,12 +121,13 @@ export class SubscriptionComponent implements OnInit {
         );
       }
 
-      this.toastService?.show('Suscripción realizada con éxito', 'success');
+      this.toastService.show('Suscripción realizada con éxito', 'success');
       this.hasActiveSubscription = true;
       this.activePlanId = this.selectedPlan.id;
+      this.showConfirmationModal = false;
     } catch (error) {
       console.error('Error en suscripción:', error);
-      this.toastService?.show('Error al procesar la suscripción', 'error');
+      this.toastService.show('Error al procesar la suscripción', 'error');
     }
   }
 

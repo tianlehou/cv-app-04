@@ -1,36 +1,46 @@
 <div class="subscription-container">
   <h1 class="title">Suscripciones</h1>
+
   <div class="plans">
-    <div
-      class="plan-card"
-      *ngFor="let plan of plans"
-      (click)="selectPlan(plan)"
-    >
+    <div class="plan-card" *ngFor="let plan of plans" (click)="selectPlan(plan)">
       <h2>{{ plan.nombre }}</h2>
       <p>{{ plan.descripcion }}</p>
       <p class="price">{{ plan.precio | currency : "USD" }}</p>
       <p *ngIf="plan.duracion !== 'ilimitado'">
         Duración: {{ plan.duracion }} días
       </p>
-      <button
-        class="subscribe-button"
-        *ngIf="
+      
+      <!-- Mostrar información del plan activo si es el plan actual -->
+      <div *ngIf="hasActiveSubscription && plan.id === activePlanId" class="active-plan-details">
+        <div class="active-plan-badge">
+          Plan Activado
+        </div>
+        <p *ngIf="activePlanExpiration !== 'ilimitado'" class="expiration-date">
+          Expira: {{ activePlanExpiration | date:'mediumDate' }}
+        </p>
+        <p *ngIf="activePlanExpiration === 'ilimitado'">
+          Sin fecha de expiración
+        </p>
+      </div>
+      
+      <button class="subscribe-button" *ngIf="
           plan.nombre !== 'Plan Gratuito' &&
           (!hasActiveSubscription || plan.id !== activePlanId)
-        "
-        [disabled]="hasActiveSubscription && plan.id === activePlanId"
-      >
+        " [disabled]="hasActiveSubscription && plan.id === activePlanId">
         Seleccionar
       </button>
-      <div *ngIf="hasActiveSubscription && plan.id === activePlanId" class="active-plan-badge">
-        Plan Activado
-      </div>
     </div>
   </div>
-  <div *ngIf="selectedPlan" class="selected-plan">
-    <h2>Has seleccionado el {{ selectedPlan.nombre }}</h2>
-    <button class="confirm-button" (click)="subscribe()">
-      Confirmar Suscripción
-    </button>
+
+  <!-- Modal de confirmación -->
+  <div *ngIf="showConfirmationModal" class="confirmation-modal">
+    <div class="modal-content">
+      <h2>Confirmar Suscripción</h2>
+      <p>¿Estás seguro de que deseas suscribirte al {{ selectedPlan?.nombre }} por {{ selectedPlan?.precio | currency : "USD" }}?</p>
+      <div class="modal-buttons">
+        <button class="cancel-button" (click)="cancelSubscription()">Cancelar</button>
+        <button class="confirm-button" (click)="subscribe()">Confirmar</button>
+      </div>
+    </div>
   </div>
 </div>

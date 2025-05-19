@@ -13,7 +13,6 @@ import {
   runTransaction,
 } from '@angular/fire/database';
 import { BehaviorSubject } from 'rxjs';
-import { FirebaseService } from 'src/app/shared/services/firebase.service';
 import { AuthService } from 'src/app/pages/home/user-type-modal/auth/auth.service';
 
 @Injectable({
@@ -21,7 +20,6 @@ import { AuthService } from 'src/app/pages/home/user-type-modal/auth/auth.servic
 })
 export class ReferralService {
   private db = inject(Database);
-  private firebaseService = inject(FirebaseService);
   private authService = inject(AuthService);
   private injector = inject(EnvironmentInjector);
   private referralSource = new BehaviorSubject<string | null>(null);
@@ -113,10 +111,7 @@ export class ReferralService {
   ): Promise<void> {
     return runInInjectionContext(this.injector, async () => {
       try {
-        console.log('[ReferralService] Iniciando actualización de suscripción para:', referredEmail);
-
         const referredEmailKey = this.formatEmailKey(referredEmail);
-        console.log('[ReferralService] Email key del referido:', referredEmailKey);
 
         // 1. Obtener referente del usuario
         const referredUserRef = ref(this.db, `cv-app/users/${referredEmailKey}/metadata`);
@@ -128,7 +123,6 @@ export class ReferralService {
         }
 
         const referredByUserId = referredUserSnapshot.val().referredBy;
-        console.log('[ReferralService] Referente encontrado (userId):', referredByUserId);
 
         if (!referredByUserId) {
           console.warn('[ReferralService] El usuario no tiene referente registrado en metadata');
@@ -136,8 +130,9 @@ export class ReferralService {
         }
 
         // 2. Convertir userId a emailKey
-        const referrerEmailKey = await this.getEmailKeyByUserId(referredByUserId);
-        console.log('[ReferralService] Email key del referente:', referrerEmailKey);
+        const referrerEmailKey = await runInInjectionContext(this.injector, async () => {
+          return await this.getEmailKeyByUserId(referredByUserId);
+        });
 
         if (!referrerEmailKey) {
           console.warn('[ReferralService] No se pudo obtener emailKey del referente');
@@ -147,10 +142,11 @@ export class ReferralService {
         // 3. Construir la ruta correcta para la referencia
         const referralPath = `cv-app/referrals/${referrerEmailKey}/referrals/${referredEmailKey}`;
         const referralRef = ref(this.db, referralPath);
-        console.log('[ReferralService] Ruta completa de referencia:', referralPath);
 
         // 4. Verificar que la referencia exista
-        const referralSnapshot = await get(referralRef);
+        const referralSnapshot = await runInInjectionContext(this.injector, async () => {
+          return await get(referralRef);
+        });
 
         if (!referralSnapshot.exists()) {
           console.warn('[ReferralService] No se encontró referencia en:', referralPath);
@@ -165,10 +161,7 @@ export class ReferralService {
           planId: planId || null
         };
 
-        console.log('[ReferralService] Actualizando referencia con:', updateData);
         await update(referralRef, updateData);
-
-        console.log('[ReferralService] Referencia actualizada exitosamente');
       } catch (error) {
         console.error('[ReferralService] Error en updateReferralSubscription:', error);
         throw error;
@@ -189,7 +182,9 @@ export class ReferralService {
           this.db,
           `cv-app/referrals/${emailKey}/referrals`
         );
-        const snapshot = await get(referralRef);
+        const snapshot = await runInInjectionContext(this.injector, async () => {
+          return await get(referralRef);
+        });
 
         if (snapshot.exists()) {
           const referrals = snapshot.val();
@@ -213,20 +208,24 @@ export class ReferralService {
 
   // Métodos auxiliares
   private async getEmailKeyByUserId(userId: string): Promise<string | null> {
-    const indexRef = ref(
-      this.db,
-      `cv-app/userIndex/userId-to-emailKey/${userId}`
-    );
-    const snapshot = await get(indexRef);
-    return snapshot.exists() ? snapshot.val() : null;
+    return runInInjectionContext(this.injector, async () => {
+      const indexRef = ref(
+        this.db,
+        `cv-app/userIndex/userId-to-emailKey/${userId}`
+      );
+      const snapshot = await get(indexRef);
+      return snapshot.exists() ? snapshot.val() : null;
+    });
   }
 
   private async updateCounter(referrerEmailKey: string): Promise<void> {
-    const counterRef = ref(
-      this.db,
-      `cv-app/referrals/${referrerEmailKey}/count`
-    );
-    await runTransaction(counterRef, (current) => (current || 0) + 1);
+    return runInInjectionContext(this.injector, async () => {
+      const counterRef = ref(
+        this.db,
+        `cv-app/referrals/${referrerEmailKey}/count`
+      );
+      await runTransaction(counterRef, (current) => (current || 0) + 1);
+    });
   }
 
   private handleFirebaseError(error: any, context: string): void {
