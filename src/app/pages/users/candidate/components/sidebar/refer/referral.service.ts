@@ -11,6 +11,7 @@ import {
   set,
   update,
   runTransaction,
+  onValue,
 } from '@angular/fire/database';
 import { BehaviorSubject } from 'rxjs';
 import { AuthService } from 'src/app/pages/home/user-type-modal/auth/auth.service';
@@ -24,6 +25,9 @@ export class ReferralService {
   private injector = inject(EnvironmentInjector);
   private referralSource = new BehaviorSubject<string | null>(null);
   currentReferral = this.referralSource.asObservable();
+
+  private referralStatsSource = new BehaviorSubject<{ count: number, referrals: any[] }>({ count: 0, referrals: [] });
+  currentReferralStats = this.referralStatsSource.asObservable();
 
   // Formatear email para claves de Firebase
   private formatEmailKey(email: string): string {
@@ -117,41 +121,18 @@ export class ReferralService {
         const referredUserRef = ref(this.db, `cv-app/users/${referredEmailKey}/metadata`);
         const referredUserSnapshot = await get(referredUserRef);
 
-        if (!referredUserSnapshot.exists()) {
-          console.warn('[ReferralService] Usuario referido no encontrado en users');
-          return;
-        }
+        if (!referredUserSnapshot.exists()) return;
 
         const referredByUserId = referredUserSnapshot.val().referredBy;
-
-        if (!referredByUserId) {
-          console.warn('[ReferralService] El usuario no tiene referente registrado en metadata');
-          return;
-        }
+        if (!referredByUserId) return;
 
         // 2. Convertir userId a emailKey
-        const referrerEmailKey = await runInInjectionContext(this.injector, async () => {
-          return await this.getEmailKeyByUserId(referredByUserId);
-        });
-
-        if (!referrerEmailKey) {
-          console.warn('[ReferralService] No se pudo obtener emailKey del referente');
-          return;
-        }
+        const referrerEmailKey = await this.getEmailKeyByUserId(referredByUserId);
+        if (!referrerEmailKey) return;
 
         // 3. Construir la ruta correcta para la referencia
         const referralPath = `cv-app/referrals/${referrerEmailKey}/referrals/${referredEmailKey}`;
         const referralRef = ref(this.db, referralPath);
-
-        // 4. Verificar que la referencia exista
-        const referralSnapshot = await runInInjectionContext(this.injector, async () => {
-          return await get(referralRef);
-        });
-
-        if (!referralSnapshot.exists()) {
-          console.warn('[ReferralService] No se encontró referencia en:', referralPath);
-          return;
-        }
 
         // 5. Actualizar los datos
         const updateData = {
@@ -162,8 +143,9 @@ export class ReferralService {
         };
 
         await update(referralRef, updateData);
+        
       } catch (error) {
-        console.error('[ReferralService] Error en updateReferralSubscription:', error);
+        console.error('Error en updateReferralSubscription:', error);
         throw error;
       }
     });
@@ -225,6 +207,35 @@ export class ReferralService {
         `cv-app/referrals/${referrerEmailKey}/count`
       );
       await runTransaction(counterRef, (current) => (current || 0) + 1);
+    });
+  }
+
+  setupRealtimeListener(userId: string): void {
+    runInInjectionContext(this.injector, async () => {
+      const emailKey = await this.getEmailKeyByUserId(userId);
+      if (!emailKey) return;
+
+      const referralRef = ref(this.db, `cv-app/referrals/${emailKey}/referrals`);
+
+      // Usar runInInjectionContext también para onValue
+      runInInjectionContext(this.injector, () => {
+        onValue(referralRef, (snapshot) => {
+          if (snapshot.exists()) {
+            const referrals = snapshot.val();
+            const referralList = Object.values(referrals).map((ref: any) => ({
+              ...ref,
+              subscriptionAmount: ref.subscriptionAmount || 0.00
+            }));
+
+            this.referralStatsSource.next({
+              count: referralList.length,
+              referrals: referralList
+            });
+          } else {
+            this.referralStatsSource.next({ count: 0, referrals: [] });
+          }
+        });
+      });
     });
   }
 

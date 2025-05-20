@@ -7,10 +7,11 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Subscription } from 'rxjs';
 import { ReferralService } from '../referral.service';
 import { FirebaseService } from 'src/app/shared/services/firebase.service';
 import { ReferStatsGridComponent } from './components/refer-stats-grid/refer-stats-grid.component';
-import { ref, get, update } from '@angular/fire/database';
+import { ref, get } from '@angular/fire/database';
 import { ReferFiltersComponent } from './components/refer-filters/refer-filters.component';
 import { ReferUserTableComponent } from './components/refer-user-table/refer-user-table.component';
 import { ReferPaginationComponent } from './components/refer-pagination/refer-pagination.component';
@@ -38,6 +39,8 @@ export class ReferDashboardComponent implements OnInit {
   users: any[] = [];
   referrals: any[] = [];
   filteredUsers: any[] = [];
+  private injector = inject(EnvironmentInjector);
+  private statsSubscription: Subscription | undefined;
 
   // Estadísticas combinadas
   stats = {
@@ -54,7 +57,6 @@ export class ReferDashboardComponent implements OnInit {
   // Paginación
   currentPage = 1;
   pageSize = 5;
-  private injector = inject(EnvironmentInjector);
 
   constructor(
     private firebaseService: FirebaseService,
@@ -62,8 +64,36 @@ export class ReferDashboardComponent implements OnInit {
   ) { }
 
   async ngOnInit() {
-    await this.loadReferralData();
+    const currentUser = await this.firebaseService.getCurrentUser();
+    if (currentUser?.metadata?.userId) {
+      this.referralService.setupRealtimeListener(currentUser.metadata.userId);
+
+      this.statsSubscription = this.referralService.currentReferralStats.subscribe(stats => {
+        this.updateStatsAndReferrals(stats);
+      });
+    }
+  }
+
+  private updateStatsAndReferrals(stats: { count: number, referrals: any[] }): void {
+    this.stats.currentReferrals = stats.referrals.length;
+    this.stats.subscribedReferrals = stats.referrals
+      .filter(r => r.subscriptionAmount > 0)
+      .reduce((sum, r) => sum + r.subscriptionAmount, 0);
+
+    this.referrals = stats.referrals.map(ref => ({
+      email: ref.email,
+      fullName: ref.fullName || 'N/A',
+      subscriptionAmount: ref.subscriptionAmount || 0.00,
+      date: new Date(ref.timestamp).toLocaleDateString('es-ES'),
+    }));
+
     this.applyFilters();
+  }
+
+  ngOnDestroy() {
+    if (this.statsSubscription) {
+      this.statsSubscription.unsubscribe();
+    }
   }
 
   async loadUsers() {

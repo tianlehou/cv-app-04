@@ -1,1 +1,18 @@
 <!-- referral-rewards.component.html -->
+<div class="rewards-section">
+  <h2 class="section-title">Tus Recompensas</h2>
+  
+  <div class="rewards-grid">
+    <div class="reward-card" *ngFor="let level of rewardLevels">
+      <div class="reward-level">Nivel {{level.level}}</div>
+      <div class="reward-details">
+        <p class="reward-points">{{level.points}} puntos</p>
+        <p class="reward-description">{{level.reward}}</p>
+      </div>
+      <div class="progress-container">
+        <div class="progress-bar" [style.width.%]="(rewards / level.points) * 100"></div>
+      </div>
+      <p class="progress-text">{{rewards}}/{{level.points}} puntos</p>
+    </div>
+  </div>
+</div>

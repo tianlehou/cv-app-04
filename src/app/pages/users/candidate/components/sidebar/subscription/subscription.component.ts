@@ -41,6 +41,7 @@ export class SubscriptionComponent implements OnInit {
   hasActiveSubscription = false;
   activePlanId: string | null = null;
   activePlanExpiration: string | null = null;
+  daysRemaining: number | null = null;
   showConfirmationModal = false;
   private toastService = inject(ToastService);
 
@@ -57,9 +58,20 @@ export class SubscriptionComponent implements OnInit {
     if (this.currentUser?.email) {
       const emailKey = this.firebaseService.formatEmailKey(this.currentUser.email);
       const userData = await this.firebaseService.getUserData(emailKey);
+      const today = new Date().toISOString().split('T')[0];
 
       if (userData?.planes_adquiridos) {
-        const activePlan = Object.values(userData.planes_adquiridos).find(
+        for (const [planId, planData] of Object.entries(userData.planes_adquiridos)) {
+          const plan = planData as any;
+          if (plan.estado === 'activo' && plan.fecha_fin !== 'ilimitado' && plan.fecha_fin < today) {
+            await update(ref(this.db, `cv-app/users/${emailKey}/planes_adquiridos/${planId}`), {
+              estado: 'vencido'
+            });
+          }
+        }
+
+        const updatedData = await this.firebaseService.getUserData(emailKey);
+        const activePlan = Object.values(updatedData.planes_adquiridos).find(
           (plan: any) => plan.estado === 'activo'
         );
 
@@ -67,6 +79,21 @@ export class SubscriptionComponent implements OnInit {
           this.hasActiveSubscription = true;
           this.activePlanId = (activePlan as { plan: string }).plan;
           this.activePlanExpiration = (activePlan as { fecha_fin: string }).fecha_fin;
+
+          // Calcular días restantes si no es ilimitado
+          if (this.activePlanExpiration !== 'ilimitado') {
+            const endDate = new Date(this.activePlanExpiration);
+            const today = new Date();
+            const diffTime = endDate.getTime() - today.getTime();
+            this.daysRemaining = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+          } else {
+            this.daysRemaining = null;
+          }
+        } else {
+          this.hasActiveSubscription = false;
+          this.activePlanId = null;
+          this.activePlanExpiration = null;
+          this.daysRemaining = null;
         }
       }
     }
@@ -124,6 +151,7 @@ export class SubscriptionComponent implements OnInit {
       this.toastService.show('Suscripción realizada con éxito', 'success');
       this.hasActiveSubscription = true;
       this.activePlanId = this.selectedPlan.id;
+      this.activePlanExpiration = fechaFin; // <-- Añade esta línea para actualizar la fecha de expiración
       this.showConfirmationModal = false;
     } catch (error) {
       console.error('Error en suscripción:', error);

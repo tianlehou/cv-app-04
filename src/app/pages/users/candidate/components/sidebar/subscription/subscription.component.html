@@ -9,7 +9,7 @@
       <p *ngIf="plan.duracion !== 'ilimitado'">
         Duración: {{ plan.duracion }} días
       </p>
-      
+
       <!-- Mostrar información del plan activo si es el plan actual -->
       <div *ngIf="hasActiveSubscription && plan.id === activePlanId" class="active-plan-details">
         <div class="active-plan-badge">
@@ -18,11 +18,14 @@
         <p *ngIf="activePlanExpiration !== 'ilimitado'" class="expiration-date">
           Expira: {{ activePlanExpiration | date:'mediumDate' }}
         </p>
+        <p *ngIf="activePlanExpiration !== 'ilimitado'" class="days-remaining">
+          Días restantes: {{ daysRemaining }}
+        </p>
         <p *ngIf="activePlanExpiration === 'ilimitado'">
           Sin fecha de expiración
         </p>
       </div>
-      
+
       <button class="subscribe-button" *ngIf="
           plan.nombre !== 'Plan Gratuito' &&
           (!hasActiveSubscription || plan.id !== activePlanId)
@@ -36,7 +39,8 @@
   <div *ngIf="showConfirmationModal" class="confirmation-modal">
     <div class="modal-content">
       <h2>Confirmar Suscripción</h2>
-      <p>¿Estás seguro de que deseas suscribirte al {{ selectedPlan?.nombre }} por {{ selectedPlan?.precio | currency : "USD" }}?</p>
+      <p>¿Estás seguro de que deseas suscribirte al {{ selectedPlan?.nombre }} por {{ selectedPlan?.precio | currency :
+        "USD" }}?</p>
       <div class="modal-buttons">
         <button class="cancel-button" (click)="cancelSubscription()">Cancelar</button>
         <button class="confirm-button" (click)="subscribe()">Confirmar</button>

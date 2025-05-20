@@ -3,8 +3,6 @@
   <div class="stats-section">
     <app-refer-stats-grid [currentReferrals]="stats.currentReferrals" [subscribedReferrals]="stats.subscribedReferrals">
     </app-refer-stats-grid>
-
-    <app-referral-rewards></app-referral-rewards>
   </div>
 
   <!-- Sección de gráficos -->
@@ -23,4 +21,6 @@
   <app-refer-pagination [currentPage]="currentPage" [totalItems]="filteredUsers.length" [pageSize]="pageSize"
     (pageChange)="onPageChange($event)">
   </app-refer-pagination>
+
+  <app-referral-rewards [rewards]="stats.subscribedReferrals"></app-referral-rewards>
 </div>
