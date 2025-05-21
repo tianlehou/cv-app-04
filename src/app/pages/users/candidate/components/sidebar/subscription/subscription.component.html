@@ -1,6 +1,9 @@
 <div class="subscription-container">
   <h1 class="title">Suscripciones</h1>
 
+  <app-comparison-table [plans]="plans" [recommendedPlanIndex]="1"> <!-- 1 = Plan Estrella como recomendado -->
+  </app-comparison-table>
+
   <div class="plans">
     <div class="plan-card" *ngFor="let plan of plans" (click)="selectPlan(plan)">
       <h2>{{ plan.nombre }}</h2>
@@ -12,39 +15,39 @@
 
       <!-- Mostrar información del plan activo si es el plan actual -->
       <div *ngIf="hasActiveSubscription && plan.id === activePlanId" class="active-plan-details">
-        <div class="active-plan-badge">
-          Plan Activado
+        <div class="active-plan-badge" [ngClass]="{'expired-badge': daysRemaining !== null && daysRemaining <= 0}">
+          {{ daysRemaining !== null && daysRemaining <= 0 ? 'Plan Expirado' : 'Plan Activado' }} </div>
+            <p *ngIf="activePlanExpiration !== 'ilimitado'" class="expiration-date">
+              Expira: {{ activePlanExpiration | date:'mediumDate' }}
+            </p>
+            <p *ngIf="activePlanExpiration !== 'ilimitado' && daysRemaining !== null" class="days-remaining">
+              Días restantes: {{ daysRemaining }}
+            </p>
+            <p *ngIf="activePlanExpiration === 'ilimitado'">
+              Sin fecha de expiración
+            </p>
         </div>
-        <p *ngIf="activePlanExpiration !== 'ilimitado'" class="expiration-date">
-          Expira: {{ activePlanExpiration | date:'mediumDate' }}
-        </p>
-        <p *ngIf="activePlanExpiration !== 'ilimitado'" class="days-remaining">
-          Días restantes: {{ daysRemaining }}
-        </p>
-        <p *ngIf="activePlanExpiration === 'ilimitado'">
-          Sin fecha de expiración
-        </p>
-      </div>
 
-      <button class="subscribe-button" *ngIf="
+        <button class="subscribe-button" *ngIf="
           plan.nombre !== 'Plan Gratuito' &&
           (!hasActiveSubscription || plan.id !== activePlanId)
         " [disabled]="hasActiveSubscription && plan.id === activePlanId">
-        Seleccionar
-      </button>
+          Seleccionar
+        </button>
+      </div>
     </div>
-  </div>
 
-  <!-- Modal de confirmación -->
-  <div *ngIf="showConfirmationModal" class="confirmation-modal">
-    <div class="modal-content">
-      <h2>Confirmar Suscripción</h2>
-      <p>¿Estás seguro de que deseas suscribirte al {{ selectedPlan?.nombre }} por {{ selectedPlan?.precio | currency :
-        "USD" }}?</p>
-      <div class="modal-buttons">
-        <button class="cancel-button" (click)="cancelSubscription()">Cancelar</button>
-        <button class="confirm-button" (click)="subscribe()">Confirmar</button>
+    <!-- Modal de confirmación -->
+    <div *ngIf="showConfirmationModal" class="confirmation-modal">
+      <div class="modal-content">
+        <h2>Confirmar Suscripción</h2>
+        <p>¿Estás seguro de que deseas suscribirte al {{ selectedPlan?.nombre }} por {{ selectedPlan?.precio | currency
+          :
+          "USD" }}?</p>
+        <div class="modal-buttons">
+          <button class="cancel-button" (click)="cancelSubscription()">Cancelar</button>
+          <button class="confirm-button" (click)="subscribe()">Confirmar</button>
+        </div>
       </div>
     </div>
   </div>
-</div>

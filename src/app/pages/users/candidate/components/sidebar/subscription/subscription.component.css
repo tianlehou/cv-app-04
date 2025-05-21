@@ -141,3 +141,15 @@
   font-weight: 500;
   margin-top: 5px;
 }
+
+.expired-badge {
+  background-color: var(--clr-red) !important;
+}
+
+.expired-plan-details {
+  border-top: 1px solid var(--clr-red-light);
+}
+
+.expired-plan-details p {
+  color: var(--clr-red);
+}

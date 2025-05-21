@@ -13,8 +13,8 @@ export class ReferralRewardsComponent {
   @Input() rewards: number = 0;
   
   rewardLevels = [
-    { level: 1, points: 100, reward: 'Descuento 10%' },
-    { level: 2, points: 500, reward: 'Descuento 15%' },
-    { level: 3, points: 1000, reward: 'Descuento 20%' },
+    { level: 1, points: 100, reward: '10%' },
+    { level: 2, points: 500, reward: '15%' },
+    { level: 3, points: 1000, reward: '20%' },
   ];
 }
