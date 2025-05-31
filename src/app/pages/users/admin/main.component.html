@@ -1,8 +1,5 @@
-<div class="profile-header">
-  <app-sidebar></app-sidebar>
-</div>
-
 <div class="main-container">
+  <app-sidebar class="profile-header"></app-sidebar>
   <h1>Panel de Administración</h1>
   <app-admin-dashboard *ngIf="userRole === 'admin'"></app-admin-dashboard>
 </div>

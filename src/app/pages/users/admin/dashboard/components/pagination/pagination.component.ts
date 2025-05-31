@@ -11,7 +11,7 @@ import { CommonModule } from '@angular/common';
 export class PaginationComponent {
   @Input() currentPage: number = 1;
   @Input() totalItems: number = 0;
-  @Input() pageSize: number = 5;
+  @Input() pageSize: number = 10;
   @Output() pageChange = new EventEmitter<number>();
 
   get totalPages(): number {
@@ -20,8 +20,8 @@ export class PaginationComponent {
 
   get pages(): number[] {
     const pages: number[] = [];
-    const start = Math.max(1, this.currentPage - 2);
-    const end = Math.min(this.totalPages, this.currentPage + 2);
+    const start = Math.max(1, this.currentPage - 1);
+    const end = Math.min(this.totalPages, this.currentPage + 1);
     
     for (let i = start; i <= end; i++) {
       pages.push(i);
@@ -34,5 +34,13 @@ export class PaginationComponent {
       this.currentPage = page;
       this.pageChange.emit(page);
     }
+  }
+
+  goToFirstPage(): void {
+    this.changePage(1);
+  }
+
+  goToLastPage(): void {
+    this.changePage(this.totalPages);
   }
 }

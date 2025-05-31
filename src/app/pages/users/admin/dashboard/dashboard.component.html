@@ -14,10 +14,14 @@
     (filtersApplied)="onFiltersApplied($event)"
   >
   </app-filters>
+</div>
 
+<div class="dashboard-container-2">
   <!-- Lista de usuarios -->
   <app-user-table
     [users]="paginatedUsers"
+    [currentPage]="currentPage"
+    [pageSize]="pageSize"
     (statusToggled)="onStatusToggled($event)"
   >
   </app-user-table>

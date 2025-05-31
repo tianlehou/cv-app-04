@@ -1,15 +1,26 @@
 .filters {
     display: flex;
     gap: 1rem;
-    margin-bottom: 2rem;
     align-items: center;
+    padding-bottom: 1rem;
 }
 
 .filters select {
-    padding: 0.5rem;
+    padding: 0.5rem 1.5rem 0.5rem 0.5rem; /* Añade más padding a la derecha */
     border: 1px solid #ddd;
     border-radius: 4px;
     font-size: 1rem;
+    appearance: none; /* Elimina el estilo por defecto del navegador */
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 0.5rem center; /* Posición de la flecha */
+    background-size: 1rem;
+    cursor: pointer;
+}
+
+.filters select:focus {
+    outline: none;
+    border-color: #4285f4;
 }
 
 .search-container {

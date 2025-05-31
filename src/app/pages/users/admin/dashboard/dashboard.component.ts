@@ -29,7 +29,7 @@ export class AdminDashboardComponent implements OnInit {
 
   // Paginación
   currentPage: number = 1;
-  pageSize: number = 5;
+  pageSize: number = 10;
 
   // Gráfico
   view: [number, number] = [700, 400];
@@ -62,13 +62,15 @@ export class AdminDashboardComponent implements OnInit {
         // Asegurar que los campos básicos existan
         return {
           key: userKey,
-          email: metadata.email || '', // Valor por defecto si no existe
           fullName: userData?.profileData?.personalData?.fullName || '', // Valor por defecto si no existe
+          email: metadata.email || '', // Valor por defecto si no existe
+          profesion: userData?.profileData?.personalData?.profesion || '', // Valor por defecto si no existe
           role: metadata.role || 'candidate', // Valor por defecto si no existe
+          isSubscribed: metadata?.subscriptionStatus > 0,
           enabled: metadata.enabled !== undefined ? metadata.enabled : true, // Valor por defecto si no existe
           ...userData,
           createdAt: metadata.createdAt ? new Date(metadata.createdAt) : null,
-          lastLogin: metadata.lastLogin ? new Date(metadata.lastLogin) : null
+          lastLogin: metadata.lastLogin ? new Date(metadata.lastLogin) : null,
         };
       });
       

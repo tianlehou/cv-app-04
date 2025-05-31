@@ -1,37 +1,39 @@
-/* user-table.component.css */
 .responsive-wrapper {
   width: 100%;
-  max-width: 100%;
   overflow-x: auto;
-  box-sizing: border-box;
-  padding: 0 !important;
+  -webkit-overflow-scrolling: touch;
   background-color: white;
+  margin: 0;
+  padding: 0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+}
+
+.table-scroll-container {
+  max-height: 75vh;
+  overflow-y: auto;
+  overflow-x: auto;
 }
 
 .user-table {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  gap: 1rem;
-  width: 1000px;
+  min-width: 100%;
+  width: auto;
   background-color: white;
-  border: 1px solid #e0e0e0;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
-}
-
-.user-table::before,
-.user-table::after {
-  content: "";
-  position: absolute;
-  background: white;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  z-index: -1;
+  border-collapse: collapse;
 }
 
 .user-table table {
   width: 100%;
+  min-width: 800px;
   border-collapse: collapse;
+}
+
+/* Para que el encabezado de la tabla se quede fijo arriba */
+.user-table thead th {
+  position: sticky;
+  top: 0;
+  background: #f8f9fa;
+  z-index: 2;
 }
 
 .user-table th,
@@ -39,38 +41,88 @@
   padding: 1rem;
   text-align: left;
   border-bottom: 1px solid #eee;
+  white-space: nowrap;
+  /* Evita que el texto se divida en varias líneas */
+}
+
+.user-table th:first-child,
+.user-table td:first-child {
+  width: 50px; /* Ancho fijo para la columna de numeración */
+  text-align: center; /* Centra los números */
+  color: #666; /* Color más suave para los números */
+}
+
+/* Ajusta el ancho de la columna Accion/Estado */
+.user-table th:nth-child(7),
+.user-table td:nth-child(7) {
+  width: 160px;
 }
 
 .user-table th {
   background: #f8f9fa;
   font-weight: 600;
+  position: sticky;
+  top: 0;
 }
 
 .user-table .status-badge {
   padding: 0.25rem 0.75rem;
   border-radius: 20px;
   font-size: 0.875rem;
+  margin-right: 0.5rem;
+  background: #e8f5e9;
+  color: #c62828;
 }
 
 .user-table .status-badge.active {
-  background: #e8f5e9;
   color: #2e7d32;
 }
 
-.user-table button {
-  padding: 0.5rem 1rem;
+.status-actions-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.icon-button {
+  background: none;
   border: none;
-  border-radius: 4px;
   cursor: pointer;
-  background: #2196f3;
-  color: white;
-  transition: all 0.3s;
+  padding: 0;
+  margin: 0;
+  color: #555;
+  transition: color 0.3s;
 }
 
-.user-table button:hover {
-  opacity: 0.9;
+.icon-button ion-icon {
+  font-size: 1.5rem;
+  transition: color 0.3s;
 }
 
-.user-table .btn-inactive {
-  background: #f44336 !important;
+.icon-button ion-icon {
+  font-size: 1.5rem;
+  transition: color 0.3s;
+}
+
+/* Icono activo (verde) */
+.icon-button ion-icon[name="checkmark-circle"] {
+  color: #2e7d32;
+  /* Verde oscuro */
+}
+
+/* Icono inactivo (rojo) */
+.icon-button ion-icon[name="close-circle"] {
+  color: #c62828;
+  /* Rojo oscuro */
+}
+
+/* Efecto hover para ambos iconos */
+.icon-button:hover ion-icon[name="checkmark-circle"] {
+  color: #4caf50;
+  /* Verde más claro al hacer hover */
+}
+
+.icon-button:hover ion-icon[name="close-circle"] {
+  color: #f44336;
+  /* Rojo más claro al hacer hover */
 }

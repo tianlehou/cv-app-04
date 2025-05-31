@@ -1,50 +1,56 @@
-<!-- user-table.component.html -->
 <div class="responsive-wrapper display-flex-center">
   <div class="user-table">
-    <table>
-      <thead>
-        <tr>
-          <th>Nombre</th>
-          <th>Email</th>
-          <th>Tipo</th>
-          <th>Registro</th>
-          <th>Último acceso</th>
-          <th>Estado</th>
-          <th>Acciones</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let user of users">
-          <td>{{ user.fullName || "N/A" }}</td>
-          <td>{{ user.email }}</td>
-          <td>
-            {{
+    <div class="table-scroll-container">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Tipo</th>
+            <th>Suscrito</th>
+            <th>Nombre</th>
+            <th>Email</th>
+            <th>Profesión</th>
+            <th>Accion/Estado</th>
+            <th>Registro</th>
+            <th>Último acceso</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let user of users; let i = index">
+            <td>{{ (currentPage - 1) * pageSize + i + 1 }}</td>
+            <td>
+              {{
               user.role === "candidate"
-                ? "Candidato"
-                : user.role === "company"
-                ? "Empresa"
-                : user.role === "admin"
-                ? "Administrador"
-                : "Desconocido"
-            }}
-          </td>
-          <td>{{ formatDate(user.createdAt) }}</td>
-          <td>{{ formatDate(user.lastLogin) }}</td>
-          <td>
-            <span class="status-badge" [class.active]="user.enabled">
-              {{ user.enabled ? "Activo" : "Inactivo" }}
-            </span>
-          </td>
-          <td>
-            <button
-              (click)="toggleUserStatus(user)"
-              [class.btn-inactive]="!user.enabled"
-            >
-              {{ user.enabled ? "Desactivar" : "Activar" }}
-            </button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+              ? "C"
+              : user.role === "company"
+              ? "B"
+              : user.role === "admin"
+              ? "A"
+              : "Desconocido"
+              }}
+            </td>
+            <!-- Resto de las celdas permanecen igual -->
+            <td>
+              <span *ngIf="user.isSubscribed; else noSuscrito">Sí</span>
+              <ng-template #noSuscrito>No</ng-template>
+            </td>
+            <td>{{ user.fullName || "N/A" }}</td>
+            <td>{{ user.email }}</td>
+            <td>{{ user.profesion || "N/A" }}</td>
+            <td class="status-actions-cell">
+              <button (click)="toggleUserStatus(user)" class="icon-button"
+                [title]="user.enabled ? 'Desactivar' : 'Activar'">
+                <ion-icon [name]="user.enabled ? 'checkmark-circle' : 'close-circle'"></ion-icon>
+              </button>
+              <span class="status-badge" [class.active]="user.enabled">
+                {{ user.enabled ? "Activado" : "Desactivado" }}
+              </span>
+            </td>
+            <td>{{ formatDate(user.createdAt) }}</td>
+            <td>{{ formatDate(user.lastLogin) }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 </div>
