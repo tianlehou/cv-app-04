@@ -1,18 +1,17 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { NgxChartsModule } from '@swimlane/ngx-charts';
 import { get, ref, update } from 'firebase/database';
 import { FirebaseService } from '../../../../shared/services/firebase.service';
-import { PaginationComponent } from './components/pagination/pagination.component';
-import { StatsGridComponent } from './components/stats-grid/stats-grid.component';
-import { FiltersComponent } from './components/filters/filters.component';
-import { UserTableComponent } from './components/user-table/user-table.component';
+import { StatsGridComponent } from './stats-grid/stats-grid.component';
+import { FiltersComponent } from './filters/filters.component';
+import { UserTableComponent } from './user-table/user-table.component';
+import { PaginationComponent } from './pagination/pagination.component';
 
 @Component({
   selector: 'app-admin-dashboard',
   standalone: true,
-  imports: [CommonModule, FormsModule, NgxChartsModule, PaginationComponent, StatsGridComponent, FiltersComponent, UserTableComponent,],
+  imports: [CommonModule, FormsModule, StatsGridComponent, FiltersComponent, UserTableComponent, PaginationComponent],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css']
 })
@@ -31,12 +30,6 @@ export class AdminDashboardComponent implements OnInit {
   currentPage: number = 1;
   pageSize: number = 10;
 
-  // Gráfico
-  view: [number, number] = [700, 400];
-  colorScheme = {
-    domain: ['#5AA454', '#A10A28', '#C7B42C']
-  };
-
   constructor(private firebaseService: FirebaseService) { }
 
   async ngOnInit() {
@@ -48,35 +41,44 @@ export class AdminDashboardComponent implements OnInit {
     const usersRef = ref(this.firebaseService['db'], 'cv-app/users');
     const snapshot = await get(usersRef);
     this.users = [];
-    
+
     if (snapshot.exists()) {
       const usersObject = snapshot.val();
-      
+
       const userPromises = Object.keys(usersObject).map(async (userKey) => {
         const userData = usersObject[userKey];
-        
+
         const metadataRef = ref(this.firebaseService['db'], `cv-app/users/${userKey}/metadata`);
         const metadataSnapshot = await get(metadataRef);
         const metadata = metadataSnapshot.exists() ? metadataSnapshot.val() : {};
-        
+
         // Asegurar que los campos básicos existan
         return {
           key: userKey,
-          fullName: userData?.profileData?.personalData?.fullName || '', // Valor por defecto si no existe
-          email: metadata.email || '', // Valor por defecto si no existe
-          profesion: userData?.profileData?.personalData?.profesion || '', // Valor por defecto si no existe
-          role: metadata.role || 'candidate', // Valor por defecto si no existe
+          fullName: userData?.profileData?.personalData?.fullName || '',
+          email: metadata.email || '',
+          profesion: userData?.profileData?.personalData?.profesion || '',
+          role: metadata.role || 'candidate',
           isSubscribed: metadata?.subscriptionStatus > 0,
-          enabled: metadata.enabled !== undefined ? metadata.enabled : true, // Valor por defecto si no existe
-          ...userData,
+          enabled: metadata.enabled !== undefined ? metadata.enabled : true,
+          // Asegurar que la estructura multimedia viene completa
+          profileData: {
+            ...userData?.profileData,
+            multimedia: {
+              ...userData?.profileData?.multimedia,
+              picture: {
+                profilePicture: userData?.profileData?.multimedia?.picture?.profilePicture || null
+              }
+            }
+          },
           createdAt: metadata.createdAt ? new Date(metadata.createdAt) : null,
           lastLogin: metadata.lastLogin ? new Date(metadata.lastLogin) : null,
         };
       });
-      
+
       this.users = await Promise.all(userPromises);
     }
-    
+
     this.applyFilters();
   }
 
@@ -106,16 +108,6 @@ export class AdminDashboardComponent implements OnInit {
 
     await update(ref(this.firebaseService['db'], `cv-app/users/${user.key}/metadata`), updates);
     user.enabled = !user.enabled;
-  }
-
-  formatDate(date: Date | null): string {
-    return date ? date.toLocaleDateString('es-ES', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    }) : 'Nunca';
   }
 
   // Métodos de paginación

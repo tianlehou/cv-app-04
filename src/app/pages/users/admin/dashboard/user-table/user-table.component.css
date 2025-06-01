@@ -33,6 +33,7 @@
   position: sticky;
   top: 0;
   background: #f8f9fa;
+  font-weight: 600;
   z-index: 2;
 }
 
@@ -52,17 +53,28 @@
   color: #666; /* Color más suave para los números */
 }
 
+.user-table ion-icon[name="eye-outline"] {
+  color: var(--clr-white);
+  font-size: 1rem;
+  vertical-align: middle;
+  margin-right: 4px;
+  transition: color 0.3s, background 0.3s;
+  cursor: pointer;
+  background: var(--clr-blue);
+  border-radius: 50%;
+  padding: 3px;
+  box-sizing: content-box;
+  box-shadow: 0 1px 4px rgba(25, 118, 210, 0.08);
+}
+
+.user-table td:hover ion-icon[name="eye-outline"] {
+  background: var(--clr-blue-light);
+}
+
 /* Ajusta el ancho de la columna Accion/Estado */
 .user-table th:nth-child(7),
 .user-table td:nth-child(7) {
   width: 160px;
-}
-
-.user-table th {
-  background: #f8f9fa;
-  font-weight: 600;
-  position: sticky;
-  top: 0;
 }
 
 .user-table .status-badge {

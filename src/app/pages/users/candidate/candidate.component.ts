@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FirebaseService } from '../../../shared/services/firebase.service';
@@ -31,7 +31,8 @@ import { AuthService } from '../../home/user-type-modal/auth/auth.service';
   styleUrls: ['./candidate.component.css'],
 })
 export class CandidateComponent implements OnInit {
-  currentUser: any = null;
+  @Input() currentUser: any = null;
+  @Input() readOnly: boolean = false;
   userRole: string | null = null;
   showSubscription = false;
   activeSection: 'home' | 'subscription' | 'refer' = 'home';

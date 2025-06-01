@@ -1,7 +1,7 @@
-<div class="profile-header">
+<div class="profile-header" *ngIf="!readOnly">
   <app-sidebar
     [activeSection]="activeSection"
-    (homeClicked)="showHome()" 
+    (homeClicked)="showHome()"
     (subscriptionClicked)="toggleSubscription()"
     (referClicked)="toggleRefer()"
   ></app-sidebar>
@@ -10,8 +10,14 @@
 <section id="candidate" *ngIf="activeSection === 'home'">
   <div class="profile-container">
     <div class="profile-components-row">
-      <app-profile-picture *ngIf="currentUser" [currentUser]="currentUser"></app-profile-picture>
-      <app-personal-data *ngIf="currentUser" [currentUser]="currentUser"></app-personal-data>
+      <app-profile-picture
+        *ngIf="currentUser"
+        [currentUser]="currentUser"
+      ></app-profile-picture>
+      <app-personal-data
+        *ngIf="currentUser"
+        [currentUser]="currentUser"
+      ></app-personal-data>
     </div>
     <app-gallery *ngIf="currentUser" [currentUser]="currentUser"></app-gallery>
   </div>

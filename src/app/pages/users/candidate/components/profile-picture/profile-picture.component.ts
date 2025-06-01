@@ -1,7 +1,5 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { User } from '@angular/fire/auth';
-import { FirebaseService } from '../../../../../shared/services/firebase.service';
 import { ProfileService } from '../../services/profile.service';
 
 @Component({
@@ -10,25 +8,18 @@ import { ProfileService } from '../../services/profile.service';
   templateUrl: './profile-picture.component.html',
   styleUrls: ['./profile-picture.component.css'],
 })
-export class ProfilePictureComponent {
-  @Input()
-  set currentUser(user: User | null) {
-    if (user?.email) {
-      const userEmailKey = user.email.replace(/\./g, '_');
-      this.loadUserData(userEmailKey);
-    } else {
-      this.profilePictureUrl = null;
-    }
-  }
+export class ProfilePictureComponent implements OnInit, OnDestroy {
+  @Input() currentUser: any; // Aceptamos cualquier estructura de usuario
   profilePictureUrl: string | null = null;
   private subscription!: Subscription;
 
-  constructor(
-    private firebaseService: FirebaseService,
-    private profileService: ProfileService
-  ) {}
+  constructor(private profileService: ProfileService) {}
 
   ngOnInit(): void {
+    // Cargar la imagen directamente del objeto de usuario
+    this.loadProfilePicture();
+
+    // Suscribirse a actualizaciones
     this.subscription = this.profileService.profilePictureUpdated$.subscribe(
       (newUrl) => {
         if (newUrl) {
@@ -44,13 +35,16 @@ export class ProfilePictureComponent {
     }
   }
 
-  private async loadUserData(userEmailKey: string): Promise<void> {
-    try {
-      const userData = await this.firebaseService.getUserData(userEmailKey);
-      this.profilePictureUrl = userData?.profileData?.multimedia?.picture?.profilePicture || null;
-    } catch (error) {
-      console.error('Error cargando datos:', error);
-      alert('No se pudo cargar la imagen actual');
+  private loadProfilePicture(): void {
+    if (this.currentUser) {
+      // Primero intentar con la estructura completa del dashboard
+      if (this.currentUser.profileData?.multimedia?.picture?.profilePicture) {
+        this.profilePictureUrl = this.currentUser.profileData.multimedia.picture.profilePicture;
+      }
+      // Luego intentar con la estructura de perfil normal
+      else if (this.currentUser?.multimedia?.picture?.profilePicture) {
+        this.profilePictureUrl = this.currentUser.multimedia.picture.profilePicture;
+      }
     }
   }
 }

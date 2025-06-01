@@ -19,8 +19,6 @@ export class MainComponent implements OnInit {
   constructor(
     private firebaseService: FirebaseService,
     private authService: AuthService,
-
-
   ) {}
 
   async ngOnInit(): Promise<void> {

@@ -1,3 +1,7 @@
 <div class="profile-container">
-  <img [src]="profilePictureUrl" class="profile-picture-preview" />
+  <img 
+    [src]="profilePictureUrl || 'assets/images/default-profile.png'" 
+    class="profile-picture-preview" 
+    alt="Foto de perfil"
+  />
 </div>

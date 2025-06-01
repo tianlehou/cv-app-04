@@ -1,0 +1,13 @@
+<!-- candidate-profile-modal.component.html -->
+<div class="modal-backdrop" (click)="close()"></div>
+<div class="modal-header">
+  <button class="close-btn" (click)="close()">&times;</button>
+</div>
+<div class="modal-content">
+  <div *ngIf="user">
+    <app-candidate [currentUser]="user" [readOnly]="true"></app-candidate>
+  </div>
+  <div *ngIf="!user">
+    <p>No hay datos de usuario disponibles</p>
+  </div>
+</div>
