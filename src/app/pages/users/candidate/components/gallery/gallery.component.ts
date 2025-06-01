@@ -23,6 +23,7 @@ export type GalleryView = 'image' | 'video' | 'cv';
 })
 export class GalleryComponent implements OnInit {
   @Input() currentUser: User | null = null;
+  @Input() readOnly: boolean = false;
   userEmail: string | null = null;
 
   ngOnInit(): void {

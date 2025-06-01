@@ -41,6 +41,7 @@ import { EditSkillsComponent } from './cv-edit-button/components/edit-skills/edi
 })
 export class CvGridComponent implements OnInit {
   @Input() currentUser: User | null = null;
+  @Input() readOnly: boolean = false;
   userEmailKey: string | null = null;
   selectedComponent: string | null = null;
   showGalleryGrid = false;

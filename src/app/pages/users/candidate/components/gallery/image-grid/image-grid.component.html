@@ -1,5 +1,5 @@
 <!-- image-grid.component.html -->
-<div class="top-row">
+<div class="top-row" *ngIf="!readOnly">
     <app-image-info-bar [userImages]="userImages"></app-image-info-bar>
     <app-image-upload-button [userEmailKey]="userEmailKey" (uploadComplete)="handleUploadComplete($event)">
     </app-image-upload-button>

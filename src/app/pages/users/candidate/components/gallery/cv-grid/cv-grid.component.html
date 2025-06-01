@@ -5,15 +5,15 @@
     (canvasClicked)="onCanvasClicked()"
     (atsClicked)="onAtsClicked()">
   </app-cv-info-bar>
-  <app-cv-edit-button (optionSelected)="onOptionSelected($event)" (backToPrincipal)="handleBackToPrincipal()">
+  <app-cv-edit-button (optionSelected)="onOptionSelected($event)" (backToPrincipal)="handleBackToPrincipal()" *ngIf="!readOnly">
   </app-cv-edit-button>
 </div>
 
 <ng-container *ngIf="showPrincipalSection">
   <section #principal>
     <app-curriculum-types-info *ngIf="showCurriculumInfo"></app-curriculum-types-info>
-    <app-canvas-001 *ngIf="showCanvas" [currentUser]="currentUser"></app-canvas-001>
-    <app-ats-001 *ngIf="showAts" [currentUser]="currentUser"></app-ats-001>
+    <app-canvas-001 *ngIf="showCanvas" [currentUser]="currentUser" [readOnly]="readOnly"></app-canvas-001>
+    <app-ats-001 *ngIf="showAts" [currentUser]="currentUser" [readOnly]="readOnly"></app-ats-001>
   </section>
 </ng-container>
 

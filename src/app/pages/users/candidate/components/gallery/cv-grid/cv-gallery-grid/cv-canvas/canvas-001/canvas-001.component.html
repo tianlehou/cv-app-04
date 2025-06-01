@@ -1,4 +1,7 @@
-<app-style-control (styleChange)="onStyleChange($event)" [componentName]="'canvas-001'">
+<app-style-control
+  (styleChange)="onStyleChange($event)"
+  [componentName]="'canvas-001'"
+  *ngIf="!readOnly">
 </app-style-control>
 <app-download-pdf containerId="pdf-content"></app-download-pdf>
 

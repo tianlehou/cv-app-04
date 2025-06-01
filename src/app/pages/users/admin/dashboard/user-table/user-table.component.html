@@ -20,13 +20,13 @@
             <td>{{ (currentPage - 1) * pageSize + i + 1 }}</td>
             <td>
               {{
-                user.role === "candidate"
-                  ? "C"
-                  : user.role === "company"
-                  ? "B"
-                  : user.role === "admin"
-                  ? "A"
-                  : "Desconocido"
+              user.role === "candidate"
+              ? "C"
+              : user.role === "company"
+              ? "B"
+              : user.role === "admin"
+              ? "A"
+              : "Desconocido"
               }}
             </td>
             <!-- Resto de las celdas permanecen igual -->
@@ -35,25 +35,20 @@
               <ng-template #noSuscrito>No</ng-template>
             </td>
             <td>
-              <ion-icon
-                name="eye-outline"
-                style="vertical-align: middle;"
-                (click)="openCandidateProfile(user)"
-              ></ion-icon>
+
               {{ user.fullName || "N/A" }}
             </td>
             <td>{{ user.email }}</td>
             <td>{{ user.profesion || "N/A" }}</td>
             <td class="status-actions-cell">
-              <button
-                (click)="toggleUserStatus(user)"
-                class="icon-button"
-                [title]="user.enabled ? 'Desactivar' : 'Activar'"
-              >
-                <ion-icon
-                  [name]="user.enabled ? 'checkmark-circle' : 'close-circle'"
-                  style="vertical-align: middle;"
-                ></ion-icon>
+              <button (click)="openCandidateProfile(user)" class="icon-button">
+                <ion-icon name="eye-outline" style="vertical-align: middle;"
+                  ></ion-icon>
+              </button>
+              <button (click)="toggleUserStatus(user)" class="icon-button"
+                [title]="user.enabled ? 'Desactivar' : 'Activar'">
+                <ion-icon [name]="user.enabled ? 'checkmark-circle' : 'close-circle'"
+                  style="vertical-align: middle;"></ion-icon>
               </button>
               <span class="status-badge" [class.active]="user.enabled">
                 {{ user.enabled ? "Activado" : "Desactivado" }}
@@ -69,8 +64,5 @@
 </div>
 
 <!-- Modal para mostrar el perfil -->
-<app-candidate-profile-modal
-  *ngIf="selectedUser"
-  [user]="selectedUser"
-  [close]="closeCandidateProfile.bind(this)">
+<app-candidate-profile-modal *ngIf="selectedUser" [user]="selectedUser" [close]="closeCandidateProfile.bind(this)">
 </app-candidate-profile-modal>

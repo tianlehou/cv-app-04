@@ -30,6 +30,7 @@ import { ImageEmptyGalleryMessageComponent } from './image-empty-gallery-message
 })
 export class ImageGridComponent implements OnInit, OnDestroy {
   @Input() currentUser: User | null = null;
+  @Input() readOnly: boolean = false;
   userEmailKey: string | null = null;
   userImages: string[] = [];
 

@@ -1,5 +1,5 @@
 <!-- video-grid.component.html -->
-<div class="top-row">
+<div class="top-row" *ngIf="!readOnly">
     <app-video-info-bar [totalUploadedMB]="state.totalUploadedMB"></app-video-info-bar>
     <app-video-upload-button [userEmailKey]="userEmailKey" [currentUser]="currentUser"
         (fileSelected)="handleFileSelected($event)">

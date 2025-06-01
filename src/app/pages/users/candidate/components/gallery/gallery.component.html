@@ -5,13 +5,13 @@
     <div class="content-container">
         @switch (activeView) {
         @case ('image') {
-        <app-image-grid *ngIf="currentUser" [currentUser]="currentUser"></app-image-grid>
+        <app-image-grid *ngIf="currentUser" [currentUser]="currentUser" [readOnly]="readOnly"></app-image-grid>
         }
         @case ('video') {
-        <app-video-grid *ngIf="currentUser" [currentUser]="currentUser"></app-video-grid>
+        <app-video-grid *ngIf="currentUser" [currentUser]="currentUser" [readOnly]="readOnly"></app-video-grid>
         }
         @case ('cv') {
-        <app-cv-grid *ngIf="currentUser" [currentUser]="currentUser"></app-cv-grid>
+        <app-cv-grid *ngIf="currentUser" [currentUser]="currentUser" [readOnly]="readOnly"></app-cv-grid>
         }
         }
     </div>

@@ -1,6 +1,7 @@
 <app-style-control
   (styleChange)="onStyleChange($event)"
-  [componentName]="'ats-001'">
+  [componentName]="'ats-001'"
+  *ngIf="!readOnly">
 </app-style-control>
 <app-download-pdf containerId="pdf-content"></app-download-pdf>
 

@@ -16,6 +16,7 @@ import { StyleService } from './style-control.service';
 })
 export class StyleControlComponent implements OnInit {
   @Input() componentName!: string;
+  @Input() readOnly: boolean = false;
   @Output() styleChange = new EventEmitter<ComponentStyles>();
 
   visible = false;
@@ -69,7 +70,7 @@ export class StyleControlComponent implements OnInit {
   selectedFontFamily = 'Arial, sans-serif';
 
   private firebaseService = inject(FirebaseService);
-    private styleService = inject(StyleService);
+  private styleService = inject(StyleService);
   private confirmationModal = inject(ConfirmationModalService);
   private toastService = inject(ToastService);
 
@@ -103,15 +104,15 @@ export class StyleControlComponent implements OnInit {
     // Font Family
     const fontFamilyOption = this.fontFamilyOptions.find(opt => opt.value === styles.fontFamily);
     this.selectedFontFamily = fontFamilyOption ? fontFamilyOption.value : 'Arial, sans-serif';
-  
+
     // Font Size
     const fontSizeOption = this.fontSizeOptions.find(opt => opt.value === styles.fontSize);
     this.selectedFontSize = fontSizeOption ? fontSizeOption.value : '12px';
-  
+
     // Padding
     const paddingOption = this.paddingOptions.find(opt => opt.value === styles.padding);
     this.selectedPadding = paddingOption ? paddingOption.value : '2rem 2rem';
-  
+
     // Bar Color
     const isCustomColor = styles.barColor && !this.barColorOptions.some(opt => opt.value === styles.barColor);
     if (isCustomColor) {
@@ -231,7 +232,7 @@ export class StyleControlComponent implements OnInit {
       padding: this.selectedPadding,
       barColor: this.selectedBarColor
     };
-  
+
     this.confirmationModal.show(
       {
         title: 'Guardar ajustes',
@@ -242,11 +243,11 @@ export class StyleControlComponent implements OnInit {
       async () => {
         try {
           const currentUser = await this.firebaseService.getCurrentUser();
-  
+
           if (currentUser && currentUser.email) {
             // Primero obtenemos los estilos actuales para no sobrescribir los colores favoritos
             const currentData = await this.firebaseService.getUserData(this.firebaseService.formatEmailKey(currentUser.email));
-            
+
             // Creamos el objeto de actualización manteniendo los datos existentes
             const updateData = {
               'cv-styles': {
@@ -254,7 +255,7 @@ export class StyleControlComponent implements OnInit {
                 [this.componentName]: styles // Actualizamos solo los estilos del componente actual
               }
             };
-  
+
             await this.firebaseService.updateUserData(currentUser.email, updateData);
             this.toastService.show('Ajustes guardados correctamente', 'success');
             this.toggleVisibility(); // Close the panel after saving

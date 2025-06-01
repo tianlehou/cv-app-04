@@ -32,6 +32,7 @@ import { StyleService } from '../../style-control/style-control.service';
 })
 export class Canvas001Component implements OnInit {
   @Input() currentUser: User | null = null;
+  @Input() readOnly: boolean = false;
   currentStyles: ComponentStyles = {
     fontSize: '12px',
     padding: '2rem 2rem',
@@ -69,7 +70,7 @@ export class Canvas001Component implements OnInit {
     document.querySelectorAll('.bar').forEach((el: Element) => {
       (el as HTMLElement).style.backgroundColor = this.currentStyles.barColor;
     });
-    
+
     const container = document.querySelector('.ats-container');
     if (container) {
       (container as HTMLElement).style.fontFamily = this.currentStyles.fontFamily;

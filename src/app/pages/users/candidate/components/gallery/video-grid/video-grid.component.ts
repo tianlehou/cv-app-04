@@ -54,6 +54,7 @@ export class VideoGridComponent implements OnInit, AfterViewInit {
     ElementRef<HTMLVideoElement>
   >;
   @Input() currentUser: User | null = null;
+  @Input() readOnly: boolean = false;
 
   state: VideoGridState = {
     userVideos: [],
