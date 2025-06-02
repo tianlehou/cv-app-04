@@ -14,9 +14,14 @@ import { CandidateComponent } from 'src/app/pages/users/candidate/candidate.comp
 export class CandidateProfileModalComponent {
   @Input() user: any;
   @Input() close!: () => void;
-  
+
   // Add this to ensure readOnly mode
   get readOnly(): boolean {
     return true;
+  }
+
+  // Propiedad para indicar que no es el propietario
+  get isOwner(): boolean {
+    return false;
   }
 }

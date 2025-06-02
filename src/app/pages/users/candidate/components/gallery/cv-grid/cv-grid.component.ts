@@ -42,6 +42,7 @@ import { EditSkillsComponent } from './cv-edit-button/components/edit-skills/edi
 export class CvGridComponent implements OnInit {
   @Input() currentUser: User | null = null;
   @Input() readOnly: boolean = false;
+  @Input() isOwner: boolean = true;
   userEmailKey: string | null = null;
   selectedComponent: string | null = null;
   showGalleryGrid = false;
@@ -57,6 +58,11 @@ export class CvGridComponent implements OnInit {
   ngOnInit(): void {
     if (this.currentUser?.email) {
       this.userEmailKey = this.formatEmailKey(this.currentUser.email);
+    }
+    
+    // Si no es el propietario (ej. admin viendo perfil), mostrar canvas por defecto
+    if (!this.isOwner) {
+      this.onCanvasClicked();
     }
   }
 

@@ -11,7 +11,11 @@
         <app-video-grid *ngIf="currentUser" [currentUser]="currentUser" [readOnly]="readOnly"></app-video-grid>
         }
         @case ('cv') {
-        <app-cv-grid *ngIf="currentUser" [currentUser]="currentUser" [readOnly]="readOnly"></app-cv-grid>
+        <app-cv-grid *ngIf="currentUser" 
+                    [currentUser]="currentUser" 
+                    [readOnly]="readOnly"
+                    [isOwner]="false">
+        </app-cv-grid>
         }
         }
     </div>
