@@ -5,7 +5,7 @@
 </div>
 <div class="modal-content">
   <div *ngIf="user">
-    <app-candidate [currentUser]="user" [readOnly]="true"></app-candidate>
+    <app-candidate [currentUser]="user" [readOnly]="readOnly"></app-candidate>
   </div>
   <div *ngIf="!user">
     <p>No hay datos de usuario disponibles</p>

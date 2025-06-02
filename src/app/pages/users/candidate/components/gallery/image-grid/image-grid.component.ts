@@ -1,4 +1,3 @@
-// image-grid.component.ts
 import {
   Component,
   OnInit,
@@ -50,11 +49,15 @@ export class ImageGridComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void { }
 
   public async handleUploadComplete(imageUrl: string): Promise<void> {
+    if (this.readOnly) return; // No permitir uploads en modo lectura
+    
     await this.updateUserImages(imageUrl);
     this.loadUserImages(imageUrl);
   }
 
   public onImageDeleted(deletedImageUrl: string): void {
+    if (this.readOnly) return; // No permitir borrados en modo lectura
+    
     this.userImages = this.userImages.filter((img) => img !== deletedImageUrl);
     this.cdr.detectChanges();
   }
@@ -95,16 +98,14 @@ export class ImageGridComponent implements OnInit, OnDestroy {
   }
 
   private async updateUserImages(imageUrl: string): Promise<void> {
-    if (!this.userEmailKey || !this.currentUser?.email) return;
+    if (!this.userEmailKey || !this.currentUser?.email || this.readOnly) return;
 
     try {
       const currentData = await this.firebaseService.getUserData(this.userEmailKey);
 
-      // Verificar si existe la estructura multimedia/galleryImages
       const currentMultimedia = currentData?.profileData?.multimedia || {};
       const currentGalleryImages = currentMultimedia.galleryImages || [];
 
-      // Crear la estructura completa de actualización
       const updatedData = {
         profileData: {
           ...(currentData?.profileData || {}),

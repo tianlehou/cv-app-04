@@ -1,50 +1,29 @@
-header {
-  background: linear-gradient(135deg, var(--clr-blue-dark) 0%, var(--clr-purple-dark) 100%);
+/* edit-skills.component.css */
+/* Solo estilos específicos que no están en edit-profile-container.css */
+
+/* Altura mínima para los textareas de habilidades */
+textarea.form-control {
+  min-height: 100px;
+  resize: vertical;
 }
 
-/* Grupos de formulario */
-.form-group {
-  margin-bottom: 15px;
-  text-align: left;
-}
-
-label {
-  display: block;
-  margin: 0.5em 0 0 1em;
-  font-weight: 500;
-}
-
-.skill-group {
-  position: relative;
+/* Espaciado entre grupos de habilidades */
+[formGroupName] {
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background-color: #f8f9fa;
   border-radius: 8px;
 }
 
-/* Inputs, textareas y botones */
-textarea {
-  width: 100%;
-  height: 100px;
+/* Ajustes responsivos específicos */
+@media (max-width: 768px) {
+  [formGroupName] {
+    margin-bottom: 1rem;
+    padding: 0.75rem;
+  }
 }
 
-/* Mensajes de error */
-.text-danger {
-  color: #e74c3c;
-  font-size: 0.875em;
-}
-
-/* Grupo de inputs con botones */
-.input-group {
-  display: flex;
-  align-items: center;
-}
-
-/* Experiencia */
-.display-flex-space-between {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-}
-
+/* Estilos para botones deshabilitados (específicos del componente) */
 :host ::ng-deep app-cv-edit-button-row .add-btn {
   opacity: 0.5 !important;
   cursor: not-allowed !important;

@@ -9,64 +9,62 @@
       [hasChanges]="formHasChanges"
       (onCancel)="onCancel()"
       (onEditSave)="toggleEdit('skills')"
-    >
-    </app-cv-edit-button-row>
+    ></app-cv-edit-button-row>
   </header>
 
   <body>
     <form [formGroup]="profileForm" (ngSubmit)="onSubmit()">
-      <div class="form-group">
-        <div formArrayName="skills">
-          <div
-            *ngFor="let skill of skillsArray.controls; let i = index"
-            [formGroupName]="i"
-            class="skill-group"
-          >
-            <div>
-              <div class="form-group">
-                <label for="name">Habilidades Técnicas:</label>
-                <textarea
-                  type="text"
-                  id="hardSkills"
-                  formControlName="hardSkills"
-                  class="form-control"
-                  [readonly]="!editableFields['skills']"
-                ></textarea>
-              </div>
+      <div formArrayName="skills">
+        <div
+          *ngFor="let skillGroup of skillsArray.controls; let i = index"
+          [formGroupName]="i"
+        >
+          <!-- Habilidades Técnicas -->
+          <div class="form-group">
+            <label for="hardSkills-{{i}}">Habilidades Técnicas:</label>
+            <textarea
+              id="hardSkills-{{i}}"
+              formControlName="hardSkills"
+              class="form-control"
+              [readonly]="!editableFields['skills']"
+              placeholder="Ej: JavaScript, Angular, Node.js"
+            ></textarea>
+          </div>
 
-              <div class="form-group">
-                <label for="name">Habilidades Blandas:</label>
-                <textarea
-                  type="text"
-                  id="softSkills"
-                  formControlName="softSkills"
-                  class="form-control"
-                  [readonly]="!editableFields['skills']"
-                ></textarea>
-              </div>
+          <!-- Habilidades Blandas -->
+          <div class="form-group">
+            <label for="softSkills-{{i}}">Habilidades Blandas:</label>
+            <textarea
+              id="softSkills-{{i}}"
+              formControlName="softSkills"
+              class="form-control"
+              [readonly]="!editableFields['skills']"
+              placeholder="Ej: Trabajo en equipo, Comunicación"
+            ></textarea>
+          </div>
 
-              <div class="form-group">
-                <label for="name">Idiomas: (opcional)</label>
-                <textarea
-                  type="text"
-                  id="languages"
-                  formControlName="languages"
-                  class="form-control"
-                  [readonly]="!editableFields['skills']"
-                ></textarea>
-              </div>
+          <!-- Idiomas -->
+          <div class="form-group">
+            <label for="languages-{{i}}">Idiomas:</label>
+            <textarea
+              id="languages-{{i}}"
+              formControlName="languages"
+              class="form-control"
+              [readonly]="!editableFields['skills']"
+              placeholder="Ej: Inglés avanzado, Francés básico"
+            ></textarea>
+          </div>
 
-              <div class="form-group">
-                <label for="name">Certificaciones: (opcional)</label>
-                <textarea
-                  type="text"
-                  id="certification"
-                  formControlName="certification"
-                  class="form-control"
-                  [readonly]="!editableFields['skills']"
-                ></textarea>
-              </div>
-            </div>
+          <!-- Certificaciones -->
+          <div class="form-group">
+            <label for="certification-{{i}}">Certificaciones:</label>
+            <textarea
+              id="certification-{{i}}"
+              formControlName="certification"
+              class="form-control"
+              [readonly]="!editableFields['skills']"
+              placeholder="Ej: Certificación AWS, Scrum Master"
+            ></textarea>
           </div>
         </div>
       </div>

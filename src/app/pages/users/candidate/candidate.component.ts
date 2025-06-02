@@ -43,7 +43,9 @@ export class CandidateComponent implements OnInit {
   ) {}
 
   async ngOnInit(): Promise<void> {
-    this.authService
+    if (!this.readOnly) {
+      // Only initialize user data if not in readOnly mode
+      this.authService
       .isAuthenticated()
       .subscribe(async (isAuthenticated) => {
         if (isAuthenticated) {
@@ -59,6 +61,7 @@ export class CandidateComponent implements OnInit {
           console.error('Usuario no autenticado.');
         }
       });
+    }
   }
 
   toggleRefer() {

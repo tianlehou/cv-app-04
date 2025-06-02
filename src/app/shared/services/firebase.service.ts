@@ -85,37 +85,37 @@ export class FirebaseService {
     }
   }
 
-async saveUserData(
-  email: string,
-  data: {
-    email: string;
-    role: string;
-    enabled: boolean;
-    createdAt: string;
-    referredBy?: string; // Esto debería ser un userId, no un email
-  }
-) {
-  return runInInjectionContext(this.injector, async () => {
-    const userEmailKey = this.formatEmailKey(email);
-    const userId = this.generateUserId();
+  async saveUserData(
+    email: string,
+    data: {
+      email: string;
+      role: string;
+      enabled: boolean;
+      createdAt: string;
+      referredBy?: string; // Esto debería ser un userId, no un email
+    }
+  ) {
+    return runInInjectionContext(this.injector, async () => {
+      const userEmailKey = this.formatEmailKey(email);
+      const userId = this.generateUserId();
 
-    const metadataRef = ref(this.db, `cv-app/users/${userEmailKey}/metadata`);
-    await set(metadataRef, {
-      email: data.email,
-      role: data.role,
-      enabled: data.enabled,
-      createdAt: data.createdAt,
-      ...(data.referredBy && { referredBy: data.referredBy }), // Guardamos el userId tal cual
-      userId: userId,
+      const metadataRef = ref(this.db, `cv-app/users/${userEmailKey}/metadata`);
+      await set(metadataRef, {
+        email: data.email,
+        role: data.role,
+        enabled: data.enabled,
+        createdAt: data.createdAt,
+        ...(data.referredBy && { referredBy: data.referredBy }), // Guardamos el userId tal cual
+        userId: userId,
+      });
+
+      // Crear entrada en el índice
+      await set(
+        ref(this.db, `cv-app/userIndex/userId-to-emailKey/${userId}`),
+        userEmailKey
+      );
     });
-
-    // Crear entrada en el índice
-    await set(
-      ref(this.db, `cv-app/userIndex/userId-to-emailKey/${userId}`),
-      userEmailKey
-    );
-  });
-}
+  }
 
   async saveFullName(email: string, fullName: string) {
     return runInInjectionContext(this.injector, async () => {
@@ -232,7 +232,7 @@ async saveUserData(
         userId?: string;
       }>;
       planes_adquiridos?: {
-        [key: string]: { 
+        [key: string]: {
           estado: string;
           fecha_fin: string;
           fecha_inicio: string;
@@ -280,21 +280,40 @@ async saveUserData(
           );
         }
 
-        // Si hay datos de metadata, actualizarlos en la ruta metadata
+        // Crear objeto de actualización para metadata
         if (data.metadata) {
-          const metadataRef = ref(
-            this.db,
-            `cv-app/users/${userEmailKey}/metadata`
-          );
-          await update(metadataRef, data.metadata);
+          const metadataUpdates: any = {};
+          for (const [key, value] of Object.entries(data.metadata)) {
+            if (value !== undefined) {
+              metadataUpdates[`metadata/${key}`] = value;
+            }
+          }
+          await update(ref(this.db, `cv-app/users/${userEmailKey}`), metadataUpdates);
         }
 
-        // Actualizar los demás datos si hay algo que actualizar
-        if (data.profileData || data['cv-styles']) {
-          const userRef = ref(this.db, `cv-app/users/${userEmailKey}`);
-          await update(userRef, {
-            ...(data.profileData && { profileData: data.profileData }),
-            ...(data['cv-styles'] && { 'cv-styles': data['cv-styles'] }),
+        // Crear objeto de actualización para profileData
+        if (data.profileData) {
+          const profileDataUpdates: any = {};
+          for (const [section, sectionData] of Object.entries(data.profileData)) {
+            if (sectionData !== undefined) {
+              if (typeof sectionData === 'object' && !Array.isArray(sectionData)) {
+                for (const [field, value] of Object.entries(sectionData)) {
+                  if (value !== undefined) {
+                    profileDataUpdates[`profileData/${section}/${field}`] = value;
+                  }
+                }
+              } else {
+                profileDataUpdates[`profileData/${section}`] = sectionData;
+              }
+            }
+          }
+          await update(ref(this.db, `cv-app/users/${userEmailKey}`), profileDataUpdates);
+        }
+
+        // Actualizar cv-styles si existe
+        if (data['cv-styles']) {
+          await update(ref(this.db, `cv-app/users/${userEmailKey}`), {
+            'cv-styles': data['cv-styles']
           });
         }
       } catch (error) {

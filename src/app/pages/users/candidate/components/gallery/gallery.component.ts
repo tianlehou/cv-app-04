@@ -27,7 +27,7 @@ export class GalleryComponent implements OnInit {
   userEmail: string | null = null;
 
   ngOnInit(): void {
-    if (this.currentUser) {
+    if (this.currentUser && !this.readOnly) {
       this.userEmail = this.currentUser.email?.replaceAll('.', '_') || null;
     }
   }

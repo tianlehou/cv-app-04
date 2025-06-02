@@ -9,6 +9,7 @@ import { PersonalDataInfoComponent } from './personal-data-info/personal-data-in
 import { CvEditButtonRowComponent } from '../../cv-edit-button-row/cv-edit-button-row.component';
 import { PersonalDataService } from '../../../../../../services/personal-data.service';
 import { ProfileService } from '../../../../../../services/profile.service';
+import { FirebaseService } from 'src/app/shared/services/firebase.service';
 
 @Component({
   selector: 'app-edit-personal-data',
@@ -32,11 +33,12 @@ export class EditPersonalDataComponent implements OnInit, OnDestroy {
 
   constructor(
     private fb: FormBuilder,
+    private firebaseService: FirebaseService,
     private personalDataService: PersonalDataService,
     private profileService: ProfileService,
     private confirmationModal: ConfirmationModalService,
     private toastService: ToastService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.initializeForm();
@@ -85,14 +87,14 @@ export class EditPersonalDataComponent implements OnInit, OnDestroy {
       this.isEditing = true;
       this.initialFormValue = JSON.parse(JSON.stringify(this.profileForm.value));
       this.formHasChanges = false;
-      
+
       this.formSubscription = this.profileForm.valueChanges.subscribe(() => {
         this.formHasChanges = !this.areObjectsEqual(
           this.initialFormValue,
           this.profileForm.value
         );
       });
-      
+
       this.toastService.show('Modo edición habilitado', 'info');
     } else {
       if (this.formHasChanges) {
@@ -137,18 +139,18 @@ export class EditPersonalDataComponent implements OnInit, OnDestroy {
     }
 
     try {
-      const userEmailKey = this.personalDataService.formatEmailKey(this.currentUser.email);
       const updatedData = {
         profileData: {
           personalData: this.profileForm.value
         }
       };
 
-      await this.personalDataService.updateUserData(userEmailKey, updatedData);
+      // Usar el método updateUserData del servicio FirebaseService directamente
+      await this.firebaseService.updateUserData(this.currentUser.email, updatedData);
 
       this.profileService.notifyPersonalDataUpdate(this.profileForm.value);
       this.toastService.show('Datos actualizados exitosamente!', 'success', 3000);
-      
+
       this.initialFormValue = JSON.parse(JSON.stringify(this.profileForm.value));
       this.isEditing = false;
       this.formHasChanges = false;
