@@ -1,0 +1,35 @@
+<div class="responsive-wrapper display-flex-center">
+  <div class="user-table">
+    <div class="table-scroll-container">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th class="status-actions-cell">Accion</th>
+            <th>Nombre</th>
+            <th>Profesión</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let user of users; let i = index">
+            <td>{{ (currentPage - 1) * pageSize + i + 1 }}</td>
+            <td class="status-actions-cell">
+              <button (click)="openCandidateProfile(user)" class="icon-button">
+                <ion-icon name="eye-outline" style="vertical-align: middle;"></ion-icon>
+              </button>
+            </td>
+            <td>
+              {{ user.fullName || "N/A" }}
+            </td>
+            <td>{{ user.profesion || "N/A" }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Modal para mostrar el perfil -->
+<app-business-candidate-profile-modal *ngIf="selectedUser" [user]="selectedUser"
+  [close]="closeCandidateProfile.bind(this)">
+</app-business-candidate-profile-modal>

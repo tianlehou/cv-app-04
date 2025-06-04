@@ -1,0 +1,35 @@
+<div class="dashboard-container">
+  <!-- Estadísticas -->
+  <app-business-stats-grid
+    [totalUsers]="totalUsers"
+    [totalBusiness]="totalBusiness"
+    [totalCandidates]="totalCandidates"
+  >
+  </app-business-stats-grid>
+
+  <!-- Filtros -->
+  <app-business-filters
+    [searchQuery]="searchQuery"
+    (filtersApplied)="onFiltersApplied($event)"
+  >
+  </app-business-filters>
+</div>
+
+<div class="dashboard-container-2">
+  <!-- Lista de usuarios -->
+  <app-business-user-table
+    [users]="paginatedUsers"
+    [currentPage]="currentPage"
+    [pageSize]="pageSize"
+    (statusToggled)="onStatusToggled($event)"
+  >
+  </app-business-user-table>
+
+  <!-- Paginación -->
+  <app-business-pagination
+    [currentPage]="currentPage"
+    [totalItems]="filteredUsers.length"
+    [pageSize]="pageSize"
+    (pageChange)="onPageChange($event)"
+  ></app-business-pagination>
+</div>

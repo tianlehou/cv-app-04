@@ -1,6 +1,8 @@
-<!-- image-item-container.component.html -->
 <div class="image-item" (contextmenu)="false" draggable="false" ondrop="return false;">
     <img [src]="imageUrl" alt="User uploaded image" draggable="false">
     <app-watermark [initialPosition]="'center'"></app-watermark>
-    <app-image-delete-button (deleteConfirmed)="handleDeleteConfirmed(imageUrl)"></app-image-delete-button>
+    <app-image-delete-button 
+      *ngIf="isOwner"
+      (deleteConfirmed)="handleDeleteConfirmed(imageUrl)">
+    </app-image-delete-button>
 </div>

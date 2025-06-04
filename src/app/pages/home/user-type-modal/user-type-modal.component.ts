@@ -10,7 +10,7 @@ import { CommonModule } from '@angular/common';
 })
 export class UserTypeModalComponent {
   isVisible = false;
-  @Output() userTypeSelected = new EventEmitter<'candidate' | 'company'>();
+  @Output() userTypeSelected = new EventEmitter<'candidate' | 'business'>();
 
   openModal() {
     this.isVisible = true;
@@ -26,7 +26,7 @@ export class UserTypeModalComponent {
     }
   }
 
-  selectUserType(type: 'candidate' | 'company') {
+  selectUserType(type: 'candidate' | 'business') {
     this.userTypeSelected.emit(type);
     this.closeModal();
   }

@@ -35,7 +35,7 @@ export class AuthService {
 
   async loginWithEmail(email: string, password: string) {
     return runInInjectionContext(this.injector, async () => {
-      await signInWithEmailAndPassword(this.auth, email, password);
+      return await signInWithEmailAndPassword(this.auth, email, password);
     });
   }
 

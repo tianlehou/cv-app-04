@@ -1,0 +1,194 @@
+/* sidebar.component.css */
+/* Icono de apertura */
+.sidebar-icon {
+  color: var(--text-color-dark);
+  font-size: 1.5rem;
+  font-weight: 500;
+  padding: 2px 10px;
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 8px;
+  box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.1),
+             -4px -4px 8px rgba(255, 255, 255, 0.5);
+  transition: all 0.5s ease-in-out;
+  margin: 0 1rem;
+  backdrop-filter: blur(5px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.sidebar-icon:hover {
+  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1),
+             -2px -2px 4px rgba(255, 255, 255, 0.5);
+}
+
+/* Menú lateral */
+.sidebar-menu {
+  position: fixed;
+  display: flex;
+  flex-direction: column;
+  top: 0;
+  left: 0;
+  width: 250px;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.7); /* Fondo blanco translúcido */
+  color: var(--text-color-dark);
+  transform: translateX(-100%);
+  transition: transform 0.5s ease-in-out;
+  z-index: 9999;
+  backdrop-filter: blur(10px);
+  border-right: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+.sidebar-menu.open {
+  transform: translateX(0);
+}
+
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 15px 20px;
+  background: rgba(255, 255, 255, 0.4);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(5px);
+}
+
+.sidebar-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 0;
+  color: var(--text-color-dark);
+  text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.1);
+}
+
+/* Ícono de cierre */
+.close-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  padding: 8px;
+  color: var(--clr-red);
+  font-size: 1.5rem;
+  cursor: pointer;
+  width: 32px;
+  height: 32px;
+  transition: all 0.3s ease;
+  background: rgba(255, 255, 255, 0.5);
+  box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.1),
+             -3px -3px 6px rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(5px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.close-icon:hover {
+  transform: rotate(90deg);
+  box-shadow: inset 2px 2px 4px rgba(0, 0, 0, 0.1),
+              inset -2px -2px 4px rgba(255, 255, 255, 0.5);
+}
+
+.main-menu {
+  flex-grow: 1;
+  padding: 15px 0;
+}
+
+.sidebar-menu nav {
+  display: flex;
+  flex-direction: column;
+  height: calc(100% - 70px);
+  padding: 0 10px;
+}
+
+.sidebar-menu nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sidebar-menu nav ul li {
+  margin: 10px 0;
+  padding: 0;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  transition: all 0.3s ease;
+  background: rgba(255, 255, 255, 0.5);
+  box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.1),
+             -5px -5px 10px rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(5px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.sidebar-menu nav ul li:hover {
+  transform: translateX(5px);
+  box-shadow: 7px 7px 14px rgba(0, 0, 0, 0.1),
+              -7px -7px 14px rgba(255, 255, 255, 0.5);
+  background: rgba(255, 255, 255, 0.7);
+}
+
+.sidebar-menu nav ul li a {
+  display: flex;
+  align-items: center;
+  color: var(--text-color-dark);
+  text-decoration: none;
+  font-size: 16px;
+  font-weight: 500;
+  padding: 15px 20px;
+  width: 100%;
+  border-radius: 10px;
+  transition: all 0.3s ease;
+}
+
+.sidebar-menu nav ul li a:hover {
+  color: var(--clr-blue-dark);
+  box-shadow: inset 3px 3px 6px rgba(0, 0, 0, 0.1),
+              inset -3px -3px 6px rgba(255, 255, 255, 0.5);
+}
+
+.sidebar-menu nav ul li a i {
+  margin-right: 15px;
+  font-size: 18px;
+  width: 24px;
+  text-align: center;
+}
+
+/* Capa de fondo para cerrar el menú al hacer clic */
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+  backdrop-filter: blur(5px);
+}
+
+.logout-menu {
+  margin-top: auto;
+  padding-bottom: 20px;
+}
+
+.logout-menu li {
+  margin-top: 20px;
+  background: rgba(255, 255, 255, 0.5);
+  box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.1),
+             -5px -5px 10px rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(5px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.logout-menu li:hover {
+  box-shadow: 7px 7px 14px rgba(0, 0, 0, 0.1),
+              -7px -7px 14px rgba(255, 255, 255, 0.5);
+  background: rgba(255, 255, 255, 0.7);
+}
+
+.logout-menu li a:hover {
+  color: var(--clr-red) !important;
+}
+
+.logout-menu li span {
+  color: var(--clr-red);
+  font-weight: 500;
+}

@@ -1,29 +1,35 @@
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { FirebaseService } from '../../../shared/services/firebase.service';
+import { FirebaseService } from 'src/app/shared/services/firebase.service';
+import { AuthService } from '../../auth.service';
 
 @Component({
-  selector: 'app-company-forgot-password',
+  selector: 'app-business-forgot-password',
   standalone: true, // Indica que el componente es standalone
   imports: [CommonModule, ReactiveFormsModule, RouterModule], // Importa los módulos necesarios
-  templateUrl: './company-forgot-password.component.html',
-  styleUrls: ['./company-forgot-password.component.css'],
+  templateUrl: './business-forgot-password.component.html',
+  styleUrls: ['./business-forgot-password.component.css'],
 })
-export class CompanyForgotPasswordComponent {
+export class BusinessForgotPasswordComponent {
+  @Output() showBusinessLogin = new EventEmitter<void>();
   forgotPasswordForm: FormGroup;
 
-  constructor(private fb: FormBuilder, private firebaseService: FirebaseService) {
+  constructor(private fb: FormBuilder, private firebaseService: FirebaseService, private authService: AuthService) {
     this.forgotPasswordForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
     });
   }
 
+  onLoginClick() {
+    this.showBusinessLogin.emit();
+  }
+
   recoverPassword() {
     const email = this.forgotPasswordForm.get('email')?.value;
     if (email) {
-      this.firebaseService
+      this.authService
         .sendPasswordResetEmail(email)
         .then(() => {
           alert('Enlace de recuperación enviado. Revisa tu correo.');

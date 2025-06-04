@@ -1,0 +1,17 @@
+.main-container {
+  min-height: 100vh;
+  text-align: center;
+  background-color: var(--bg-blue);
+}
+
+.profile-header {
+  height: 4rem;
+  display: flex;
+  align-items: center;
+  background-color: var(--clr-white);
+  border-bottom: 1px solid #ccc;
+}
+
+h1 {
+  padding: 1rem 1rem 0;
+}

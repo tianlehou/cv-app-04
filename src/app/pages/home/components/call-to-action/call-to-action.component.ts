@@ -10,13 +10,13 @@ import { UserTypeModalComponent } from '../../user-type-modal/user-type-modal.co
 })
 export class CallToActionComponent {
   @ViewChild(UserTypeModalComponent) userTypeModal!: UserTypeModalComponent;
-  @Output() userTypeSelected = new EventEmitter<'candidate' | 'company'>();
+  @Output() userTypeSelected = new EventEmitter<'candidate' | 'business'>();
 
   openUserTypeModal() {
     this.userTypeModal.openModal();
   }
 
-  onUserTypeSelected(type: 'candidate' | 'company') {
+  onUserTypeSelected(type: 'candidate' | 'business') {
     this.userTypeSelected.emit(type);
   }
 }

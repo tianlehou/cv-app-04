@@ -22,6 +22,7 @@ export class ImageItemContainerComponent {
   @Input() currentUser: User | null = null;
   @Input() userEmailKey: string | null = null;
   @Output() imageDeleted = new EventEmitter<string>();
+  @Input() isOwner: boolean = false;
 
   isLoading = false;
 

@@ -1,17 +1,17 @@
 <div class="display-flex-center">
   <div class="login-container">
-    <!-- botón de regreso -->
+    <!-- Botón de regreso -->
     <button class="back-button" (click)="goBackToHome()">
       <i class="fas fa-arrow-left"></i> Regresar
     </button>
-    <h2>Iniciar Sesión</h2>
+    <h2>Iniciar Sesión Empresarial</h2>
     <form (ngSubmit)="login()" [formGroup]="loginForm" novalidate>
       <!-- Email -->
       <div class="form-group">
         <label for="email">Email</label>
         <input type="email" id="email" class="form-control" formControlName="email"
           [ngClass]="{'is-invalid': loginForm.get('email')?.invalid && loginForm.get('email')?.touched}">
-        <!-- Email validation messages -->
+        <!-- Validación básica del email -->
         <div *ngIf="loginForm.get('email')?.touched">
           <div class="invalid-feedback" *ngIf="loginForm.get('email')?.errors?.['required']">
             El email es obligatorio.
@@ -33,14 +33,13 @@
             {{ showPassword ? "Ocultar" : "Mostrar" }}
           </button>
         </div>
-
-        <!-- Mensajes de validación básica -->
+        <!-- Validación básica de la contraseña -->
         <div *ngIf="loginForm.get('password')?.touched">
           <div class="invalid-feedback" *ngIf="loginForm.get('password')?.errors?.['required']">
             La contraseña es obligatoria.
           </div>
           <div class="invalid-feedback" *ngIf="loginForm.get('password')?.errors?.['minlength']">
-            La contraseña debe tener al menos 6 caracteres.
+            La contraseña debe tener al menos 8 caracteres.
           </div>
         </div>
       </div>
@@ -61,10 +60,5 @@
         <span (click)="onRegisterClick()">Regístrate</span>
       </section>
     </form>
-
-    <!-- Botón de Google -->
-    <div class="separator display-flex-center">o</div>
-    <app-google-login (loginSuccess)="handleGoogleSuccess()" (loginError)="handleGoogleError($event)">
-    </app-google-login>
   </div>
 </div>

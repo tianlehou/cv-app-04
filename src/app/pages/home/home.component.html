@@ -38,3 +38,24 @@
     ></app-candidate-forgot-password>
   </section>
 </ng-container>
+
+<ng-container *ngIf="showBusinessSection">
+  <section #business>
+    <app-business-login 
+      *ngIf="currentBusinessView === 'business-login'"
+      (showBusinessRegister)="showBusinessRegister()"
+      (showBusinessForgotPassword)="showBusinessForgotPassword()"
+      (showHome)="showHomeSection = true; showBusinessSection = false"
+    ></app-business-login>
+    
+    <app-business-register 
+      *ngIf="currentBusinessView === 'business-register'"
+      (showBusinessLogin)="showBusinessLogin()"
+    ></app-business-register>
+    
+    <app-business-forgot-password 
+      *ngIf="currentBusinessView === 'business-forgot-password'"
+      (showBusinessLogin)="showBusinessLogin()"
+    ></app-business-forgot-password>
+  </section>
+</ng-container>
