@@ -4,51 +4,48 @@
     <!-- Nombre Completo -->
     <div class="form-group">
       <label for="fullName">Nombre Completo</label>
-      <input
-        type="text"
-        id="fullName"
-        class="form-control"
-        formControlName="fullName"
-        [ngClass]="{
+      <input type="text" id="fullName" class="form-control" formControlName="fullName" [ngClass]="{
           'is-invalid':
             registerForm.get('fullName')?.invalid &&
             (registerForm.get('fullName')?.touched ||
               registerForm.get('fullName')?.dirty)
-        }"
-      />
-      <div
-        class="invalid-feedback"
-        *ngIf="registerForm.get('fullName')?.errors?.['required']"
-      >
+        }" />
+      <div class="invalid-feedback" *ngIf="registerForm.get('fullName')?.errors?.['required']">
         El nombre completo es obligatorio.
+      </div>
+    </div>
+
+    <!-- País -->
+    <div class="form-group">
+      <label for="country">País</label>
+      <select id="country" class="form-control" formControlName="country" [ngClass]="{
+          'is-invalid':
+            registerForm.get('country')?.invalid &&
+            (registerForm.get('country')?.touched ||
+              registerForm.get('country')?.dirty)
+        }">
+        <option *ngFor="let country of countries" [value]="country.code">
+          {{ country.name }}
+        </option>
+      </select>
+      <div class="invalid-feedback" *ngIf="registerForm.get('country')?.errors?.['required']">
+        Por favor selecciona tu país.
       </div>
     </div>
 
     <!-- Email -->
     <div class="form-group">
       <label for="email">Email</label>
-      <input
-        type="email"
-        id="email"
-        class="form-control"
-        formControlName="email"
-        [ngClass]="{
+      <input type="email" id="email" class="form-control" formControlName="email" [ngClass]="{
           'is-invalid':
             registerForm.get('email')?.invalid &&
             (registerForm.get('email')?.touched ||
               registerForm.get('email')?.dirty)
-        }"
-      />
-      <div
-        class="invalid-feedback"
-        *ngIf="registerForm.get('email')?.errors?.['required']"
-      >
+        }" />
+      <div class="invalid-feedback" *ngIf="registerForm.get('email')?.errors?.['required']">
         El correo es obligatorio.
       </div>
-      <div
-        class="invalid-feedback"
-        *ngIf="registerForm.get('email')?.errors?.['email']"
-      >
+      <div class="invalid-feedback" *ngIf="registerForm.get('email')?.errors?.['email']">
         Introduce un correo válido.
       </div>
     </div>
@@ -57,36 +54,21 @@
     <div class="form-group">
       <label for="password">Contraseña</label>
       <div class="input-group">
-        <input
-          [type]="showPassword ? 'text' : 'password'"
-          id="password"
-          class="form-control"
-          formControlName="password"
+        <input [type]="showPassword ? 'text' : 'password'" id="password" class="form-control" formControlName="password"
           [ngClass]="{
             'is-invalid':
               registerForm.get('password')?.invalid &&
               (registerForm.get('password')?.touched ||
                 registerForm.get('password')?.dirty)
-          }"
-        />
-        <button
-          type="button"
-          class="btn btn-outline-secondary"
-          (click)="togglePasswordVisibility()"
-        >
+          }" />
+        <button type="button" class="btn btn-outline-secondary" (click)="togglePasswordVisibility()">
           {{ showPassword ? "Ocultar" : "Mostrar" }}
         </button>
       </div>
-      <div
-        class="invalid-feedback"
-        *ngIf="registerForm.get('password')?.errors?.['required']"
-      >
+      <div class="invalid-feedback" *ngIf="registerForm.get('password')?.errors?.['required']">
         La contraseña es obligatoria.
       </div>
-      <div
-        class="invalid-feedback"
-        *ngIf="registerForm.get('password')?.errors?.['minlength']"
-      >
+      <div class="invalid-feedback" *ngIf="registerForm.get('password')?.errors?.['minlength']">
         La contraseña debe tener al menos 8 caracteres.
       </div>
     </div>
@@ -95,30 +77,18 @@
     <div class="form-group">
       <label for="confirmPassword">Confirmar Contraseña</label>
       <div class="input-group">
-        <input
-          [type]="showConfirmPassword ? 'text' : 'password'"
-          id="confirmPassword"
-          class="form-control"
-          formControlName="confirmPassword"
-          [ngClass]="{
+        <input [type]="showConfirmPassword ? 'text' : 'password'" id="confirmPassword" class="form-control"
+          formControlName="confirmPassword" [ngClass]="{
             'is-invalid':
               registerForm.get('confirmPassword')?.invalid &&
               (registerForm.get('confirmPassword')?.touched ||
                 registerForm.get('confirmPassword')?.dirty)
-          }"
-        />
-        <button
-          type="button"
-          class="btn btn-outline-secondary"
-          (click)="toggleConfirmPasswordVisibility()"
-        >
+          }" />
+        <button type="button" class="btn btn-outline-secondary" (click)="toggleConfirmPasswordVisibility()">
           {{ showConfirmPassword ? "Ocultar" : "Mostrar" }}
         </button>
       </div>
-      <div
-        class="invalid-feedback"
-        *ngIf="registerForm.get('confirmPassword')?.errors?.['required']"
-      >
+      <div class="invalid-feedback" *ngIf="registerForm.get('confirmPassword')?.errors?.['required']">
         Confirma tu contraseña.
       </div>
     </div>
@@ -137,11 +107,7 @@
     </ng-container>
 
     <!-- Botones -->
-    <button
-      type="submit"
-      class="btn btn-primary register-btn"
-      [disabled]="registerForm.invalid"
-    >
+    <button type="submit" class="btn btn-primary register-btn" [disabled]="registerForm.invalid">
       Registrarse
     </button>
     <div class="haveAccount">

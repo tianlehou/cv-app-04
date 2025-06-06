@@ -60,3 +60,7 @@ footer {
 .border-red {
     border: red 1px solid;
 }
+
+.text-center {
+    text-align: center;
+}

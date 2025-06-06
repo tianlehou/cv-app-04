@@ -10,7 +10,7 @@
   border-radius: 8px;
   box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.1),
              -4px -4px 8px rgba(255, 255, 255, 0.5);
-  transition: all 0.5s ease-in-out;
+  transition: all 1s ease;
   margin: 0 1rem;
   backdrop-filter: blur(5px);
   border: 1px solid rgba(255, 255, 255, 0.3);
@@ -30,10 +30,10 @@
   left: 0;
   width: 250px;
   height: 100%;
-  background: rgba(255, 255, 255, 0.7); /* Fondo blanco translúcido */
+  background: rgba(255, 255, 255, 0.7);
   color: var(--text-color-dark);
   transform: translateX(-100%);
-  transition: transform 0.5s ease-in-out;
+  transition: transform 1s ease;
   z-index: 9999;
   backdrop-filter: blur(10px);
   border-right: 1px solid rgba(255, 255, 255, 0.5);
@@ -99,13 +99,13 @@
   padding: 0 10px;
 }
 
-.sidebar-menu nav ul {
+.sidebar-menu ul {
   list-style: none;
   padding: 0;
   margin: 0;
 }
 
-.sidebar-menu nav ul li {
+.sidebar-menu li {
   margin: 10px 0;
   padding: 0;
   border-radius: 10px;
@@ -117,16 +117,17 @@
              -5px -5px 10px rgba(255, 255, 255, 0.5);
   backdrop-filter: blur(5px);
   border: 1px solid rgba(255, 255, 255, 0.3);
+  cursor: pointer;
 }
 
-.sidebar-menu nav ul li:hover {
+.sidebar-menu li:hover:not(.active) {
   transform: translateX(5px);
   box-shadow: 7px 7px 14px rgba(0, 0, 0, 0.1),
               -7px -7px 14px rgba(255, 255, 255, 0.5);
   background: rgba(255, 255, 255, 0.7);
 }
 
-.sidebar-menu nav ul li a {
+.sidebar-menu a {
   display: flex;
   align-items: center;
   color: var(--text-color-dark);
@@ -139,13 +140,13 @@
   transition: all 0.3s ease;
 }
 
-.sidebar-menu nav ul li a:hover {
+.sidebar-menu a:hover:not(.active a) {
   color: var(--clr-blue-dark);
   box-shadow: inset 3px 3px 6px rgba(0, 0, 0, 0.1),
               inset -3px -3px 6px rgba(255, 255, 255, 0.5);
 }
 
-.sidebar-menu nav ul li a i {
+.sidebar-menu i {
   margin-right: 15px;
   font-size: 18px;
   width: 24px;
@@ -188,7 +189,30 @@
   color: var(--clr-red) !important;
 }
 
-.logout-menu li span {
+.logout-menu span {
   color: var(--clr-red);
   font-weight: 500;
+}
+
+/* Modo .active y .disabled */
+.main-menu li.active {
+  border-left: 3px solid var(--clr-blue-dark);
+  transform: translateX(10px);
+  background: var(--bg-blue);
+  cursor: default;
+}
+
+.main-menu li.active a {
+  color: var(--clr-blue-dark);
+  pointer-events: none;
+  opacity: 0.7;
+}
+
+.main-menu li.active i {
+  color: var(--clr-blue-dark) !important;
+}
+
+.main-menu li.disabled a {
+  pointer-events: none;
+  opacity: 0.7;
 }

@@ -5,7 +5,7 @@
         <thead>
           <tr>
             <th>#</th>
-            <th class="status-actions-cell">Accion</th>
+            <th style="width: 0;">Acción</th>
             <th>Nombre</th>
             <th>Profesión</th>
           </tr>
@@ -13,7 +13,7 @@
         <tbody>
           <tr *ngFor="let user of users; let i = index">
             <td>{{ (currentPage - 1) * pageSize + i + 1 }}</td>
-            <td class="status-actions-cell">
+            <td style="text-align: center;">
               <button (click)="openCandidateProfile(user)" class="icon-button">
                 <ion-icon name="eye-outline" style="vertical-align: middle;"></ion-icon>
               </button>

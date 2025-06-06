@@ -18,10 +18,17 @@ export class FiltersComponent {
     searchQuery: string;
   }>();
 
+  // Lista de tipos de usuario
+  userTypes: string[] = ['all', 'candidate', 'business'];
   applyFilters() {
     this.filtersApplied.emit({
       userTypeFilter: this.userTypeFilter,
       searchQuery: this.searchQuery
     });
+  }
+
+  // Método para manejar el cambio del input de búsqueda
+  onSelectChange() {
+    this.applyFilters();
   }
 }

@@ -19,12 +19,40 @@ import { ToastService } from '../../../../../../shared/services/toast.service';
   styleUrls: ['./candidate-register.component.css'],
 })
 export class CandidateRegisterComponent implements OnInit {
+  @Output() showLogin = new EventEmitter<void>();
   registerForm: FormGroup;
   showPassword = false;
   showConfirmPassword = false;
   referredBy: string | null = null;
   isLoading = false;
-  @Output() showLogin = new EventEmitter<void>();
+
+  // Lista de países
+  countries = [
+    { code: 'Panama', name: 'Panamá' },
+    { code: 'Argentina', name: 'Argentina' },
+    { code: 'Bolivia', name: 'Bolivia' },
+    { code: 'Brazil', name: 'Brasil' },
+    { code: 'Chile', name: 'Chile' },
+    { code: 'Colombia', name: 'Colombia' },
+    { code: 'Costa Rica', name: 'Costa Rica' },
+    { code: 'Cuba', name: 'Cuba' },
+    { code: 'Dominican Republic', name: 'República Dominicana' },
+    { code: 'Ecuador', name: 'Ecuador' },
+    { code: 'El Salvador', name: 'El Salvador' },
+    { code: 'España', name: 'España' },
+    { code: 'USA', name: 'Estados Unidos' },
+    { code: 'Guatemala', name: 'Guatemala' },
+    { code: 'Honduras', name: 'Honduras' },
+    { code: 'Nicaragua', name: 'Nicaragua' },
+    { code: 'Mexico', name: 'México' },
+    { code: 'Paraguay', name: 'Paraguay' },
+    { code: 'Peru', name: 'Perú' },
+    { code: 'Puerto Rico', name: 'Puerto Rico' },
+    { code: 'Uruguay', name: 'Uruguay' },
+    { code: 'Venezuela', name: 'Venezuela' },
+    
+    // Agrega más países según sea necesario
+  ];
 
   constructor(
     private fb: FormBuilder,
@@ -38,6 +66,7 @@ export class CandidateRegisterComponent implements OnInit {
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(8)]],
       confirmPassword: ['', Validators.required],
+      country: ['', Validators.required],
       referredBy: [''],
     });
   }
@@ -74,7 +103,7 @@ export class CandidateRegisterComponent implements OnInit {
   async register() {
     if (this.registerForm.valid) {
       this.isLoading = true;
-      const { fullName, email, password, confirmPassword, referredBy } =
+      const { fullName, email, password, confirmPassword, country, referredBy } =
         this.registerForm.value;
 
       // Validar coincidencia de contraseñas
@@ -105,6 +134,7 @@ export class CandidateRegisterComponent implements OnInit {
             },
           },
           metadata: {
+            country: country,
             createdAt: new Date().toISOString(),
             email: email,
             enabled: true,
@@ -149,7 +179,7 @@ export class CandidateRegisterComponent implements OnInit {
         setTimeout(() => this.showLogin.emit(), 800);
       } catch (error: any) {
         console.error('Error durante el registro:', error);
-        
+
         // Mensajes de error más específicos
         const errorMessage = this.getFriendlyErrorMessage(error);
         this.toastService.show(errorMessage, 'error', 5000);

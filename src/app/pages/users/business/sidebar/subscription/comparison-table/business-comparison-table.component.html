@@ -1,0 +1,68 @@
+<div class="comparison-table">
+  <h2>Comparativa de Planes</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Beneficios</th>
+        <th *ngFor="let plan of plans; let i = index" 
+            [class.recommended]="i === recommendedPlanIndex">
+          {{ plan.nombre }}
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Plantillas disponibles -->
+      <tr>
+        <td>Plantillas disponibles</td>
+        <td *ngFor="let plan of plans">
+          {{ plan.id === 'gratuito' ? 'Básicas' : 
+             plan.id === 'mensualidad' ? 'Premium' : 'Premium + Exclusivas' }}
+        </td>
+      </tr>
+      
+      <!-- CVs generados -->
+      <tr>
+        <td>CVs generados</td>
+        <td *ngFor="let plan of plans">
+          {{ plan.id === 'gratuito' ? '1/mes' : 
+             plan.id === 'mensualidad' ? '5/mes' : 'Ilimitados' }}
+        </td>
+      </tr>
+      
+      <!-- Soporte -->
+      <tr>
+        <td>Soporte</td>
+        <td *ngFor="let plan of plans">
+          {{ plan.id === 'gratuito' ? 'Correo electrónico' : 
+             plan.id === 'mensualidad' ? 'Prioritario' : '24/7' }}
+        </td>
+      </tr>
+      
+      <!-- Formatos de descarga -->
+      <tr>
+        <td>Formatos de descarga</td>
+        <td *ngFor="let plan of plans">
+          {{ plan.id === 'gratuito' ? 'PDF' : 
+             plan.id === 'mensualidad' ? 'PDF + Word' : 'Múltiples formatos' }}
+        </td>
+      </tr>
+      
+      <!-- Estadísticas -->
+      <tr>
+        <td>Estadísticas</td>
+        <td *ngFor="let plan of plans">
+          {{ plan.id === 'gratuito' ? 'No' : 
+             plan.id === 'mensualidad' ? 'Básicas' : 'Avanzadas' }}
+        </td>
+      </tr>
+      
+      <!-- Asesoría profesional -->
+      <tr>
+        <td>Asesoría profesional</td>
+        <td *ngFor="let plan of plans">
+          {{ plan.id === 'premium' ? 'Incluida' : 'No' }}
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

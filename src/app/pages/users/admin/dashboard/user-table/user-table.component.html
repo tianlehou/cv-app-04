@@ -5,8 +5,9 @@
         <thead>
           <tr>
             <th>#</th>
-            <th>Tipo</th>
+            <th class="text-center">Tipo</th>
             <th>Suscrito</th>
+            <th>País</th>
             <th>Nombre</th>
             <th>Email</th>
             <th>Profesión</th>
@@ -18,11 +19,11 @@
         <tbody>
           <tr *ngFor="let user of users; let i = index">
             <td>{{ (currentPage - 1) * pageSize + i + 1 }}</td>
-            <td>
+            <td class="text-center">
               {{
               user.role === "candidate"
               ? "C"
-              : user.role === "company"
+              : user.role === "business"
               ? "B"
               : user.role === "admin"
               ? "A"
@@ -34,10 +35,8 @@
               <span *ngIf="user.isSubscribed; else noSuscrito">Sí</span>
               <ng-template #noSuscrito>No</ng-template>
             </td>
-            <td>
-
-              {{ user.fullName || "N/A" }}
-            </td>
+            <td>{{ user.country || "N/A" }}</td>
+            <td>{{ user.fullName || "N/A" }}</td>
             <td>{{ user.email }}</td>
             <td>{{ user.profesion || "N/A" }}</td>
             <td class="status-actions-cell">

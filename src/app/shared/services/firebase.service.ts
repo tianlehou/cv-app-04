@@ -52,10 +52,33 @@ export class FirebaseService {
     return 'user_' + Math.random().toString(36).substr(2, 9);
   }
 
-  // Método corregido con runInInjectionContext
+  async getUsersByCountry(countryCode: string): Promise<any[]> {
+    const users = [];
+
+    // 1. Obtener todas las keys de usuarios para ese país
+    const indexRef = ref(this.db, `cv-app/countriesIndex/${countryCode}`);
+    const indexSnapshot = await get(indexRef);
+
+    if (indexSnapshot.exists()) {
+      const userKeys = Object.keys(indexSnapshot.val());
+
+      // 2. Obtener datos completos de cada usuario
+      for (const userKey of userKeys) {
+        const userRef = ref(this.db, `cv-app/users/${userKey}`);
+        const userSnapshot = await get(userRef);
+        if (userSnapshot.exists()) {
+          users.push(userSnapshot.val());
+        }
+      }
+    }
+
+    return users;
+  }
+
   async initializeUserData(email: string, userData: any): Promise<void> {
     const userKey = this.formatEmailKey(email);
     const userId = userData.metadata?.userId || this.generateUserId();
+    const countryCode = userData.metadata?.country || 'PA'; // Default
 
     // Asegurar que metadata existe
     if (!userData.metadata) {
@@ -63,26 +86,48 @@ export class FirebaseService {
     }
     userData.metadata.userId = userId;
 
-    // 1. Crear usuario
+    // 1. Crear usuario en ubicación principal
     await set(ref(this.db, `cv-app/users/${userKey}`), userData);
 
-    // 2. Crear índice (con retry si falla)
-    let attempts = 0;
-    while (attempts < 3) {
-      try {
-        await set(
-          ref(this.db, `cv-app/userIndex/userId-to-emailKey/${userId}`),
-          userKey
-        );
-        break;
-      } catch (err) {
-        attempts++;
-        if (attempts >= 3) {
-          console.error('Error creando índice después de 3 intentos:', err);
-        }
-        await new Promise((resolve) => setTimeout(resolve, 500 * attempts));
-      }
+    // 2. Crear índice por país
+    await set(
+      ref(this.db, `cv-app/countriesIndex/${countryCode}/${userKey}`),
+      true
+    );
+
+    // 3. Crear índice userId-to-email
+    await set(
+      ref(this.db, `cv-app/userIndex/userId-to-emailKey/${userId}`),
+      userKey
+    );
+  }
+
+  async updateUserCountry(email: string, newCountryCode: string): Promise<void> {
+    const userKey = this.formatEmailKey(email);
+
+    // 1. Obtener el país actual
+    const userRef = ref(this.db, `cv-app/users/${userKey}/metadata/country`);
+    const snapshot = await get(userRef);
+    const currentCountry = snapshot.val();
+
+    // 2. Actualizar el país en metadata
+    await update(ref(this.db, `cv-app/users/${userKey}/metadata`), {
+      country: newCountryCode
+    });
+
+    // 3. Actualizar índices de país
+    if (currentCountry) {
+      // Eliminar del índice anterior
+      await set(
+        ref(this.db, `cv-app/countriesIndex/${currentCountry}/${userKey}`),
+        null
+      );
     }
+    // Agregar al nuevo índice
+    await set(
+      ref(this.db, `cv-app/countriesIndex/${newCountryCode}/${userKey}`),
+      true
+    );
   }
 
   async saveUserData(
@@ -221,6 +266,7 @@ export class FirebaseService {
     originalEmail: string,
     data: Partial<{
       metadata?: Partial<{
+        country?: string;
         createdAt?: string;
         email: string;
         enabled: boolean;

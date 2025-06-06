@@ -55,6 +55,7 @@ export class AdminDashboardComponent implements OnInit {
         // Asegurar que los campos básicos existan
         return {
           key: userKey,
+          country: metadata.country || '',
           fullName: userData?.profileData?.personalData?.fullName || '',
           email: metadata.email || '',
           profesion: userData?.profileData?.personalData?.profesion || '',
@@ -85,7 +86,7 @@ export class AdminDashboardComponent implements OnInit {
   updateStats() {
     this.totalUsers = this.users.length;
     this.totalCandidates = this.users.filter(u => u.role === 'candidate').length;
-    this.totalCompanies = this.users.filter(u => u.role === 'company').length;
+    this.totalCompanies = this.users.filter(u => u.role === 'business').length;
   }
 
   applyFilters() {

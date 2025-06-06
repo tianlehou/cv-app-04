@@ -1,8 +1,8 @@
 <div class="filters">
-    <select [(ngModel)]="userTypeFilter">
+    <select [(ngModel)]="userTypeFilter" (change)="onSelectChange()">
         <option value="all">Todos</option>
         <option value="candidate">Candidatos</option>
-        <option value="company">Empresas</option>
+        <option value="business">Empresas</option>
     </select>
     <div class="search-container">
         <input 
