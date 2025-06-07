@@ -80,11 +80,18 @@ export class ImageUploadButtonComponent implements OnDestroy {
 
   private async handleUploadComplete(uploadTask: any): Promise<void> {
     this.showProgress = false;
-    const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-    this.ngZone.run(() => {
-      this.toast.show('Imagen subida exitosamente', 'success');
-      this.uploadComplete.emit(downloadURL);
-      this.resetUploadState();
+
+    await runInInjectionContext(this.injector, async () => {
+      try {
+        const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+        this.ngZone.run(() => {
+          this.toast.show('Imagen subida exitosamente', 'success');
+          this.uploadComplete.emit(downloadURL);
+          this.resetUploadState();
+        });
+      } catch (error) {
+        this.handleUploadError(error);
+      }
     });
   }
 
