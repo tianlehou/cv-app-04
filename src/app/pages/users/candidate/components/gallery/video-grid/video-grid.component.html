@@ -2,13 +2,13 @@
 <div class="top-row" *ngIf="!readOnly">
     <app-video-info-bar [totalUploadedMB]="state.totalUploadedMB"></app-video-info-bar>
     <app-video-upload-button [userEmailKey]="userEmailKey" [currentUser]="currentUser"
-        (fileSelected)="handleFileSelected($event)">
+        (uploadComplete)="handleUploadComplete($event)" (uploadProgress)="handleUploadProgress($event)">
     </app-video-upload-button>
 </div>
 
 <!-- Upload Progress -->
-<app-video-upload-progress-bar *ngIf="state.uploadProgress !== null" [uploadProgress]="state.uploadProgress"
-    [uploadedSize]="state.uploadedSize" [totalSize]="state.totalSize">
+<app-video-upload-progress-bar *ngIf="state.uploadProgress !== null && state.uploadProgress < 100"
+    [uploadProgress]="state.uploadProgress" [uploadedSize]="state.uploadedSize" [totalSize]="state.totalSize">
 </app-video-upload-progress-bar>
 
 <!-- Videos Grid -->
@@ -28,8 +28,7 @@
     </div>
 
     <!-- Empty State Message -->
-    <app-video-empty-gallery-message
-        *ngIf="!state.isLoading && state.userVideos.length === 0">
+    <app-video-empty-gallery-message *ngIf="!state.isLoading && state.userVideos.length === 0">
     </app-video-empty-gallery-message>
 
     <!-- Loading State -->

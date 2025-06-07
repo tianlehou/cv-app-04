@@ -1,4 +1,3 @@
-// video.utils.ts
 import { User } from '@angular/fire/auth';
 import { QueryList, ElementRef, ChangeDetectorRef } from '@angular/core';
 import { NgZone } from '@angular/core';
@@ -69,15 +68,15 @@ export function handleError(
   });
 }
 
-export async function calculateTotalSize(
+export async function calculateTotalSizeMB(
   videos: string[],
   videoService: VideoService
 ): Promise<number> {
   try {
     const totalBytes = await videoService.calculateTotalSize(videos);
-    return totalBytes / 1048576; // Convertir a MB
+    return totalBytes / 1048576; // Convert to MB
   } catch (error) {
-    console.error('Error calculando tamaño total:', error);
+    console.error('Error calculating total size:', error);
     return 0;
   }
 }
@@ -95,19 +94,6 @@ export function updateState<T>(
   return newState;
 }
 
-export async function handleVideoUpload(
-  file: File,
-  userEmailKey: string,
-  videoService: VideoService,
-  updateProgressCallback: (progress: number, uploaded: number, total: number) => void
-): Promise<string> {
-  return await videoService.uploadVideo(
-    userEmailKey,
-    file,
-    updateProgressCallback
-  );
-}
-
 export async function updateUserVideos(
   videos: string[],
   currentUser: User,
@@ -115,7 +101,8 @@ export async function updateUserVideos(
 ): Promise<void> {
   const userEmailKey = formatEmailKey(currentUser.email!);
   const currentData = await firebaseService.getUserData(userEmailKey);
-  const updatedData = {
+
+  await firebaseService.updateUserData(currentUser.email!, {
     profileData: {
       ...currentData.profileData,
       multimedia: {
@@ -123,6 +110,5 @@ export async function updateUserVideos(
         galleryVideos: videos
       }
     }
-  };
-  await firebaseService.updateUserData(currentUser.email!, updatedData);
+  });
 }

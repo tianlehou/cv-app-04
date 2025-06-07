@@ -25,7 +25,7 @@ import {
   setupVideoPlayers,
   onVideoPlay,
   handleError,
-  calculateTotalSize,
+  calculateTotalSizeMB,
   updateState,
   updateUserVideos,
 } from './video.utils';
@@ -89,49 +89,6 @@ export class VideoGridComponent implements OnInit, AfterViewInit {
   ngAfterViewInit(): void {
     this.setupVideoPlayers();
     this.videoPlayers.changes.subscribe(() => this.setupVideoPlayers());
-  }
-
-  // En video-grid.component.ts
-  handleFileSelected(file: File): void {
-    if (!this.userEmailKey) {
-      console.log('No userEmailKey available');
-      return;
-    }
-
-    this.state = updateState(
-      this.state,
-      {
-        uploadProgress: 0,
-        uploadedSize: 0,
-        totalSize: file.size,
-      },
-      this.ngZone,
-      this.cdr
-    );
-
-    this.videoService
-      .uploadVideo(this.userEmailKey, file, (progress, uploaded, total) => {
-        this.ngZone.run(() => {
-          this.state = updateState(
-            this.state,
-            {
-              uploadProgress: progress,
-              uploadedSize: uploaded,
-              totalSize: total,
-            },
-            this.ngZone,
-            this.cdr
-          );
-        });
-      })
-      .then((downloadURL) => {
-        this.handleUploadComplete(downloadURL);
-        this.resetUploadState();
-      })
-      .catch((error) => {
-        console.error('Upload error:', error);
-        this.handleUploadError(error);
-      });
   }
 
   private resetUploadState(): void {
@@ -231,7 +188,7 @@ export class VideoGridComponent implements OnInit, AfterViewInit {
     try {
       const videos = await this.videoService.getVideos(userEmailKey);
       const sortedVideos = sortVideosByDate(videos);
-      const totalUploadedMB = await calculateTotalSize(
+      const totalUploadedMB = await calculateTotalSizeMB(
         sortedVideos,
         this.videoService
       );
@@ -262,12 +219,26 @@ export class VideoGridComponent implements OnInit, AfterViewInit {
     if (!this.currentUser || !this.userEmailKey) return;
 
     this.ngZone.run(() => {
+      this.resetUploadState(); // Añade esta línea para reiniciar el estado de progreso
       updateUserVideos(
         [...this.state.userVideos, downloadURL],
         this.currentUser!,
         this.firebaseService
       ).then(() => this.loadVideos(this.userEmailKey!));
     });
+  }
+
+  handleUploadProgress(progressData: { progress: number, uploaded: number, total: number }): void {
+    this.state = updateState(
+      this.state,
+      {
+        uploadProgress: progressData.progress,
+        uploadedSize: progressData.uploaded,
+        totalSize: progressData.total,
+      },
+      this.ngZone,
+      this.cdr
+    );
   }
 
   trackByVideoUrl = trackByVideoUrl;

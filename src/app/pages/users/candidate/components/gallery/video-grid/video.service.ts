@@ -1,55 +1,18 @@
 import { Injectable, inject, runInInjectionContext, EnvironmentInjector } from '@angular/core';
-import { Storage, ref, getDownloadURL, deleteObject, uploadBytesResumable, getMetadata } from '@angular/fire/storage';
+import { Storage, ref, getDownloadURL, deleteObject, getMetadata } from '@angular/fire/storage';
 import { FirebaseService } from 'src/app/shared/services/firebase.service';
 
 @Injectable({ providedIn: 'root' })
 export class VideoService {
   private injector = inject(EnvironmentInjector);
+  private storage = inject(Storage);
 
-  constructor(
-    private storage: Storage,
-    private firebaseService: FirebaseService
-  ) { }
+  constructor(private firebaseService: FirebaseService) {}
 
   async getVideos(userEmailKey: string): Promise<string[]> {
     return runInInjectionContext(this.injector, async () => {
       const userData = await this.firebaseService.getUserData(userEmailKey);
       return userData?.profileData?.multimedia?.galleryVideos || [];
-    });
-  }
-
-  async uploadVideo(
-    userEmailKey: string,
-    file: File,
-    progressCallback: (progress: number, uploaded: number, total: number) => void
-  ): Promise<string> {
-    return runInInjectionContext(this.injector, async () => {
-      const videoName = `gallery-video-${Date.now()}.${file.name.split('.').pop()}`;
-      const storageRef = ref(this.storage, `cv-app/users/${userEmailKey}/gallery-videos/${videoName}`);
-
-      const uploadTask = uploadBytesResumable(storageRef, file);
-
-      return new Promise((resolve, reject) => {
-        uploadTask.on(
-          'state_changed',
-          (snapshot) => {
-            const progress = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
-            progressCallback(progress, snapshot.bytesTransferred, snapshot.totalBytes);
-          },
-          (error) => reject(error),
-          () => {
-            // Extraemos la lógica de getDownloadURL a una función separada
-            runInInjectionContext(this.injector, async () => {
-              try {
-                const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-                resolve(downloadURL);
-              } catch (error) {
-                reject(error);
-              }
-            });
-          }
-        );
-      });
     });
   }
 
