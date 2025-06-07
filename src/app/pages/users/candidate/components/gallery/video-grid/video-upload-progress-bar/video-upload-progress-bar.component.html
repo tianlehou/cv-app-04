@@ -1,7 +1,9 @@
 <!-- video-upload-progress-bar.component.html -->
-<div class="upload-progress">
-    <div class="progress-bar" [style.width]="uploadProgress + '%'">
-        {{ uploadProgress }}%
+<div class="upload-progress-container">
+    <div class="upload-progress">
+        <div class="progress-bar" [style.width]="uploadProgress + '%'">
+            {{ uploadProgress }}%
+        </div>
     </div>
     <div class="progress-size">
         {{ uploadedSize | filesize }} de {{ totalSize | filesize }}

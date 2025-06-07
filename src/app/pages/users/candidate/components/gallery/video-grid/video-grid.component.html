@@ -11,8 +11,8 @@
     [uploadedSize]="state.uploadedSize" [totalSize]="state.totalSize">
 </app-video-upload-progress-bar>
 
+<!-- Videos Grid -->
 <div class="gallery-grid">
-    <!-- Videos Grid -->
     <div *ngFor="let video of state.userVideos; trackBy: trackByVideoUrl" class="video-item"
         [ngClass]="{'expanded': state.expandedStates[video]}">
         <video controls controlsList="nodownload" #videoPlayer>
@@ -29,7 +29,8 @@
 
     <!-- Empty State Message -->
     <app-video-empty-gallery-message
-        *ngIf="!state.isLoading && state.userVideos.length === 0"></app-video-empty-gallery-message>
+        *ngIf="!state.isLoading && state.userVideos.length === 0">
+    </app-video-empty-gallery-message>
 
     <!-- Loading State -->
     <div *ngIf="state.isLoading" class="loading-spinner">
