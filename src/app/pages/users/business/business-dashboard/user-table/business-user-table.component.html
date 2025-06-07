@@ -6,6 +6,7 @@
           <tr>
             <th>#</th>
             <th style="width: 0;">Acción</th>
+            <th>País</th>
             <th>Nombre</th>
             <th>Profesión</th>
           </tr>
@@ -18,9 +19,8 @@
                 <ion-icon name="eye-outline" style="vertical-align: middle;"></ion-icon>
               </button>
             </td>
-            <td>
-              {{ user.fullName || "N/A" }}
-            </td>
+            <td>{{ user.country || "N/A" }}</td>
+            <td>{{ user.fullName || "N/A" }}</td>
             <td>{{ user.profesion || "N/A" }}</td>
           </tr>
         </tbody>

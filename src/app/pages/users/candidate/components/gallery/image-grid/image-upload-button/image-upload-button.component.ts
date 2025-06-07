@@ -1,24 +1,9 @@
-// image-upload-container.component.ts
 import { CommonModule } from '@angular/common';
-import {
-  Component,
-  Output,
-  EventEmitter,
-  Input,
-  inject,
-  ChangeDetectorRef,
-  NgZone,
-  EnvironmentInjector,
-  OnDestroy,
-} from '@angular/core';
-import {
-  Storage,
-  ref,
-  uploadBytesResumable,
-  getDownloadURL,
-} from '@angular/fire/storage';
+import { Component, Output, EventEmitter, Input, inject, ChangeDetectorRef, NgZone, EnvironmentInjector, OnDestroy } from '@angular/core';
+import { Storage, ref, uploadBytesResumable, getDownloadURL } from '@angular/fire/storage';
 import { ToastService } from '../../../../../../../shared/services/toast.service';
 import { runInInjectionContext } from '@angular/core';
+import { ImageCompressionService } from 'src/app/shared/services/image-compression.service';
 
 @Component({
   selector: 'app-image-upload-button',
@@ -41,23 +26,28 @@ export class ImageUploadButtonComponent implements OnDestroy {
   private toast = inject(ToastService);
   private cdr = inject(ChangeDetectorRef);
   private ngZone = inject(NgZone);
+  private imageCompression = inject(ImageCompressionService);
 
-  onFileSelected(event: Event): void {
+  async onFileSelected(event: Event): Promise<void> {
     const input = event.target as HTMLInputElement;
     if (!input.files?.length) return;
 
     const file = input.files[0];
     if (!file.type.startsWith('image/')) {
-      this.toast.show(
-        'Formato de archivo inválido. Solo se permiten imágenes.',
-        'error'
-      );
+      this.toast.show('Formato de archivo inválido. Solo se permiten imágenes.', 'error');
       input.value = '';
       return;
     }
 
-    this.selectedFile = file;
-    this.uploadImage();
+    try {
+      // Comprimir la imagen antes de subirla
+      this.selectedFile = await this.imageCompression.compressImage(file);
+      this.uploadImage();
+    } catch (error) {
+      console.error('Error al comprimir imagen:', error);
+      this.toast.show('Error al procesar la imagen', 'error');
+      input.value = '';
+    }
   }
 
   private async uploadImage(): Promise<void> {
@@ -68,9 +58,7 @@ export class ImageUploadButtonComponent implements OnDestroy {
 
     try {
       await runInInjectionContext(this.injector, async () => {
-        const imageName = `gallery-image-${Date.now()}.${this.selectedFile!.name.split(
-          '.'
-        ).pop()}`;
+        const imageName = `gallery-image-${Date.now()}.${this.selectedFile!.name.split('.').pop()}`;
         const storagePath = `cv-app/users/${this.userEmailKey}/gallery-images/${imageName}`;
         const storageRef = ref(this.storage, storagePath);
         const uploadTask = uploadBytesResumable(storageRef, this.selectedFile!);

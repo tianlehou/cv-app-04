@@ -3,14 +3,10 @@
   <header class="display-flex-space-between">
     <h3>
       <i class="fas fa-id-card"></i>
-      <span style="font-size: 1rem;">Datos de Contacto</span>
+      <span style="font-size: 1rem">Datos de Contacto</span>
     </h3>
-    <app-cv-edit-button-row
-      [isEditing]="isEditing"
-      [hasChanges]="formHasChanges"
-      (onCancel)="onCancel()"
-      (onEditSave)="toggleEdit()"
-    ></app-cv-edit-button-row>
+    <app-cv-edit-button-row [isEditing]="isEditing" [hasChanges]="formHasChanges" (onCancel)="onCancel()"
+      (onEditSave)="toggleEdit()"></app-cv-edit-button-row>
   </header>
 
   <body>
@@ -18,17 +14,11 @@
       <!-- Nombre Completo -->
       <div class="form-group">
         <label for="fullName">Nombre Completo:</label>
-        <input 
-          id="fullName" 
-          formControlName="fullName" 
-          type="text" 
-          class="form-control"
-          [readonly]="!isEditing" 
-        />
-        <div 
-          *ngIf="profileForm.get('fullName')?.invalid && profileForm.get('fullName')?.touched" 
-          class="text-danger"
-        >
+        <input id="fullName" formControlName="fullName" type="text" class="form-control" [readonly]="!isEditing" />
+        <div *ngIf="
+            profileForm.get('fullName')?.invalid &&
+            profileForm.get('fullName')?.touched
+          " class="text-danger">
           El nombre es obligatorio y debe tener al menos 3 caracteres.
         </div>
       </div>
@@ -36,17 +26,11 @@
       <!-- Profesión -->
       <div class="form-group">
         <label for="profesion">Profesión:</label>
-        <input 
-          id="profesion" 
-          formControlName="profesion" 
-          type="text" 
-          class="form-control"
-          [readonly]="!isEditing" 
-        />
-        <div 
-          *ngIf="profileForm.get('profesion')?.invalid && profileForm.get('profesion')?.touched" 
-          class="text-danger"
-        >
+        <input id="profesion" formControlName="profesion" type="text" class="form-control" [readonly]="!isEditing" />
+        <div *ngIf="
+            profileForm.get('profesion')?.invalid &&
+            profileForm.get('profesion')?.touched
+          " class="text-danger">
           La profesión es obligatoria.
         </div>
       </div>
@@ -54,35 +38,39 @@
       <!-- Dirección -->
       <div class="form-group">
         <label for="direction">Dirección:</label>
-        <input 
-          id="direction" 
-          formControlName="direction" 
-          type="text" 
-          class="form-control"
-          [readonly]="!isEditing" 
-        />
-        <div 
-          *ngIf="profileForm.get('direction')?.invalid && profileForm.get('direction')?.touched" 
-          class="text-danger"
-        >
+        <input id="direction" formControlName="direction" type="text" class="form-control" [readonly]="!isEditing" />
+        <div *ngIf="
+            profileForm.get('direction')?.invalid &&
+            profileForm.get('direction')?.touched
+          " class="text-danger">
           Introduce una dirección
+        </div>
+      </div>
+
+      <!-- País -->
+      <div class="form-group">
+        <label for="country">País:</label>
+        <select id="country" formControlName="country" class="form-control" [ngClass]="{'readonly-select': !isEditing}"
+          [disabled]="!isEditing">
+          <option value="" disabled selected>Selecciona tu país</option>
+          <option *ngFor="let country of countries" [value]="country.code">
+            {{ country.name }}
+          </option>
+        </select>
+        <div *ngIf="profileForm.get('country')?.invalid && profileForm.get('country')?.touched" class="text-danger">
+          Por favor selecciona tu país.
         </div>
       </div>
 
       <!-- Correo -->
       <div class="form-group">
         <label for="editableEmail">Correo electrónico:</label>
-        <input 
-          id="editableEmail" 
-          formControlName="editableEmail" 
-          type="email" 
-          class="form-control"
-          [readonly]="!isEditing" 
-        />
-        <div 
-          *ngIf="profileForm.get('editableEmail')?.invalid && profileForm.get('editableEmail')?.touched" 
-          class="text-danger"
-        >
+        <input id="editableEmail" formControlName="editableEmail" type="email" class="form-control"
+          [readonly]="!isEditing" />
+        <div *ngIf="
+            profileForm.get('editableEmail')?.invalid &&
+            profileForm.get('editableEmail')?.touched
+          " class="text-danger">
           Introduce un correo electrónico válido
         </div>
       </div>
@@ -90,20 +78,12 @@
       <!-- Teléfono -->
       <div class="form-group">
         <label for="phone">Teléfono:</label>
-        <input 
-          id="phone" 
-          formControlName="phone" 
-          type="tel" 
-          class="form-control"
-          [readonly]="!isEditing" 
-          (input)="formatPhoneNumber($event)" 
-          maxlength="9"
-          placeholder="Ej: 6123-1234" 
-        />
-        <div 
-          *ngIf="profileForm.get('phone')?.invalid && profileForm.get('phone')?.touched" 
-          class="text-danger"
-        >
+        <input id="phone" formControlName="phone" type="tel" class="form-control" [readonly]="!isEditing"
+          (input)="formatPhoneNumber($event)" maxlength="9" placeholder="Ej: 6123-1234" />
+        <div *ngIf="
+            profileForm.get('phone')?.invalid &&
+            profileForm.get('phone')?.touched
+          " class="text-danger">
           Introduce un número de teléfono válido.
         </div>
       </div>

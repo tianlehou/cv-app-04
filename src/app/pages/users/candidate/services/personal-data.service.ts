@@ -24,7 +24,8 @@ export class PersonalDataService {
         profesion: userData?.profileData?.personalData?.profesion || '',
         phone: userData?.profileData?.personalData?.phone || '',
         editableEmail: userData?.profileData?.personalData?.editableEmail || '',
-        direction: userData?.profileData?.personalData?.direction || ''
+        direction: userData?.profileData?.personalData?.direction || '',
+        country: userData?.metadata?.country || '',
       };
     } catch (error) {
       console.error('Error loading personal data:', error);

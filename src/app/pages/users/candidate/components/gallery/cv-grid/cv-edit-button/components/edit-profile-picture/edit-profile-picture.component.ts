@@ -20,6 +20,7 @@ import { User } from '@angular/fire/auth';
 import { ToastService } from '../../../../../../../../../shared/services/toast.service';
 import { ConfirmationModalService } from '../../../../../../../../../shared/services/confirmation-modal.service';
 import { ProfilePictureInfoComponent } from './profile-picture-info/profile-picture-info.component';
+import { ImageCompressionService } from 'src/app/shared/services/image-compression.service';
 
 @Component({
   selector: 'app-edit-profile-picture',
@@ -41,7 +42,8 @@ export class EditProfilePictureComponent implements OnInit, OnChanges {
     private firebaseService: FirebaseService,
     private profileService: ProfileService,
     private toastService: ToastService,
-    private confirmationModalService: ConfirmationModalService
+    private confirmationModalService: ConfirmationModalService,
+    private imageCompression: ImageCompressionService,
   ) { }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -88,15 +90,21 @@ export class EditProfilePictureComponent implements OnInit, OnChanges {
     }
   }
 
-  onFileSelected(event: Event): void {
+  async onFileSelected(event: Event): Promise<void> {
     const input = event.target as HTMLInputElement;
     if (input.files?.length) {
-      this.selectedFile = input.files[0];
-      const reader = new FileReader();
-      reader.onload = () => {
-        this.profileForm.patchValue({ profilePicture: reader.result });
-      };
-      reader.readAsDataURL(this.selectedFile);
+      try {
+        // Comprimir la imagen antes de mostrarla
+        this.selectedFile = await this.imageCompression.compressImage(input.files[0]);
+        const reader = new FileReader();
+        reader.onload = () => {
+          this.profileForm.patchValue({ profilePicture: reader.result });
+        };
+        reader.readAsDataURL(this.selectedFile);
+      } catch (error) {
+        console.error('Error al comprimir imagen:', error);
+        this.toastService.show('Error al procesar la imagen', 'error');
+      }
     } else {
       this.profileForm.patchValue({ profilePicture: '' });
     }

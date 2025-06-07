@@ -31,6 +31,31 @@ export class EditPersonalDataComponent implements OnInit, OnDestroy {
   private initialFormValue: any;
   private formSubscription: Subscription | null = null;
 
+  countries = [
+    { code: 'Panama', name: 'Panamá' },
+    { code: 'Argentina', name: 'Argentina' },
+    { code: 'Bolivia', name: 'Bolivia' },
+    { code: 'Brazil', name: 'Brasil' },
+    { code: 'Chile', name: 'Chile' },
+    { code: 'Colombia', name: 'Colombia' },
+    { code: 'Costa Rica', name: 'Costa Rica' },
+    { code: 'Cuba', name: 'Cuba' },
+    { code: 'Ecuador', name: 'Ecuador' },
+    { code: 'El Salvador', name: 'El Salvador' },
+    { code: 'España', name: 'España' },
+    { code: 'USA', name: 'Estados Unidos' },
+    { code: 'Guatemala', name: 'Guatemala' },
+    { code: 'Honduras', name: 'Honduras' },
+    { code: 'Nicaragua', name: 'Nicaragua' },
+    { code: 'Mexico', name: 'México' },
+    { code: 'Paraguay', name: 'Paraguay' },
+    { code: 'Peru', name: 'Perú' },
+    { code: 'Puerto Rico', name: 'Puerto Rico' },
+    { code: 'Rep. Dominicana', name: 'República Dominicana' },
+    { code: 'Uruguay', name: 'Uruguay' },
+    { code: 'Venezuela', name: 'Venezuela' },
+  ];
+
   constructor(
     private fb: FormBuilder,
     private firebaseService: FirebaseService,
@@ -58,6 +83,7 @@ export class EditPersonalDataComponent implements OnInit, OnDestroy {
       phone: ['', [Validators.pattern(/^\d{4}-\d{4}$/), Validators.minLength(8)]],
       editableEmail: ['', [Validators.required, Validators.email]],
       direction: ['', [Validators.required, Validators.minLength(3)]],
+      country: ['', [Validators.required]],
     });
   }
 
@@ -141,7 +167,16 @@ export class EditPersonalDataComponent implements OnInit, OnDestroy {
     try {
       const updatedData = {
         profileData: {
-          personalData: this.profileForm.value
+          personalData: {
+            fullName: this.profileForm.value.fullName,
+            profesion: this.profileForm.value.profesion,
+            phone: this.profileForm.value.phone,
+            editableEmail: this.profileForm.value.editableEmail,
+            direction: this.profileForm.value.direction
+          }
+        },
+        metadata: {
+          country: this.profileForm.value.country
         }
       };
 

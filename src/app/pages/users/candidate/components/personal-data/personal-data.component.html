@@ -4,6 +4,12 @@
     <p id="profesion" *ngIf="profileForm.get('profesion')?.value">{{ profileForm.get("profesion")?.value }}</p>
 
     <section style="display: grid; justify-content: center;">
+      <!-- país -->
+      <div class="icon-field" *ngIf="profileForm.get('country')?.value">
+        <i class="fas fa-globe-americas" style="color: var(--clr-green);"></i>
+        <p id="country">{{ getCountryName(profileForm.get('country')?.value) }}</p>
+      </div>
+
       <div class="icon-field" *ngIf="profileForm.get('phone')?.value">
         <i class="fas fa-phone" style="color: var(--clr-green);"></i>
         <p id="phone">{{ profileForm.get("phone")?.value }}</p>

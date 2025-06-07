@@ -19,6 +19,31 @@ export class PersonalDataComponent implements OnInit, OnDestroy {
   editableFields: { [key: string]: boolean } = {};
   private subscription!: Subscription;
 
+  countries = [
+    { code: 'Panama', name: 'Panamá' },
+    { code: 'Argentina', name: 'Argentina' },
+    { code: 'Bolivia', name: 'Bolivia' },
+    { code: 'Brazil', name: 'Brasil' },
+    { code: 'Chile', name: 'Chile' },
+    { code: 'Colombia', name: 'Colombia' },
+    { code: 'Costa Rica', name: 'Costa Rica' },
+    { code: 'Cuba', name: 'Cuba' },
+    { code: 'Ecuador', name: 'Ecuador' },
+    { code: 'El Salvador', name: 'El Salvador' },
+    { code: 'España', name: 'España' },
+    { code: 'USA', name: 'Estados Unidos' },
+    { code: 'Guatemala', name: 'Guatemala' },
+    { code: 'Honduras', name: 'Honduras' },
+    { code: 'Nicaragua', name: 'Nicaragua' },
+    { code: 'Mexico', name: 'México' },
+    { code: 'Paraguay', name: 'Paraguay' },
+    { code: 'Peru', name: 'Perú' },
+    { code: 'Puerto Rico', name: 'Puerto Rico' },
+    { code: 'Rep. Dominicana', name: 'República Dominicana' },
+    { code: 'Uruguay', name: 'Uruguay' },
+    { code: 'Venezuela', name: 'Venezuela' },
+  ];
+
   constructor(
     private fb: FormBuilder,
     private profileService: ProfileService,
@@ -47,6 +72,7 @@ export class PersonalDataComponent implements OnInit, OnDestroy {
       phone: [''],
       editableEmail: [''],
       direction: [''],
+      country: [''],
     });
   }
 
@@ -57,5 +83,10 @@ export class PersonalDataComponent implements OnInit, OnDestroy {
     } catch (error) {
       console.error('Error loading user data:', error);
     }
+  }
+
+  getCountryName(countryCode: string): string {
+    const country = this.countries.find(c => c.code === countryCode);
+    return country ? country.name : countryCode;
   }
 }

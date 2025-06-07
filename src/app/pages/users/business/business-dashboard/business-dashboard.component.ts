@@ -56,6 +56,7 @@ export class BusinessDashboardComponent implements OnInit {
         if (metadata.role === 'candidate') {
           return {
             key: userKey,
+            country: metadata.country || '',
             fullName: userData?.profileData?.personalData?.fullName || '',
             email: metadata.email || '',
             profesion: userData?.profileData?.personalData?.profesion || '',

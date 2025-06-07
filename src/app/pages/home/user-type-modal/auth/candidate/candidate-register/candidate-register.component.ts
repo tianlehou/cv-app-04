@@ -36,7 +36,6 @@ export class CandidateRegisterComponent implements OnInit {
     { code: 'Colombia', name: 'Colombia' },
     { code: 'Costa Rica', name: 'Costa Rica' },
     { code: 'Cuba', name: 'Cuba' },
-    { code: 'Dominican Republic', name: 'República Dominicana' },
     { code: 'Ecuador', name: 'Ecuador' },
     { code: 'El Salvador', name: 'El Salvador' },
     { code: 'España', name: 'España' },
@@ -48,6 +47,7 @@ export class CandidateRegisterComponent implements OnInit {
     { code: 'Paraguay', name: 'Paraguay' },
     { code: 'Peru', name: 'Perú' },
     { code: 'Puerto Rico', name: 'Puerto Rico' },
+    { code: 'Rep. Dominicana', name: 'República Dominicana' },
     { code: 'Uruguay', name: 'Uruguay' },
     { code: 'Venezuela', name: 'Venezuela' },
     

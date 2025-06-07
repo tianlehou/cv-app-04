@@ -19,11 +19,12 @@
     <div class="form-group">
       <label for="country">País</label>
       <select id="country" class="form-control" formControlName="country" [ngClass]="{
-          'is-invalid':
-            registerForm.get('country')?.invalid &&
-            (registerForm.get('country')?.touched ||
-              registerForm.get('country')?.dirty)
-        }">
+      'is-invalid':
+        registerForm.get('country')?.invalid &&
+        (registerForm.get('country')?.touched ||
+        registerForm.get('country')?.dirty)
+    }">
+        <option value="" disabled selected>Selecciona tu país</option>
         <option *ngFor="let country of countries" [value]="country.code">
           {{ country.name }}
         </option>
