@@ -25,8 +25,6 @@ export class VideoUploadButtonComponent {
     }
 
     const file = input.files[0];
-    console.log('File selected:', file.name, file.size);
-
     if (!file.type.startsWith('video/')) {
       this.toast.show(
         'Formato de archivo inválido. Solo se permiten videos.',
@@ -35,8 +33,6 @@ export class VideoUploadButtonComponent {
       input.value = '';
       return;
     }
-
-    console.log('Emitting fileSelected event');
     this.fileSelected.emit(file);
   }
 }

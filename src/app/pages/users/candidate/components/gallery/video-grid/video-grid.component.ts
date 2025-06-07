@@ -93,14 +93,11 @@ export class VideoGridComponent implements OnInit, AfterViewInit {
 
   // En video-grid.component.ts
   handleFileSelected(file: File): void {
-    console.log('handleFileSelected called with file:', file.name);
-
     if (!this.userEmailKey) {
       console.log('No userEmailKey available');
       return;
     }
 
-    console.log('Starting upload process...');
     this.state = updateState(
       this.state,
       {
@@ -112,7 +109,6 @@ export class VideoGridComponent implements OnInit, AfterViewInit {
       this.cdr
     );
 
-    console.log('Calling videoService.uploadVideo');
     this.videoService
       .uploadVideo(this.userEmailKey, file, (progress, uploaded, total) => {
         this.ngZone.run(() => {
@@ -129,7 +125,6 @@ export class VideoGridComponent implements OnInit, AfterViewInit {
         });
       })
       .then((downloadURL) => {
-        console.log('Upload complete, downloadURL:', downloadURL);
         this.handleUploadComplete(downloadURL);
         this.resetUploadState();
       })
