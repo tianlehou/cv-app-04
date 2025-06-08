@@ -20,7 +20,7 @@ export class ToastService {
     return this.toasts$.asObservable();
   }
 
-  show(message: string, type: ToastType, duration: number = 5000) {
+  show(message: string, type: ToastType, duration: number = 3000) {
     const toast: Toast = {
       id: this.currentId++,
       message,
