@@ -1,29 +1,72 @@
-/* edit-skills.component.css */
-/* Solo estilos específicos que no están en edit-profile-container.css */
+/* Formulario general */
+.form-group {
+  text-align: left;
+}
 
-/* Altura mínima para los textareas de habilidades */
-textarea.form-control {
+label {
+  display: block;
+  margin: 0.5em 0 0 1em;
+  font-weight: 500;
+}
+
+/* Inputs, textareas y botones */
+input,
+textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+
+input[readonly],
+textarea[readonly] {
+  background-color: #f8f9fa;
+  border: 1px solid #ddd;
+}
+
+input:not([readonly]),
+textarea:not([readonly]) {
+  background-color: #fff;
+  border: 1px solid #007bff;
+}
+
+.line {
+  border-bottom: 1px solid #ccc;
+  margin: 0 !important;
+}
+
+.section-group:last-child .line {
+  display: none;
+}
+
+.section-group {
+  position: relative;
+  padding: 15px;
+}
+
+.form-control {
+  width: 100%;
+}
+
+textarea {
+  height: 150px;
   min-height: 100px;
   resize: vertical;
 }
 
-/* Espaciado entre grupos de habilidades */
+.text-danger {
+  color: #e74c3c;
+  font-size: 0.875em;
+}
+
+/* Estilos específicos para grupos de habilidades */
 [formGroupName] {
   margin-bottom: 1.5rem;
-  padding: 1rem;
   background-color: #f8f9fa;
   border-radius: 8px;
 }
 
-/* Ajustes responsivos específicos */
-@media (max-width: 768px) {
-  [formGroupName] {
-    margin-bottom: 1rem;
-    padding: 0.75rem;
-  }
-}
-
-/* Estilos para botones deshabilitados (específicos del componente) */
+/* Inhabilita el boton de "Agregar" */
 :host ::ng-deep app-cv-edit-button-row .add-btn {
   opacity: 0.5 !important;
   cursor: not-allowed !important;

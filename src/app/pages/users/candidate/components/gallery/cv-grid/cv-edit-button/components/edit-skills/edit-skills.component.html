@@ -1,71 +1,70 @@
+<!-- edit-skills.component.html -->
 <div class="edit-profile-container">
-  <header class="display-flex-space-between">
+  <header>
     <h3>
       <i class="fas fa-star"></i>
       <span>Habilidades</span>
     </h3>
     <app-cv-edit-button-row
-      [isEditing]="editableFields['skills']"
+      [isEditing]="isEditing"
       [hasChanges]="formHasChanges"
       (onCancel)="onCancel()"
-      (onEditSave)="toggleEdit('skills')"
+      (onEditSave)="toggleEdit()"
     ></app-cv-edit-button-row>
   </header>
 
   <body>
     <form [formGroup]="profileForm" (ngSubmit)="onSubmit()">
-      <div formArrayName="skills">
-        <div
-          *ngFor="let skillGroup of skillsArray.controls; let i = index"
-          [formGroupName]="i"
-        >
-          <!-- Habilidades Técnicas -->
-          <div class="form-group">
-            <label for="hardSkills-{{i}}">Habilidades Técnicas:</label>
-            <textarea
-              id="hardSkills-{{i}}"
-              formControlName="hardSkills"
-              class="form-control"
-              [readonly]="!editableFields['skills']"
-              placeholder="Ej: JavaScript, Angular, Node.js"
-            ></textarea>
+      <div class="form-group">
+        <!-- Habilidades Técnicas -->
+        <div class="form-group">
+          <label for="hardSkills">Habilidades Técnicas:</label>
+          <textarea
+            id="hardSkills"
+            formControlName="hardSkills"
+            class="form-control"
+            [readonly]="!isEditing"
+            placeholder="Ej: JavaScript, Angular, Node.js"
+          ></textarea>
+          <div *ngIf="profileForm.get('hardSkills')?.invalid && profileForm.get('hardSkills')?.touched" class="text-danger">
+            Las habilidades técnicas son obligatorias
           </div>
+        </div>
 
-          <!-- Habilidades Blandas -->
-          <div class="form-group">
-            <label for="softSkills-{{i}}">Habilidades Blandas:</label>
-            <textarea
-              id="softSkills-{{i}}"
-              formControlName="softSkills"
-              class="form-control"
-              [readonly]="!editableFields['skills']"
-              placeholder="Ej: Trabajo en equipo, Comunicación"
-            ></textarea>
-          </div>
+        <!-- Habilidades Blandas -->
+        <div class="form-group">
+          <label for="softSkills">Habilidades Blandas:</label>
+          <textarea
+            id="softSkills"
+            formControlName="softSkills"
+            class="form-control"
+            [readonly]="!isEditing"
+            placeholder="Ej: Trabajo en equipo, Comunicación"
+          ></textarea>
+        </div>
 
-          <!-- Idiomas -->
-          <div class="form-group">
-            <label for="languages-{{i}}">Idiomas:</label>
-            <textarea
-              id="languages-{{i}}"
-              formControlName="languages"
-              class="form-control"
-              [readonly]="!editableFields['skills']"
-              placeholder="Ej: Inglés avanzado, Francés básico"
-            ></textarea>
-          </div>
+        <!-- Idiomas -->
+        <div class="form-group">
+          <label for="languages">Idiomas:</label>
+          <textarea
+            id="languages"
+            formControlName="languages"
+            class="form-control"
+            [readonly]="!isEditing"
+            placeholder="Ej: Inglés avanzado, Francés básico"
+          ></textarea>
+        </div>
 
-          <!-- Certificaciones -->
-          <div class="form-group">
-            <label for="certification-{{i}}">Certificaciones:</label>
-            <textarea
-              id="certification-{{i}}"
-              formControlName="certification"
-              class="form-control"
-              [readonly]="!editableFields['skills']"
-              placeholder="Ej: Certificación AWS, Scrum Master"
-            ></textarea>
-          </div>
+        <!-- Certificaciones -->
+        <div class="form-group">
+          <label for="certification">Certificaciones:</label>
+          <textarea
+            id="certification"
+            formControlName="certification"
+            class="form-control"
+            [readonly]="!isEditing"
+            placeholder="Ej: Certificación AWS, Scrum Master"
+          ></textarea>
         </div>
       </div>
     </form>

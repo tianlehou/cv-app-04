@@ -1,28 +1,35 @@
 <div class="profile-container">
   <label class="bar">Habilidades:</label>
-  <form [formGroup]="profileForm">
-    <div class="form-group">
-      <div *ngFor="let skill of profileForm.get('skills')?.value">
-        <span>
-          <strong>Habilidades Técnica:</strong>
-          <label>{{ skill.hardSkills || "No especificado" }}</label>
-        </span>
 
-        <span>
-          <strong>Habilidades Blandas:</strong>
-          <label>{{ skill.softSkills || "No especificado" }}</label>
-        </span>
+  <!-- Habilidades Técnicas -->
+  <div class="skill-category" *ngIf="skills.hardSkills">
+    <h6>Técnicas:</h6>
+    <ul>
+      <li *ngFor="let skill of getSkillList(skills.hardSkills)">{{ skill }}</li>
+    </ul>
+  </div>
 
-        <span *ngIf="skill.languages">
-          <strong>Idiomas:</strong>
-          <label>{{ skill.languages || "No especificado" }}</label>
-        </span>
+  <!-- Habilidades Blandas -->
+  <div class="skill-category" *ngIf="skills.softSkills">
+    <h6>Blandas:</h6>
+    <ul>
+      <li *ngFor="let skill of getSkillList(skills.softSkills)">{{ skill }}</li>
+    </ul>
+  </div>
 
-        <span *ngIf="skill.certification">
-          <strong>Certificaciones:</strong>
-          <label>{{ skill.certification || "No especificado" }}</label>
-        </span>
-      </div>
-    </div>
-  </form>
+  <!-- Idiomas -->
+  <div class="skill-category" *ngIf="skills.languages">
+    <h6>Idiomas:</h6>
+    <ul>
+      <li *ngFor="let language of getSkillList(skills.languages)">{{ language }}</li>
+    </ul>
+  </div>
+
+  <!-- Certificaciones -->
+  <div class="skill-category" *ngIf="skills.certification">
+    <h6>Certificaciones:</h6>
+    <ul>
+      <li *ngFor="let cert of getSkillList(skills.certification)">{{ cert }}</li>
+    </ul>
+  </div>
 </div>

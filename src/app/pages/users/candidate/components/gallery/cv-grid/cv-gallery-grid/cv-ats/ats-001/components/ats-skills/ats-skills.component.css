@@ -13,16 +13,6 @@
 }
 
 /* Grupos de formulario */
-.form-group {
-  padding: 1rem 3rem;
-  text-align: left;
-}
-
-.profile-container span {
-  display: flex;
-}
-
-.profile-container label {
-  white-space: pre-wrap;
-  padding-left: 10px;
+.skill-category {
+  padding: 0 3rem;
 }

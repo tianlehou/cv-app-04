@@ -1,27 +1,33 @@
-<!-- canvas-001-skills.component.html -->
 <div class="profile-container">
-  <form [formGroup]="profileForm">
-    <div class="form-group" *ngFor="let skill of profileForm.get('skills')?.value">
+  <!-- Habilidades Técnicas -->
+  <div class="skill-category" *ngIf="skills.hardSkills">
+    <h6>Técnicas:</h6>
+    <ul>
+      <li *ngFor="let skill of getSkillList(skills.hardSkills)">{{ skill }}</li>
+    </ul>
+  </div>
 
-      <span>
-        <div>Técnicas:</div>
-        <label>{{ skill.hardSkills | formatList }}</label>
-      </span>
+  <!-- Habilidades Blandas -->
+  <div class="skill-category" *ngIf="skills.softSkills">
+    <h6>Blandas:</h6>
+    <ul>
+      <li *ngFor="let skill of getSkillList(skills.softSkills)">{{ skill }}</li>
+    </ul>
+  </div>
 
-      <span>
-        <div>Blandas:</div>
-        <label>{{ skill.softSkills | formatList }}</label>
-      </span>
+  <!-- Idiomas -->
+  <div class="skill-category" *ngIf="skills.languages">
+    <h6>Idiomas:</h6>
+    <ul>
+      <li *ngFor="let language of getSkillList(skills.languages)">{{ language }}</li>
+    </ul>
+  </div>
 
-      <span *ngIf="skill.languages">
-        <div>Idiomas:</div>
-        <label>{{ skill.languages | formatList }}</label>
-      </span>
-
-      <span *ngIf="skill.certification">
-        <div>Certificaciones:</div>
-        <label>{{ skill.certification | formatList }}</label>
-      </span>
-    </div>
-  </form>
+  <!-- Certificaciones -->
+  <div class="skill-category" *ngIf="skills.certification">
+    <h6>Certificaciones:</h6>
+    <ul>
+      <li *ngFor="let cert of getSkillList(skills.certification)">{{ cert }}</li>
+    </ul>
+  </div>
 </div>

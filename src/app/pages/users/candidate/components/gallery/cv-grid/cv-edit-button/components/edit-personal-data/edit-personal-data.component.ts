@@ -3,12 +3,12 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { CommonModule } from '@angular/common';
 import { User } from '@angular/fire/auth';
 import { Subscription } from 'rxjs';
-import { ConfirmationModalService } from '../../../../../../../../../shared/services/confirmation-modal.service';
-import { ToastService } from '../../../../../../../../../shared/services/toast.service';
+import { ConfirmationModalService } from 'src/app/shared/services/confirmation-modal.service';
+import { ToastService } from 'src/app/shared/services/toast.service';
 import { PersonalDataInfoComponent } from './personal-data-info/personal-data-info.component';
 import { CvEditButtonRowComponent } from '../../cv-edit-button-row/cv-edit-button-row.component';
-import { PersonalDataService } from '../../../../../../services/personal-data.service';
-import { ProfileService } from '../../../../../../services/profile.service';
+import { PersonalDataService } from 'src/app/pages/users/candidate/services/personal-data.service';
+import { ProfileService } from 'src/app/pages/users/candidate/services/profile.service';
 import { FirebaseService } from 'src/app/shared/services/firebase.service';
 
 @Component({
@@ -78,12 +78,12 @@ export class EditPersonalDataComponent implements OnInit, OnDestroy {
 
   private initializeForm(): void {
     this.profileForm = this.fb.group({
-      fullName: ['', [Validators.required, Validators.minLength(3)]],
-      profesion: ['', [Validators.required]],
-      phone: ['', [Validators.pattern(/^\d{4}-\d{4}$/), Validators.minLength(8)]],
-      editableEmail: ['', [Validators.required, Validators.email]],
-      direction: ['', [Validators.required, Validators.minLength(3)]],
-      country: ['', [Validators.required]],
+      fullName: [{ value: '', disabled: true }, [Validators.required, Validators.minLength(3)]],
+      profesion: [{ value: '', disabled: true }, [Validators.required]],
+      phone: [{ value: '', disabled: true }, [Validators.pattern(/^\d{4}-\d{4}$/), Validators.minLength(8)]],
+      editableEmail: [{ value: '', disabled: true }, [Validators.required, Validators.email]],
+      direction: [{ value: '', disabled: true }, [Validators.required, Validators.minLength(3)]],
+      country: [{ value: '', disabled: true }, [Validators.required]],
     });
   }
 
@@ -113,6 +113,9 @@ export class EditPersonalDataComponent implements OnInit, OnDestroy {
       this.isEditing = true;
       this.initialFormValue = JSON.parse(JSON.stringify(this.profileForm.value));
       this.formHasChanges = false;
+
+      // Habilitar todos los controles al entrar en modo edición
+      this.profileForm.enable();
 
       this.formSubscription = this.profileForm.valueChanges.subscribe(() => {
         this.formHasChanges = !this.areObjectsEqual(
@@ -148,6 +151,10 @@ export class EditPersonalDataComponent implements OnInit, OnDestroy {
     this.isEditing = false;
     this.profileForm.patchValue(this.initialFormValue);
     this.formHasChanges = false;
+
+    // Deshabilitar todos los controles al cancelar
+    this.profileForm.disable();
+
     this.formSubscription?.unsubscribe();
     this.formSubscription = null;
     this.toastService.show('Modo edición deshabilitado', 'error');
