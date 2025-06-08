@@ -1,14 +1,20 @@
 <!-- video-grid.component.html -->
 <div class="top-row" *ngIf="!readOnly">
-    <app-video-info-bar [totalUploadedMB]="state.totalUploadedMB"></app-video-info-bar>
+    <app-video-info-bar 
+        [videoUrls]="state.userVideos" 
+        (totalSizeCalculated)="state.totalUploadedMB = $event">
+    </app-video-info-bar>
     <app-video-upload-button [userEmailKey]="userEmailKey" [currentUser]="currentUser"
         (uploadComplete)="handleUploadComplete($event)" (uploadProgress)="handleUploadProgress($event)">
     </app-video-upload-button>
 </div>
 
 <!-- Upload Progress -->
-<app-video-upload-progress-bar *ngIf="state.uploadProgress !== null && state.uploadProgress < 100"
-    [uploadProgress]="state.uploadProgress" [uploadedSize]="state.uploadedSize" [totalSize]="state.totalSize">
+<app-video-upload-progress-bar
+    *ngIf="state.uploadProgress !== null && state.uploadProgress < 100"
+    [uploadProgress]="state.uploadProgress"
+    [uploadedSize]="state.uploadedSize"
+    [totalSize]="state.totalSize">
 </app-video-upload-progress-bar>
 
 <!-- Videos Grid -->

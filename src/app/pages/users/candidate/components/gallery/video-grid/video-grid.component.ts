@@ -114,16 +114,6 @@ export class VideoGridComponent implements OnInit, AfterViewInit {
     });
   }
 
-  private async calculateTotalSizeMB(videos: string[]): Promise<number> {
-    try {
-      const totalBytes = await this.calculateTotalSize(videos);
-      return totalBytes / 1048576; // Convert to MB
-    } catch (error) {
-      console.error('Error calculating total size:', error);
-      return 0;
-    }
-  }
-
   private updateState<T>(currentState: T, partialState: Partial<T>): T {
     const newState = { ...currentState, ...partialState };
     this.ngZone.run(() => {
@@ -158,30 +148,6 @@ export class VideoGridComponent implements OnInit, AfterViewInit {
   private async deleteVideoFromStorage(videoUrl: string): Promise<void> {
     const videoRef = ref(this.storage, videoUrl);
     await deleteObject(videoRef);
-  }
-
-  private async calculateTotalSize(videos: string[]): Promise<number> {
-    if (!videos || videos.length === 0) return 0;
-
-    try {
-      const sizes = await Promise.all(
-        videos.map(async (url) => {
-          try {
-            const videoRef = ref(this.storage, url);
-            const metadata = await getMetadata(videoRef);
-            return metadata.size || 0;
-          } catch (error) {
-            console.error('Error getting video metadata:', error);
-            return 0;
-          }
-        })
-      );
-
-      return sizes.reduce((sum, size) => sum + size, 0);
-    } catch (error) {
-      console.error('Error calculating total video size:', error);
-      return 0;
-    }
   }
 
   // Métodos del componente
@@ -256,12 +222,10 @@ export class VideoGridComponent implements OnInit, AfterViewInit {
     try {
       const videos = await this.getVideos(userEmailKey);
       const sortedVideos = this.sortVideosByDate(videos);
-      const totalUploadedMB = await this.calculateTotalSizeMB(sortedVideos);
 
       this.state = this.updateState(this.state, {
         userVideos: sortedVideos,
         expandedStates: this.initExpandedStates(sortedVideos),
-        totalUploadedMB,
         isLoading: false,
       });
     } catch (error) {
