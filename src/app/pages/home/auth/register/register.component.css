@@ -154,3 +154,36 @@ select.form-control:focus {
   border-color: var(--clr-green);
   box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
 }
+
+/* register.component.css */
+/* ... (estilos existentes) */
+
+.user-type-options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.form-check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.form-check-input {
+  width: 18px;
+  height: 18px;
+  margin: 0;
+}
+
+.form-check-label {
+  cursor: pointer;
+  user-select: none;
+}
+
+/* Estilo para radio buttons seleccionados */
+.form-check-input:checked {
+  background-color: var(--clr-green);
+  border-color: var(--clr-green);
+}

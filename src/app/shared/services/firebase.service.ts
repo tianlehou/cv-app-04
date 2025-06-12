@@ -8,7 +8,7 @@ import {
 import { Database, ref, set, get, update } from '@angular/fire/database';
 import { BehaviorSubject } from 'rxjs';
 import { ComponentStyles } from '../../pages/users/candidate/components/gallery/cv-grid/cv-gallery-grid/style-control/component-styles.model';
-import { AuthService } from '../../pages/home/user-type-modal/auth/auth.service';
+import { AuthService } from '../../pages/home/auth/auth.service';
 import { FirebaseConfigService } from './firebase-config.service';
 
 @Injectable({

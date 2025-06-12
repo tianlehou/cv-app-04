@@ -15,12 +15,36 @@ export class DownloadPdfComponent {
   downloadPDF(): void {
     const element = document.getElementById(this.containerId);
     if (element) {
-      html2canvas(element).then((canvas) => {
+      // Estilo temporal para el contenedor
+      const originalStyles = {
+        boxShadow: element.style.boxShadow,
+        position: element.style.position,
+      };
+      element.style.boxShadow = 'none';
+      element.style.position = 'static'; // Evita superposiciones
+
+      html2canvas(element, {
+        scale: 1,
+        backgroundColor: '#FFFFFF', // Fondo blanco (no transparente)
+        logging: false,
+        useCORS: true,
+        width: 780,
+        height: 1700,
+        x: 0,
+        y: 0,
+        ignoreElements: (el) => {
+          // Ignorar elementos ocultos o superpuestos
+          return el.classList.contains('hidden-element');
+        },
+      }).then((canvas) => {
+        // Restaurar estilos originales
+        element.style.boxShadow = originalStyles.boxShadow;
+        element.style.position = originalStyles.position;
+
         const imgData = canvas.toDataURL('image/png');
         const pdf = new jsPDF.jsPDF('p', 'mm', 'a4');
-        const imgProps = pdf.getImageProperties(imgData);
         const pdfWidth = pdf.internal.pageSize.getWidth();
-        const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+        const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
         pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
         pdf.save('cv.pdf');
       });

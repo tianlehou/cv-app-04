@@ -1,22 +1,17 @@
-import { Component, Output, EventEmitter, ViewChild } from '@angular/core';
-import { UserTypeModalComponent } from '../../user-type-modal/user-type-modal.component';
+// call-to-action.component.ts
+import { Component, Output, EventEmitter } from '@angular/core';
 
 @Component({
   selector: 'app-call-to-action',
   standalone: true,
-  imports: [UserTypeModalComponent],
+  imports: [],
   templateUrl: './call-to-action.component.html',
   styleUrl: './call-to-action.component.css'
 })
 export class CallToActionComponent {
-  @ViewChild(UserTypeModalComponent) userTypeModal!: UserTypeModalComponent;
-  @Output() userTypeSelected = new EventEmitter<'candidate' | 'business'>();
+  @Output() registerClicked = new EventEmitter<void>();
 
-  openUserTypeModal() {
-    this.userTypeModal.openModal();
-  }
-
-  onUserTypeSelected(type: 'candidate' | 'business') {
-    this.userTypeSelected.emit(type);
+  onRegisterClick() {
+    this.registerClicked.emit();
   }
 }

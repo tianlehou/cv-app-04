@@ -1,16 +1,52 @@
 <div class="register-container">
-  <h2>Regístrar Empresa</h2>
+  <h2>Regístrate</h2>
   <form (ngSubmit)="register()" [formGroup]="registerForm" novalidate>
+
+    <!-- Tipo de Usuario -->
+    <div class="form-group">
+      <label>¿Qué tipo de usuario eres?</label>
+      <div class="user-type-options">
+        <div *ngFor="let type of userTypes" class="form-check">
+          <input type="radio" id="{{type.value}}" class="form-check-input" formControlName="userType"
+            [value]="type.value" [checked]="type.value === 'candidate'">
+          <label for="{{type.value}}" class="form-check-label">{{type.label}}</label>
+        </div>
+      </div>
+      <div class="invalid-feedback" *ngIf="registerForm.get('userType')?.errors?.['required']">
+        Por favor selecciona un tipo de usuario.
+      </div>
+    </div>
+
     <!-- Nombre Completo -->
     <div class="form-group">
       <label for="fullName">Nombre Completo</label>
       <input type="text" id="fullName" class="form-control" formControlName="fullName" [ngClass]="{
           'is-invalid':
             registerForm.get('fullName')?.invalid &&
-            (registerForm.get('fullName')?.touched || registerForm.get('fullName')?.dirty)
+            (registerForm.get('fullName')?.touched ||
+              registerForm.get('fullName')?.dirty)
         }" />
       <div class="invalid-feedback" *ngIf="registerForm.get('fullName')?.errors?.['required']">
         El nombre completo es obligatorio.
+      </div>
+    </div>
+
+    <!-- País -->
+    <div class="form-group">
+      <label for="country">País</label>
+      <select id="country" class="form-control" formControlName="country" [ngClass]="{
+      'is-invalid':
+        registerForm.get('country')?.invalid &&
+        (registerForm.get('country')?.touched ||
+        registerForm.get('country')?.dirty)
+    }">
+        <option value="" disabled selected>Selecciona tu país</option>
+        <option *ngFor="let country of countries" [value]="country.code">
+          {{ country.name }}
+        </option>
+      </select>
+      <div class="invalid-feedback" *ngIf="registerForm.get('country')?.errors?.['required']">
+        Por favor selecciona tu país.
       </div>
     </div>
 
@@ -20,7 +56,8 @@
       <input type="email" id="email" class="form-control" formControlName="email" [ngClass]="{
           'is-invalid':
             registerForm.get('email')?.invalid &&
-            (registerForm.get('email')?.touched || registerForm.get('email')?.dirty)
+            (registerForm.get('email')?.touched ||
+              registerForm.get('email')?.dirty)
         }" />
       <div class="invalid-feedback" *ngIf="registerForm.get('email')?.errors?.['required']">
         El correo es obligatorio.
@@ -38,7 +75,8 @@
           [ngClass]="{
             'is-invalid':
               registerForm.get('password')?.invalid &&
-              (registerForm.get('password')?.touched || registerForm.get('password')?.dirty)
+              (registerForm.get('password')?.touched ||
+                registerForm.get('password')?.dirty)
           }" />
         <button type="button" class="btn btn-outline-secondary" (click)="togglePasswordVisibility()">
           {{ showPassword ? "Ocultar" : "Mostrar" }}
@@ -60,7 +98,8 @@
           formControlName="confirmPassword" [ngClass]="{
             'is-invalid':
               registerForm.get('confirmPassword')?.invalid &&
-              (registerForm.get('confirmPassword')?.touched || registerForm.get('confirmPassword')?.dirty)
+              (registerForm.get('confirmPassword')?.touched ||
+                registerForm.get('confirmPassword')?.dirty)
           }" />
         <button type="button" class="btn btn-outline-secondary" (click)="toggleConfirmPasswordVisibility()">
           {{ showConfirmPassword ? "Ocultar" : "Mostrar" }}
@@ -71,12 +110,25 @@
       </div>
     </div>
 
+    <!-- Campo oculto para referido -->
+    <input type="hidden" formControlName="referredBy" />
+    <div *ngIf="referredBy" class="referred-by-banner">
+      <i class="bi bi-people-fill"></i>
+      <span>Estás siendo referido por un usuario de nuestra comunidad</span>
+    </div>
+
+    <ng-container *ngIf="toastService.getToasts() | async as toasts">
+      <div *ngFor="let toast of toasts" class="toast toast-{{ toast.type }}">
+        {{ toast.message }}
+      </div>
+    </ng-container>
+
     <!-- Botones -->
-    <button type="submit" class="register-btn" [disabled]="registerForm.invalid || isLoading">
-      {{ isLoading ? 'Registrando...' : 'Registrarse' }}
+    <button type="submit" class="btn btn-primary register-btn" [disabled]="registerForm.invalid">
+      Registrarse
     </button>
     <div class="haveAccount">
-      <section class="btn-link">
+      <section class="btn btn-link">
         <Label>¡Ya tengo una cuenta!</Label>
         <a (click)="onLoginClick()">Regresar</a>
       </section>

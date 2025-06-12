@@ -6,14 +6,14 @@ import {
   FormGroup,
   Validators,
 } from '@angular/forms';
-import { AuthService } from '../../auth.service';
-import { FirebaseService } from '../../../../../../shared/services/firebase.service';
 import { Router, RouterModule } from '@angular/router';
-import { GoogleLoginComponent } from '../google-login-button/google-login.component';
-import { ToastService } from '../../../../../../shared/services/toast.service';
+import { AuthService } from '../auth.service';
+import { FirebaseService } from 'src/app/shared/services/firebase.service';
+import { ToastService } from 'src/app/shared/services/toast.service';
+import { GoogleLoginComponent } from '../google-login.component';
 
 @Component({
-  selector: 'app-candidate-login',
+  selector: 'app-login',
   standalone: true,
   imports: [
     CommonModule,
@@ -21,10 +21,10 @@ import { ToastService } from '../../../../../../shared/services/toast.service';
     RouterModule,
     GoogleLoginComponent,
   ],
-  templateUrl: './candidate-login.component.html',
-  styleUrls: ['./candidate-login.component.css'],
+  templateUrl: './login.component.html',
+  styleUrls: ['./login.component.css'],
 })
-export class CandidateLoginComponent {
+export class LoginComponent {
   loginForm: FormGroup;
   showPassword = false;
   @Output() showRegister = new EventEmitter<void>();

@@ -2,17 +2,17 @@ import { Component, Output, EventEmitter } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { FirebaseService } from '../../../../../../shared/services/firebase.service';
-import { AuthService } from '../../auth.service';
+import { FirebaseService } from 'src/app/shared/services/firebase.service';
+import { AuthService } from '../auth.service';
 
 @Component({
-  selector: 'app-candidate-forgot-password',
+  selector: 'app-forgot-password',
   standalone: true, // Indica que el componente es standalone
   imports: [CommonModule, ReactiveFormsModule, RouterModule], // Importa los módulos necesarios
-  templateUrl: './candidate-forgot-password.component.html',
-  styleUrls: ['./candidate-forgot-password.component.css'],
+  templateUrl: './forgot-password.component.html',
+  styleUrls: ['./forgot-password.component.css'],
 })
-export class CandidateForgotPasswordComponent {
+export class ForgotPasswordComponent {
   forgotPasswordForm: FormGroup;
   @Output() showLogin = new EventEmitter<void>();
 

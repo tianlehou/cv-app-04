@@ -14,7 +14,7 @@ import {
   onValue,
 } from '@angular/fire/database';
 import { BehaviorSubject } from 'rxjs';
-import { AuthService } from 'src/app/pages/home/user-type-modal/auth/auth.service';
+import { AuthService } from 'src/app/pages/home/auth/auth.service';
 
 @Injectable({
   providedIn: 'root',

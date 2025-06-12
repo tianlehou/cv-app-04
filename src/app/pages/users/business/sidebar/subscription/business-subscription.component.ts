@@ -2,7 +2,7 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Database, set, ref, update } from '@angular/fire/database';
 import { ReferralService } from '../../../candidate/components/sidebar/refer/referral.service';
-import { AuthService } from 'src/app/pages/home/user-type-modal/auth/auth.service';
+import { AuthService } from 'src/app/pages/home/auth/auth.service';
 import { FirebaseService } from 'src/app/shared/services/firebase.service';
 import { ToastService } from 'src/app/shared/services/toast.service';
 import { BusinessComparisonTableComponent } from './comparison-table/business-comparison-table.component';

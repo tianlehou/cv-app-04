@@ -6,25 +6,30 @@ import {
   FormGroup,
   Validators,
 } from '@angular/forms';
-import { AuthService } from '../../auth.service';
-import { FirebaseService } from '../../../../../../shared/services/firebase.service';
+import { AuthService } from '../auth.service';
+import { FirebaseService } from 'src/app/shared/services/firebase.service';
 import { ReferralService } from 'src/app/pages/users/candidate/components/sidebar/refer/referral.service';
-import { ToastService } from '../../../../../../shared/services/toast.service';
+import { ToastService } from 'src/app/shared/services/toast.service';
 
 @Component({
-  selector: 'app-candidate-register',
+  selector: 'app-register',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
-  templateUrl: './candidate-register.component.html',
-  styleUrls: ['./candidate-register.component.css'],
+  templateUrl: './register.component.html',
+  styleUrls: ['./register.component.css'],
 })
-export class CandidateRegisterComponent implements OnInit {
+export class RegisterComponent implements OnInit {
   @Output() showLogin = new EventEmitter<void>();
   registerForm: FormGroup;
   showPassword = false;
   showConfirmPassword = false;
   referredBy: string | null = null;
   isLoading = false;
+
+  userTypes = [
+    { value: 'candidate', label: 'Candidato (Busco trabajo)' },
+    { value: 'business', label: 'Empresa (Busco talento)' }
+  ];
 
   // Lista de países
   countries = [
@@ -50,7 +55,7 @@ export class CandidateRegisterComponent implements OnInit {
     { code: 'Rep. Dominicana', name: 'República Dominicana' },
     { code: 'Uruguay', name: 'Uruguay' },
     { code: 'Venezuela', name: 'Venezuela' },
-    
+
     // Agrega más países según sea necesario
   ];
 
@@ -66,6 +71,7 @@ export class CandidateRegisterComponent implements OnInit {
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(8)]],
       confirmPassword: ['', Validators.required],
+      userType: ['candidate', Validators.required],
       country: ['', Validators.required],
       referredBy: [''],
     });
@@ -103,7 +109,7 @@ export class CandidateRegisterComponent implements OnInit {
   async register() {
     if (this.registerForm.valid) {
       this.isLoading = true;
-      const { fullName, email, password, confirmPassword, country, referredBy } =
+      const { fullName, email, password, confirmPassword, country, referredBy, userType } =
         this.registerForm.value;
 
       // Validar coincidencia de contraseñas
@@ -139,9 +145,9 @@ export class CandidateRegisterComponent implements OnInit {
             email: email,
             enabled: true,
             ...(referredBy && { referredBy: this.firebaseService.formatEmailKey(referredBy) }),
-            role: 'candidate',
+            role: userType,
             userId: userId,
-            subscriptionStatus: 0.00, // Estado inicial de suscripción
+            subscriptionStatus: 0.00,
           },
         });
 

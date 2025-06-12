@@ -1,21 +1,12 @@
-<app-style-control
-  (styleChange)="onStyleChange($event)"
-  [componentName]="'ats-001'"
-  *ngIf="!readOnly">
+<app-style-control (styleChange)="onStyleChange($event)" [componentName]="'ats-001'" *ngIf="!readOnly">
 </app-style-control>
 <app-download-pdf containerId="pdf-content"></app-download-pdf>
 
 <div class="responsive-wrapper" [style.font-size]="currentStyles.fontSize">
-  <div
-    class="cv-container"
-    id="pdf-content"
-    [style.padding]="currentStyles.padding"
-    [style.font-family]="currentStyles.fontFamily"
-  >
+  <div class="cv-container" id="pdf-content" [style.padding]="currentStyles.padding"
+    [style.font-family]="currentStyles.fontFamily">
     <div class="section">
-      <app-ats-personal-data
-        [currentUser]="currentUser"
-      ></app-ats-personal-data>
+      <app-ats-personal-data [currentUser]="currentUser"></app-ats-personal-data>
     </div>
 
     <div class="section">

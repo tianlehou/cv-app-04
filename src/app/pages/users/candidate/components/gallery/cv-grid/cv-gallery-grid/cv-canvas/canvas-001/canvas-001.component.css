@@ -11,14 +11,14 @@
   display: flex;
   width: 780px;
   min-height: 1130px;
-  margin: 0 auto;
-  padding: 4rem;
+  margin: 0;
+  padding: 0;
   font-family: "Calibri", "Helvetica", sans-serif;
   background-color: white;
   border: 1px solid #e0e0e0;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
   position: relative;
-  transition: all 3s ease;
+  /* Eliminar sombras y efectos residuales */
+  box-shadow: none !important;
 }
 
 .cv-container::before,

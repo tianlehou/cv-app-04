@@ -1,61 +1,37 @@
 <ng-container *ngIf="showHomeSection">
   <section #home>
     <button class="custom-button"
-      (click)="openUserTypeModal()"
-    >Ingresar</button>
+      (click)="showAuthLogin()"
+      >Ingresar
+    </button>
 
     <app-hero></app-hero>
     <app-features></app-features>
     <app-testimonials></app-testimonials>
     <app-call-to-action
-      (userTypeSelected)="onUserTypeSelected($event)"
+      (registerClicked)="showAuthRegister()"
     ></app-call-to-action>
     <app-footer></app-footer>
-
-    <app-user-type-modal
-      (userTypeSelected)="onUserTypeSelected($event)"
-    ></app-user-type-modal>
   </section>
 </ng-container>
 
-<ng-container *ngIf="showCandidateSection">
+<ng-container *ngIf="showAuthSection">
   <section #candidate>
-    <app-candidate-login 
-      *ngIf="currentCandidateView === 'login'"
+    <app-login
+      *ngIf="currentAuthView === 'login'"
       (showRegister)="showRegister()"
       (showForgotPassword)="showForgotPassword()"
-      (showHome)="showHomeSection = true; showCandidateSection = false"
-    ></app-candidate-login>
-    
-    <app-candidate-register 
-      *ngIf="currentCandidateView === 'register'"
-      (showLogin)="showLogin()"
-    ></app-candidate-register>
-    
-    <app-candidate-forgot-password 
-      *ngIf="currentCandidateView === 'forgot-password'"
-      (showLogin)="showLogin()"
-    ></app-candidate-forgot-password>
-  </section>
-</ng-container>
+      (showHome)="showHomeSection = true; showAuthSection = false"
+    ></app-login>
 
-<ng-container *ngIf="showBusinessSection">
-  <section #business>
-    <app-business-login 
-      *ngIf="currentBusinessView === 'business-login'"
-      (showBusinessRegister)="showBusinessRegister()"
-      (showBusinessForgotPassword)="showBusinessForgotPassword()"
-      (showHome)="showHomeSection = true; showBusinessSection = false"
-    ></app-business-login>
-    
-    <app-business-register 
-      *ngIf="currentBusinessView === 'business-register'"
-      (showBusinessLogin)="showBusinessLogin()"
-    ></app-business-register>
-    
-    <app-business-forgot-password 
-      *ngIf="currentBusinessView === 'business-forgot-password'"
-      (showBusinessLogin)="showBusinessLogin()"
-    ></app-business-forgot-password>
+    <app-register
+      *ngIf="currentAuthView === 'register'"
+      (showLogin)="showLogin()"
+    ></app-register>
+
+    <app-forgot-password
+      *ngIf="currentAuthView === 'forgot-password'"
+      (showLogin)="showLogin()"
+    ></app-forgot-password>
   </section>
 </ng-container>

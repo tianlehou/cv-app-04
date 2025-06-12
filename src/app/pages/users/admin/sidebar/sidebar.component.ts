@@ -2,7 +2,7 @@
 import { Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { AuthService } from 'src/app/pages/home/user-type-modal/auth/auth.service';
+import { AuthService } from 'src/app/pages/home/auth/auth.service';
 
 @Component({
   selector: 'app-sidebar',

@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FirebaseService } from '../../../shared/services/firebase.service';
 import { AdminDashboardComponent } from './dashboard/dashboard.component';
 import { SidebarComponent } from './sidebar/sidebar.component';
-import { AuthService } from '../../home/user-type-modal/auth/auth.service';
+import { AuthService } from '../../home/auth/auth.service';
 
 @Component({
   selector: 'app-main',

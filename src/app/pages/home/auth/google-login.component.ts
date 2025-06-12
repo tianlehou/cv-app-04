@@ -2,7 +2,8 @@
 import { Component, Output, EventEmitter } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { Auth, signInWithPopup, GoogleAuthProvider } from '@angular/fire/auth';
-import { FirebaseService } from '../../../../../../shared/services/firebase.service';
+import { FirebaseService } from 'src/app/shared/services/firebase.service';
+
 
 @Component({
   selector: 'app-google-login',

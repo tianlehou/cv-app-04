@@ -3,13 +3,9 @@
     <h2>¿Listo para transformar tu empresa?</h2>
     <p>Regístrate ahora y conecta con el mejor talento.</p>
     <button 
-      class="btn btn-light btn-lg" 
-      (click)="openUserTypeModal()">
-      ¡Regístrate ahora!
+      class="btn btn-light btn-lg"
+      (click)="onRegisterClick()"
+      >¡Regístrate ahora!
     </button>
   </div>
 </section>
-
-<app-user-type-modal
-  (userTypeSelected)="onUserTypeSelected($event)"
-></app-user-type-modal>
