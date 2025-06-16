@@ -33,8 +33,8 @@ export class BusinessSubscriptionComponent implements OnInit {
     {
       id: 'mensualidad',
       nombre: 'Plan Estrella',
-      precio: 9.99,
-      duracion: 90,
+      precio: 29.99,
+      duracion: 30,
       beneficios: [
         'Todas las plantillas premium',
         '5 CVs generados por mes',
@@ -46,7 +46,7 @@ export class BusinessSubscriptionComponent implements OnInit {
     {
       id: 'anualidad',
       nombre: 'Plan Premium',
-      precio: 29.99,
+      precio: 299.99,
       duracion: 365,
       beneficios: [
         'Todas las plantillas premium + exclusivas',

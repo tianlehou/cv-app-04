@@ -19,6 +19,7 @@
   position: relative;
   /* Eliminar sombras y efectos residuales */
   box-shadow: none !important;
+  transition: all 3s ease;
 }
 
 .cv-container::before,
@@ -45,7 +46,8 @@
   padding-bottom: 5px;
 }
 
-.sidebar p, .sidebar ul {
+.sidebar p,
+.sidebar ul {
   margin: 10px 0;
   font-size: 0.95em;
 }

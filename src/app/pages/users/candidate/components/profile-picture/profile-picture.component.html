@@ -1,7 +1,8 @@
-<div class="profile-container">
+<div class="profile-container" (contextmenu)="false" draggable="false" ondrop="return false;">
   <img 
-    [src]="profilePictureUrl || 'assets/images/default-profile.png'" 
+    [src]="profilePictureUrl || 'src/assets/default-profile.jpg'" 
     class="profile-picture-preview" 
     alt="Foto de perfil"
+    draggable="false"
   />
 </div>

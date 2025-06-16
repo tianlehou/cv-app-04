@@ -17,6 +17,7 @@
   position: relative;
   /* Eliminar sombras y efectos residuales */
   box-shadow: none !important;
+  transition: all 3s ease;
 }
 
 /* Eliminar pseudo-elementos si existen */

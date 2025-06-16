@@ -1,14 +1,11 @@
-<app-style-control
-  (styleChange)="onStyleChange($event)"
-  [componentName]="'canvas-001'"
-  *ngIf="!readOnly">
+<app-style-control (styleChange)="onStyleChange($event)" [componentName]="'canvas-001'" *ngIf="!readOnly">
 </app-style-control>
 <app-download-pdf containerId="pdf-content"></app-download-pdf>
 
 <div class="responsive-wrapper" [style.font-size]="currentStyles.fontSize">
   <div class="cv-container" id="pdf-content" [style.padding]="currentStyles.padding"
     [style.font-family]="currentStyles.fontFamily">
-
+    
     <aside class="sidebar bar">
       <app-canvas-001-profile-picture [currentUser]="currentUser"></app-canvas-001-profile-picture>
 
@@ -16,7 +13,7 @@
         <h2>Contacto</h2>
         <app-canvas-001-personal-data [currentUser]="currentUser" displayMode="sidebar"></app-canvas-001-personal-data>
       </section>
-      
+
       <section class="skills">
         <h2>Habilidades</h2>
         <app-canvas-001-skills [currentUser]="currentUser"></app-canvas-001-skills>

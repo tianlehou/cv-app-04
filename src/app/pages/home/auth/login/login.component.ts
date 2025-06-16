@@ -76,31 +76,40 @@ export class LoginComponent {
       this.toastService.show('Por favor completa el formulario correctamente', 'error', 5000);
       return;
     }
-  
+
     const { email, password } = this.loginForm.value;
-  
+
     try {
       await this.authService.loginWithEmail(email, password);
       const userData = await this.firebaseService.getCurrentUser();
-      
+
       if (!userData) throw new Error('No se obtuvieron datos');
-  
+
       const fullName = userData?.profileData?.personalData?.fullName || 'Usuario';
       const userRole = userData?.metadata?.role || 'candidate';
-  
+
       await this.firebaseService.updateUserData(email, {
         metadata: { lastLogin: new Date().toISOString() }
       });
-  
+
       this.toastService.show(`Bienvenido ${fullName}`, 'success', 5000);
-      
-      this.router.navigateByUrl('/', {skipLocationChange: true}).then(() => {
-        this.router.navigate([userRole === 'admin' ? '/main' : '/candidate']);
+
+      // Redirección basada en el rol del usuario
+      let redirectRoute = '/candidate'; // Ruta por defecto
+
+      if (userRole === 'admin') {
+        redirectRoute = '/main';
+      } else if (userRole === 'business') {
+        redirectRoute = '/business';
+      }
+
+      this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
+        this.router.navigate([redirectRoute]);
       });
-  
+
     } catch (error: any) {
       console.error('Error during login:', error);
-      
+
       const errorMessages: { [key: string]: string } = {
         'auth/invalid-email': 'Correo inválido',
         'auth/user-disabled': 'Cuenta deshabilitada',
@@ -108,7 +117,7 @@ export class LoginComponent {
         'auth/wrong-password': 'Contraseña incorrecta',
         'auth/too-many-requests': 'Demasiados intentos. Intenta más tarde',
       };
-  
+
       const message = errorMessages[error.code] || 'Error al iniciar sesión';
       this.toastService.show(message, 'error', 5000);
     }

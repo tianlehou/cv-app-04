@@ -20,7 +20,7 @@
 <!-- Videos Grid -->
 <div class="gallery-grid">
     <div *ngFor="let video of state.userVideos; trackBy: trackByVideoUrl" class="video-item"
-        [ngClass]="{'expanded': state.expandedStates[video]}">
+        [ngClass]="{'expanded': state.expandedStates[video]}" (contextmenu)="false">
         <video controls controlsList="nodownload" #videoPlayer>
             <source [src]="video" type="video/mp4">
             Tu navegador no soporta videos.
