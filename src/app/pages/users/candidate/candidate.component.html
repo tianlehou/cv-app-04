@@ -2,7 +2,7 @@
   <div class="profile-header" *ngIf="!readOnly">
     <app-sidebar
       [activeSection]="activeSection"
-      (homeClicked)="showHome()"
+      (profileClicked)="showProfile()"
       (subscriptionClicked)="toggleSubscription()"
       (referClicked)="toggleRefer()"
     ></app-sidebar>
@@ -10,7 +10,7 @@
 
   <section
     id="candidate"
-    *ngIf="activeSection === 'home'"
+    *ngIf="activeSection === 'profile'"
     (contextmenu)="(false)"
   >
     <div class="profile-container">

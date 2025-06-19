@@ -35,46 +35,46 @@ export class CandidateComponent implements OnInit {
   @Input() readOnly: boolean = false;
   userRole: string | null = null;
   showSubscription = false;
-  activeSection: 'home' | 'subscription' | 'refer' = 'home';
+  activeSection: 'profile' | 'subscription' | 'refer' = 'profile';
 
   constructor(
     private firebaseService: FirebaseService,
     private authService: AuthService,
-  ) {}
+  ) { }
 
   async ngOnInit(): Promise<void> {
     if (!this.readOnly) {
       // Only initialize user data if not in readOnly mode
       this.authService
-      .isAuthenticated()
-      .subscribe(async (isAuthenticated) => {
-        if (isAuthenticated) {
-          this.currentUser = await this.firebaseService.getCurrentUser();
-          console.log('Usuario autenticado:', this.currentUser.email);
+        .isAuthenticated()
+        .subscribe(async (isAuthenticated) => {
+          if (isAuthenticated) {
+            this.currentUser = await this.firebaseService.getCurrentUser();
+            console.log('Usuario autenticado:', this.currentUser.email);
 
-          // Obtener el rol usando firebase.service
-          const userEmailKey = this.firebaseService.formatEmailKey(this.currentUser.email);
-          const userData = await this.firebaseService.getUserData(userEmailKey);
-          this.userRole = userData?.metadata?.role || null;
-          console.log('Rol del usuario:', this.userRole);
-        } else {
-          console.error('Usuario no autenticado.');
-        }
-      });
+            // Obtener el rol usando firebase.service
+            const userEmailKey = this.firebaseService.formatEmailKey(this.currentUser.email);
+            const userData = await this.firebaseService.getUserData(userEmailKey);
+            this.userRole = userData?.metadata?.role || null;
+            console.log('Rol del usuario:', this.userRole);
+          } else {
+            console.error('Usuario no autenticado.');
+          }
+        });
     }
   }
 
   toggleRefer() {
-    this.activeSection = this.activeSection === 'refer' ? 'home' : 'refer';
+    this.activeSection = this.activeSection === 'refer' ? 'profile' : 'refer';
   }
 
   toggleSubscription() {
     this.showSubscription = !this.showSubscription;
-    this.activeSection = this.showSubscription ? 'subscription' : 'home';
+    this.activeSection = this.showSubscription ? 'subscription' : 'profile';
   }
 
-  showHome() {
+  showProfile() {
     this.showSubscription = false;
-    this.activeSection = 'home';
+    this.activeSection = 'profile';
   }
 }

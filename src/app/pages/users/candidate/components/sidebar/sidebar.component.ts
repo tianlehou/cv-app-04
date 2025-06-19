@@ -2,7 +2,7 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { FirebaseService } from '../../../../../shared/services/firebase.service';
+import { FirebaseService } from 'src/app/shared/services/firebase.service';
 import { AuthService } from 'src/app/pages/home/auth/auth.service';
 
 @Component({
@@ -14,8 +14,8 @@ import { AuthService } from 'src/app/pages/home/auth/auth.service';
 })
 export class SidebarComponent {
   isMenuOpen = false;
-  @Input() activeSection: 'home' | 'subscription' | 'refer' = 'home'; 
-  @Output() homeClicked = new EventEmitter<void>();
+  @Input() activeSection: 'profile' | 'subscription' | 'refer' = 'profile'; 
+  @Output() profileClicked = new EventEmitter<void>();
   @Output() subscriptionClicked = new EventEmitter<void>();
   @Output() referClicked = new EventEmitter<void>();
 
@@ -32,10 +32,10 @@ export class SidebarComponent {
     event.stopPropagation();
   }
 
-  onHomeClick() {
-    this.homeClicked.emit();
-    this.toggleMenu(); // Opcional: cerrar el menú después de hacer clic
-  }
+onProfileClick() {
+  this.profileClicked.emit();
+  this.toggleMenu();
+}
 
   onSubscriptionClick() {
     this.subscriptionClicked.emit();

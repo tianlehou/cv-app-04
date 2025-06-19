@@ -3,11 +3,7 @@
 <span class="sidebar-icon" (click)="toggleMenu()">☰</span>
 
 <!-- Menú lateral -->
-<div
-  class="sidebar-menu"
-  [class.open]="isMenuOpen"
-  (click)="preventClose($event)"
->
+<div class="sidebar-menu" [class.open]="isMenuOpen" (click)="preventClose($event)">
   <!-- Ícono de cierre -->
   <div class="sidebar-header">
     <h2 class="sidebar-title">menu</h2>
@@ -15,34 +11,23 @@
   </div>
   <nav>
     <ul class="main-menu">
-      <li
-        [class.active]="activeSection === 'home'"
-        [class.disabled]="activeSection === 'home'"
-      >
-        <a (click)="activeSection !== 'home' ? onHomeClick() : null">
+      <li [class.active]="activeSection === 'profile'" [class.disabled]="activeSection === 'profile'">
+        <a (click)="activeSection !== 'profile' ? onProfileClick() : null">
           <i class="fas fa-home" style="color: var(--clr-blue)"></i>
-          <span>Inicio</span>
+          <span>Perfil</span>
         </a>
       </li>
 
-      <li
-        [class.active]="activeSection === 'subscription'"
-        [class.disabled]="activeSection === 'subscription'"
-      >
-        <a
-          (click)="
+      <li [class.active]="activeSection === 'subscription'" [class.disabled]="activeSection === 'subscription'">
+        <a (click)="
             activeSection !== 'subscription' ? onSubscriptionClick() : null
-          "
-        >
+          ">
           <i class="fas fa-id-card-alt" style="color: var(--clr-green)"></i>
           <span>Suscripciones</span>
         </a>
       </li>
 
-      <li
-        [class.active]="activeSection === 'refer'"
-        [class.disabled]="activeSection === 'refer'"
-      >
+      <li [class.active]="activeSection === 'refer'" [class.disabled]="activeSection === 'refer'">
         <a (click)="activeSection !== 'refer' ? onReferClick() : null">
           <i class="fas fa-user-plus" style="color: var(--clr-purple)"></i>
           <span>Referir</span>
