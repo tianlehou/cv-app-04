@@ -14,7 +14,8 @@ import { AuthService } from 'src/app/pages/home/auth/auth.service';
 })
 export class SidebarComponent {
   isMenuOpen = false;
-  @Input() activeSection: 'profile' | 'subscription' | 'refer' = 'profile'; 
+  @Input() activeSection: 'home' | 'profile' | 'subscription' | 'refer' = 'home';
+  @Output() homeClicked = new EventEmitter<void>();
   @Output() profileClicked = new EventEmitter<void>();
   @Output() subscriptionClicked = new EventEmitter<void>();
   @Output() referClicked = new EventEmitter<void>();
@@ -22,7 +23,7 @@ export class SidebarComponent {
   constructor(
     private firebaseService: FirebaseService,
     private authService: AuthService,
-  ) {}
+  ) { }
 
   toggleMenu() {
     this.isMenuOpen = !this.isMenuOpen;
@@ -32,10 +33,15 @@ export class SidebarComponent {
     event.stopPropagation();
   }
 
-onProfileClick() {
-  this.profileClicked.emit();
-  this.toggleMenu();
-}
+  onHomeClick() {
+    this.homeClicked.emit();
+    this.toggleMenu();
+  }
+
+  onProfileClick() {
+    this.profileClicked.emit();
+    this.toggleMenu();
+  }
 
   onSubscriptionClick() {
     this.subscriptionClicked.emit();

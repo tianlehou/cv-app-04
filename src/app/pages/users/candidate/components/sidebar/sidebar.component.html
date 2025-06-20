@@ -11,9 +11,17 @@
   </div>
   <nav>
     <ul class="main-menu">
+
+      <li [class.active]="activeSection === 'home'" [class.disabled]="activeSection === 'home'">
+        <a (click)="activeSection !== 'home' ? onHomeClick() : null">
+          <i class="fas fa-home" style="color: var(--clr-orange)"></i>
+          <span>Inicio</span>
+        </a>
+      </li>
+
       <li [class.active]="activeSection === 'profile'" [class.disabled]="activeSection === 'profile'">
         <a (click)="activeSection !== 'profile' ? onProfileClick() : null">
-          <i class="fas fa-home" style="color: var(--clr-blue)"></i>
+          <i class="fas fa-id-card-alt" style="color: var(--clr-blue)"></i>
           <span>Perfil</span>
         </a>
       </li>

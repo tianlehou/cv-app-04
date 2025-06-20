@@ -13,6 +13,7 @@ import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { SubscriptionComponent } from './components/sidebar/subscription/subscription.component';
 import { ReferComponent } from './components/sidebar/refer/refer.component';
 import { AuthService } from '../../home/auth/auth.service';
+import { HomeComponent } from './components/sidebar/home/home.component';
 
 @Component({
   selector: 'app-candidate',
@@ -24,6 +25,7 @@ import { AuthService } from '../../home/auth/auth.service';
     ProfilePictureComponent,
     PersonalDataComponent,
     GalleryComponent,
+    HomeComponent,
     SubscriptionComponent,
     ReferComponent,
   ],
@@ -35,7 +37,7 @@ export class CandidateComponent implements OnInit {
   @Input() readOnly: boolean = false;
   userRole: string | null = null;
   showSubscription = false;
-  activeSection: 'profile' | 'subscription' | 'refer' = 'profile';
+  activeSection: 'home' | 'profile' | 'subscription' | 'refer' = 'home';
 
   constructor(
     private firebaseService: FirebaseService,
@@ -64,6 +66,16 @@ export class CandidateComponent implements OnInit {
     }
   }
 
+  showHome() {
+    this.showSubscription = false;
+    this.activeSection = 'home';
+  }
+
+  showProfile() {
+    this.showSubscription = false;
+    this.activeSection = 'profile';
+  }
+
   toggleRefer() {
     this.activeSection = this.activeSection === 'refer' ? 'profile' : 'refer';
   }
@@ -71,10 +83,5 @@ export class CandidateComponent implements OnInit {
   toggleSubscription() {
     this.showSubscription = !this.showSubscription;
     this.activeSection = this.showSubscription ? 'subscription' : 'profile';
-  }
-
-  showProfile() {
-    this.showSubscription = false;
-    this.activeSection = 'profile';
   }
 }

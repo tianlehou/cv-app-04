@@ -2,11 +2,16 @@
   <div class="profile-header" *ngIf="!readOnly">
     <app-sidebar
       [activeSection]="activeSection"
+      (homeClicked)="showHome()"
       (profileClicked)="showProfile()"
       (subscriptionClicked)="toggleSubscription()"
       (referClicked)="toggleRefer()"
     ></app-sidebar>
   </div>
+
+  <section id="home" *ngIf="activeSection === 'home'">
+    <app-home></app-home>
+  </section>
 
   <section
     id="candidate"
