@@ -21,7 +21,7 @@
 
       <li [class.active]="activeSection === 'profile'" [class.disabled]="activeSection === 'profile'">
         <a (click)="activeSection !== 'profile' ? onProfileClick() : null">
-          <i class="fas fa-id-card-alt" style="color: var(--clr-blue)"></i>
+          <i class="fas fa-user" style="color: var(--clr-blue)"></i>
           <span>Perfil</span>
         </a>
       </li>
@@ -30,14 +30,14 @@
         <a (click)="
             activeSection !== 'subscription' ? onSubscriptionClick() : null
           ">
-          <i class="fas fa-id-card-alt" style="color: var(--clr-green)"></i>
+          <i class="fas fa-credit-card" style="color: var(--clr-green)"></i>
           <span>Suscripciones</span>
         </a>
       </li>
 
       <li [class.active]="activeSection === 'refer'" [class.disabled]="activeSection === 'refer'">
         <a (click)="activeSection !== 'refer' ? onReferClick() : null">
-          <i class="fas fa-user-plus" style="color: var(--clr-purple)"></i>
+          <i class="fas fa-share-alt" style="color: var(--clr-purple)"></i>
           <span>Referir</span>
         </a>
       </li>

@@ -4,11 +4,12 @@
         <div class="container">
             <nav>
                 <div class="logo">Talento<span>Visual</span></div>
+                <!-- Cambia esta parte del nav-links -->
                 <div class="nav-links">
-                    <a href="#features">Beneficios</a>
-                    <a href="#how-it-works">Cómo funciona</a>
-                    <a href="#testimonials">Testimonios</a>
-                    <a href="#" class="btn">Regístrate gratis</a>
+                    <a (click)="scrollTo('features')">Beneficios</a>
+                    <a (click)="scrollTo('how-it-works')">Cómo funciona</a>
+                    <a (click)="scrollTo('testimonials')">Testimonios</a>
+                    <a class="btn" (click)="scrollTo('register')">Regístrate gratis</a>
                 </div>
             </nav>
         </div>
@@ -37,28 +38,28 @@
             <div class="features-grid">
                 <div class="feature-card">
                     <div class="feature-icon">
-                        <i class="fas fa-camera"></i>
+                        <ion-icon name="camera-outline"></ion-icon>
                     </div>
                     <h3>Portafolio visual</h3>
                     <p>Sube fotos y videos de tu trabajo real. Muestra tus habilidades en acción, no solo en papel.</p>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon">
-                        <i class="fas fa-bolt"></i>
+                        <ion-icon name="flash-outline"></ion-icon>
                     </div>
                     <h3>Algoritmo inteligente</h3>
                     <p>Conectamos tu perfil con empleadores que buscan exactamente tus habilidades.</p>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon">
-                        <i class="fas fa-clock"></i>
+                        <ion-icon name="time-outline"></ion-icon>
                     </div>
                     <h3>Ahorra tiempo</h3>
                     <p>Sin gastar en pasajes, filas o currículums impresos. Todo se hace en línea, desde tu casa.</p>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon">
-                        <i class="fas fa-globe"></i>
+                        <ion-icon name="globe-outline"></ion-icon>
                     </div>
                     <h3>Visibilidad global</h3>
                     <p>Accede a oportunidades laborales locales e internacionales sin moverte de tu ciudad.</p>
@@ -109,23 +110,23 @@
                 </tr>
                 <tr>
                     <td>Muestras tus habilidades</td>
-                    <td><i class="fas fa-check check"></i></td>
-                    <td><i class="fas fa-times cross"></i></td>
+                    <td><ion-icon name="checkmark-circle" class="check"></ion-icon></td>
+                    <td><ion-icon name="close-circle" class="cross"></ion-icon></td>
                 </tr>
                 <tr>
                     <td>Te encuentran empresas</td>
-                    <td><i class="fas fa-check check"></i></td>
-                    <td><i class="fas fa-times cross"></i></td>
+                    <td><ion-icon name="checkmark-circle" class="check"></ion-icon></td>
+                    <td><ion-icon name="close-circle" class="cross"></ion-icon></td>
                 </tr>
                 <tr>
                     <td>Sin gastar en pasajes</td>
-                    <td><i class="fas fa-check check"></i></td>
-                    <td><i class="fas fa-times cross"></i></td>
+                    <td><ion-icon name="checkmark-circle" class="check"></ion-icon></td>
+                    <td><ion-icon name="close-circle" class="cross"></ion-icon></td>
                 </tr>
                 <tr>
                     <td>Respuestas rápidas</td>
-                    <td><i class="fas fa-check check"></i></td>
-                    <td><i class="fas fa-times cross"></i></td>
+                    <td><ion-icon name="checkmark-circle" class="check"></ion-icon></td>
+                    <td><ion-icon name="close-circle" class="cross"></ion-icon></td>
                 </tr>
             </table>
         </div>
@@ -199,10 +200,10 @@
                     <h3>TalentoVisual</h3>
                     <p>La plataforma que conecta talento con oportunidades mediante el poder de lo visual.</p>
                     <div class="social-links">
-                        <a href="#"><i class="fab fa-facebook-f"></i></a>
-                        <a href="#"><i class="fab fa-twitter"></i></a>
-                        <a href="#"><i class="fab fa-instagram"></i></a>
-                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#"><ion-icon name="logo-facebook"></ion-icon></a>
+                        <a href="#"><ion-icon name="logo-twitter"></ion-icon></a>
+                        <a href="#"><ion-icon name="logo-instagram"></ion-icon></a>
+                        <a href="#"><ion-icon name="logo-linkedin"></ion-icon></a>
                     </div>
                 </div>
                 <div class="footer-column">
@@ -225,8 +226,8 @@
                 <div class="footer-column">
                     <h3>Contacto</h3>
                     <ul>
-                        <li><i class="fas fa-envelope"></i> hola&#64;talentovisual.com</li>
-                        <li><i class="fas fa-phone"></i> +1 234 567 890</li>
+                        <li><ion-icon name="mail-outline"></ion-icon> hola&#64;talentovisual.com</li>
+                        <li><ion-icon name="call-outline"></ion-icon> +1 234 567 890</li>
                     </ul>
                 </div>
             </div>
