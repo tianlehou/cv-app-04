@@ -1,0 +1,14 @@
+<section class="testimonials" id="testimonials">
+    <div class="container">
+        <div class="section-title">
+            <h2>Historias de éxito</h2>
+            <p>Lo que dicen profesionales como tú que encontraron trabajo con TalentoVisual</p>
+        </div>
+        <div class="testimonial-grid">
+            <div class="testimonial-card" *ngFor="let testimonial of testimonials">
+                <p class="testimonial-text">{{testimonial.text}}</p>
+                <p class="testimonial-author">{{testimonial.author}}, {{testimonial.role}}</p>
+            </div>
+        </div>
+    </div>
+</section>

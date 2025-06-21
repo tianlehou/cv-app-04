@@ -1,0 +1,32 @@
+<section class="comparison">
+    <div class="container">
+        <div class="section-title">
+            <h2>TalentoVisual vs. Métodos tradicionales</h2>
+            <p>La diferencia es abismal cuando muestras lo que realmente sabes hacer</p>
+        </div>
+        <div class="comparison-table-container">
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>Con TalentoVisual</th>
+                        <th>Método tradicional</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let item of comparisonData">
+                        <td>{{item.feature}}</td>
+                        <td>
+                            <ion-icon *ngIf="item.withUs" name="checkmark-circle" class="check"></ion-icon>
+                            <ion-icon *ngIf="!item.withUs" name="close-circle" class="cross"></ion-icon>
+                        </td>
+                        <td>
+                            <ion-icon *ngIf="item.traditional" name="checkmark-circle" class="check"></ion-icon>
+                            <ion-icon *ngIf="!item.traditional" name="close-circle" class="cross"></ion-icon>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>

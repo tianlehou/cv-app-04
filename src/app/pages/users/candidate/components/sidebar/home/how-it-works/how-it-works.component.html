@@ -1,0 +1,15 @@
+<section class="how-it-works" id="how-it-works">
+    <div class="container">
+        <div class="section-title">
+            <h2>¿Cómo funciona?</h2>
+            <p>Sigue estos 3 simples pasos para comenzar a recibir ofertas de trabajo</p>
+        </div>
+        <div class="steps">
+            <div class="step" *ngFor="let step of steps">
+                <div class="step-number">{{step.number}}</div>
+                <h3>{{step.title}}</h3>
+                <p>{{step.description}}</p>
+            </div>
+        </div>
+    </div>
+</section>
