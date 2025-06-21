@@ -10,7 +10,7 @@
   </div>
 
   <section id="home" *ngIf="activeSection === 'home'">
-    <app-home></app-home>
+    <app-home (startNow)="showProfile()"></app-home>
   </section>
 
   <section

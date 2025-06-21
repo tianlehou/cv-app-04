@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 import { HeaderComponent } from './header/header.component';
 import { HeroSectionComponent } from './hero-section/hero-section.component';
 import { FeaturesSectionComponent } from './features-section/features-section.component';
@@ -27,5 +27,9 @@ import { FooterSectionComponent } from './footer-section/footer-section.componen
   styleUrl: './home.component.css'
 })
 export class HomeComponent {
-  // El componente principal ahora delega la funcionalidad a los componentes hijos
+  @Output() startNow = new EventEmitter<void>();
+
+  onHeaderStartNow(): void {
+    this.startNow.emit();
+  }
 }

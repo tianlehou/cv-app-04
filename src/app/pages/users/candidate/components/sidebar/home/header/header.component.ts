@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 
 @Component({
   selector: 'app-header',
@@ -7,6 +7,8 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./header.component.css']
 })
 export class HeaderComponent implements OnInit {
+  @Output() startNow = new EventEmitter<void>();
+
   constructor() { }
 
   ngOnInit(): void {
@@ -26,5 +28,9 @@ export class HeaderComponent implements OnInit {
       navLinks.classList.toggle('active');
       hamburger.classList.toggle('active');
     }
+  }
+
+  onStartNow(): void {
+    this.startNow.emit();
   }
 }

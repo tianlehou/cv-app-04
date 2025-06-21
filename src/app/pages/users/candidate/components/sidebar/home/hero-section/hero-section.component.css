@@ -1,22 +1,27 @@
 .hero {
-  padding: 8rem 0 5rem;
+  /* min-height: 100vh; */
+  display: flex;
+  align-items: center;
+  justify-content: center;
   background: linear-gradient(135deg, #f8f9ff 0%, #f0f2ff 100%);
   position: relative;
   overflow: hidden;
+  text-align: center;
 }
 
 .hero .container {
   position: relative;
   z-index: 2;
-  max-width: 1200px;
+  max-width: 1000px;
+  width: 100%;
   margin: 0 auto;
-  padding: 0 1.5rem;
+  padding: 2rem;
 }
 
 .hero h1 {
-  font-size: 3.2rem;
+  font-size: 2rem;
   color: #1a1a1a;
-  margin-bottom: 1.5rem;
+  margin: 0 auto 1.5rem;
   line-height: 1.2;
   font-weight: 800;
 }
@@ -24,7 +29,6 @@
 .hero p {
   font-size: 1.25rem;
   color: #4a5568;
-  max-width: 600px;
   margin-bottom: 2.5rem;
   line-height: 1.6;
 }
@@ -33,6 +37,8 @@
   display: flex;
   gap: 1rem;
   flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 2rem;
 }
 
 .btn {
@@ -70,12 +76,11 @@
 /* Responsive styles */
 @media (max-width: 768px) {
   .hero {
-    padding: 6rem 0 4rem;
     text-align: center;
   }
   
   .hero h1 {
-    font-size: 2.5rem;
+    font-size: 1.8rem;
   }
   
   .hero p {
