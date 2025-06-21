@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -6,7 +6,12 @@ import { CommonModule } from '@angular/common';
   standalone: true,
   imports: [CommonModule],
   templateUrl: './hero-section.component.html',
-  styleUrl: './hero-section.component.css',
+  styleUrls: ['./hero-section.component.css'],
 })
 export class HeroSectionComponent {
+  @Output() startNow = new EventEmitter<void>();
+
+  onStartNow(): void {
+    this.startNow.emit();
+  }
 }
