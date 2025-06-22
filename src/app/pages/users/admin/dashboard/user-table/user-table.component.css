@@ -70,8 +70,8 @@
 }
 
 /* Ajusta el ancho de la columna Accion/Estado */
-.user-table th:nth-child(7),
-.user-table td:nth-child(7) {
+.user-table th:nth-child(4),
+.user-table td:nth-child(4) {
   width: 200px;
 }
 

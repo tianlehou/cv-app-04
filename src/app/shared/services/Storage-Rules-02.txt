@@ -1,0 +1,26 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+  
+    // regla para profile-picture
+    match /cv-app/users/{userEmailKey}/profile-pictures/{allPaths=**} {
+      allow read: if true;
+      allow write, delete: if request.auth != null 
+          && request.auth.token.email.matches(userEmailKey.replace('_', '.'));
+    }
+    
+    // regla para gallery-images
+    match /cv-app/users/{userEmailKey}/gallery-images/{allPaths=**} {
+      allow read: if true;
+      allow write, delete: if request.auth != null 
+          && request.auth.token.email.matches(userEmailKey.replace('_', '.'));
+    }
+    
+    // regla para gallery-videos
+    match /cv-app/users/{userEmailKey}/gallery-videos/{allPaths=**} {
+      allow read: if true;
+      allow write, delete: if request.auth != null 
+          && request.auth.token.email.matches(userEmailKey.replace('_', '.'));
+    }
+  }
+}

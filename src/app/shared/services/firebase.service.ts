@@ -60,11 +60,11 @@ export class FirebaseService {
     const indexSnapshot = await get(indexRef);
 
     if (indexSnapshot.exists()) {
-      const userKeys = Object.keys(indexSnapshot.val());
+      const userEmailKeys = Object.keys(indexSnapshot.val());
 
       // 2. Obtener datos completos de cada usuario
-      for (const userKey of userKeys) {
-        const userRef = ref(this.db, `cv-app/users/${userKey}`);
+      for (const userEmailKey of userEmailKeys) {
+        const userRef = ref(this.db, `cv-app/users/${userEmailKey}`);
         const userSnapshot = await get(userRef);
         if (userSnapshot.exists()) {
           users.push(userSnapshot.val());
@@ -76,7 +76,7 @@ export class FirebaseService {
   }
 
   async initializeUserData(email: string, userData: any): Promise<void> {
-    const userKey = this.formatEmailKey(email);
+    const userEmailKey = this.formatEmailKey(email);
     const userId = userData.metadata?.userId || this.generateUserId();
     const countryCode = userData.metadata?.country || 'PA'; // Default
 
@@ -87,31 +87,31 @@ export class FirebaseService {
     userData.metadata.userId = userId;
 
     // 1. Crear usuario en ubicación principal
-    await set(ref(this.db, `cv-app/users/${userKey}`), userData);
+    await set(ref(this.db, `cv-app/users/${userEmailKey}`), userData);
 
     // 2. Crear índice por país
     await set(
-      ref(this.db, `cv-app/countriesIndex/${countryCode}/${userKey}`),
+      ref(this.db, `cv-app/countriesIndex/${countryCode}/${userEmailKey}`),
       true
     );
 
     // 3. Crear índice userId-to-email
     await set(
       ref(this.db, `cv-app/userIndex/userId-to-emailKey/${userId}`),
-      userKey
+      userEmailKey
     );
   }
 
   async updateUserCountry(email: string, newCountryCode: string): Promise<void> {
-    const userKey = this.formatEmailKey(email);
+    const userEmailKey = this.formatEmailKey(email);
 
     // 1. Obtener el país actual
-    const userRef = ref(this.db, `cv-app/users/${userKey}/metadata/country`);
+    const userRef = ref(this.db, `cv-app/users/${userEmailKey}/metadata/country`);
     const snapshot = await get(userRef);
     const currentCountry = snapshot.val();
 
     // 2. Actualizar el país en metadata
-    await update(ref(this.db, `cv-app/users/${userKey}/metadata`), {
+    await update(ref(this.db, `cv-app/users/${userEmailKey}/metadata`), {
       country: newCountryCode
     });
 
@@ -119,13 +119,13 @@ export class FirebaseService {
     if (currentCountry) {
       // Eliminar del índice anterior
       await set(
-        ref(this.db, `cv-app/countriesIndex/${currentCountry}/${userKey}`),
+        ref(this.db, `cv-app/countriesIndex/${currentCountry}/${userEmailKey}`),
         null
       );
     }
     // Agregar al nuevo índice
     await set(
-      ref(this.db, `cv-app/countriesIndex/${newCountryCode}/${userKey}`),
+      ref(this.db, `cv-app/countriesIndex/${newCountryCode}/${userEmailKey}`),
       true
     );
   }
@@ -270,6 +270,7 @@ export class FirebaseService {
         createdAt?: string;
         email: string;
         enabled: boolean;
+        isEditor: boolean;
         lastLogin?: string;
         lastUpdated?: string;
         referredBy?: string;
