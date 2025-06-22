@@ -14,4 +14,11 @@ export class HeroSectionComponent {
   onStartNow(): void {
     this.startNow.emit();
   }
+
+  openExamplesModal() {
+    const modal = document.getElementById('candidateExamplesModal');
+    if (modal) {
+      modal.style.display = 'flex';
+    }
+  }
 }

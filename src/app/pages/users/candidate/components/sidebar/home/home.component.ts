@@ -8,6 +8,7 @@ import { TestimonialsSectionComponent } from './testimonials-section/testimonial
 import { CallToActionComponent } from './call-to-action/call-to-action.component';
 import { ComparisonSectionComponent } from './comparison-section/comparison-section.component';
 import { FooterSectionComponent } from './footer-section/footer-section.component';
+import { CandidateExamplesModalComponent } from './hero-section/candidate-examples-modal/candidate-examples-modal.component';
 
 @Component({
   selector: 'app-home',
@@ -18,6 +19,7 @@ import { FooterSectionComponent } from './footer-section/footer-section.componen
     HeroSectionComponent,
     FeaturesSectionComponent,
     HowItWorksComponent,
+    CandidateExamplesModalComponent,
     TestimonialsSectionComponent,
     CallToActionComponent,
     ComparisonSectionComponent,
