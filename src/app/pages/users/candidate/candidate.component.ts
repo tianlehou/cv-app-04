@@ -1,19 +1,19 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { FirebaseService } from '../../../shared/services/firebase.service';
+import { AuthService } from '../../home/auth/auth.service';
+import { FirebaseService } from 'src/app/shared/services/firebase.service';
 
-// Components
+// Profile Components
 import { ProfilePictureComponent } from './components/profile-picture/profile-picture.component';
 import { PersonalDataComponent } from './components/personal-data/personal-data.component';
 import { GalleryComponent } from './components/gallery/gallery.component';
 
 // Others components
 import { SidebarComponent } from './components/sidebar/sidebar.component';
+import { HomeComponent } from './components/sidebar/home/home.component';
 import { SubscriptionComponent } from './components/sidebar/subscription/subscription.component';
 import { ReferComponent } from './components/sidebar/refer/refer.component';
-import { AuthService } from '../../home/auth/auth.service';
-import { HomeComponent } from './components/sidebar/home/home.component';
 
 @Component({
   selector: 'app-candidate',
@@ -42,10 +42,13 @@ export class CandidateComponent implements OnInit {
   constructor(
     private firebaseService: FirebaseService,
     private authService: AuthService,
-  ) { }
+  ) { 
+  }
 
   async ngOnInit(): Promise<void> {
-    if (!this.readOnly) {
+    if (this.readOnly) {
+      this.activeSection = 'profile';
+    } else {
       // Only initialize user data if not in readOnly mode
       this.authService
         .isAuthenticated()
