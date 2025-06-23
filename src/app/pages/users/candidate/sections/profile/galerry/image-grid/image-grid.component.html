@@ -1,8 +1,16 @@
 <!-- image-grid.component.html -->
-<div class="top-row" *ngIf="!readOnly">
-    <app-image-info-bar [userImages]="userImages"></app-image-info-bar>
-    <app-image-upload-button [userEmailKey]="userEmailKey" (uploadComplete)="handleUploadComplete($event)">
+<div class="top-row" *ngIf="!readOnly || isExample">
+    <app-image-info-bar [userImages]="isExample ? [] : userImages"></app-image-info-bar>
+    <app-image-upload-button 
+        *ngIf="!readOnly"
+        [userEmailKey]="userEmailKey" 
+        [isExample]="isExample"
+        (uploadComplete)="handleUploadComplete($event)">
     </app-image-upload-button>
+    <div *ngIf="isExample" class="example-upload-placeholder">
+        <i class="fas fa-upload"></i>
+        <span>Subir imagen</span>
+    </div>
 </div>
 
 <div class="gallery-grid">

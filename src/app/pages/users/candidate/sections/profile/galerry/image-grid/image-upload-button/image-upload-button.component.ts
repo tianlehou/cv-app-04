@@ -14,6 +14,7 @@ import { ImageCompressionService } from 'src/app/shared/services/image-compressi
 })
 export class ImageUploadButtonComponent implements OnDestroy {
   @Input() userEmailKey: string | null = null;
+  @Input() isExample: boolean = false;
   @Output() uploadComplete = new EventEmitter<string>();
 
   // Propiedades de estado
@@ -29,6 +30,11 @@ export class ImageUploadButtonComponent implements OnDestroy {
   private imageCompression = inject(ImageCompressionService);
 
   async onFileSelected(event: Event): Promise<void> {
+    if (this.isExample) {
+      this.toast.show('Esta es una vista de ejemplo. Inicia sesión para subir imágenes.', 'info');
+      return;
+    }
+
     const input = event.target as HTMLInputElement;
     if (!input.files?.length) return;
 
@@ -46,6 +52,9 @@ export class ImageUploadButtonComponent implements OnDestroy {
     } catch (error) {
       console.error('Error al comprimir imagen:', error);
       this.toast.show('Error al procesar la imagen', 'error');
+      input.value = '';
+    } finally {
+      // Limpiar el input de archivo para permitir cargar el mismo archivo nuevamente
       input.value = '';
     }
   }

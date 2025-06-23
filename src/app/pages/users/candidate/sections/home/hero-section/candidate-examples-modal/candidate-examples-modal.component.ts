@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Output, Input } from '@angular/core';
 import { GalleryComponent } from '../../../profile/galerry/gallery.component';
 import { ProfilePictureComponent } from '../../../profile/profile-picture/profile-picture.component';
 import { PersonalDataComponent } from '../../../profile/personal-data/personal-data.component';
@@ -11,10 +11,10 @@ import { PersonalDataComponent } from '../../../profile/personal-data/personal-d
   styleUrls: ['./candidate-examples-modal.component.css']
 })
 export class CandidateExamplesModalComponent {
-  closeModal() {
-    const modal = document.getElementById('candidateExamplesModal');
-    if (modal) {
-      modal.style.display = 'none';
-    }
+  @Input() isVisible = false;
+  @Output() closeModal = new EventEmitter<void>();
+
+  onClose() {
+    this.closeModal.emit();
   }
 }

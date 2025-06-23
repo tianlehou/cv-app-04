@@ -25,10 +25,14 @@ export class GalleryComponent implements OnInit {
   @Input() currentUser: User | null = null;
   @Input() readOnly: boolean = false;
   @Input() isOwner: boolean = false;
+  @Input() isExample: boolean = false;
   userEmail: string | null = null;
 
   ngOnInit(): void {
-    if (this.currentUser && !this.readOnly) {
+    if (this.isExample) {
+      // En modo ejemplo, mostrar todo sin restricciones
+      this.readOnly = true;
+    } else if (this.currentUser && !this.readOnly) {
       this.userEmail = this.currentUser.email?.replaceAll('.', '_') || null;
     }
   }

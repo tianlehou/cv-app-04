@@ -3,20 +3,43 @@
     </app-icon-rows>
 
     <div class="content-container">
-        @switch (activeView) {
-        @case ('image') {
-        <app-image-grid *ngIf="currentUser" [currentUser]="currentUser" [readOnly]="readOnly"></app-image-grid>
-        }
-        @case ('video') {
-        <app-video-grid *ngIf="currentUser" [currentUser]="currentUser" [readOnly]="readOnly"></app-video-grid>
-        }
-        @case ('cv') {
-        <app-cv-grid *ngIf="currentUser" 
-                    [currentUser]="currentUser" 
-                    [readOnly]="readOnly"
-                    [isOwner]="false">
-        </app-cv-grid>
-        }
+        @if (isExample) {
+            <!-- Modo ejemplo con cambio de vistas -->
+            @switch (activeView) {
+                @case ('image') {
+                    <app-image-grid 
+                        [currentUser]="null" 
+                        [readOnly]="true"
+                        [isExample]="isExample">
+                    </app-image-grid>
+                }
+                @case ('video') {
+                    <app-video-grid [currentUser]="null" [readOnly]="true"></app-video-grid>
+                }
+                @case ('cv') {
+                    <app-cv-grid [currentUser]="null" 
+                                [readOnly]="true"
+                                [isOwner]="false">
+                    </app-cv-grid>
+                }
+            }
+        } @else {
+            <!-- Modo normal -->
+            @switch (activeView) {
+                @case ('image') {
+                    <app-image-grid *ngIf="currentUser" [currentUser]="currentUser" [readOnly]="readOnly"></app-image-grid>
+                }
+                @case ('video') {
+                    <app-video-grid *ngIf="currentUser" [currentUser]="currentUser" [readOnly]="readOnly"></app-video-grid>
+                }
+                @case ('cv') {
+                    <app-cv-grid *ngIf="currentUser" 
+                                [currentUser]="currentUser" 
+                                [readOnly]="readOnly"
+                                [isOwner]="false">
+                    </app-cv-grid>
+                }
+            }
         }
     </div>
 </div>

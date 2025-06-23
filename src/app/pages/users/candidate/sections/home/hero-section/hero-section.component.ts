@@ -1,24 +1,27 @@
 import { Component, EventEmitter, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { CandidateExamplesModalComponent } from './candidate-examples-modal/candidate-examples-modal.component';
 
 @Component({
   selector: 'app-hero-section',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, CandidateExamplesModalComponent],
   templateUrl: './hero-section.component.html',
   styleUrls: ['./hero-section.component.css'],
 })
 export class HeroSectionComponent {
   @Output() startNow = new EventEmitter<void>();
+  isModalVisible = false;
 
   onStartNow(): void {
     this.startNow.emit();
   }
 
-  openExamplesModal() {
-    const modal = document.getElementById('candidateExamplesModal');
-    if (modal) {
-      modal.style.display = 'flex';
-    }
+  showExamplesModal(): void {
+    this.isModalVisible = true;
+  }
+
+  onCloseModal(): void {
+    this.isModalVisible = false;
   }
 }
