@@ -6,20 +6,18 @@
   border: 1px solid var(--text-color);
   border-radius: 8px;
   background: var(--clr-white);
-  transition: all 0.3s ease-in-out;
+  transition: all 3s ease-in-out;
   animation:
-    slideInUp 1s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+    slideInRight 3s cubic-bezier(0.23, 1, 0.32, 1) forwards;
 }
 
-@keyframes slideInUp {
+@keyframes slideInRight {
   from {
     transform: translateX(100%);
-    opacity: 0;
   }
 
   to {
     transform: translateX(0);
-    opacity: 1;
   }
 }
 

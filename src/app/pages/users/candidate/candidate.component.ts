@@ -5,15 +5,15 @@ import { AuthService } from '../../home/auth/auth.service';
 import { FirebaseService } from 'src/app/shared/services/firebase.service';
 
 // Profile Components
-import { ProfilePictureComponent } from './components/profile-picture/profile-picture.component';
-import { PersonalDataComponent } from './components/personal-data/personal-data.component';
-import { GalleryComponent } from './components/gallery/gallery.component';
+import { ProfilePictureComponent } from './sections/profile/profile-picture/profile-picture.component';
+import { PersonalDataComponent } from './sections/profile/personal-data/personal-data.component';
+import { GalleryComponent } from './sections/profile/galerry/gallery.component';
 
 // Others components
-import { SidebarComponent } from './components/sidebar/sidebar.component';
-import { HomeComponent } from './components/sidebar/home/home.component';
-import { SubscriptionComponent } from './components/sidebar/subscription/subscription.component';
-import { ReferComponent } from './components/sidebar/refer/refer.component';
+import { SidebarComponent } from './sidebar/sidebar.component';
+import { HomeComponent } from './sections/home/home.component';
+import { SubscriptionComponent } from './sections/subscription/subscription.component';
+import { ReferComponent } from './sections/refer/refer.component';
 
 @Component({
   selector: 'app-candidate',

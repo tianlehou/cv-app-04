@@ -1,7 +1,7 @@
 import { Component, ChangeDetectorRef, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
-import { ReferralService } from '../users/candidate/components/sidebar/refer/referral.service';
+import { ReferralService } from '../users/candidate/sections/refer/referral.service';
 
 import { HeroComponent } from './components/hero/hero.component';
 import { FeaturesComponent } from './components/features/features.component';

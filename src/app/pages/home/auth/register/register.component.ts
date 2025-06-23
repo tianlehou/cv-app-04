@@ -8,7 +8,7 @@ import {
 } from '@angular/forms';
 import { AuthService } from '../auth.service';
 import { FirebaseService } from 'src/app/shared/services/firebase.service';
-import { ReferralService } from 'src/app/pages/users/candidate/components/sidebar/refer/referral.service';
+import { ReferralService } from 'src/app/pages/users/candidate/sections/refer/referral.service';
 import { ToastService } from 'src/app/shared/services/toast.service';
 
 @Component({
