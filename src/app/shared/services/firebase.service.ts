@@ -247,17 +247,22 @@ export class FirebaseService {
   async getUserData(emailKey: string): Promise<any> {
     return runInInjectionContext(this.injector, async () => {
       try {
-        const userRef = ref(this.db, `cv-app/users/${emailKey}`);
+        // Usar 'example_user' directamente si es el caso, sin formatear
+        const userPath = emailKey === 'example_user' ? 'example_user' : this.formatEmailKey(emailKey);
+        const userRef = ref(this.db, `cv-app/users/${userPath}`);
         const userSnapshot = await get(userRef);
 
         if (!userSnapshot.exists()) {
-          throw new Error('Datos de usuario no encontrados');
+          // Si no existe, devolver un objeto vacío en lugar de lanzar un error
+          // para manejar mejor los casos donde el usuario no tiene datos aún
+          return {};
         }
 
-        return userSnapshot.val();
+        return userSnapshot.val() || {};
       } catch (error) {
         console.error('Error al obtener datos:', error);
-        throw new Error('No tienes permisos para acceder a estos datos');
+        // Devolver un objeto vacío en caso de error para mejor manejo
+        return {};
       }
     });
   }
@@ -313,15 +318,17 @@ export class FirebaseService {
     }>
   ): Promise<void> {
     return runInInjectionContext(this.injector, async () => {
-      const userEmailKey = this.formatEmailKey(originalEmail);
+      // Usar 'example_user' si el email es 'example_user', de lo contrario formatear el email
+      const userEmailKey = originalEmail === 'example_user' ? 'example_user' : this.formatEmailKey(originalEmail);
+      const basePath = 'cv-app/users';
 
       try {
-        // Si hay cambio de userId, actualizar el índice
-        if (data.metadata?.userId) {
+        // Si hay cambio de userId, actualizar el índice (solo para usuarios reales)
+        if (data.metadata?.userId && userEmailKey !== 'example_user') {
           await set(
             ref(
               this.db,
-              `cv-app/userIndex/userId-to-emailKey/${data.metadata.userId}`
+              `${basePath}/userIndex/userId-to-emailKey/${data.metadata.userId}`
             ),
             userEmailKey
           );
@@ -335,7 +342,9 @@ export class FirebaseService {
               metadataUpdates[`metadata/${key}`] = value;
             }
           }
-          await update(ref(this.db, `cv-app/users/${userEmailKey}`), metadataUpdates);
+          if (Object.keys(metadataUpdates).length > 0) {
+            await update(ref(this.db, `${basePath}/${userEmailKey}`), metadataUpdates);
+          }
         }
 
         // Crear objeto de actualización para profileData
@@ -354,12 +363,14 @@ export class FirebaseService {
               }
             }
           }
-          await update(ref(this.db, `cv-app/users/${userEmailKey}`), profileDataUpdates);
+          if (Object.keys(profileDataUpdates).length > 0) {
+            await update(ref(this.db, `${basePath}/${userEmailKey}`), profileDataUpdates);
+          }
         }
 
         // Actualizar cv-styles si existe
         if (data['cv-styles']) {
-          await update(ref(this.db, `cv-app/users/${userEmailKey}`), {
+          await update(ref(this.db, `${basePath}/${userEmailKey}`), {
             'cv-styles': data['cv-styles']
           });
         }

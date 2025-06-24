@@ -1,6 +1,11 @@
 rules_version = '2';
 service firebase.storage {
   match /b/{bucket}/o {
+    // Regla para la carpeta de ejemplo (acceso público para lectura, autenticado para escritura)
+    match /cv-app/example/{allPaths=**} {
+      allow read: if true;  // Cualquiera puede leer
+      allow write: if request.auth != null;  // Solo usuarios autenticados pueden escribir
+    }
   
     // regla para profile-picture
     match /cv-app/users/{userEmailKey}/profile-pictures/{allPaths=**} {

@@ -24,11 +24,11 @@
 
 .upload-button.example-mode {
     opacity: 0.8;
-    cursor: not-allowed;
+    /* cursor: not-allowed; */
 }
 
 .upload-button.example-mode label {
-    cursor: not-allowed;
+    /* cursor: not-allowed; */
     opacity: 0.8;
 }
 

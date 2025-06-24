@@ -10,7 +10,8 @@
                     <app-image-grid 
                         [currentUser]="null" 
                         [readOnly]="true"
-                        [isExample]="isExample">
+                        [isExample]="isExample"
+                        [isEditor]="isEditor">
                     </app-image-grid>
                 }
                 @case ('video') {
@@ -27,7 +28,12 @@
             <!-- Modo normal -->
             @switch (activeView) {
                 @case ('image') {
-                    <app-image-grid *ngIf="currentUser" [currentUser]="currentUser" [readOnly]="readOnly"></app-image-grid>
+                    <app-image-grid 
+                        *ngIf="currentUser" 
+                        [currentUser]="currentUser" 
+                        [readOnly]="readOnly"
+                        [isEditor]="isEditor">
+                    </app-image-grid>
                 }
                 @case ('video') {
                     <app-video-grid *ngIf="currentUser" [currentUser]="currentUser" [readOnly]="readOnly"></app-video-grid>

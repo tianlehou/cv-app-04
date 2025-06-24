@@ -1,9 +1,11 @@
 .top-row {
     display: grid;
     grid-template-columns: 1fr auto;
+
     align-items: center;
     gap: 1rem;
     margin: 0 1rem;
+    min-height: 52px;
 }
 
 .gallery-grid {
@@ -13,28 +15,12 @@
     padding: 16px;
 }
 
-/* Estilos para el placeholder del botón de carga en modo ejemplo */
-.example-upload-placeholder {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    padding: 8px 16px;
-    border-radius: 8px;
-    background: var(--bg-yellow);
-    border: 2px dashed var(--clr-yellow);
-    color: var(--clr-yellow);
-    font-size: 0.9rem;
-    cursor: not-allowed;
-    opacity: 0.8;
-    transition: all 0.3s ease;
+/* Estilos para el botón de subida en modo ejemplo */
+app-image-upload-button {
+    display: block;
 }
 
-.example-upload-placeholder i {
-    font-size: 1rem;
-}
-
-/* Asegurar que el contenedor superior mantenga el espaciado correcto */
+/* Asegurar que el botón de subida se alinee a la derecha */
 .top-row {
-    min-height: 52px; /* Altura similar al botón original */
+    justify-content: space-between;
 }

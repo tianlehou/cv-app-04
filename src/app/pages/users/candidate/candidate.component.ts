@@ -36,6 +36,7 @@ export class CandidateComponent implements OnInit {
   @Input() currentUser: any = null;
   @Input() readOnly: boolean = false;
   userRole: string | null = null;
+  isEditor: boolean = false;
   showSubscription = false;
   activeSection: 'home' | 'profile' | 'subscription' | 'refer' = 'home';
 
@@ -61,7 +62,9 @@ export class CandidateComponent implements OnInit {
             const userEmailKey = this.firebaseService.formatEmailKey(this.currentUser.email);
             const userData = await this.firebaseService.getUserData(userEmailKey);
             this.userRole = userData?.metadata?.role || null;
+            this.isEditor = userData?.metadata?.isEditor === true;
             console.log('Rol del usuario:', this.userRole);
+            console.log('Es editor:', this.isEditor);
           } else {
             console.error('Usuario no autenticado.');
           }

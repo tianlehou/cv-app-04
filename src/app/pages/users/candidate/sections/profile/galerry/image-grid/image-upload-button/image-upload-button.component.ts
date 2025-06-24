@@ -15,6 +15,7 @@ import { ImageCompressionService } from 'src/app/shared/services/image-compressi
 export class ImageUploadButtonComponent implements OnDestroy {
   @Input() userEmailKey: string | null = null;
   @Input() isExample: boolean = false;
+  @Input() isEditor: boolean = false; // Recibir estado de editor
   @Output() uploadComplete = new EventEmitter<string>();
 
   // Propiedades de estado
@@ -30,10 +31,8 @@ export class ImageUploadButtonComponent implements OnDestroy {
   private imageCompression = inject(ImageCompressionService);
 
   async onFileSelected(event: Event): Promise<void> {
-    if (this.isExample) {
-      this.toast.show('Esta es una vista de ejemplo. Inicia sesión para subir imágenes.', 'info');
-      return;
-    }
+    // Permitir siempre la subida para pruebas
+    console.log('Subiendo archivo...');
 
     const input = event.target as HTMLInputElement;
     if (!input.files?.length) return;
@@ -60,7 +59,7 @@ export class ImageUploadButtonComponent implements OnDestroy {
   }
 
   private async uploadImage(): Promise<void> {
-    if (!this.selectedFile || !this.userEmailKey) return;
+    if (!this.selectedFile) return;
 
     this.showProgress = true;
     this.currentSnapshot = null;
@@ -68,7 +67,16 @@ export class ImageUploadButtonComponent implements OnDestroy {
     try {
       await runInInjectionContext(this.injector, async () => {
         const imageName = `gallery-image-${Date.now()}.${this.selectedFile!.name.split('.').pop()}`;
-        const storagePath = `cv-app/users/${this.userEmailKey}/gallery-images/${imageName}`;
+        
+        // Usar ruta diferente para modo ejemplo
+        let storagePath: string;
+        if (this.isExample) {
+          storagePath = `cv-app/example/gallery-images/${imageName}`;
+        } else {
+          if (!this.userEmailKey) return;
+          storagePath = `cv-app/users/${this.userEmailKey}/gallery-images/${imageName}`;
+        }
+        
         const storageRef = ref(this.storage, storagePath);
         const uploadTask = uploadBytesResumable(storageRef, this.selectedFile!);
 

@@ -26,6 +26,7 @@ export class GalleryComponent implements OnInit {
   @Input() readOnly: boolean = false;
   @Input() isOwner: boolean = false;
   @Input() isExample: boolean = false;
+  @Input() isEditor: boolean = false;
   userEmail: string | null = null;
 
   ngOnInit(): void {

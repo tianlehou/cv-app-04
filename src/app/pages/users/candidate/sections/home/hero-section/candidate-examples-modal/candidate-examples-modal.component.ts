@@ -12,6 +12,7 @@ import { PersonalDataComponent } from '../../../profile/personal-data/personal-d
 })
 export class CandidateExamplesModalComponent {
   @Input() isVisible = false;
+  @Input() isEditor: boolean = false;
   @Output() closeModal = new EventEmitter<void>();
 
   onClose() {

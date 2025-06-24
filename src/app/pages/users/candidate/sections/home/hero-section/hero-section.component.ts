@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, Output, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CandidateExamplesModalComponent } from './candidate-examples-modal/candidate-examples-modal.component';
 
@@ -10,6 +10,7 @@ import { CandidateExamplesModalComponent } from './candidate-examples-modal/cand
   styleUrls: ['./hero-section.component.css'],
 })
 export class HeroSectionComponent {
+  @Input() isEditor: boolean = false;
   @Output() startNow = new EventEmitter<void>();
   isModalVisible = false;
 
