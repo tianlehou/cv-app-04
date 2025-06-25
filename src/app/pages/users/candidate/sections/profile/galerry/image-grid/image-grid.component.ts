@@ -1,6 +1,5 @@
 import { Component, Input, ChangeDetectorRef, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { User } from '@angular/fire/auth';
 import { Database, ref, get, set } from '@angular/fire/database';
 import { FirebaseService } from 'src/app/shared/services/firebase.service';
 import { ToastService } from 'src/app/shared/services/toast.service';
@@ -50,45 +49,13 @@ export class ImageGridComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void { }
 
-  public async handleUploadComplete(imageUrl: string): Promise<void> {
+  public handleUploadComplete(imageUrl: string): void {
     if (this.readOnly) return;
-
-    try {
-      if (this.isExample) {
-        // En modo ejemplo, actualizar en 'cv-app/example'
-        const examplePath = 'cv-app/example';
-        const exampleRef = ref(this.database, examplePath);
-        
-        // Obtener datos actuales
-        const snapshot = await get(exampleRef);
-        const currentData = snapshot.exists() ? snapshot.val() : {};
-        const currentGalleryImages = Array.isArray(currentData.galleryImages) 
-          ? currentData.galleryImages 
-          : [];
-        
-        // Verificar si la imagen ya existe para evitar duplicados
-        if (!currentGalleryImages.includes(imageUrl)) {
-          // Actualizar en Firebase
-          await set(exampleRef, {
-            ...currentData,
-            galleryImages: [...currentGalleryImages, imageUrl]
-          });
-          
-          // Actualizar la lista local
-          this.userImages = this.sortImagesByDate([...currentGalleryImages, imageUrl]);
-          this.toast.show('Imagen de ejemplo guardada', 'info');
-        } else {
-          this.toast.show('La imagen ya existe en la galería', 'info');
-        }
-      } else {
-        // Modo normal: actualizar la lista local
-        await this.updateUserImages(imageUrl);
-        this.userImages = this.sortImagesByDate([...this.userImages, imageUrl]);
-      }
+    
+    // Actualizar la lista local con la nueva imagen
+    if (!this.userImages.includes(imageUrl)) {
+      this.userImages = this.sortImagesByDate([...this.userImages, imageUrl]);
       this.cdr.detectChanges();
-    } catch (error) {
-      console.error('Error al guardar la imagen:', error);
-      this.toast.show('Error al guardar la imagen', 'error');
     }
   }
 
@@ -135,11 +102,7 @@ export class ImageGridComponent implements OnInit, OnDestroy {
     return email.replace(/\./g, '_');
   }
 
-  private getExampleUserKey(): string {
-    return 'example_user';
-  }
-
-  private async loadUserImages(addedImageUrl?: string): Promise<void> {
+  private async loadUserImages(): Promise<void> {
     try {
       if (this.isExample) {
         // En modo ejemplo, cargar desde la ruta de ejemplo
@@ -156,36 +119,26 @@ export class ImageGridComponent implements OnInit, OnDestroy {
         } else {
           this.userImages = [];
         }
-        
-        // Si se está agregando una nueva imagen, actualizar la lista local
-        if (addedImageUrl && !this.userImages.includes(addedImageUrl)) {
-          this.userImages = this.sortImagesByDate([...this.userImages, addedImageUrl]);
-        }
       } else if (this.userEmailKey) {
         // Modo normal: cargar imágenes del usuario
         const userData = await this.firebaseService.getUserData(this.userEmailKey);
         const multimediaData = userData?.profileData?.multimedia || {};
-        let images = multimediaData.galleryImages || [];
-
-        if (addedImageUrl && !images.includes(addedImageUrl)) {
-          images = [...images, addedImageUrl];
-        }
-
+        const images = multimediaData.galleryImages || [];
         this.userImages = this.sortImagesByDate(images);
       }
       this.cdr.detectChanges();
     } catch (error) {
-      console.error('Error loading images:', error);
+      console.error('Error cargando imágenes:', error);
       this.toast.show('Error cargando imágenes', 'error');
     }
   }
 
   private sortImagesByDate(images: string[]): string[] {
-    return images.sort((a, b) => {
+    return [...images].sort((a, b) => {
       const getTimestamp = (url: string) => {
         const filename = url.split('%2F').pop()?.split('?')[0] || '';
-        const timestampMatch = filename.match(/-(\d+)\./);
-        return timestampMatch ? parseInt(timestampMatch[1], 10) : 0;
+        const timestampMatch = filename.match(/-\d+\./);
+        return timestampMatch ? parseInt(timestampMatch[0].replace(/[^\d]/g, ''), 10) : 0;
       };
       return getTimestamp(b) - getTimestamp(a);
     });
@@ -201,35 +154,6 @@ export class ImageGridComponent implements OnInit, OnDestroy {
     } catch (error) {
       console.error('Error checking editor status:', error);
       this.isEditor = false;
-    }
-  }
-
-  private async updateUserImages(imageUrl: string): Promise<void> {
-    if (!this.userEmailKey || !this.currentUser?.email || this.readOnly) return;
-
-    try {
-      const currentData = await this.firebaseService.getUserData(this.userEmailKey);
-
-      const currentMultimedia = currentData?.profileData?.multimedia || {};
-      const currentGalleryImages = currentMultimedia.galleryImages || [];
-
-      const updatedData = {
-        profileData: {
-          ...(currentData?.profileData || {}),
-          multimedia: {
-            ...currentMultimedia,
-            galleryImages: [...currentGalleryImages, imageUrl]
-          }
-        }
-      };
-
-      await this.firebaseService.updateUserData(
-        this.currentUser.email,
-        updatedData
-      );
-    } catch (error) {
-      console.error('Error updating user images:', error);
-      this.toast.show('Error al actualizar las imágenes', 'error');
     }
   }
 }

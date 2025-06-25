@@ -1,9 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { Component, Output, EventEmitter, Input, inject, ChangeDetectorRef, NgZone, EnvironmentInjector, OnDestroy } from '@angular/core';
 import { Storage, ref, uploadBytesResumable, getDownloadURL } from '@angular/fire/storage';
+import { Database, ref as dbRef, set, get } from '@angular/fire/database';
 import { ToastService } from 'src/app/shared/services/toast.service';
 import { runInInjectionContext } from '@angular/core';
 import { ImageCompressionService } from 'src/app/shared/services/image-compression.service';
+import { FirebaseService } from 'src/app/shared/services/firebase.service';
 
 @Component({
   selector: 'app-image-upload-button',
@@ -15,7 +17,8 @@ import { ImageCompressionService } from 'src/app/shared/services/image-compressi
 export class ImageUploadButtonComponent implements OnDestroy {
   @Input() userEmailKey: string | null = null;
   @Input() isExample: boolean = false;
-  @Input() isEditor: boolean = false; // Recibir estado de editor
+  @Input() isEditor: boolean = false;
+  @Input() readOnly: boolean = false;
   @Output() uploadComplete = new EventEmitter<string>();
 
   // Propiedades de estado
@@ -25,10 +28,13 @@ export class ImageUploadButtonComponent implements OnDestroy {
 
   private injector = inject(EnvironmentInjector);
   private storage = inject(Storage);
+  private database = inject(Database);
+  private firebaseService = inject(FirebaseService);
   private toast = inject(ToastService);
   private cdr = inject(ChangeDetectorRef);
   private ngZone = inject(NgZone);
   private imageCompression = inject(ImageCompressionService);
+  private userImages: string[] = [];
 
   async onFileSelected(event: Event): Promise<void> {
     // Permitir siempre la subida para pruebas
@@ -101,6 +107,13 @@ export class ImageUploadButtonComponent implements OnDestroy {
     await runInInjectionContext(this.injector, async () => {
       try {
         const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+        
+        if (this.isExample) {
+          await this.updateExampleGallery(downloadURL);
+        } else if (this.userEmailKey) {
+          await this.updateUserGallery(downloadURL);
+        }
+        
         this.ngZone.run(() => {
           this.toast.show('Imagen subida exitosamente', 'success');
           this.uploadComplete.emit(downloadURL);
@@ -123,6 +136,61 @@ export class ImageUploadButtonComponent implements OnDestroy {
 
   private resetUploadState(): void {
     this.selectedFile = null;
+  }
+
+  private async updateExampleGallery(imageUrl: string): Promise<void> {
+    const examplePath = 'cv-app/example';
+    const exampleRef = dbRef(this.database, examplePath);
+    
+    // Obtener datos actuales
+    const snapshot = await get(exampleRef);
+    const currentData = snapshot.exists() ? snapshot.val() : {};
+    const currentGalleryImages = Array.isArray(currentData.galleryImages) 
+      ? currentData.galleryImages 
+      : [];
+    
+    // Verificar si la imagen ya existe para evitar duplicados
+    if (!currentGalleryImages.includes(imageUrl)) {
+      // Actualizar en Firebase
+      await set(exampleRef, {
+        ...currentData,
+        galleryImages: [...currentGalleryImages, imageUrl]
+      });
+    } else {
+      this.toast.show('La imagen ya existe en la galería', 'info');
+    }
+  }
+
+  private async updateUserGallery(imageUrl: string): Promise<void> {
+    if (!this.userEmailKey) return;
+    
+    try {
+      const userData = await this.firebaseService.getUserData(this.userEmailKey);
+      const profileData = userData?.profileData || {};
+      const multimediaData = profileData.multimedia || {};
+      const currentGalleryImages = Array.isArray(multimediaData.galleryImages) 
+        ? multimediaData.galleryImages 
+        : [];
+      
+      if (!currentGalleryImages.includes(imageUrl)) {
+        const updatedMultimedia = {
+          ...multimediaData,
+          galleryImages: [...currentGalleryImages, imageUrl]
+        };
+        
+        await this.firebaseService.updateUserData(this.userEmailKey, {
+          profileData: {
+            ...profileData,
+            multimedia: updatedMultimedia
+          }
+        });
+      } else {
+        this.toast.show('La imagen ya existe en tu galería', 'info');
+      }
+    } catch (error) {
+      console.error('Error al actualizar la galería del usuario:', error);
+      throw error;
+    }
   }
 
   ngOnDestroy(): void {
