@@ -14,9 +14,15 @@
 
 <div class="gallery-grid">
     <!-- Mostrar imágenes si existen -->
-    <app-image-item-container *ngFor="let image of userImages" [imageUrl]="image" [currentUser]="currentUser"
-        [userEmailKey]="userEmailKey" [isOwner]="!readOnly"
-        (imageDeleted)="onImageDeleted($event)"></app-image-item-container>
+    <app-image-item-container 
+        *ngFor="let image of userImages" 
+        [imageUrl]="image" 
+        [currentUser]="currentUser"
+        [userEmailKey]="userEmailKey" 
+        [isOwner]="!readOnly"
+        [isExample]="isExample"
+        (imageDeleted)="handleImageDeleted($event)">
+    </app-image-item-container>
 
     <!-- Mostrar mensaje cuando no hay imágenes -->
     <app-image-empty-gallery-message *ngIf="userImages.length === 0"></app-image-empty-gallery-message>

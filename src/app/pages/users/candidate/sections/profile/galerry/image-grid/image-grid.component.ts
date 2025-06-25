@@ -49,9 +49,13 @@ export class ImageGridComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void { }
 
+  private formatEmailKey(email: string): string {
+    return email.replace(/\./g, '_');
+  }
+
   public handleUploadComplete(imageUrl: string): void {
     if (this.readOnly) return;
-    
+
     // Actualizar la lista local con la nueva imagen
     if (!this.userImages.includes(imageUrl)) {
       this.userImages = this.sortImagesByDate([...this.userImages, imageUrl]);
@@ -59,47 +63,10 @@ export class ImageGridComponent implements OnInit, OnDestroy {
     }
   }
 
-  public async onImageDeleted(deletedImageUrl: string): Promise<void> {
-    if (this.readOnly) return; // No permitir borrados en modo lectura
-    
-    try {
-      if (this.isExample) {
-        // En modo ejemplo, actualizar en 'cv-app/example'
-        const examplePath = 'cv-app/example';
-        const exampleRef = ref(this.database, examplePath);
-        
-        // Obtener datos actuales
-        const snapshot = await get(exampleRef);
-        const currentData = snapshot.exists() ? snapshot.val() : {};
-        const currentGalleryImages = Array.isArray(currentData.galleryImages) 
-          ? currentData.galleryImages 
-          : [];
-        
-        // Filtrar la imagen eliminada
-        const updatedGallery = currentGalleryImages.filter((img: string) => img !== deletedImageUrl);
-        
-        // Actualizar en Firebase
-        await set(exampleRef, {
-          ...currentData,
-          galleryImages: updatedGallery
-        });
-        
-        // Actualizar la lista local
-        this.userImages = updatedGallery;
-        this.toast.show('Imagen de ejemplo eliminada', 'info');
-      } else {
-        // Modo normal: actualizar la lista local
-        this.userImages = this.userImages.filter((img) => img !== deletedImageUrl);
-      }
-      this.cdr.detectChanges();
-    } catch (error) {
-      console.error('Error al eliminar la imagen:', error);
-      this.toast.show('Error al eliminar la imagen', 'error');
-    }
-  }
-
-  private formatEmailKey(email: string): string {
-    return email.replace(/\./g, '_');
+  public handleImageDeleted(deletedImageUrl: string): void {
+    // Actualizar la lista local eliminando la imagen
+    this.userImages = this.userImages.filter(img => img !== deletedImageUrl);
+    this.cdr.detectChanges();
   }
 
   private async loadUserImages(): Promise<void> {
@@ -109,11 +76,11 @@ export class ImageGridComponent implements OnInit, OnDestroy {
         const examplePath = 'cv-app/example';
         const exampleRef = ref(this.database, examplePath);
         const snapshot = await get(exampleRef);
-        
+
         if (snapshot.exists()) {
           const exampleData = snapshot.val();
-          const exampleImages = Array.isArray(exampleData?.galleryImages) 
-            ? exampleData.galleryImages 
+          const exampleImages = Array.isArray(exampleData?.galleryImages)
+            ? exampleData.galleryImages
             : [];
           this.userImages = this.sortImagesByDate(exampleImages);
         } else {
@@ -146,7 +113,7 @@ export class ImageGridComponent implements OnInit, OnDestroy {
 
   private async checkEditorStatus(): Promise<void> {
     if (!this.userEmailKey) return;
-    
+
     try {
       const userData = await this.firebaseService.getUserData(this.userEmailKey);
       this.isEditor = userData?.isEditor === true;
