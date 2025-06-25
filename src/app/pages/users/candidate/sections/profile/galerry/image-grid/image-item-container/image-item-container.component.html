@@ -1,8 +1,14 @@
 <div class="image-item" (contextmenu)="false" draggable="false" ondrop="return false;">
-    <img [src]="imageUrl" alt="User uploaded image" draggable="false">
-    <app-watermark [initialPosition]="'center'"></app-watermark>
-    <app-image-delete-button 
-      *ngIf="isOwner"
-      (deleteConfirmed)="handleDeleteConfirmed(imageUrl)">
-    </app-image-delete-button>
+    <div class="image-item">
+        <img [src]="imageUrl" alt="Gallery image">
+        <app-watermark *ngIf="!isOwner"></app-watermark>
+        <app-image-delete-button 
+          *ngIf="isOwner"
+          [imageUrl]="imageUrl"
+          [currentUser]="currentUser"
+          [userEmailKey]="userEmailKey"
+          [isExample]="isExample"
+          (imageDeleted)="onImageDeleted($event)">
+        </app-image-delete-button>
+    </div>
 </div>
