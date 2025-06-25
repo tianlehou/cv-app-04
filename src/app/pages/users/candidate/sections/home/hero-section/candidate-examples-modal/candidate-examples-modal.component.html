@@ -3,9 +3,14 @@
     <span class="close-btn" (click)="onClose()">&times;</span>
     <div class="modal-body">
       <h1>Ejemplos</h1>
-      <app-profile-picture></app-profile-picture>
-      <app-personal-data></app-personal-data>
-      <app-gallery [isExample]="true" [isEditor]="isEditor"></app-gallery>
+      <app-profile-picture [currentUser]="null"></app-profile-picture>
+      <app-personal-data [currentUser]="null"></app-personal-data>
+      <app-gallery 
+        [currentUser]="null"
+        [isExample]="true" 
+        [isEditor]="isEditor"
+        [readOnly]="!isEditor">
+      </app-gallery>
     </div>
   </div>
 </div>
