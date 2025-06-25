@@ -32,7 +32,7 @@ export class GalleryComponent implements OnInit {
   ngOnInit(): void {
     if (this.isExample) {
       // En modo ejemplo, mostrar todo sin restricciones
-      this.readOnly = true;
+      this.readOnly = !this.isEditor; // Usar readOnly basado en isEditor
     } else if (this.currentUser && !this.readOnly) {
       this.userEmail = this.currentUser.email?.replaceAll('.', '_') || null;
     }

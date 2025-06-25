@@ -9,13 +9,13 @@
                 @case ('image') {
                     <app-image-grid 
                         [currentUser]="null" 
-                        [readOnly]="true"
+                        [readOnly]="!isEditor"
                         [isExample]="isExample"
                         [isEditor]="isEditor">
                     </app-image-grid>
                 }
                 @case ('video') {
-                    <app-video-grid [currentUser]="null" [readOnly]="true"></app-video-grid>
+                    <app-video-grid [currentUser]="null" [readOnly]="!isEditor"></app-video-grid>
                 }
                 @case ('cv') {
                     <app-cv-grid [currentUser]="null" 

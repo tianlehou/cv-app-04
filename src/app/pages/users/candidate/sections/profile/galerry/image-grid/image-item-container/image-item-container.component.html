@@ -1,14 +1,32 @@
 <div class="image-item" (contextmenu)="false" draggable="false" ondrop="return false;">
     <div class="image-item">
-        <img [src]="imageUrl" alt="Gallery image">
-        <app-watermark *ngIf="!isOwner"></app-watermark>
+        <!-- Mostrar mensaje de carga -->
+        <div *ngIf="!imageLoaded && !imageError" class="image-loading">
+            Cargando imagen...
+        </div>
+        
+        <!-- Mostrar mensaje de error si falla la carga -->
+        <div *ngIf="imageError" class="image-loading error">
+            Error al cargar la imagen
+        </div>
+        
+        <!-- Imagen con manejadores de carga y error -->
+        <img 
+            [src]="imageUrl" 
+            alt="Gallery image"
+            (load)="onImageLoad()"
+            (error)="onImageError()"
+            [style.display]="imageLoaded && !imageError ? 'block' : 'none'">
+            
+        <app-watermark *ngIf="!isOwner && imageLoaded && !imageError"></app-watermark>
+        
         <app-image-delete-button 
-          *ngIf="isOwner"
-          [imageUrl]="imageUrl"
-          [currentUser]="currentUser"
-          [userEmailKey]="userEmailKey"
-          [isExample]="isExample"
-          (imageDeleted)="onImageDeleted($event)">
+            *ngIf="isOwner && imageLoaded && !imageError"
+            [imageUrl]="imageUrl"
+            [currentUser]="currentUser"
+            [userEmailKey]="userEmailKey"
+            [isExample]="isExample"
+            (imageDeleted)="onImageDeleted($event)">
         </app-image-delete-button>
     </div>
 </div>

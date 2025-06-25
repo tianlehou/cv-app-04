@@ -20,6 +20,26 @@ export class ImageItemContainerComponent {
   @Input() isOwner: boolean = false;
   @Input() isExample: boolean = false;
 
+  // Estados para el manejo de carga de imágenes
+  imageLoaded: boolean = false;
+  imageError: boolean = false;
+
+  constructor() {
+  }
+
+  // Se ejecuta cuando la imagen se carga correctamente
+  onImageLoad(): void {
+    this.imageLoaded = true;
+    this.imageError = false;
+  }
+
+  // Se ejecuta cuando hay un error al cargar la imagen
+  onImageError(): void {
+    console.error('Error al cargar la imagen:', this.imageUrl);
+    this.imageError = true;
+    this.imageLoaded = false;
+  }
+
   onImageDeleted(imageUrl: string): void {
     this.imageDeleted.emit(imageUrl);
   }

@@ -139,25 +139,34 @@ export class ImageUploadButtonComponent implements OnDestroy {
   }
 
   private async updateExampleGallery(imageUrl: string): Promise<void> {
-    const examplePath = 'cv-app/example';
+    const examplePath = 'cv-app/example/gallery-images';
     const exampleRef = dbRef(this.database, examplePath);
     
-    // Obtener datos actuales
-    const snapshot = await get(exampleRef);
-    const currentData = snapshot.exists() ? snapshot.val() : {};
-    const currentGalleryImages = Array.isArray(currentData.galleryImages) 
-      ? currentData.galleryImages 
-      : [];
-    
-    // Verificar si la imagen ya existe para evitar duplicados
-    if (!currentGalleryImages.includes(imageUrl)) {
-      // Actualizar en Firebase
-      await set(exampleRef, {
-        ...currentData,
-        galleryImages: [...currentGalleryImages, imageUrl]
-      });
-    } else {
-      this.toast.show('La imagen ya existe en la galería', 'info');
+    try {
+      // Obtener el array actual de imágenes
+      const snapshot = await get(exampleRef);
+      let currentImages: string[] = [];
+      
+      if (snapshot.exists()) {
+        const data = snapshot.val();
+        // Si es un array, usarlo directamente, si no, crear un array con el valor
+        currentImages = Array.isArray(data) ? [...data] : [];
+      }
+      
+      // Verificar si la imagen ya existe para evitar duplicados
+      if (!currentImages.includes(imageUrl)) {
+        // Agregar la nueva imagen al array
+        currentImages.push(imageUrl);
+        
+        // Actualizar en Firebase
+        await set(exampleRef, currentImages);
+      } else {
+        console.log('La imagen ya existe en la galería de ejemplo');
+        this.toast.show('La imagen ya existe en la galería de ejemplo', 'info');
+      }
+    } catch (error) {
+      console.error('Error al actualizar la galería de ejemplo:', error);
+      throw error;
     }
   }
 

@@ -37,13 +37,18 @@ export class ImageGridComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
-    if (this.currentUser?.email) {
+    if (this.isExample) {
+      this.loadUserImages();
+    } else if (this.currentUser?.email) {
+      console.log('Cargando en modo usuario normal');
       this.userEmailKey = this.formatEmailKey(this.currentUser.email);
       this.loadUserImages();
       // Solo verificar el estado de editor si no se proporcionó como input
       if (this.isEditor === undefined) {
         this.checkEditorStatus();
       }
+    } else {
+      console.warn('No se pudo inicializar: No hay usuario actual y no está en modo ejemplo');
     }
   }
 
@@ -54,12 +59,16 @@ export class ImageGridComponent implements OnInit, OnDestroy {
   }
 
   public handleUploadComplete(imageUrl: string): void {
-    if (this.readOnly) return;
+    if (this.readOnly) {
+      return;
+    }
 
     // Actualizar la lista local con la nueva imagen
     if (!this.userImages.includes(imageUrl)) {
       this.userImages = this.sortImagesByDate([...this.userImages, imageUrl]);
       this.cdr.detectChanges();
+    } else {
+      console.log('La imagen ya existe en la galería');
     }
   }
 
@@ -72,18 +81,21 @@ export class ImageGridComponent implements OnInit, OnDestroy {
   private async loadUserImages(): Promise<void> {
     try {
       if (this.isExample) {
-        // En modo ejemplo, cargar desde la ruta de ejemplo
-        const examplePath = 'cv-app/example';
+        const examplePath = 'cv-app/example/gallery-images';
         const exampleRef = ref(this.database, examplePath);
         const snapshot = await get(exampleRef);
 
         if (snapshot.exists()) {
-          const exampleData = snapshot.val();
-          const exampleImages = Array.isArray(exampleData?.galleryImages)
-            ? exampleData.galleryImages
-            : [];
-          this.userImages = this.sortImagesByDate(exampleImages);
+          const exampleImages = snapshot.val();
+
+          // Verificar si es un array, si no, convertirlo en un array
+          const imagesArray = Array.isArray(exampleImages)
+            ? exampleImages
+            : (exampleImages ? [exampleImages] : []);
+
+          this.userImages = this.sortImagesByDate(imagesArray);
         } else {
+          console.warn('No se encontraron imágenes de ejemplo en la ruta:', examplePath);
           this.userImages = [];
         }
       } else if (this.userEmailKey) {
@@ -101,14 +113,52 @@ export class ImageGridComponent implements OnInit, OnDestroy {
   }
 
   private sortImagesByDate(images: string[]): string[] {
-    return [...images].sort((a, b) => {
-      const getTimestamp = (url: string) => {
-        const filename = url.split('%2F').pop()?.split('?')[0] || '';
-        const timestampMatch = filename.match(/-\d+\./);
-        return timestampMatch ? parseInt(timestampMatch[0].replace(/[^\d]/g, ''), 10) : 0;
-      };
-      return getTimestamp(b) - getTimestamp(a);
-    });
+    if (!Array.isArray(images) || images.length === 0) {
+      console.log('No hay imágenes para ordenar');
+      return [];
+    }
+
+    try {
+      const sorted = [...images].sort((a, b) => {
+        const getTimestamp = (url: string): number => {
+          if (!url || typeof url !== 'string') {
+            console.warn('URL inválida:', url);
+            return 0;
+          }
+
+          // Extraer el nombre del archivo de la URL
+          let filename = '';
+          try {
+            // Intentar decodificar la URL en caso de que esté codificada
+            const decodedUrl = decodeURIComponent(url);
+            filename = decodedUrl.split('/').pop() || '';
+            // Eliminar parámetros de consulta si existen
+            filename = filename.split('?')[0];
+          } catch (e) {
+            console.warn('Error al decodificar URL:', url, e);
+            filename = url.split('/').pop() || '';
+            filename = filename.split('?')[0];
+          }
+
+          // Buscar timestamp en el formato -1234567890.ext
+          const timestampMatch = filename.match(/-\d+(?=\.\w+$)/);
+          if (timestampMatch) {
+            const timestamp = parseInt(timestampMatch[0].substring(1), 10);
+            return timestamp;
+          }
+
+          console.warn('No se encontró timestamp en:', filename);
+          return 0;
+        };
+
+        return getTimestamp(b) - getTimestamp(a);
+      });
+
+      return sorted;
+    } catch (error) {
+      console.error('Error al ordenar imágenes:', error);
+      return [...images]; // Devolver las imágenes sin ordenar en caso de error
+    }
   }
 
   private async checkEditorStatus(): Promise<void> {
