@@ -1,13 +1,12 @@
-import { Component, EventEmitter, Output, Input, inject, NgZone, ChangeDetectorRef } from '@angular/core';
+import { Component, EventEmitter, Output, Input, inject, NgZone } from '@angular/core';
+import { EnvironmentInjector, runInInjectionContext } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ConfirmationModalService } from 'src/app/shared/services/confirmation-modal.service';
-import { Storage, ref, deleteObject } from '@angular/fire/storage';
-import { FirebaseService } from 'src/app/shared/services/firebase.service';
-import { ToastService } from 'src/app/shared/services/toast.service';
 import { User } from '@angular/fire/auth';
-import { EnvironmentInjector } from '@angular/core';
-import { runInInjectionContext } from '@angular/core';
+import { Storage, ref, deleteObject } from '@angular/fire/storage';
 import { Database, ref as dbRef, get, set } from '@angular/fire/database';
+import { FirebaseService } from 'src/app/shared/services/firebase.service';
+import { ConfirmationModalService } from 'src/app/shared/services/confirmation-modal.service';
+import { ToastService } from 'src/app/shared/services/toast.service';
 
 @Component({
   selector: 'app-image-delete-button',
@@ -50,7 +49,7 @@ export class ImageDeleteButtonComponent {
   @Input() isExample: boolean = false;
   @Input() readOnly: boolean = false;
   @Output() imageDeleted = new EventEmitter<string>();
-  
+
   private storage = inject(Storage);
   private firebaseService = inject(FirebaseService);
   private toast = inject(ToastService);
@@ -58,11 +57,10 @@ export class ImageDeleteButtonComponent {
   private ngZone = inject(NgZone);
   private confirmationModalService = inject(ConfirmationModalService);
   private database = inject(Database);
-  private cdr = inject(ChangeDetectorRef);
 
   showDeleteModal(): void {
     if (!this.imageUrl) return;
-    
+
     this.confirmationModalService.show(
       {
         title: 'Eliminar Imagen',
@@ -71,60 +69,61 @@ export class ImageDeleteButtonComponent {
       () => this.deleteImage()
     );
   }
-  
+
   private async deleteImage(): Promise<void> {
     if (this.readOnly) return;
-    
+
     try {
       await runInInjectionContext(this.injector, async () => {
-        // Eliminar la imagen del Storage
-        await deleteObject(ref(this.storage, this.imageUrl));
-        
+        // 1. Primero, eliminar de la base de datos
         if (this.isExample) {
-          // En modo ejemplo, actualizar en 'cv-app/example'
-          const examplePath = 'cv-app/example';
+          // En modo ejemplo, actualizar en 'cv-app/example/gallery-images'
+          const examplePath = 'cv-app/example/gallery-images';
           const exampleRef = dbRef(this.database, examplePath);
-          
+
           // Obtener datos actuales
           const snapshot = await get(exampleRef);
-          const currentData = snapshot.exists() ? snapshot.val() : {};
-          const currentGalleryImages = Array.isArray(currentData.galleryImages) 
-            ? currentData.galleryImages 
-            : [];
+          let currentGalleryImages: string[] = [];
           
+          if (snapshot.exists()) {
+            const data = snapshot.val();
+            currentGalleryImages = Array.isArray(data) ? data : [];
+          }
+
           // Filtrar la imagen eliminada
           const updatedGallery = currentGalleryImages.filter((img: string) => img !== this.imageUrl);
-          
+
           // Actualizar en Firebase
-          await set(exampleRef, {
-            ...currentData,
-            galleryImages: updatedGallery
-          });
-          
-          // Notificar que la imagen fue eliminada
-          this.ngZone.run(() => {
-            this.toast.show('Imagen de ejemplo eliminada', 'info');
-            this.imageDeleted.emit(this.imageUrl);
-          });
+          await set(exampleRef, updatedGallery);
         } else {
           // Modo normal: actualizar los datos del usuario
           await this.removeImageFromUserData();
-          
-          // Notificar que la imagen fue eliminada
-          this.ngZone.run(() => {
-            this.toast.show('Imagen eliminada exitosamente', 'success');
-            this.imageDeleted.emit(this.imageUrl);
-          });
         }
+
+        // 2. Luego, eliminar del Storage
+        try {
+          await deleteObject(ref(this.storage, this.imageUrl));
+        } catch (storageError) {
+          console.warn('No se pudo eliminar del Storage, pero se actualizó la base de datos:', storageError);
+        }
+
+        // 3. Notificar que la imagen fue eliminada
+        this.ngZone.run(() => {
+          const message = this.isExample 
+            ? 'Imagen de ejemplo eliminada' 
+            : 'Imagen eliminada exitosamente';
+          this.toast.show(message, 'success');
+          this.imageDeleted.emit(this.imageUrl);
+        });
       });
     } catch (error) {
       this.ngZone.run(() => {
         console.error('Error eliminando imagen:', error);
-        this.toast.show('Error eliminando imagen', 'error');
+        this.toast.show('Error eliminando imagen: ' + (error as Error).message, 'error');
       });
     }
   }
-  
+
   private async removeImageFromUserData(): Promise<void> {
     if (!this.userEmailKey || !this.currentUser?.email) return;
 
@@ -142,7 +141,7 @@ export class ImageDeleteButtonComponent {
         },
       },
     };
-    
+
     await this.firebaseService.updateUserData(this.currentUser.email, updatedData);
   }
 }

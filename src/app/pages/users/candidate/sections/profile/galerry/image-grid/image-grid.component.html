@@ -19,7 +19,7 @@
         [imageUrl]="image" 
         [currentUser]="currentUser"
         [userEmailKey]="userEmailKey" 
-        [isOwner]="!readOnly"
+        [isOwner]="isExample || !readOnly"
         [isExample]="isExample"
         (imageDeleted)="handleImageDeleted($event)">
     </app-image-item-container>

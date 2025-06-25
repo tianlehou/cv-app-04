@@ -1,6 +1,7 @@
 import { Component, Input, ChangeDetectorRef, OnInit, OnDestroy } from '@angular/core';
+import { inject, EnvironmentInjector, NgZone, runInInjectionContext } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Database, ref, get, set } from '@angular/fire/database';
+import { Database, ref, get, onValue } from '@angular/fire/database';
 import { FirebaseService } from 'src/app/shared/services/firebase.service';
 import { ToastService } from 'src/app/shared/services/toast.service';
 import { ImageInfoBarComponent } from './image-info-bar/image-info-bar.component';
@@ -28,17 +29,20 @@ export class ImageGridComponent implements OnInit, OnDestroy {
   @Input() isExample: boolean = false;
   userEmailKey: string | null = null;
   userImages: string[] = [];
+  private unsubscribeExample: (() => void) | null = null;
 
-  constructor(
-    private firebaseService: FirebaseService,
-    private toast: ToastService,
-    private cdr: ChangeDetectorRef,
-    private database: Database
-  ) { }
+  private injector = inject(EnvironmentInjector);
+  private database = inject(Database);
+  private firebaseService = inject(FirebaseService);
+  private toast = inject(ToastService);
+  private cdr = inject(ChangeDetectorRef);
+  private ngZone = inject(NgZone);
+
+  constructor() { }
 
   ngOnInit(): void {
     if (this.isExample) {
-      this.loadUserImages();
+      this.setupExampleRealtimeUpdates();
     } else if (this.currentUser?.email) {
       console.log('Cargando en modo usuario normal');
       this.userEmailKey = this.formatEmailKey(this.currentUser.email);
@@ -52,7 +56,12 @@ export class ImageGridComponent implements OnInit, OnDestroy {
     }
   }
 
-  ngOnDestroy(): void { }
+  ngOnDestroy(): void {
+    // Limpiar la suscripción del ejemplo si existe
+    if (this.unsubscribeExample) {
+      this.unsubscribeExample();
+    }
+  }
 
   private formatEmailKey(email: string): string {
     return email.replace(/\./g, '_');
@@ -63,101 +72,79 @@ export class ImageGridComponent implements OnInit, OnDestroy {
       return;
     }
 
-    // Actualizar la lista local con la nueva imagen
+    // Actualizar la lista local con la nueva imagen (se agrega al inicio para mantener el orden más reciente primero)
     if (!this.userImages.includes(imageUrl)) {
-      this.userImages = this.sortImagesByDate([...this.userImages, imageUrl]);
+      this.userImages = [imageUrl, ...this.userImages];
       this.cdr.detectChanges();
-    } else {
-      console.log('La imagen ya existe en la galería');
     }
   }
 
   public handleImageDeleted(deletedImageUrl: string): void {
-    // Actualizar la lista local eliminando la imagen
-    this.userImages = this.userImages.filter(img => img !== deletedImageUrl);
-    this.cdr.detectChanges();
+    // En modo ejemplo, no necesitamos hacer nada aquí ya que la actualización
+    // en tiempo real manejará los cambios automáticamente
+    if (!this.isExample) {
+      // Solo en modo normal actualizamos manualmente la lista local
+      this.userImages = this.userImages.filter(img => img !== deletedImageUrl);
+      this.cdr.detectChanges();
+    }
+  }
+
+  private setupExampleRealtimeUpdates(): void {
+    runInInjectionContext(this.injector, () => {
+      const examplePath = 'cv-app/example/gallery-images';
+      const exampleRef = ref(this.database, examplePath);
+      
+      // Cargar datos iniciales
+      get(exampleRef).then(snapshot => {
+        this.processExampleSnapshot(snapshot);
+      }).catch(error => {
+        console.error('Error cargando imágenes de ejemplo:', error);
+        this.ngZone.run(() => {
+          this.toast.show('Error cargando imágenes de ejemplo', 'error');
+        });
+      });
+      
+      // Configurar escucha de cambios en tiempo real
+      this.unsubscribeExample = onValue(exampleRef, 
+        (snapshot) => this.processExampleSnapshot(snapshot),
+        (error) => {
+          console.error('Error en tiempo real (ejemplo):', error);
+        }
+      );
+    });
+  }
+
+  private processExampleSnapshot(snapshot: any): void {
+    this.ngZone.run(() => {
+      if (snapshot.exists()) {
+        const exampleImages = snapshot.val();
+        const imagesArray = Array.isArray(exampleImages)
+          ? exampleImages
+          : (exampleImages ? [exampleImages] : []);
+        
+        this.userImages = [...imagesArray].reverse();
+      } else {
+        console.warn('No se encontraron imágenes de ejemplo');
+        this.userImages = [];
+      }
+      this.cdr.detectChanges();
+    });
   }
 
   private async loadUserImages(): Promise<void> {
+    if (!this.userEmailKey) return;
+    
     try {
-      if (this.isExample) {
-        const examplePath = 'cv-app/example/gallery-images';
-        const exampleRef = ref(this.database, examplePath);
-        const snapshot = await get(exampleRef);
-
-        if (snapshot.exists()) {
-          const exampleImages = snapshot.val();
-
-          // Verificar si es un array, si no, convertirlo en un array
-          const imagesArray = Array.isArray(exampleImages)
-            ? exampleImages
-            : (exampleImages ? [exampleImages] : []);
-
-          this.userImages = this.sortImagesByDate(imagesArray);
-        } else {
-          console.warn('No se encontraron imágenes de ejemplo en la ruta:', examplePath);
-          this.userImages = [];
-        }
-      } else if (this.userEmailKey) {
-        // Modo normal: cargar imágenes del usuario
-        const userData = await this.firebaseService.getUserData(this.userEmailKey);
-        const multimediaData = userData?.profileData?.multimedia || {};
-        const images = multimediaData.galleryImages || [];
-        this.userImages = this.sortImagesByDate(images);
-      }
+      const userData = await this.firebaseService.getUserData(this.userEmailKey);
+      const multimediaData = userData?.profileData?.multimedia || {};
+      const images = multimediaData.galleryImages || [];
+      this.userImages = [...images].reverse();
       this.cdr.detectChanges();
     } catch (error) {
-      console.error('Error cargando imágenes:', error);
-      this.toast.show('Error cargando imágenes', 'error');
-    }
-  }
-
-  private sortImagesByDate(images: string[]): string[] {
-    if (!Array.isArray(images) || images.length === 0) {
-      console.log('No hay imágenes para ordenar');
-      return [];
-    }
-
-    try {
-      const sorted = [...images].sort((a, b) => {
-        const getTimestamp = (url: string): number => {
-          if (!url || typeof url !== 'string') {
-            console.warn('URL inválida:', url);
-            return 0;
-          }
-
-          // Extraer el nombre del archivo de la URL
-          let filename = '';
-          try {
-            // Intentar decodificar la URL en caso de que esté codificada
-            const decodedUrl = decodeURIComponent(url);
-            filename = decodedUrl.split('/').pop() || '';
-            // Eliminar parámetros de consulta si existen
-            filename = filename.split('?')[0];
-          } catch (e) {
-            console.warn('Error al decodificar URL:', url, e);
-            filename = url.split('/').pop() || '';
-            filename = filename.split('?')[0];
-          }
-
-          // Buscar timestamp en el formato -1234567890.ext
-          const timestampMatch = filename.match(/-\d+(?=\.\w+$)/);
-          if (timestampMatch) {
-            const timestamp = parseInt(timestampMatch[0].substring(1), 10);
-            return timestamp;
-          }
-
-          console.warn('No se encontró timestamp en:', filename);
-          return 0;
-        };
-
-        return getTimestamp(b) - getTimestamp(a);
+      console.error('Error cargando imágenes del usuario:', error);
+      this.ngZone.run(() => {
+        this.toast.show('Error cargando tus imágenes', 'error');
       });
-
-      return sorted;
-    } catch (error) {
-      console.error('Error al ordenar imágenes:', error);
-      return [...images]; // Devolver las imágenes sin ordenar en caso de error
     }
   }
 
@@ -166,11 +153,16 @@ export class ImageGridComponent implements OnInit, OnDestroy {
 
     try {
       const userData = await this.firebaseService.getUserData(this.userEmailKey);
-      this.isEditor = userData?.isEditor === true;
-      this.cdr.detectChanges();
+      this.ngZone.run(() => {
+        this.isEditor = userData?.isEditor === true;
+        this.cdr.detectChanges();
+      });
     } catch (error) {
       console.error('Error checking editor status:', error);
-      this.isEditor = false;
+      this.ngZone.run(() => {
+        this.isEditor = false;
+        this.cdr.detectChanges();
+      });
     }
   }
 }

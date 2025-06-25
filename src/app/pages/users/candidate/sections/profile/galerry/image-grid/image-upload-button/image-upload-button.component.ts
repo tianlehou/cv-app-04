@@ -139,67 +139,79 @@ export class ImageUploadButtonComponent implements OnDestroy {
   }
 
   private async updateExampleGallery(imageUrl: string): Promise<void> {
-    const examplePath = 'cv-app/example/gallery-images';
-    const exampleRef = dbRef(this.database, examplePath);
-    
-    try {
-      // Obtener el array actual de imágenes
-      const snapshot = await get(exampleRef);
-      let currentImages: string[] = [];
+    return runInInjectionContext(this.injector, async () => {
+      const examplePath = 'cv-app/example/gallery-images';
+      const database = inject(Database);
+      const exampleRef = dbRef(database, examplePath);
+      const toast = inject(ToastService);
+      const ngZone = inject(NgZone);
       
-      if (snapshot.exists()) {
-        const data = snapshot.val();
-        // Si es un array, usarlo directamente, si no, crear un array con el valor
-        currentImages = Array.isArray(data) ? [...data] : [];
-      }
-      
-      // Verificar si la imagen ya existe para evitar duplicados
-      if (!currentImages.includes(imageUrl)) {
-        // Agregar la nueva imagen al array
-        currentImages.push(imageUrl);
+      try {
+        // Obtener el array actual de imágenes
+        const snapshot = await get(exampleRef);
+        let currentImages: string[] = [];
         
-        // Actualizar en Firebase
-        await set(exampleRef, currentImages);
-      } else {
-        console.log('La imagen ya existe en la galería de ejemplo');
-        this.toast.show('La imagen ya existe en la galería de ejemplo', 'info');
+        if (snapshot.exists()) {
+          const data = snapshot.val();
+          // Si es un array, usarlo directamente, si no, crear un array con el valor
+          currentImages = Array.isArray(data) ? [...data] : [];
+        }
+        
+        // Verificar si la imagen ya existe para evitar duplicados
+        if (!currentImages.includes(imageUrl)) {
+          // Agregar la nueva imagen al array
+          currentImages.push(imageUrl);
+          
+          // Actualizar en Firebase
+          await set(exampleRef, currentImages);
+        } else {
+          console.log('La imagen ya existe en la galería de ejemplo');
+          ngZone.run(() => {
+            toast.show('La imagen ya existe en la galería de ejemplo', 'info');
+          });
+        }
+      } catch (error) {
+        console.error('Error al actualizar la galería de ejemplo:', error);
+        throw error;
       }
-    } catch (error) {
-      console.error('Error al actualizar la galería de ejemplo:', error);
-      throw error;
-    }
+    });
   }
 
   private async updateUserGallery(imageUrl: string): Promise<void> {
-    if (!this.userEmailKey) return;
+    const userEmailKey = this.userEmailKey;
+    if (!userEmailKey) return;
     
-    try {
-      const userData = await this.firebaseService.getUserData(this.userEmailKey);
-      const profileData = userData?.profileData || {};
-      const multimediaData = profileData.multimedia || {};
-      const currentGalleryImages = Array.isArray(multimediaData.galleryImages) 
-        ? multimediaData.galleryImages 
-        : [];
-      
-      if (!currentGalleryImages.includes(imageUrl)) {
-        const updatedMultimedia = {
-          ...multimediaData,
-          galleryImages: [...currentGalleryImages, imageUrl]
-        };
+    return runInInjectionContext(this.injector, async () => {
+      try {
+        const userData = await this.firebaseService.getUserData(userEmailKey);
+        const profileData = userData?.profileData || {};
+        const multimediaData = profileData.multimedia || {};
+        const currentGalleryImages = Array.isArray(multimediaData.galleryImages) 
+          ? multimediaData.galleryImages 
+          : [];
         
-        await this.firebaseService.updateUserData(this.userEmailKey, {
-          profileData: {
-            ...profileData,
-            multimedia: updatedMultimedia
-          }
-        });
-      } else {
-        this.toast.show('La imagen ya existe en tu galería', 'info');
+        if (!currentGalleryImages.includes(imageUrl)) {
+          const updatedMultimedia = {
+            ...multimediaData,
+            galleryImages: [...currentGalleryImages, imageUrl]
+          };
+          
+          await this.firebaseService.updateUserData(userEmailKey, {
+            profileData: {
+              ...profileData,
+              multimedia: updatedMultimedia
+            }
+          });
+        } else {
+          this.ngZone.run(() => {
+            this.toast.show('La imagen ya existe en tu galería', 'info');
+          });
+        }
+      } catch (error) {
+        console.error('Error al actualizar la galería del usuario:', error);
+        throw error;
       }
-    } catch (error) {
-      console.error('Error al actualizar la galería del usuario:', error);
-      throw error;
-    }
+    });
   }
 
   ngOnDestroy(): void {
