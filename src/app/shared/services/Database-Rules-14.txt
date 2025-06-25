@@ -1,11 +1,14 @@
 {
   "rules": {
+    ".read": "auth != null",
+    ".write": "auth != null",
+    
     "cv-app": {
       "users": {
         // Reglas generales para el nodo users (solo lectura para admin y business)
         ".read": "auth != null &&
-          (root.child('cv-app/users/' + auth.token.email.replace('.', '_') + '/metadata/role').val() === 'admin' ||
-          root.child('cv-app/users/' + auth.token.email.replace('.', '_') + '/metadata/role').val() === 'business')",
+        (root.child('cv-app/users/' + auth.token.email.replace('.', '_') + '/metadata/role').val() === 'admin' ||
+        root.child('cv-app/users/' + auth.token.email.replace('.', '_') + '/metadata/role').val() === 'business')",
         ".write": false, // No permitir escritura en el nodo raíz
         
         // Reglas para cada usuario individual
@@ -14,14 +17,14 @@
             auth.token.email.replace('.', '_') == $userEmailKey ||
             root.child('cv-app/users/' + auth.token.email.replace('.', '_') + '/metadata/role').val() === 'admin' ||
             (root.child('cv-app/users/' + auth.token.email.replace('.', '_') + '/metadata/role').val() === 'business' &&
-             root.child('cv-app/users/' + $userEmailKey + '/metadata/role').val() === 'candidate')
-          )",
+            root.child('cv-app/users/' + $userEmailKey + '/metadata/role').val() === 'candidate')
+            )",
           
           // Permitir escritura inicial si el nodo no existe (durante registro)
           ".write": "auth != null && (
             (auth.token.email.replace('.', '_') == $userEmailKey && !data.exists()) ||
             root.child('cv-app/users/' + auth.token.email.replace('.', '_') + '/metadata/role').val() === 'admin'
-          )",
+            )",
 
           // Subnodos específicos
           "metadata": {
@@ -29,12 +32,12 @@
               auth.token.email.replace('.', '_') == $userEmailKey ||
               root.child('cv-app/users/' + auth.token.email.replace('.', '_') + '/metadata/role').val() === 'admin' ||
               (root.child('cv-app/users/' + auth.token.email.replace('.', '_') + '/metadata/role').val() === 'business' &&
-               root.child('cv-app/users/' + $userEmailKey + '/metadata/role').val() === 'candidate')
-            )",
+              root.child('cv-app/users/' + $userEmailKey + '/metadata/role').val() === 'candidate')
+              )",
             ".write": "auth != null && (
-              auth.token.email.replace('.', '_') == $userEmailKey ||
+              auth.token.email.replace('.', '_') == $userEmailKey || 
               root.child('cv-app/users/' + auth.token.email.replace('.', '_') + '/metadata/role').val() === 'admin'
-            )"
+              )"
           },
 
           "planes_adquiridos": {
@@ -44,11 +47,11 @@
           
           "profileData": {
             ".read": "auth != null && (
-              auth.token.email.replace('.', '_') == $userEmailKey ||
+              auth.token.email.replace('.', '_') == $userEmailKey || 
               root.child('cv-app/users/' + auth.token.email.replace('.', '_') + '/metadata/role').val() === 'admin' ||
-              (root.child('cv-app/users/' + auth.token.email.replace('.', '_') + '/metadata/role').val() === 'business' &&
-               root.child('cv-app/users/' + $userEmailKey + '/metadata/role').val() === 'candidate')
-            )",
+              (root.child('cv-app/users/' + auth.token.email.replace('.', '_') + '/metadata/role').val() === 'business' && 
+              root.child('cv-app/users/' + $userEmailKey + '/metadata/role').val() === 'candidate')
+              )",
             ".write": "auth != null && auth.token.email.replace('.', '_') == $userEmailKey"
           },
           
@@ -63,10 +66,10 @@
       "countriesIndex": {
         ".read": "auth != null",
         "$countryCode": {
-          ".write": "auth != null && 
-            (root.child('cv-app/users/' + auth.token.email.replace('.', '_') + '/metadata/role').val() === 'admin' ||
-            newData.child(auth.token.email.replace('.', '_')).exists() === true ||
-            data.child(auth.token.email.replace('.', '_')).exists() === true)",
+          ".write": "auth != null &&
+          (root.child('cv-app/users/' + auth.token.email.replace('.', '_') + '/metadata/role').val() === 'admin' ||
+          newData.child(auth.token.email.replace('.', '_')).exists() === true ||
+          data.child(auth.token.email.replace('.', '_')).exists() === true)",
           
           "$userEmailKey": {
             ".validate": "newData.isBoolean() && newData.val() === true"
@@ -82,7 +85,7 @@
             ".write": "auth != null && (
               root.child('cv-app/users/' + auth.token.email.replace('.','_') + '/metadata/role').val() === 'admin' || 
               (newData.val() != null && root.child('cv-app/users/' + newData.val() + '/metadata/userId').val() == $userId)
-            )"
+              )"
           }
         }
       },

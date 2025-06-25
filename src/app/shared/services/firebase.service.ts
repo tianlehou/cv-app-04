@@ -137,27 +137,50 @@ export class FirebaseService {
       role: string;
       enabled: boolean;
       createdAt: string;
-      referredBy?: string; // Esto debería ser un userId, no un email
+      referredBy?: string;
     }
   ) {
     return runInInjectionContext(this.injector, async () => {
       const userEmailKey = this.formatEmailKey(email);
       const userId = this.generateUserId();
+      const userRef = ref(this.db, `cv-app/users/${userEmailKey}`);
+      
+      // Primero, crear la estructura básica del usuario
+      const userData = {
+        metadata: {
+          email: data.email,
+          role: data.role,
+          enabled: data.enabled,
+          createdAt: data.createdAt,
+          userId: userId,
+          lastUpdated: data.createdAt,
+          ...(data.referredBy && { referredBy: data.referredBy }),
+        },
+        profileData: {},
+        'cv-styles': {}
+      };
 
-      const metadataRef = ref(this.db, `cv-app/users/${userEmailKey}/metadata`);
-      await set(metadataRef, {
-        email: data.email,
-        role: data.role,
-        enabled: data.enabled,
-        createdAt: data.createdAt,
-        ...(data.referredBy && { referredBy: data.referredBy }), // Guardamos el userId tal cual
-        userId: userId,
-      });
+      // Crear el usuario en la base de datos
+      await set(userRef, userData);
 
-      // Crear entrada en el índice
+      // Crear entrada en el índice de usuarios
       await set(
         ref(this.db, `cv-app/userIndex/userId-to-emailKey/${userId}`),
         userEmailKey
+      );
+
+      // Si hay un referido, actualizar el índice de referidos
+      if (data.referredBy) {
+        await set(
+          ref(this.db, `cv-app/referrals/${data.referredBy}/${userEmailKey}`),
+          true
+        );
+      }
+
+      // Crear índice por país (usando 'PA' como valor por defecto)
+      await set(
+        ref(this.db, `cv-app/countriesIndex/PA/${userEmailKey}`),
+        true
       );
     });
   }
