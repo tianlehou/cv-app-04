@@ -1,9 +1,9 @@
 <!-- image-grid.component.html -->
-<div class="top-row">
+<div class="top-row" *ngIf="isEditor">
     <!-- Mostrar siempre la barra de información -->
     <app-image-info-bar [userImages]="isExample ? [] : userImages"></app-image-info-bar>
     
-    <!-- Botón de subida siempre visible para pruebas -->
+    <!-- Botón de subida solo para editores -->
     <app-image-upload-button 
         [userEmailKey]="userEmailKey" 
         [isExample]="isExample"

@@ -38,8 +38,6 @@ export class ImageGridComponent implements OnInit, OnDestroy {
   private cdr = inject(ChangeDetectorRef);
   private ngZone = inject(NgZone);
 
-  constructor() { }
-
   ngOnInit(): void {
     if (this.isExample) {
       this.setupExampleRealtimeUpdates();
@@ -47,10 +45,6 @@ export class ImageGridComponent implements OnInit, OnDestroy {
       console.log('Cargando en modo usuario normal');
       this.userEmailKey = this.formatEmailKey(this.currentUser.email);
       this.loadUserImages();
-      // Solo verificar el estado de editor si no se proporcionó como input
-      if (this.isEditor === undefined) {
-        this.checkEditorStatus();
-      }
     } else {
       console.warn('No se pudo inicializar: No hay usuario actual y no está en modo ejemplo');
     }
@@ -68,7 +62,7 @@ export class ImageGridComponent implements OnInit, OnDestroy {
   }
 
   public handleUploadComplete(imageUrl: string): void {
-    if (this.readOnly) {
+    if (this.readOnly && !this.isEditor) {
       return;
     }
 
@@ -144,24 +138,6 @@ export class ImageGridComponent implements OnInit, OnDestroy {
       console.error('Error cargando imágenes del usuario:', error);
       this.ngZone.run(() => {
         this.toast.show('Error cargando tus imágenes', 'error');
-      });
-    }
-  }
-
-  private async checkEditorStatus(): Promise<void> {
-    if (!this.userEmailKey) return;
-
-    try {
-      const userData = await this.firebaseService.getUserData(this.userEmailKey);
-      this.ngZone.run(() => {
-        this.isEditor = userData?.isEditor === true;
-        this.cdr.detectChanges();
-      });
-    } catch (error) {
-      console.error('Error checking editor status:', error);
-      this.ngZone.run(() => {
-        this.isEditor = false;
-        this.cdr.detectChanges();
       });
     }
   }

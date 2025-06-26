@@ -10,7 +10,21 @@ import { CandidateExamplesModalComponent } from './candidate-examples-modal/cand
   styleUrls: ['./hero-section.component.css'],
 })
 export class HeroSectionComponent {
-  @Input() isEditor: boolean = false;
+  private _isEditor: boolean = false;
+  
+  @Input() 
+  set isEditor(value: boolean) {
+    this._isEditor = value;
+    if (this.isModalVisible) {
+      this.isModalVisible = false;
+      setTimeout(() => this.isModalVisible = true);
+    }
+  }
+  
+  get isEditor(): boolean {
+    return this._isEditor;
+  }
+  
   @Output() startNow = new EventEmitter<void>();
   isModalVisible = false;
 

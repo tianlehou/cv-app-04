@@ -1,48 +1,56 @@
 <main (contextmenu)="(false)">
-  <div class="profile-header" *ngIf="!readOnly">
-    <app-sidebar
-      [activeSection]="activeSection"
-      (homeClicked)="showHome()"
-      (profileClicked)="showProfile()"
-      (subscriptionClicked)="toggleSubscription()"
-      (referClicked)="toggleRefer()"
-    ></app-sidebar>
-  </div>
-
-  <section id="home" *ngIf="activeSection === 'home'">
-    <app-home (startNow)="showProfile()"></app-home>
-  </section>
-
-  <section
-    id="candidate"
-    *ngIf="activeSection === 'profile'"
-    (contextmenu)="(false)"
-  >
-    <div class="profile-container">
-      <div class="profile-components-row">
-        <app-profile-picture
-          *ngIf="currentUser"
-          [currentUser]="currentUser"
-        ></app-profile-picture>
-        <app-personal-data
-          *ngIf="currentUser"
-          [currentUser]="currentUser"
-        ></app-personal-data>
-      </div>
-      <app-gallery
-        *ngIf="currentUser"
-        [currentUser]="currentUser"
-        [readOnly]="readOnly"
-        [isOwner]="!readOnly"
-      ></app-gallery>
+  <div class="candidate-container">
+    <div class="profile-header" *ngIf="!readOnly">
+      <app-sidebar
+        [activeSection]="activeSection"
+        (homeClicked)="showHome()"
+        (profileClicked)="showProfile()"
+        (subscriptionClicked)="toggleSubscription()"
+        (referClicked)="toggleRefer()"
+      ></app-sidebar>
     </div>
-  </section>
 
-  <section id="subscription" *ngIf="activeSection === 'subscription'">
-    <app-subscription></app-subscription>
-  </section>
+    <div class="main-content">
+      <section id="home" *ngIf="activeSection === 'home'">
+        <app-hero-section 
+          (startNow)="onHeaderStartNow()"
+          [isEditor]="isEditor">
+        </app-hero-section>
+        <app-home (startNow)="showProfile()"></app-home>
+      </section>
 
-  <section id="refer" *ngIf="activeSection === 'refer'">
-    <app-refer></app-refer>
-  </section>
+      <section
+        id="candidate"
+        *ngIf="activeSection === 'profile'"
+        (contextmenu)="(false)"
+      >
+        <div class="profile-container">
+          <div class="profile-components-row">
+            <app-profile-picture
+              *ngIf="currentUser"
+              [currentUser]="currentUser"
+            ></app-profile-picture>
+            <app-personal-data
+              *ngIf="currentUser"
+              [currentUser]="currentUser"
+            ></app-personal-data>
+          </div>
+          <app-gallery
+            *ngIf="currentUser"
+            [currentUser]="currentUser"
+            [readOnly]="readOnly"
+            [isOwner]="!readOnly"
+          ></app-gallery>
+        </div>
+      </section>
+
+      <section id="subscription" *ngIf="activeSection === 'subscription'">
+        <app-subscription></app-subscription>
+      </section>
+
+      <section id="refer" *ngIf="activeSection === 'refer'">
+        <app-refer></app-refer>
+      </section>
+    </div>
+  </div>
 </main>

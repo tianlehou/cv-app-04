@@ -14,6 +14,7 @@ import { SidebarComponent } from './sidebar/sidebar.component';
 import { HomeComponent } from './sections/home/home.component';
 import { SubscriptionComponent } from './sections/subscription/subscription.component';
 import { ReferComponent } from './sections/refer/refer.component';
+import { HeroSectionComponent } from './sections/home/hero-section/hero-section.component';
 
 @Component({
   selector: 'app-candidate',
@@ -28,6 +29,7 @@ import { ReferComponent } from './sections/refer/refer.component';
     HomeComponent,
     SubscriptionComponent,
     ReferComponent,
+    HeroSectionComponent,
   ],
   templateUrl: './candidate.component.html',
   styleUrls: ['./candidate.component.css'],
@@ -89,5 +91,9 @@ export class CandidateComponent implements OnInit {
   toggleSubscription() {
     this.showSubscription = !this.showSubscription;
     this.activeSection = this.showSubscription ? 'subscription' : 'profile';
+  }
+
+  onHeaderStartNow(): void {
+    this.showProfile();
   }
 }
