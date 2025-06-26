@@ -81,8 +81,21 @@ nav {
 
 /* Responsive Styles */
 @media screen and (max-width: 768px) {
+  nav {
+    height: 5vh;
+  }
+
+  .logo {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
   .hamburger {
     display: flex;
+    align-items: center;
+    position: fixed;
+    left: 1rem;
     z-index: 3;
   }
 
