@@ -10,7 +10,7 @@
     <app-watermark *ngIf="!isOwner"></app-watermark>
 
     <app-image-delete-button
-      *ngIf="isOwner"
+      *ngIf="(isOwner && !isExample) || (isOwner && isEditor && isExample)"
       [imageUrl]="imageUrl"
       [currentUser]="currentUser"
       [userEmailKey]="userEmailKey"

@@ -19,6 +19,7 @@ export class ImageItemContainerComponent {
   @Output() imageDeleted = new EventEmitter<string>();
   @Input() isOwner: boolean = false;
   @Input() isExample: boolean = false;
+  @Input() isEditor: boolean = false;
 
   // Estados para el manejo de carga de imágenes
   imageLoaded: boolean = false;

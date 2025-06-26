@@ -1,5 +1,5 @@
 <!-- image-grid.component.html -->
-<div class="top-row" *ngIf="isEditor">
+<div class="top-row" *ngIf="isEditor || !isExample && !readOnly">
     <!-- Mostrar siempre la barra de información -->
     <app-image-info-bar [userImages]="isExample ? [] : userImages"></app-image-info-bar>
     
@@ -21,6 +21,7 @@
         [userEmailKey]="userEmailKey" 
         [isOwner]="isExample || !readOnly"
         [isExample]="isExample"
+        [isEditor]="isEditor"
         (imageDeleted)="handleImageDeleted($event)">
     </app-image-item-container>
 

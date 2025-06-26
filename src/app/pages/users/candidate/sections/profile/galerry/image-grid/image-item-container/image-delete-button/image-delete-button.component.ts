@@ -12,11 +12,7 @@ import { ToastService } from 'src/app/shared/services/toast.service';
   selector: 'app-image-delete-button',
   standalone: true,
   imports: [CommonModule],
-  template: `
-    <button class="delete-button" (click)="showDeleteModal()">
-      <i class="fas fa-trash"></i>
-    </button>
-  `,
+  templateUrl: './image-delete-button.component.html',
   styles: [`
     .delete-button {
       position: absolute;
