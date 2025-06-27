@@ -2,11 +2,12 @@ import { Component, EventEmitter, Output, Input } from '@angular/core';
 import { GalleryComponent } from '../../../profile/galerry/gallery.component';
 import { ProfilePictureComponent } from '../../../profile/profile-picture/profile-picture.component';
 import { PersonalDataComponent } from '../../../profile/personal-data/personal-data.component';
+import { ExamplePaginationComponent } from './example-pagination/example-pagination.component';
 
 @Component({
   selector: 'app-candidate-examples-modal',
   standalone: true,
-  imports: [ProfilePictureComponent, PersonalDataComponent, GalleryComponent],
+  imports: [ProfilePictureComponent, PersonalDataComponent, GalleryComponent, ExamplePaginationComponent],
   templateUrl: './candidate-examples-modal.component.html',
   styleUrls: ['./candidate-examples-modal.component.css']
 })
