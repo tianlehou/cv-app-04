@@ -3,7 +3,6 @@
   display: none;
   position: fixed;
   top: 0;
-  left: 0;
   width: 100%;
   height: 100%;
   background-color: rgba(0, 0, 0, 0.7);
@@ -19,27 +18,15 @@
   opacity: 1;
 }
 
-/* Contenido del modal */
-.modal-content {
-  position: relative;
-  background: var(--clr-white);
-  padding: 20px;
+.modal-header {
+  position: fixed;
+  top: 0;
+  left: 50%;
+  transform: translate(-50%, -50%);
   width: 100%;
   max-width: 800px;
-  height: 100%;
-  overflow-y: auto;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-}
-
-.modal-header {
-    position: fixed;
-    top: 0;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 100%;
-    max-width: 800px;
-    max-height: 10vh;
-    z-index: 1002;
+  max-height: 10vh;
+  z-index: 1002;
 }
 
 /* Botón de cierre */
@@ -55,4 +42,50 @@
   font-size: 2rem;
   cursor: pointer;
   z-index: 5;
+}
+
+/* Controles de ejemplo */
+.example-controls {
+  position: fixed !important;
+  top: 20px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.example-btn, .delete-example-btn {
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.example-btn {
+  background-color: var(--clr-blue);
+  color: white;
+  border: none;
+}
+
+.delete-example-btn {
+  background-color: #ff4444;
+  color: white;
+  border: none;
+}
+
+.example-selector select {
+  padding: 5px;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+}
+
+/* Contenido del modal */
+.modal-content {
+  position: relative;
+  background: var(--clr-white);
+  padding: 20px;
+  padding-bottom: 3rem;
+  width: 100%;
+  max-width: 800px;
+  height: 100%;
+  overflow-y: auto;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
