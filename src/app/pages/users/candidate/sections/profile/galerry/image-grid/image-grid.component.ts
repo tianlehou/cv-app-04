@@ -43,7 +43,7 @@ export class ImageGridComponent implements OnInit, OnDestroy {
       this.setupExampleRealtimeUpdates();
     } else if (this.currentUser?.email) {
       console.log('Cargando en modo usuario normal');
-      this.userEmailKey = this.formatEmailKey(this.currentUser.email);
+      this.userEmailKey = this.firebaseService.formatEmailKey(this.currentUser.email);
       this.loadUserImages();
     } else {
       console.warn('No se pudo inicializar: No hay usuario actual y no está en modo ejemplo');
@@ -55,10 +55,6 @@ export class ImageGridComponent implements OnInit, OnDestroy {
     if (this.unsubscribeExample) {
       this.unsubscribeExample();
     }
-  }
-
-  private formatEmailKey(email: string): string {
-    return email.replace(/\./g, '_');
   }
 
   public handleUploadComplete(imageUrl: string): void {
@@ -85,7 +81,7 @@ export class ImageGridComponent implements OnInit, OnDestroy {
 
   private setupExampleRealtimeUpdates(): void {
     runInInjectionContext(this.injector, () => {
-      const examplePath = 'cv-app/example/gallery-images';
+      const examplePath = 'cv-app/examples/gallery-images';
       const exampleRef = ref(this.database, examplePath);
       
       // Cargar datos iniciales

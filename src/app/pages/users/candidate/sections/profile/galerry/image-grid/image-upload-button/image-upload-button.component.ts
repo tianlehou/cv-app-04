@@ -28,13 +28,11 @@ export class ImageUploadButtonComponent implements OnDestroy {
 
   private injector = inject(EnvironmentInjector);
   private storage = inject(Storage);
-  private database = inject(Database);
   private firebaseService = inject(FirebaseService);
   private toast = inject(ToastService);
   private cdr = inject(ChangeDetectorRef);
   private ngZone = inject(NgZone);
   private imageCompression = inject(ImageCompressionService);
-  private userImages: string[] = [];
 
   async onFileSelected(event: Event): Promise<void> {
     // Permitir siempre la subida para pruebas
@@ -77,7 +75,7 @@ export class ImageUploadButtonComponent implements OnDestroy {
         // Usar ruta diferente para modo ejemplo
         let storagePath: string;
         if (this.isExample) {
-          storagePath = `cv-app/example/gallery-images/${imageName}`;
+          storagePath = `cv-app/examples/gallery-images/${imageName}`;
         } else {
           if (!this.userEmailKey) return;
           storagePath = `cv-app/users/${this.userEmailKey}/gallery-images/${imageName}`;
@@ -140,7 +138,7 @@ export class ImageUploadButtonComponent implements OnDestroy {
 
   private async updateExampleGallery(imageUrl: string): Promise<void> {
     return runInInjectionContext(this.injector, async () => {
-      const examplePath = 'cv-app/example/gallery-images';
+      const examplePath = 'cv-app/examples/gallery-images';
       const database = inject(Database);
       const exampleRef = dbRef(database, examplePath);
       const toast = inject(ToastService);

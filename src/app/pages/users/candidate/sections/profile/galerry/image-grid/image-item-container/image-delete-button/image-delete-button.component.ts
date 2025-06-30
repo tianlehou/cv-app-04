@@ -74,7 +74,7 @@ export class ImageDeleteButtonComponent {
         // 1. Primero, eliminar de la base de datos
         if (this.isExample) {
           // En modo ejemplo, actualizar en 'cv-app/example/gallery-images'
-          const examplePath = 'cv-app/example/gallery-images';
+          const examplePath = 'cv-app/examples/gallery-images';
           const exampleRef = dbRef(this.database, examplePath);
 
           // Obtener datos actuales

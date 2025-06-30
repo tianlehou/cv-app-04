@@ -6,6 +6,14 @@
   <div class="modal-content">
     <div class="modal-body">
       <h1>Ejemplos</h1>
+      
+      <div *ngIf="isEditor">
+        <app-example-editor-actions 
+          (addExample)="addExample()"
+          (deleteExample)="deleteExample()">
+        </app-example-editor-actions>
+      </div>
+
       <app-profile-picture [currentUser]="null"></app-profile-picture>
       <app-personal-data [currentUser]="null"></app-personal-data>
       <app-gallery

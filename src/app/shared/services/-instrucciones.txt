@@ -1,0 +1,31 @@
+servicio de firebase
+    firebase.service.ts
+
+ruta para guardar ejemplos en storage:
+    storagePath = `cv-app/examples/gallery-images/${imageName}`;
+
+ruta para guardar ejemplos en database:
+    examplePath = 'cv-app/examples/gallery-images';
+
+que quiero hacer:
+- necesito un boton de agregar ejemplo y eliminar ejemplo.
+este componente debe ser nuevo. quiero que se integre con el modal de ejemplos.
+- tengo un componente de paginacion que me permite paginar los ejemplos.
+- cada ejemplo debe tener un id unico.
+- hay que modificar las rutas para que guarden los archivos en cada carperta de ejemplo.
+por ejemplo: 
+    storagePath = `cv-app/examples/01/gallery-images/${imageName}`;
+    examplePath = 'cv-app/examples/01/gallery-images';
+
+    storagePath = `cv-app/examples/02/gallery-images/${imageName}`;
+    examplePath = 'cv-app/examples/02/gallery-images';
+
+    storagePath = `cv-app/examples/03/gallery-images/${imageName}`;
+    examplePath = 'cv-app/examples/03/gallery-images';
+
+    y asi sucesivamente...
+
+- el metodo para guardar esta en el componente image-upload-button.component.ts
+- el metodo para eliminar esta en el componente image-delete-button.component.ts
+- el metodo para obtener los ejemplos esta en el image-grid.component.ts
+- las reglas de seguridad estan en el archivo -storage-rules-03.txt y -database-rules-14.txt

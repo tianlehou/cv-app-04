@@ -90,7 +90,7 @@
         }
       },
 
-      "example": {
+      "examples": {
         ".read": true,
         ".write": "auth != null && root.child('cv-app/users/' + auth.token.email.replace('.', '_') + '/isEditor').val() === true"
       },
