@@ -5,7 +5,7 @@
 
   <div class="modal-content">
     <div class="modal-body">
-      <h1>Ejemplos</h1>
+      <h1>Ejemplo {{currentIndex + 1}} de {{exampleIds.length}}</h1>
       
       <div *ngIf="isEditor">
         <app-example-editor-actions 
@@ -27,7 +27,8 @@
   </div>
   <app-example-pagination 
     [isExample]="true"
-    [totalItems]="50"
-    [pageSize]="10"
+    [totalItems]="exampleIds.length"
+    [pageSize]="1"
+    (pageChange)="onPageChange($event)"
   ></app-example-pagination>
 </div>

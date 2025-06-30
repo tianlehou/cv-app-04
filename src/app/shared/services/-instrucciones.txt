@@ -1,6 +1,6 @@
-- necesito coordinar el componente de paginacion con los modales de ejemplos.
 - el boton de agregar ejemplo funciona bien.
 - necesito que los botones de adelante, atras funcionen.
+- necesito coordinar el componente de paginacion con los modales de ejemplos.
 
 const exampleId = 'default-example'; // TODO: reemplaza con el ID correcto si es necesario
 const examplePath = `cv-app/examples/${exampleId}/gallery-images`;

@@ -50,4 +50,15 @@ export class ExamplesService {
       console.error('Error al eliminar archivos:', error);
     });
   }
+
+  async getAllExampleIds(): Promise<string[]> {
+    const examplesRef = ref(this.db, 'cv-app/examples');
+    const snapshot = await get(examplesRef);
+    
+    if (!snapshot.exists()) {
+      return [];
+    }
+    
+    return Object.keys(snapshot.val());
+  }
 }
