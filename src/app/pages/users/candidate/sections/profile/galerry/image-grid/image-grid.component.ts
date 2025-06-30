@@ -81,7 +81,8 @@ export class ImageGridComponent implements OnInit, OnDestroy {
 
   private setupExampleRealtimeUpdates(): void {
     runInInjectionContext(this.injector, () => {
-      const examplePath = 'cv-app/examples/gallery-images';
+      const exampleId = 'default-example'; // TODO: Replace with actual example ID as needed
+      const examplePath = `cv-app/examples/${exampleId}/gallery-images`;
       const exampleRef = ref(this.database, examplePath);
       
       // Cargar datos iniciales

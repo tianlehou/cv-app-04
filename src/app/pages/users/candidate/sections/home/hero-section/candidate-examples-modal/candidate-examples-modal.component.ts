@@ -20,20 +20,24 @@ export class CandidateExamplesModalComponent {
   @Output() closeModal = new EventEmitter<void>();
   currentExampleId: string = '';
 
-  constructor(private examplesService: ExamplesService) {}
+  constructor(private examplesService: ExamplesService) { }
 
   onClose() {
     this.closeModal.emit();
   }
 
-  addExample() {
-    this.currentExampleId = this.examplesService.generateExampleId();
-    // Lógica para agregar nuevo ejemplo
+  async addExample() {
+    this.currentExampleId = await this.examplesService.generateExampleId();
+
+    await this.examplesService.createExample(this.currentExampleId, {
+      createdAt: new Date().toISOString(),
+      images: []
+    });
   }
 
   deleteExample() {
-    if (this.currentExampleId) {
-      // Lógica para eliminar ejemplo
+    if (this.currentExampleId && confirm('¿Estás seguro de eliminar este ejemplo?')) {
+      this.examplesService.deleteExample(this.currentExampleId);
     }
   }
 }

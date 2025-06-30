@@ -75,7 +75,8 @@ export class ImageUploadButtonComponent implements OnDestroy {
         // Usar ruta diferente para modo ejemplo
         let storagePath: string;
         if (this.isExample) {
-          storagePath = `cv-app/examples/gallery-images/${imageName}`;
+          const exampleId = 'default-example';
+          storagePath = `cv-app/examples/${exampleId}/gallery-images/${imageName}`;
         } else {
           if (!this.userEmailKey) return;
           storagePath = `cv-app/users/${this.userEmailKey}/gallery-images/${imageName}`;
@@ -138,7 +139,9 @@ export class ImageUploadButtonComponent implements OnDestroy {
 
   private async updateExampleGallery(imageUrl: string): Promise<void> {
     return runInInjectionContext(this.injector, async () => {
-      const examplePath = 'cv-app/examples/gallery-images';
+      // Usa un valor fijo o pásalo como argumento/propiedad si es dinámico
+      const exampleId = 'default-example'; // TODO: reemplaza con el ID correcto si es necesario
+      const examplePath = `cv-app/examples/${exampleId}/gallery-images`;
       const database = inject(Database);
       const exampleRef = dbRef(database, examplePath);
       const toast = inject(ToastService);

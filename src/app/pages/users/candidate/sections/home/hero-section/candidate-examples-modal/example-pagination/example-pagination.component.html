@@ -2,15 +2,6 @@
   <button 
     class="pagination-button"
     [disabled]="currentPage === 1"
-    (click)="goToFirstPage()"
-    title="Primera página"
-  >
-    &laquo;&laquo;
-  </button>
-
-  <button 
-    class="pagination-button"
-    [disabled]="currentPage === 1"
     (click)="changePage(currentPage - 1)"
     title="Página anterior"
   >
@@ -34,14 +25,5 @@
     title="Página siguiente"
   >
     &raquo;
-  </button>
-
-  <button 
-    class="pagination-button"
-    [disabled]="currentPage === totalPages"
-    (click)="goToLastPage()"
-    title="Última página"
-  >
-    &raquo;&raquo;
   </button>
 </div>

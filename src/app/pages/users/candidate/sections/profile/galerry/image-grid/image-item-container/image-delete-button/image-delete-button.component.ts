@@ -73,14 +73,15 @@ export class ImageDeleteButtonComponent {
       await runInInjectionContext(this.injector, async () => {
         // 1. Primero, eliminar de la base de datos
         if (this.isExample) {
-          // En modo ejemplo, actualizar en 'cv-app/example/gallery-images'
-          const examplePath = 'cv-app/examples/gallery-images';
+          // Usa un valor fijo o pásalo como argumento/propiedad si es dinámico
+          const exampleId = 'default-example'; // TODO: reemplaza con el ID correcto si es necesario
+          const examplePath = `cv-app/examples/${exampleId}/gallery-images`;
           const exampleRef = dbRef(this.database, examplePath);
 
           // Obtener datos actuales
           const snapshot = await get(exampleRef);
           let currentGalleryImages: string[] = [];
-          
+
           if (snapshot.exists()) {
             const data = snapshot.val();
             currentGalleryImages = Array.isArray(data) ? data : [];
@@ -105,8 +106,8 @@ export class ImageDeleteButtonComponent {
 
         // 3. Notificar que la imagen fue eliminada
         this.ngZone.run(() => {
-          const message = this.isExample 
-            ? 'Imagen de ejemplo eliminada' 
+          const message = this.isExample
+            ? 'Imagen de ejemplo eliminada'
             : 'Imagen eliminada exitosamente';
           this.toast.show(message, 'success');
           this.imageDeleted.emit(this.imageUrl);

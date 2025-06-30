@@ -36,12 +36,4 @@ export class ExamplePaginationComponent {
       this.pageChange.emit(page);
     }
   }
-
-  goToFirstPage(): void {
-    this.changePage(1);
-  }
-
-  goToLastPage(): void {
-    this.changePage(this.totalPages);
-  }
 }
