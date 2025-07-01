@@ -7,7 +7,7 @@ import { FirebaseService } from 'src/app/shared/services/firebase.service';
 // Profile Components
 import { ProfilePictureComponent } from './sections/profile/profile-picture/profile-picture.component';
 import { PersonalDataComponent } from './sections/profile/personal-data/personal-data.component';
-import { GalleryComponent } from './sections/profile/galerry/gallery.component';
+import { GalleryComponent } from './sections/profile/gallery/gallery.component';
 
 // Others components
 import { SidebarComponent } from './sidebar/sidebar.component';

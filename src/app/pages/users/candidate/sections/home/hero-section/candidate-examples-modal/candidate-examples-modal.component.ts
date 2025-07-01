@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Output, Input, OnInit } from '@angular/core';
 import { NgIf } from '@angular/common';
 import { ExamplesService } from 'src/app/shared/services/examples.service';
-import { GalleryComponent } from '../../../profile/galerry/gallery.component';
+import { GalleryComponent } from '../../../profile/gallery/gallery.component';
 import { ProfilePictureComponent } from '../../../profile/profile-picture/profile-picture.component';
 import { PersonalDataComponent } from '../../../profile/personal-data/personal-data.component';
 import { ExamplePaginationComponent } from './example-pagination/example-pagination.component';

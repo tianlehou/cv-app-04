@@ -7,7 +7,6 @@ import { HowItWorksComponent } from './how-it-works/how-it-works.component';
 import { TestimonialsSectionComponent } from './testimonials-section/testimonials-section.component';
 import { CallToActionComponent } from './call-to-action/call-to-action.component';
 import { ComparisonSectionComponent } from './comparison-section/comparison-section.component';
-import { FooterSectionComponent } from './footer-section/footer-section.component';
 import { CandidateExamplesModalComponent } from './hero-section/candidate-examples-modal/candidate-examples-modal.component';
 
 @Component({
@@ -23,7 +22,6 @@ import { CandidateExamplesModalComponent } from './hero-section/candidate-exampl
     TestimonialsSectionComponent,
     CallToActionComponent,
     ComparisonSectionComponent,
-    FooterSectionComponent
   ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css'

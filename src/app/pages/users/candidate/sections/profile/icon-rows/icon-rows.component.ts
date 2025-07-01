@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { GalleryView } from '../galerry/gallery.component';
+import { GalleryView } from '../gallery/gallery.component';
 
 @Component({
   selector: 'app-icon-rows',
