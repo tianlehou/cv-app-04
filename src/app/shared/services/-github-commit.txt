@@ -1,0 +1,21 @@
+2025-06-30 v1.02.033 -m "fix(firebase): corrección completa de eliminación de ejemplos
+
+- Modificado el método deleteExample en ExamplesService para:
+  - Eliminar correctamente archivos en Firebase Storage usando rutas específicas
+  - Manejar adecuadamente errores de tipado TypeScript
+  - Implementar verificación explícita de tipos para errores
+  - Usar rutas consistentes con la estructura de gallery-images
+  - Mejorar el manejo de promesas y errores
+
+- Ajustes complementarios:
+  - Corregido conflicto de nombres con storageRef
+  - Añadido manejo de errores en la UI
+  - Verificado reglas de Firebase Storage para eliminación
+
+Los cambios aseguran que al eliminar un ejemplo se borren tanto los datos en 
+Database como los archivos asociados en Storage."
+
+
+
+Prompt:
+dame el commit para github de los ajustes realizados desde que se inicio este chat

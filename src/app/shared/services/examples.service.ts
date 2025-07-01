@@ -65,13 +65,42 @@ export class ExamplesService {
 
   async deleteExample(exampleId: string): Promise<void> {
     return runInInjectionContext(this.injector, async () => {
+      // 1. Obtener lista de imágenes desde Database
       const exampleRef = ref(this.db, this.getExamplePath(exampleId));
+      const snapshot = await get(exampleRef);
+      
+      // 2. Eliminar nodo en Database
       await remove(exampleRef);
       
-      const storageExampleRef = storageRef(this.storage, `cv-app/examples/${exampleId}`);
-      await deleteObject(storageExampleRef).catch(error => {
-        console.error('Error al eliminar archivos:', error);
-      });
+      // 3. Eliminar archivos en Storage
+      try {
+        if (snapshot.exists()) {
+          const images = snapshot.val();
+          if (Array.isArray(images)) {
+            // Eliminar cada imagen individualmente usando su ruta completa
+            const deletePromises = images.map(imageUrl => {
+              const fileRef = storageRef(this.storage, imageUrl); 
+              return deleteObject(fileRef);
+            });
+            await Promise.all(deletePromises);
+          }
+        }
+        
+        // Intentar eliminar la subcarpeta gallery-images
+        try {
+          const folderRef = storageRef(this.storage, `cv-app/examples/${exampleId}/gallery-images`);
+          await deleteObject(folderRef);
+        } catch (error) {
+          const folderError = error as {code?: string};
+          // Ignorar error si la carpeta no existe
+          if (folderError.code !== 'storage/object-not-found') {
+            throw folderError;
+          }
+        }
+      } catch (storageError) {
+        console.error('Error al eliminar archivos:', storageError);
+        throw new Error('No se pudieron eliminar todos los archivos del ejemplo');
+      }
     });
   }
 
