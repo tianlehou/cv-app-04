@@ -1,4 +1,6 @@
 import { Component, Output, EventEmitter } from '@angular/core';
+import { ConfirmationModalService } from 'src/app/shared/services/confirmation-modal.service';
+import { inject } from '@angular/core';
 
 @Component({
   selector: 'app-example-editor-actions',
@@ -9,12 +11,20 @@ import { Component, Output, EventEmitter } from '@angular/core';
 export class ExampleEditorActionsComponent {
   @Output() addExample = new EventEmitter<void>();
   @Output() deleteExample = new EventEmitter<void>();
+  
+  private confirmationModalService = inject(ConfirmationModalService);
 
   onAddExample() {
     this.addExample.emit();
   }
 
   onDeleteExample() {
-    this.deleteExample.emit();
+    this.confirmationModalService.show(
+      {
+        title: 'Eliminar Ejemplo',
+        message: '¿Estás seguro de que deseas eliminar este ejemplo?'
+      },
+      () => this.deleteExample.emit()
+    );
   }
 }

@@ -13,11 +13,11 @@ import { ToastService } from 'src/app/shared/services/toast.service';
   selector: 'app-candidate-examples-modal',
   standalone: true,
   imports: [
-    NgIf, 
-    ProfilePictureComponent, 
-    PersonalDataComponent, 
+    NgIf,
+    ProfilePictureComponent,
+    PersonalDataComponent,
     GalleryComponent,
-    ExamplePaginationComponent, 
+    ExamplePaginationComponent,
     ExampleEditorActionsComponent
   ],
   templateUrl: './candidate-examples-modal.component.html',
@@ -43,7 +43,7 @@ export class CandidateExamplesModalComponent implements OnInit {
 
   async initExamples() {
     this.exampleIds = await this.examplesService.getAllExampleIds();
-    
+
     // Si no hay ejemplos, crear el primero
     if (this.exampleIds.length === 0) {
       try {
@@ -59,7 +59,7 @@ export class CandidateExamplesModalComponent implements OnInit {
         this.toast.show('Error al crear el primer ejemplo', 'error');
       }
     }
-    
+
     if (this.exampleIds.length > 0) {
       this.currentIndex = 0;
       this.currentExampleId = this.exampleIds[this.currentIndex];
@@ -89,12 +89,12 @@ export class CandidateExamplesModalComponent implements OnInit {
     try {
       this.currentExampleId = await this.examplesService.generateExampleId();
       this.examplesService.setCurrentExampleId(this.currentExampleId);
-      
+
       await this.examplesService.createExample(this.currentExampleId, {
         createdAt: new Date().toISOString(),
         images: []
       });
-      
+
       this.exampleIds = await this.examplesService.getAllExampleIds();
       this.currentIndex = this.exampleIds.indexOf(this.currentExampleId);
       this.cdr.detectChanges();
@@ -105,8 +105,6 @@ export class CandidateExamplesModalComponent implements OnInit {
   }
 
   deleteExample() {
-    if (this.currentExampleId && confirm('¿Estás seguro de eliminar este ejemplo?')) {
-      this.examplesService.deleteExample(this.currentExampleId);
-    }
+    this.examplesService.deleteExample(this.currentExampleId);
   }
 }
