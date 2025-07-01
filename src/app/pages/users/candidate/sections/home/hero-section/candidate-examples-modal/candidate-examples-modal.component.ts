@@ -6,6 +6,8 @@ import { ProfilePictureComponent } from '../../../profile/profile-picture/profil
 import { PersonalDataComponent } from '../../../profile/personal-data/personal-data.component';
 import { ExamplePaginationComponent } from './example-pagination/example-pagination.component';
 import { ExampleEditorActionsComponent } from './example-editor-actions/example-editor-actions.component';
+import { ChangeDetectorRef } from '@angular/core';
+import { ToastService } from 'src/app/shared/services/toast.service';
 
 @Component({
   selector: 'app-candidate-examples-modal',
@@ -29,7 +31,11 @@ export class CandidateExamplesModalComponent implements OnInit {
   exampleIds: string[] = [];
   currentIndex: number = -1;
 
-  constructor(private examplesService: ExamplesService) { }
+  constructor(
+    private examplesService: ExamplesService,
+    private cdr: ChangeDetectorRef,
+    private toast: ToastService
+  ) { }
 
   ngOnInit(): Promise<void> {
     return this.initExamples();
@@ -37,16 +43,36 @@ export class CandidateExamplesModalComponent implements OnInit {
 
   async initExamples() {
     this.exampleIds = await this.examplesService.getAllExampleIds();
+    
+    // Si no hay ejemplos, crear el primero
+    if (this.exampleIds.length === 0) {
+      try {
+        const firstExampleId = await this.examplesService.generateExampleId();
+        await this.examplesService.createExample(firstExampleId, {
+          createdAt: new Date().toISOString(),
+          images: []
+        });
+        // Recargar la lista de IDs
+        this.exampleIds = await this.examplesService.getAllExampleIds();
+      } catch (error) {
+        console.error('Error al crear el primer ejemplo:', error);
+        this.toast.show('Error al crear el primer ejemplo', 'error');
+      }
+    }
+    
     if (this.exampleIds.length > 0) {
       this.currentIndex = 0;
       this.currentExampleId = this.exampleIds[this.currentIndex];
+      this.examplesService.setCurrentExampleId(this.currentExampleId);
     }
+    this.cdr.detectChanges();
   }
 
   async onPageChange(newPage: number) {
     if (newPage >= 1 && newPage <= this.exampleIds.length) {
       this.currentIndex = newPage - 1;
       this.currentExampleId = this.exampleIds[this.currentIndex];
+      this.examplesService.setCurrentExampleId(this.currentExampleId);
     }
   }
 
@@ -60,12 +86,22 @@ export class CandidateExamplesModalComponent implements OnInit {
   }
 
   async addExample() {
-    this.currentExampleId = await this.examplesService.generateExampleId();
-
-    await this.examplesService.createExample(this.currentExampleId, {
-      createdAt: new Date().toISOString(),
-      images: []
-    });
+    try {
+      this.currentExampleId = await this.examplesService.generateExampleId();
+      this.examplesService.setCurrentExampleId(this.currentExampleId);
+      
+      await this.examplesService.createExample(this.currentExampleId, {
+        createdAt: new Date().toISOString(),
+        images: []
+      });
+      
+      this.exampleIds = await this.examplesService.getAllExampleIds();
+      this.currentIndex = this.exampleIds.indexOf(this.currentExampleId);
+      this.cdr.detectChanges();
+    } catch (error) {
+      console.error('Error al crear ejemplo:', error);
+      this.toast.show('Error al crear ejemplo', 'error');
+    }
   }
 
   deleteExample() {

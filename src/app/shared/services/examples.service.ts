@@ -1,12 +1,15 @@
 import { Injectable, inject, EnvironmentInjector, runInInjectionContext } from '@angular/core';
 import { Database, ref, set, remove, get } from '@angular/fire/database';
 import { Storage, ref as storageRef, deleteObject } from '@angular/fire/storage';
+import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ExamplesService {
   private injector = inject(EnvironmentInjector);
+  private currentExampleId = new BehaviorSubject<string>('');
+  currentExampleId$ = this.currentExampleId.asObservable();
 
   constructor(
     private db: Database,
@@ -23,7 +26,15 @@ export class ExamplesService {
       }
       
       const examples = snapshot.val();
-      const count = Object.keys(examples).length;
+      const exampleIds = Object.keys(examples);
+      
+      // Si no hay ejemplos con ID '01', lo devolvemos
+      if (!exampleIds.includes('01')) {
+        return '01';
+      }
+      
+      // Si ya existe '01', continuamos con la secuencia normal
+      const count = exampleIds.length;
       return (count + 1).toString().padStart(2, '0');
     });
   }
@@ -42,8 +53,13 @@ export class ExamplesService {
 
   async createExample(exampleId: string, initialData: any): Promise<void> {
     return runInInjectionContext(this.injector, async () => {
-      const exampleRef = ref(this.db, this.getExamplePath(exampleId));
-      await set(exampleRef, initialData);
+      try {
+        const exampleRef = ref(this.db, this.getExamplePath(exampleId));
+        await set(exampleRef, initialData);
+      } catch (error) {
+        console.error('Error creating example:', error);
+        throw error;
+      }
     });
   }
 
@@ -70,5 +86,18 @@ export class ExamplesService {
       
       return Object.keys(snapshot.val());
     });
+  }
+
+  setCurrentExampleId(exampleId: string): void {
+    this.currentExampleId.next(exampleId);
+  }
+  
+  getCurrentExampleId(): string {
+    return this.currentExampleId.getValue();
+  }
+  
+  getExampleImagesPath(exampleId?: string): string {
+    const id = exampleId || this.getCurrentExampleId();
+    return `cv-app/examples/${id}/gallery-images`;
   }
 }

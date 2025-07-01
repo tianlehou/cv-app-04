@@ -1,9 +1,12 @@
 import { Component, Input, ChangeDetectorRef, OnInit, OnDestroy } from '@angular/core';
 import { inject, EnvironmentInjector, NgZone, runInInjectionContext } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Subscription } from 'rxjs';
+import { filter, distinctUntilChanged } from 'rxjs/operators';
 import { Database, ref, get, onValue } from '@angular/fire/database';
 import { FirebaseService } from 'src/app/shared/services/firebase.service';
 import { ToastService } from 'src/app/shared/services/toast.service';
+import { ExamplesService } from 'src/app/shared/services/examples.service';
 import { ImageInfoBarComponent } from './image-info-bar/image-info-bar.component';
 import { ImageUploadButtonComponent } from './image-upload-button/image-upload-button.component';
 import { ImageItemContainerComponent } from './image-item-container/image-item-container.component';
@@ -29,7 +32,8 @@ export class ImageGridComponent implements OnInit, OnDestroy {
   @Input() isExample: boolean = false;
   userEmailKey: string | null = null;
   userImages: string[] = [];
-  private unsubscribeExample: (() => void) | null = null;
+  private unsubscribeExample?: () => void;
+  private currentExampleSubscription?: Subscription;
 
   private injector = inject(EnvironmentInjector);
   private database = inject(Database);
@@ -37,10 +41,21 @@ export class ImageGridComponent implements OnInit, OnDestroy {
   private toast = inject(ToastService);
   private cdr = inject(ChangeDetectorRef);
   private ngZone = inject(NgZone);
+  private examplesService = inject(ExamplesService);
+
+  constructor() {}
 
   ngOnInit(): void {
     if (this.isExample) {
-      this.setupExampleRealtimeUpdates();
+      this.subscribeToExampleChanges();
+      this.currentExampleSubscription = this.examplesService.currentExampleId$
+        .pipe(
+          filter(exampleId => !!exampleId),
+          distinctUntilChanged()
+        )
+        .subscribe(exampleId => {
+          this.loadExampleImages(exampleId);
+        });
     } else if (this.currentUser?.email) {
       console.log('Cargando en modo usuario normal');
       this.userEmailKey = this.firebaseService.formatEmailKey(this.currentUser.email);
@@ -51,10 +66,8 @@ export class ImageGridComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    // Limpiar la suscripción del ejemplo si existe
-    if (this.unsubscribeExample) {
-      this.unsubscribeExample();
-    }
+    if (this.unsubscribeExample) this.unsubscribeExample();
+    if (this.currentExampleSubscription) this.currentExampleSubscription.unsubscribe();
   }
 
   public handleUploadComplete(imageUrl: string): void {
@@ -79,17 +92,26 @@ export class ImageGridComponent implements OnInit, OnDestroy {
     }
   }
 
-  private setupExampleRealtimeUpdates(): void {
+  private loadExampleImages(exampleId: string): void {
+    console.log('Cargando imágenes para ejemplo:', exampleId);
+    
     runInInjectionContext(this.injector, () => {
-      const exampleId = 'default-example'; // TODO: Replace with actual example ID as needed
-      const examplePath = `cv-app/examples/${exampleId}/gallery-images`;
+      const examplePath = this.examplesService.getExampleImagesPath(exampleId);
+      console.log('Ruta de ejemplo:', examplePath);
+      
       const exampleRef = ref(this.database, examplePath);
       
       // Cargar datos iniciales
       get(exampleRef).then(snapshot => {
+        console.log('Datos recibidos:', snapshot.val());
         this.processExampleSnapshot(snapshot);
       }).catch(error => {
-        console.error('Error cargando imágenes de ejemplo:', error);
+        console.error('Error cargando imágenes de ejemplo:', {
+          error,
+          exampleId,
+          path: examplePath,
+          timestamp: new Date().toISOString()
+        });
         this.ngZone.run(() => {
           this.toast.show('Error cargando imágenes de ejemplo', 'error');
         });
@@ -97,9 +119,16 @@ export class ImageGridComponent implements OnInit, OnDestroy {
       
       // Configurar escucha de cambios en tiempo real
       this.unsubscribeExample = onValue(exampleRef, 
-        (snapshot) => this.processExampleSnapshot(snapshot),
+        (snapshot) => {
+          console.log('Actualización en tiempo real:', snapshot.val());
+          this.processExampleSnapshot(snapshot);
+        },
         (error) => {
-          console.error('Error en tiempo real (ejemplo):', error);
+          console.error('Error en tiempo real (ejemplo):', {
+            error,
+            exampleId,
+            timestamp: new Date().toISOString()
+          });
         }
       );
     });
@@ -137,5 +166,15 @@ export class ImageGridComponent implements OnInit, OnDestroy {
         this.toast.show('Error cargando tus imágenes', 'error');
       });
     }
+  }
+
+  private subscribeToExampleChanges(): void {
+    // No-op for now
+  }
+
+  private showErrorToast(message: string): void {
+    this.ngZone.run(() => {
+      this.toast.show(message, 'error');
+    });
   }
 }

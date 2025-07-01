@@ -6,6 +6,7 @@ import { ToastService } from 'src/app/shared/services/toast.service';
 import { runInInjectionContext } from '@angular/core';
 import { ImageCompressionService } from 'src/app/shared/services/image-compression.service';
 import { FirebaseService } from 'src/app/shared/services/firebase.service';
+import { ExamplesService } from 'src/app/shared/services/examples.service';
 
 @Component({
   selector: 'app-image-upload-button',
@@ -33,6 +34,7 @@ export class ImageUploadButtonComponent implements OnDestroy {
   private cdr = inject(ChangeDetectorRef);
   private ngZone = inject(NgZone);
   private imageCompression = inject(ImageCompressionService);
+  private examplesService = inject(ExamplesService);
 
   async onFileSelected(event: Event): Promise<void> {
     // Permitir siempre la subida para pruebas
@@ -75,7 +77,7 @@ export class ImageUploadButtonComponent implements OnDestroy {
         // Usar ruta diferente para modo ejemplo
         let storagePath: string;
         if (this.isExample) {
-          const exampleId = 'default-example';
+          const exampleId = this.examplesService.getCurrentExampleId();
           storagePath = `cv-app/examples/${exampleId}/gallery-images/${imageName}`;
         } else {
           if (!this.userEmailKey) return;
@@ -139,8 +141,7 @@ export class ImageUploadButtonComponent implements OnDestroy {
 
   private async updateExampleGallery(imageUrl: string): Promise<void> {
     return runInInjectionContext(this.injector, async () => {
-      // Usa un valor fijo o pásalo como argumento/propiedad si es dinámico
-      const exampleId = 'default-example'; // TODO: reemplaza con el ID correcto si es necesario
+      const exampleId = this.examplesService.getCurrentExampleId();
       const examplePath = `cv-app/examples/${exampleId}/gallery-images`;
       const database = inject(Database);
       const exampleRef = dbRef(database, examplePath);

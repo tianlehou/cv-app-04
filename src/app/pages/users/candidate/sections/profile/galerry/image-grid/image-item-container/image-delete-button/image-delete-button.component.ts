@@ -7,6 +7,7 @@ import { Database, ref as dbRef, get, set } from '@angular/fire/database';
 import { FirebaseService } from 'src/app/shared/services/firebase.service';
 import { ConfirmationModalService } from 'src/app/shared/services/confirmation-modal.service';
 import { ToastService } from 'src/app/shared/services/toast.service';
+import { ExamplesService } from 'src/app/shared/services/examples.service';
 
 @Component({
   selector: 'app-image-delete-button',
@@ -53,6 +54,7 @@ export class ImageDeleteButtonComponent {
   private ngZone = inject(NgZone);
   private confirmationModalService = inject(ConfirmationModalService);
   private database = inject(Database);
+  private examplesService = inject(ExamplesService);
 
   showDeleteModal(): void {
     if (!this.imageUrl) return;
@@ -73,8 +75,7 @@ export class ImageDeleteButtonComponent {
       await runInInjectionContext(this.injector, async () => {
         // 1. Primero, eliminar de la base de datos
         if (this.isExample) {
-          // Usa un valor fijo o pásalo como argumento/propiedad si es dinámico
-          const exampleId = 'default-example'; // TODO: reemplaza con el ID correcto si es necesario
+          const exampleId = this.examplesService.getCurrentExampleId();
           const examplePath = `cv-app/examples/${exampleId}/gallery-images`;
           const exampleRef = dbRef(this.database, examplePath);
 

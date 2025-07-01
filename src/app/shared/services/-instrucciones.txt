@@ -1,10 +1,13 @@
-- el boton de agregar ejemplo funciona bien.
-- necesito que los botones de adelante, atras funcionen.
-- necesito coordinar el componente de paginacion con los modales de ejemplos.
+componentes relacionados:
+- candidate-examples-modal
+- example-pagination
+- example-editor-actions
+- image-item-container
+- image-grid, metodo para cargar imagenes de ejemplo
+- image-upload-button, metodo para subir imagenes de ejemplo
+- image-delete-button, metodo para eliminar imagenes de ejemplo
+- example.service.ts servicio del modal de ejemplos
 
-const exampleId = 'default-example'; // TODO: reemplaza con el ID correcto si es necesario
-const examplePath = `cv-app/examples/${exampleId}/gallery-images`;
-
-actualmente las imagenes se guardan en subnodo de default-example,
-cuando haga clic en el boton de adelante, atras, debe cambiar el id de default-example por el siguiente o anterior.
-
+funcionalidades:
+- cuando el usuario navegue entre los ejemplos, debe cargar las imagenes de ejemplo correspondientes.
+por ejemplo, si el usuario navega al ejemplo 2, debe cargar las imagenes del ejemplo 2.
