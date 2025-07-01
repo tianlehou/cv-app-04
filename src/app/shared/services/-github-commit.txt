@@ -1,22 +1,13 @@
-2025-07-01 v1.02.034 -m "feat(examples): Mejora en gestión de IDs y navegación al eliminar ejemplos
+2025-07-01 v1.02.035 feat(paginación): sincronizar página actual al cambiar ejemplos
 
-- Modificado examples.service.ts para:
-  - Mantener toda la funcionalidad de borrado de imágenes y carpetas
-  - Implementar lógica que determina automáticamente qué ejemplo mostrar tras eliminar:
-    * Muestra el siguiente ejemplo si existe
-    * Muestra el anterior si se eliminó el último
-  - Devolver IDs restantes y nuevo ID actual al componente
+- Se implementó OnChanges en ExamplePaginationComponent
+- Ajuste automático de página actual cuando cambia totalItems
+- Garantiza que la página sea válida al agregar/eliminar ejemplos
+- Lógica para volver a página 1 cuando solo queda una página
 
-- Actualizado candidate-examples-modal.component.ts para:
-  - Manejar la respuesta del servicio al eliminar ejemplos
-  - Actualizar la vista con el ejemplo correspondiente
-  - Crear nuevo ejemplo si no quedan existentes
-
-- Mejorado el título del modal para:
-  * Mostrar posición actual y total de ejemplos
-  * Mostrar ID solo para usuarios editores (isEditor: true)
-
-- Corregido nombre de archivo en instrucciones (example.service.ts -> examples.service.ts)"
+Estos cambios aseguran que la paginación se mantenga sincronizada con el número
+real de ejemplos y evita quedar en una página inválida después de eliminar
+un ejemplo.
 
 
 

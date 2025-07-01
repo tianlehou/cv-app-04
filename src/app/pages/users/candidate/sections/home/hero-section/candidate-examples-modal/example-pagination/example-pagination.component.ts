@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -8,7 +8,7 @@ import { CommonModule } from '@angular/common';
   templateUrl: './example-pagination.component.html',
   styleUrls: ['./example-pagination.component.css']
 })
-export class ExamplePaginationComponent {
+export class ExamplePaginationComponent implements OnChanges {
   @Input() currentPage: number = 1;
   @Input() totalItems: number = 0;
   @Input() pageSize: number = 10;
@@ -34,6 +34,16 @@ export class ExamplePaginationComponent {
     if (page >= 1 && page <= this.totalPages && page !== this.currentPage) {
       this.currentPage = page;
       this.pageChange.emit(page);
+    }
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['totalItems']) {
+      // Ajustar currentPage si es necesario al cambiar totalItems
+      if (this.currentPage > this.totalPages && this.totalPages > 0) {
+        this.currentPage = this.totalPages;
+        this.pageChange.emit(this.currentPage);
+      }
     }
   }
 }

@@ -92,18 +92,13 @@ export class ImageGridComponent implements OnInit, OnDestroy {
     }
   }
 
-  private loadExampleImages(exampleId: string): void {
-    console.log('Cargando imágenes para ejemplo:', exampleId);
-    
+  private loadExampleImages(exampleId: string): void {    
     runInInjectionContext(this.injector, () => {
       const examplePath = this.examplesService.getExampleImagesPath(exampleId);
-      console.log('Ruta de ejemplo:', examplePath);
-      
       const exampleRef = ref(this.database, examplePath);
       
       // Cargar datos iniciales
       get(exampleRef).then(snapshot => {
-        console.log('Datos recibidos:', snapshot.val());
         this.processExampleSnapshot(snapshot);
       }).catch(error => {
         console.error('Error cargando imágenes de ejemplo:', {
@@ -120,7 +115,6 @@ export class ImageGridComponent implements OnInit, OnDestroy {
       // Configurar escucha de cambios en tiempo real
       this.unsubscribeExample = onValue(exampleRef, 
         (snapshot) => {
-          console.log('Actualización en tiempo real:', snapshot.val());
           this.processExampleSnapshot(snapshot);
         },
         (error) => {
