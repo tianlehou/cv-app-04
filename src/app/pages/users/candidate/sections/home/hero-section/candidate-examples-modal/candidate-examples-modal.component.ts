@@ -104,7 +104,22 @@ export class CandidateExamplesModalComponent implements OnInit {
     }
   }
 
-  deleteExample() {
-    this.examplesService.deleteExample(this.currentExampleId);
+  async deleteExample() {
+    try {
+      const result = await this.examplesService.deleteExample(this.currentExampleId);
+      
+      if (result.remainingIds.length > 0) {
+        this.exampleIds = result.remainingIds;
+        this.currentExampleId = result.newCurrentId || this.exampleIds[0];
+        this.currentIndex = this.exampleIds.indexOf(this.currentExampleId);
+      } else {
+        await this.addExample(); // Crear nuevo si no quedan ejemplos
+      }
+      
+      this.cdr.detectChanges();
+    } catch (error) {
+      console.error('Error al eliminar ejemplo:', error);
+      this.toast.show('Error al eliminar ejemplo', 'error');
+    }
   }
 }

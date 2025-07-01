@@ -25,17 +25,23 @@ export class ExamplesService {
         return '01';
       }
       
-      const examples = snapshot.val();
-      const exampleIds = Object.keys(examples);
+      const exampleIds = Object.keys(snapshot.val()).map(id => parseInt(id));
       
       // Si no hay ejemplos con ID '01', lo devolvemos
-      if (!exampleIds.includes('01')) {
+      if (!exampleIds.includes(1)) {
         return '01';
       }
       
-      // Si ya existe '01', continuamos con la secuencia normal
-      const count = exampleIds.length;
-      return (count + 1).toString().padStart(2, '0');
+      // Buscar el primer hueco disponible en la secuencia
+      const maxId = Math.max(...exampleIds);
+      for (let i = 1; i <= maxId; i++) {
+        if (!exampleIds.includes(i)) {
+          return i.toString().padStart(2, '0');
+        }
+      }
+      
+      // Si no hay huecos, devolver el siguiente número después del máximo
+      return (maxId + 1).toString().padStart(2, '0');
     });
   }
 
@@ -63,7 +69,7 @@ export class ExamplesService {
     });
   }
 
-  async deleteExample(exampleId: string): Promise<void> {
+  async deleteExample(exampleId: string): Promise<{remainingIds: string[], newCurrentId?: string}> {
     return runInInjectionContext(this.injector, async () => {
       // 1. Obtener lista de imágenes desde Database
       const exampleRef = ref(this.db, this.getExamplePath(exampleId));
@@ -101,6 +107,25 @@ export class ExamplesService {
         console.error('Error al eliminar archivos:', storageError);
         throw new Error('No se pudieron eliminar todos los archivos del ejemplo');
       }
+      
+      // 4. Obtener IDs restantes y determinar nuevo ID a mostrar
+      const remainingIds = await this.getAllExampleIds();
+      let newCurrentId;
+      
+      if (remainingIds.length > 0) {
+        // Buscar el ID más cercano (siguiente o anterior)
+        const originalIndex = remainingIds.indexOf(exampleId);
+        if (originalIndex >= 0 && originalIndex < remainingIds.length - 1) {
+          // Mostrar siguiente ID si existe
+          newCurrentId = remainingIds[originalIndex];
+        } else {
+          // Mostrar anterior si era el último
+          newCurrentId = remainingIds[Math.max(0, remainingIds.length - 1)];
+        }
+        this.setCurrentExampleId(newCurrentId);
+      }
+      
+      return {remainingIds, newCurrentId};
     });
   }
 

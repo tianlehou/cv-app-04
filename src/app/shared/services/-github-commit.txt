@@ -1,19 +1,22 @@
-2025-06-30 v1.02.033 -m "fix(firebase): corrección completa de eliminación de ejemplos
+2025-07-01 v1.02.034 -m "feat(examples): Mejora en gestión de IDs y navegación al eliminar ejemplos
 
-- Modificado el método deleteExample en ExamplesService para:
-  - Eliminar correctamente archivos en Firebase Storage usando rutas específicas
-  - Manejar adecuadamente errores de tipado TypeScript
-  - Implementar verificación explícita de tipos para errores
-  - Usar rutas consistentes con la estructura de gallery-images
-  - Mejorar el manejo de promesas y errores
+- Modificado examples.service.ts para:
+  - Mantener toda la funcionalidad de borrado de imágenes y carpetas
+  - Implementar lógica que determina automáticamente qué ejemplo mostrar tras eliminar:
+    * Muestra el siguiente ejemplo si existe
+    * Muestra el anterior si se eliminó el último
+  - Devolver IDs restantes y nuevo ID actual al componente
 
-- Ajustes complementarios:
-  - Corregido conflicto de nombres con storageRef
-  - Añadido manejo de errores en la UI
-  - Verificado reglas de Firebase Storage para eliminación
+- Actualizado candidate-examples-modal.component.ts para:
+  - Manejar la respuesta del servicio al eliminar ejemplos
+  - Actualizar la vista con el ejemplo correspondiente
+  - Crear nuevo ejemplo si no quedan existentes
 
-Los cambios aseguran que al eliminar un ejemplo se borren tanto los datos en 
-Database como los archivos asociados en Storage."
+- Mejorado el título del modal para:
+  * Mostrar posición actual y total de ejemplos
+  * Mostrar ID solo para usuarios editores (isEditor: true)
+
+- Corregido nombre de archivo en instrucciones (example.service.ts -> examples.service.ts)"
 
 
 
