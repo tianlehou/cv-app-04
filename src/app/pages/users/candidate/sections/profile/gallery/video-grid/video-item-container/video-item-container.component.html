@@ -1,0 +1,16 @@
+<div class="video-item" [ngClass]="{'expanded': isExpanded}" (contextmenu)="$event.preventDefault()">
+    <video 
+        #videoPlayer 
+        controls 
+        controlsList="nodownload" 
+        (play)="onVideoPlay()">
+        <source [src]="videoUrl" type="video/mp4">
+        Tu navegador no soporta videos.
+    </video>
+    <button class="toggle-button" (click)="onToggleExpand()">
+        <i class="fas" [ngClass]="isExpanded ? 'fa-compress' : 'fa-expand'"></i>
+    </button>
+    <button *ngIf="!readOnly" class="delete-button" (click)="onDeleteVideo($event)">
+        <i class="fas fa-trash"></i>
+    </button>
+</div>

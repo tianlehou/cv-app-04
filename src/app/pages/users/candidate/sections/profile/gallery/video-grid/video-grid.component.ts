@@ -11,6 +11,7 @@ import { VideoInfoBarComponent } from './video-info-bar/video-info-bar.component
 import { VideoUploadButtonComponent } from './video-upload-button/video-upload-button.component';
 import { VideoUploadProgressBarComponent } from './video-upload-progress-bar/video-upload-progress-bar.component';
 import { VideoEmptyGalleryMessageComponent } from './video-empty-gallery-message/video-empty-gallery-message.component';
+import { VideoItemContainerComponent } from './video-item-container/video-item-container.component';
 
 interface VideoGridState {
   userVideos: string[];
@@ -31,6 +32,7 @@ interface VideoGridState {
     VideoUploadButtonComponent,
     VideoUploadProgressBarComponent,
     VideoEmptyGalleryMessageComponent,
+    VideoItemContainerComponent,
   ],
   templateUrl: './video-grid.component.html',
   styleUrls: ['./video-grid.component.css'],

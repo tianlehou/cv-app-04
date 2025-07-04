@@ -19,19 +19,14 @@
 
 <!-- Videos Grid -->
 <div class="gallery-grid">
-    <div *ngFor="let video of state.userVideos; trackBy: trackByVideoUrl" class="video-item"
-        [ngClass]="{'expanded': state.expandedStates[video]}" (contextmenu)="false">
-        <video controls controlsList="nodownload" #videoPlayer>
-            <source [src]="video" type="video/mp4">
-            Tu navegador no soporta videos.
-        </video>
-        <button class="toggle-button" (click)="toggleExpansion(video)">
-            <i class="fas" [ngClass]="state.expandedStates[video] ? 'fa-compress' : 'fa-expand'"></i>
-        </button>
-        <button *ngIf="!readOnly" class="delete-button" (click)="confirmDeleteVideo(video)">
-            <i class="fas fa-trash"></i>
-        </button>
-    </div>
+    <app-video-item-container 
+        *ngFor="let video of state.userVideos; trackBy: trackByVideoUrl"
+        [videoUrl]="video"
+        [isExpanded]="!!state.expandedStates[video]"
+        [readOnly]="readOnly"
+        (toggleExpand)="toggleExpansion(video)"
+        (deleteVideo)="confirmDeleteVideo($event)">
+    </app-video-item-container>
 
     <!-- Empty State Message -->
     <app-video-empty-gallery-message *ngIf="!state.isLoading && state.userVideos.length === 0">
