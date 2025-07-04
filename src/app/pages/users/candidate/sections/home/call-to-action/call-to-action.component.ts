@@ -10,6 +10,6 @@ import { CommonModule } from '@angular/common';
 })
 export class CallToActionComponent {
   title = '¿Listo para que te vean y te contraten?';
-  description = 'Únete a miles de profesionales que ya encontraron trabajo mostrando su talento real. ¡Solo toma 2 minutos!';
-  buttonText = 'Regístrate Gratis';
+  description = 'Únete a miles de profesionales que ya encontraron trabajo mostrando su talento real. ¡Solo toma unos minutos!';
+  buttonText = 'Prúebalo ¡Ya!';
 }

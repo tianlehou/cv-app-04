@@ -43,14 +43,13 @@
 
 .btn {
   display: inline-block;
-  background: #4a6cf7;
+  background: #ff9100;
   color: white;
   padding: 0.8rem 2rem;
   border-radius: 50px;
   text-decoration: none;
-  font-weight: 600;
   transition: all 0.3s ease;
-  border: none;
+  border: 1px solid #ff9100;
   cursor: pointer;
   font-size: 1rem;
 }
@@ -64,7 +63,13 @@
 .btn-secondary {
   background: white;
   color: #4a6cf7;
-  border: 2px solid #e2e8f0;
+  padding: 0.8rem 2rem;
+  border-radius: 50px;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  border: 1px solid #4a6cf7;
+  cursor: pointer;
+  font-size: 1rem;
 }
 
 .btn-secondary:hover {

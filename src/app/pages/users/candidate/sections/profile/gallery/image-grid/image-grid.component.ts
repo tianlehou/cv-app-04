@@ -47,7 +47,6 @@ export class ImageGridComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     if (this.isExample) {
-      this.subscribeToExampleChanges();
       this.currentExampleSubscription = this.examplesService.currentExampleId$
         .pipe(
           filter(exampleId => !!exampleId),
@@ -160,15 +159,5 @@ export class ImageGridComponent implements OnInit, OnDestroy {
         this.toast.show('Error cargando tus imágenes', 'error');
       });
     }
-  }
-
-  private subscribeToExampleChanges(): void {
-    // No-op for now
-  }
-
-  private showErrorToast(message: string): void {
-    this.ngZone.run(() => {
-      this.toast.show(message, 'error');
-    });
   }
 }

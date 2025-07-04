@@ -59,11 +59,8 @@ export class VideoGridComponent implements OnInit, AfterViewInit {
   private cdr = inject(ChangeDetectorRef);
   private ngZone = inject(NgZone);
 
-  // Funciones movidas de video.utils.ts
-  private formatEmailKey(email: string): string {
-    return email.replace(/\./g, '_');
-  }
-
+  // Método para ordenar los videos por fecha
+  // Extrae la fecha del nombre del archivo y ordena los videos en orden descendente
   private sortVideosByDate(videos: string[]): string[] {
     return [...videos].sort((a, b) => {
       const getTimestamp = (url: string) => {
@@ -75,6 +72,8 @@ export class VideoGridComponent implements OnInit, AfterViewInit {
     });
   }
 
+  // Método para inicializar los estados de expansión de los videos
+  // Crea un objeto donde cada video tiene un estado de expansión inicial en falso
   private initExpandedStates(videos: string[]): Record<string, boolean> {
     return videos.reduce((acc, video) => {
       acc[video] = false;
@@ -82,14 +81,20 @@ export class VideoGridComponent implements OnInit, AfterViewInit {
     }, {} as Record<string, boolean>);
   }
 
+  // Método para validar el usuario actual
+  // Verifica si el usuario tiene un email válido
   private validateCurrentUser(user: User | null): user is User {
     return !!user?.email;
   }
 
+  // Método para rastrear los videos por su URL
+  // Utiliza la URL del video como clave para mejorar el rendimiento en la renderización
   protected trackByVideoUrl(index: number, videoUrl: string): string {
     return videoUrl;
   }
 
+  // Método para configurar los reproductores de video
+  // Agrega un evento de reproducción a cada reproductor de video para pausar otros videos
   private setupVideoPlayers(): void {
     this.videoPlayers.forEach((video) => {
       video.nativeElement.addEventListener('play', (e: Event) =>
@@ -98,6 +103,8 @@ export class VideoGridComponent implements OnInit, AfterViewInit {
     });
   }
 
+  // Método para manejar el evento de reproducción de video
+  // Pausa todos los videos excepto el que se está reproduciendo actualmente
   private onVideoPlay(event: Event): void {
     const playingVideo = event.target as HTMLVideoElement;
     this.videoPlayers.forEach((video) => {
@@ -107,6 +114,8 @@ export class VideoGridComponent implements OnInit, AfterViewInit {
     });
   }
 
+  // Método para manejar errores
+  // Muestra un mensaje de error en la consola y en un toast
   private handleError(message: string, error: any): void {
     this.ngZone.run(() => {
       console.error(`${message}:`, error);
@@ -114,6 +123,8 @@ export class VideoGridComponent implements OnInit, AfterViewInit {
     });
   }
 
+  // Método para actualizar el estado del componente
+  // Combina el estado actual con un estado parcial y ejecuta la detección de cambios
   private updateState<T>(currentState: T, partialState: Partial<T>): T {
     const newState = { ...currentState, ...partialState };
     this.ngZone.run(() => {
@@ -122,10 +133,12 @@ export class VideoGridComponent implements OnInit, AfterViewInit {
     return newState;
   }
 
+  // Método para actualizar los videos del usuario en la base de datos
+  // Obtiene los datos actuales del usuario y actualiza la lista de videos en su perfil
   private async updateUserVideos(videos: string[]): Promise<void> {
     if (!this.currentUser?.email) return;
 
-    const userEmailKey = this.formatEmailKey(this.currentUser.email);
+    const userEmailKey = this.firebaseService.formatEmailKey(this.currentUser.email);
     const currentData = await this.firebaseService.getUserData(userEmailKey);
 
     await this.firebaseService.updateUserData(this.currentUser.email, {
@@ -139,36 +152,48 @@ export class VideoGridComponent implements OnInit, AfterViewInit {
     });
   }
 
-  // Métodos movidos de video.service.ts
+  // Método para obtener los videos del usuario desde la base de datos
+  // Utiliza la clave de email del usuario para acceder a sus datos y extraer los
   private async getVideos(userEmailKey: string): Promise<string[]> {
     const userData = await this.firebaseService.getUserData(userEmailKey);
     return userData?.profileData?.multimedia?.galleryVideos || [];
   }
 
+  // Método para eliminar un video del almacenamiento de Firebase
+  // Utiliza la URL del video para crear una referencia y eliminar el objeto del almacenamiento
   private async deleteVideoFromStorage(videoUrl: string): Promise<void> {
     const videoRef = ref(this.storage, videoUrl);
     await deleteObject(videoRef);
   }
 
-  // Métodos del componente
+  // Método para obtener la clave de email del usuario actual
+  // Formatea el email del usuario para usarlo como clave en Firebase
   get userEmailKey(): string | null {
     return this.currentUser?.email
-      ? this.formatEmailKey(this.currentUser.email)
+      ? this.firebaseService.formatEmailKey(this.currentUser.email)
       : null;
   }
 
+  // Método del ciclo de vida de Angular para inicializar el componente
+  // Verifica si el usuario actual es válido y carga los videos asociados a su email
   ngOnInit(): void {
     if (this.validateCurrentUser(this.currentUser)) {
-      const userEmailKey = this.formatEmailKey(this.currentUser!.email!);
+      const userEmailKey = this.firebaseService.formatEmailKey(this.currentUser!.email!);
       this.loadVideos(userEmailKey);
     }
   }
 
+  // Método del ciclo de vida de Angular para inicializar la vista
+  // Configura los reproductores de video y sus eventos, y suscribe a cambios en la lista de reproductores
+  // para actualizar la configuración si se agregan o eliminan videos
   ngAfterViewInit(): void {
     this.setupVideoPlayers();
     this.videoPlayers.changes.subscribe(() => this.setupVideoPlayers());
   }
 
+  // Método para reiniciar el estado de subida
+  // Resetea el progreso de subida, el tamaño subido y el tamaño total a cero
+  // Esto se utiliza después de completar una subida o al iniciar una nueva
   private resetUploadState(): void {
     this.state = this.updateState(this.state, {
       uploadProgress: null,
@@ -177,6 +202,8 @@ export class VideoGridComponent implements OnInit, AfterViewInit {
     });
   }
 
+  // Método para alternar la expansión de un video
+  // Actualiza el estado de expansión del video especificado en el objeto de estado
   toggleExpansion(videoUrl: string): void {
     this.state = this.updateState(this.state, {
       expandedStates: {
@@ -186,6 +213,8 @@ export class VideoGridComponent implements OnInit, AfterViewInit {
     });
   }
 
+  // Método para confirmar la eliminación de un video
+  // Muestra un modal de confirmación antes de proceder con la eliminación
   confirmDeleteVideo(videoUrl: string): void {
     this.confirmationModal.show(
       {
@@ -196,6 +225,8 @@ export class VideoGridComponent implements OnInit, AfterViewInit {
     );
   }
 
+  // Método para eliminar un video
+  // Valida el usuario actual, muestra un mensaje de carga y maneja la eliminación
   private async deleteVideo(videoUrl: string): Promise<void> {
     if (!this.validateCurrentUser(this.currentUser)) return;
 
@@ -208,7 +239,7 @@ export class VideoGridComponent implements OnInit, AfterViewInit {
       );
       await this.updateUserVideos(updatedVideos);
       this.toast.show('Video eliminado exitosamente', 'success');
-      this.loadVideos(this.formatEmailKey(this.currentUser!.email!));
+      this.loadVideos(this.firebaseService.formatEmailKey(this.currentUser!.email!));
     } catch (error) {
       this.handleError('Error eliminando video', error);
     } finally {
@@ -216,6 +247,8 @@ export class VideoGridComponent implements OnInit, AfterViewInit {
     }
   }
 
+  // Método para cargar los videos del usuario
+  // Valida el usuario actual, muestra un mensaje de carga y obtiene los videos
   private async loadVideos(userEmailKey: string): Promise<void> {
     this.state = this.updateState(this.state, { isLoading: true });
 
@@ -234,6 +267,8 @@ export class VideoGridComponent implements OnInit, AfterViewInit {
     }
   }
 
+  // Método para manejar la subida de videos
+  // Valida el usuario actual, muestra un mensaje de carga y sube el video
   handleUploadComplete(downloadURL: string): void {
     if (!this.currentUser || !this.userEmailKey) return;
 
@@ -245,6 +280,8 @@ export class VideoGridComponent implements OnInit, AfterViewInit {
     });
   }
 
+  // Método para manejar el progreso de la subida
+  // Actualiza el estado del componente con el progreso de la subida
   handleUploadProgress(progressData: {
     progress: number;
     uploaded: number;

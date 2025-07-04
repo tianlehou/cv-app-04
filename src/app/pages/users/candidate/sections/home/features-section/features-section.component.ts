@@ -25,7 +25,7 @@ export class FeaturesSectionComponent {
     {
       icon: 'flash-outline',
       title: 'Algoritmo inteligente',
-      description: 'Conectamos tu perfil con empleadores que buscan exactamente tus habilidades.'
+      description: 'Conectamos tu perfil con empleadores que buscan tus habilidades.'
     },
     {
       icon: 'time-outline',

@@ -7,7 +7,7 @@
       (error)="onImageError()"
     />
 
-    <app-watermark *ngIf="!isOwner"></app-watermark>
+    <app-watermark *ngIf="isOwner"></app-watermark>
 
     <app-image-delete-button
       *ngIf="(isOwner && !isExample) || (isOwner && isEditor && isExample)"
