@@ -1,30 +1,29 @@
 <!-- image-grid.component.html -->
-<div class="top-row" *ngIf="isEditor || !isExample && !readOnly">
-    <!-- Mostrar siempre la barra de información -->
-    <app-image-info-bar [userImages]="isExample ? [] : userImages"></app-image-info-bar>
-    
-    <!-- Botón de subida solo para editores -->
-    <app-image-upload-button 
-        [userEmailKey]="userEmailKey" 
-        [isExample]="isExample"
-        [isEditor]="isEditor"
-        (uploadComplete)="handleUploadComplete($event)">
-    </app-image-upload-button>
+<div class="top-row" *ngIf="isEditor || (!isExample && !readOnly)">
+  <app-image-info-bar [userImages]="isExample ? [] : userImages"></app-image-info-bar>
+
+  <!-- Botón de subida solo para editores -->
+  <app-image-upload-button
+    [userEmailKey]="userEmailKey"
+    [isExample]="isExample"
+    [isEditor]="isEditor"
+    (uploadComplete)="handleUploadComplete($event)">
+  </app-image-upload-button>
 </div>
 
 <div class="gallery-grid">
-    <!-- Mostrar imágenes si existen -->
-    <app-image-item-container 
-        *ngFor="let image of userImages" 
-        [imageUrl]="image" 
-        [currentUser]="currentUser"
-        [userEmailKey]="userEmailKey" 
-        [isOwner]="isExample || !readOnly"
-        [isExample]="isExample"
-        [isEditor]="isEditor"
-        (imageDeleted)="handleImageDeleted($event)">
-    </app-image-item-container>
+  <!-- Mostrar imágenes si existen -->
+  <app-image-item-container
+    *ngFor="let image of userImages"
+    [imageUrl]="image"
+    [currentUser]="currentUser"
+    [userEmailKey]="userEmailKey"
+    [isOwner]="isExample || !readOnly"
+    [isExample]="isExample"
+    [isEditor]="isEditor"
+    (imageDeleted)="handleImageDeleted($event)">
+  </app-image-item-container>
 
-    <!-- Mostrar mensaje cuando no hay imágenes -->
-    <app-image-empty-gallery-message *ngIf="userImages.length === 0"></app-image-empty-gallery-message>
+  <!-- Mostrar mensaje cuando no hay imágenes -->
+  <app-image-empty-gallery-message *ngIf="userImages.length === 0"></app-image-empty-gallery-message>
 </div>

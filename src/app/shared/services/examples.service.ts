@@ -175,4 +175,9 @@ export class ExamplesService {
     const id = exampleId || this.getCurrentExampleId();
     return `cv-app/examples/${id}/gallery-images`;
   }
+
+  getExampleVideosPath(exampleId?: string): string {
+    const id = exampleId || this.getCurrentExampleId();
+    return `cv-app/examples/${id}/gallery-videos`;
+  }
 }

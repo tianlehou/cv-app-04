@@ -1,18 +1,13 @@
-componentes relacionados:
-- candidate-examples-modal
-- example-pagination
-- example-editor-actions
-- image-item-container
-- image-grid, metodo para cargar imagenes de ejemplo
-- image-upload-button, metodo para subir imagenes de ejemplo
-- image-delete-button, metodo para eliminar imagenes de ejemplo
-- examples.service.ts servicio del modal de ejemplos
+revisa estos componentes para que lo tomes de referencias:
 
-problemas:
-- tengo 3 ejemplo con los siguientes id: 01, 02 y 03
-- borro el ejemplo con el id 02, se borra correctamente.
-- pero en database queda asi: 01 y 03.
-- cuando intento agregar un nuevo ejemplo, no se agrega nuevos ejemplos sino que sobreescribe el ultimo ejemplo id 03.
-- si tengo imagenes en el id 03, las imagenes se borran e intentar crear nuevo ejemplos pero no lo hace.
-porque se perdio la secuencia de id. 01 a 03
-- hay que buscar una forma para que el 03 sea el siguiente id. o que el 03 se renombre a 02.
+- candidate-examples-modal, es el componente que se utiliza para mostrar los ejemplos
+a los usuarios normales y el usuario editor lo usa para subir archivos multimedia.
+
+- image-grid y image-upload-button, son componentes que suben imagenes correctamente a la basa de datos.
+usuarios normales suben a la ruta de usuarios,
+usuario editor sube a la ruta de ejemplo.
+
+- examples.service.ts y firebase.service.ts son servicio para la subida de datos
+
+Actualmente:
+- en modo usu

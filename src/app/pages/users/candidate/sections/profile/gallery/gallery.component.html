@@ -15,7 +15,12 @@
                     </app-image-grid>
                 }
                 @case ('video') {
-                    <app-video-grid [currentUser]="null" [readOnly]="!isEditor"></app-video-grid>
+                    <app-video-grid 
+                        [currentUser]="null" 
+                        [readOnly]="!isEditor"
+                        [isExample]="isExample"
+                        [isEditor]="isEditor">
+                    </app-video-grid>
                 }
                 @case ('cv') {
                     <app-cv-grid [currentUser]="null" 

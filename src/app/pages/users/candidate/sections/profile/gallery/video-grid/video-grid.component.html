@@ -1,39 +1,49 @@
 <!-- video-grid.component.html -->
-<div class="top-row" *ngIf="!readOnly">
-    <app-video-info-bar 
-        [videoUrls]="state.userVideos" 
-        (totalSizeCalculated)="state.totalUploadedMB = $event">
-    </app-video-info-bar>
-    <app-video-upload-button [userEmailKey]="userEmailKey" [currentUser]="currentUser"
-        (uploadComplete)="handleUploadComplete($event)" (uploadProgress)="handleUploadProgress($event)">
-    </app-video-upload-button>
+<div class="top-row" *ngIf="isEditor || (!isExample && !readOnly)">
+  <app-video-info-bar
+    [videoUrls]="state.userVideos"
+    (totalSizeCalculated)="state.totalUploadedMB = $event"
+  ></app-video-info-bar>
+
+  <app-video-upload-button
+    [userEmailKey]="userEmailKey"
+    [isEditor]="isEditor"
+    [isExample]="isExample"
+    (uploadComplete)="handleUploadComplete($event)"
+    (uploadProgress)="handleUploadProgress($event)"
+  >
+  </app-video-upload-button>
 </div>
 
 <!-- Upload Progress -->
 <app-video-upload-progress-bar
-    *ngIf="state.uploadProgress !== null && state.uploadProgress < 100"
-    [uploadProgress]="state.uploadProgress"
-    [uploadedSize]="state.uploadedSize"
-    [totalSize]="state.totalSize">
+  *ngIf="state.uploadProgress !== null && state.uploadProgress < 100"
+  [uploadProgress]="state.uploadProgress"
+  [uploadedSize]="state.uploadedSize"
+  [totalSize]="state.totalSize"
+>
 </app-video-upload-progress-bar>
 
 <!-- Videos Grid -->
 <div class="gallery-grid">
-    <app-video-item-container 
-        *ngFor="let video of state.userVideos; trackBy: trackByVideoUrl"
-        [videoUrl]="video"
-        [isExpanded]="!!state.expandedStates[video]"
-        [readOnly]="readOnly"
-        (toggleExpand)="toggleExpansion(video)"
-        (deleteVideo)="confirmDeleteVideo($event)">
-    </app-video-item-container>
+  <app-video-item-container
+    *ngFor="let video of state.userVideos; trackBy: trackByVideoUrl"
+    [videoUrl]="video"
+    [isExpanded]="!!state.expandedStates[video]"
+    [readOnly]="readOnly"
+    (toggleExpand)="toggleExpansion(video)"
+    (deleteVideo)="confirmDeleteVideo($event)"
+  >
+  </app-video-item-container>
 
-    <!-- Empty State Message -->
-    <app-video-empty-gallery-message *ngIf="!state.isLoading && state.userVideos.length === 0">
-    </app-video-empty-gallery-message>
+  <!-- Empty State Message -->
+  <app-video-empty-gallery-message
+    *ngIf="!state.isLoading && state.userVideos.length === 0"
+  >
+  </app-video-empty-gallery-message>
 
-    <!-- Loading State -->
-    <div *ngIf="state.isLoading" class="loading-spinner">
-        <i class="fas fa-spinner fa-spin"></i>
-    </div>
+  <!-- Loading State -->
+  <div *ngIf="state.isLoading" class="loading-spinner">
+    <i class="fas fa-spinner fa-spin"></i>
+  </div>
 </div>

@@ -6,12 +6,14 @@ import { CommonModule } from '@angular/common';
 import { ToastService } from 'src/app/shared/services/toast.service';
 import { FirebaseService } from 'src/app/shared/services/firebase.service';
 import { ConfirmationModalService } from 'src/app/shared/services/confirmation-modal.service';
-import { Storage, ref, deleteObject, getMetadata } from '@angular/fire/storage';
+import { Storage, ref, deleteObject } from '@angular/fire/storage';
+import { Database, ref as dbRef, set, get } from '@angular/fire/database';
 import { VideoInfoBarComponent } from './video-info-bar/video-info-bar.component';
 import { VideoUploadButtonComponent } from './video-upload-button/video-upload-button.component';
 import { VideoUploadProgressBarComponent } from './video-upload-progress-bar/video-upload-progress-bar.component';
 import { VideoEmptyGalleryMessageComponent } from './video-empty-gallery-message/video-empty-gallery-message.component';
 import { VideoItemContainerComponent } from './video-item-container/video-item-container.component';
+import { ExamplesService } from 'src/app/shared/services/examples.service';
 
 interface VideoGridState {
   userVideos: string[];
@@ -42,7 +44,10 @@ export class VideoGridComponent implements OnInit, AfterViewInit {
     ElementRef<HTMLVideoElement>
   >;
   @Input() currentUser: User | null = null;
+  @Input() isEditor: boolean = false;
   @Input() readOnly: boolean = false;
+  @Input() isExample: boolean = false;
+  userEmailKey: string | null = null;
 
   state: VideoGridState = {
     userVideos: [],
@@ -60,6 +65,8 @@ export class VideoGridComponent implements OnInit, AfterViewInit {
   private firebaseService = inject(FirebaseService);
   private cdr = inject(ChangeDetectorRef);
   private ngZone = inject(NgZone);
+  private database = inject(Database);
+  private examplesService = inject(ExamplesService);
 
   // Método para ordenar los videos por fecha
   // Extrae la fecha del nombre del archivo y ordena los videos en orden descendente
@@ -135,30 +142,45 @@ export class VideoGridComponent implements OnInit, AfterViewInit {
     return newState;
   }
 
-  // Método para actualizar los videos del usuario en la base de datos
-  // Obtiene los datos actuales del usuario y actualiza la lista de videos en su perfil
-  private async updateUserVideos(videos: string[]): Promise<void> {
-    if (!this.currentUser?.email) return;
+  // Método para actualizar los videos en la base de datos (usuario o ejemplo)
+  private async updateVideos(videos: string[]): Promise<void> {
+    if (this.isExample) {
+      const exampleId = this.examplesService.getCurrentExampleId();
+      if (!exampleId) return;
+      
+      const exampleRef = dbRef(this.database, `cv-app/examples/${exampleId}/gallery-videos`);
+      await set(exampleRef, videos);
+    } else if (this.currentUser?.email) {
+      const userEmailKey = this.firebaseService.formatEmailKey(this.currentUser.email);
+      const currentData = await this.firebaseService.getUserData(userEmailKey);
 
-    const userEmailKey = this.firebaseService.formatEmailKey(this.currentUser.email);
-    const currentData = await this.firebaseService.getUserData(userEmailKey);
-
-    await this.firebaseService.updateUserData(this.currentUser.email, {
-      profileData: {
-        ...currentData.profileData,
-        multimedia: {
-          ...currentData.profileData?.multimedia,
-          galleryVideos: videos,
+      await this.firebaseService.updateUserData(this.currentUser.email, {
+        profileData: {
+          ...currentData.profileData,
+          multimedia: {
+            ...currentData.profileData?.multimedia,
+            galleryVideos: videos,
+          },
         },
-      },
-    });
+      });
+    }
   }
 
-  // Método para obtener los videos del usuario desde la base de datos
-  // Utiliza la clave de email del usuario para acceder a sus datos y extraer los
+  // Método para obtener los videos del usuario o del ejemplo
   private async getVideos(userEmailKey: string): Promise<string[]> {
-    const userData = await this.firebaseService.getUserData(userEmailKey);
-    return userData?.profileData?.multimedia?.galleryVideos || [];
+    if (this.isExample) {
+      const exampleId = this.examplesService.getCurrentExampleId();
+      if (!exampleId) return [];
+      
+      // Intentar obtener los videos del ejemplo
+      const exampleRef = dbRef(this.database, `cv-app/examples/${exampleId}/gallery-videos`);
+      const snapshot = await get(exampleRef);
+      return snapshot.exists() ? snapshot.val() : [];
+    } else {
+      // Obtener los videos del usuario
+      const userData = await this.firebaseService.getUserData(userEmailKey);
+      return userData?.profileData?.multimedia?.galleryVideos || [];
+    }
   }
 
   // Método para eliminar un video del almacenamiento de Firebase
@@ -168,20 +190,13 @@ export class VideoGridComponent implements OnInit, AfterViewInit {
     await deleteObject(videoRef);
   }
 
-  // Método para obtener la clave de email del usuario actual
-  // Formatea el email del usuario para usarlo como clave en Firebase
-  get userEmailKey(): string | null {
-    return this.currentUser?.email
-      ? this.firebaseService.formatEmailKey(this.currentUser.email)
-      : null;
-  }
-
   // Método del ciclo de vida de Angular para inicializar el componente
-  // Verifica si el usuario actual es válido y carga los videos asociados a su email
   ngOnInit(): void {
-    if (this.validateCurrentUser(this.currentUser)) {
-      const userEmailKey = this.firebaseService.formatEmailKey(this.currentUser!.email!);
-      this.loadVideos(userEmailKey);
+    if (this.isExample || this.validateCurrentUser(this.currentUser)) {
+      this.userEmailKey = this.currentUser?.email 
+        ? this.firebaseService.formatEmailKey(this.currentUser.email)
+        : '';
+      this.loadVideos(this.userEmailKey);
     }
   }
 
@@ -228,9 +243,8 @@ export class VideoGridComponent implements OnInit, AfterViewInit {
   }
 
   // Método para eliminar un video
-  // Valida el usuario actual, muestra un mensaje de carga y maneja la eliminación
   private async deleteVideo(videoUrl: string): Promise<void> {
-    if (!this.validateCurrentUser(this.currentUser)) return;
+    if (!this.currentUser?.email && !this.isExample) return;
 
     this.state = this.updateState(this.state, { isLoading: true });
 
@@ -239,9 +253,14 @@ export class VideoGridComponent implements OnInit, AfterViewInit {
       const updatedVideos = this.state.userVideos.filter(
         (vid) => vid !== videoUrl
       );
-      await this.updateUserVideos(updatedVideos);
+      await this.updateVideos(updatedVideos);
       this.toast.show('Video eliminado exitosamente', 'success');
-      this.loadVideos(this.firebaseService.formatEmailKey(this.currentUser!.email!));
+      
+      const loadKey = this.isExample 
+        ? this.firebaseService.formatEmailKey(this.currentUser?.email || '') 
+        : this.firebaseService.formatEmailKey(this.currentUser!.email!);
+      
+      this.loadVideos(loadKey);
     } catch (error) {
       this.handleError('Error eliminando video', error);
     } finally {
@@ -270,14 +289,13 @@ export class VideoGridComponent implements OnInit, AfterViewInit {
   }
 
   // Método para manejar la subida de videos
-  // Valida el usuario actual, muestra un mensaje de carga y sube el video
   handleUploadComplete(downloadURL: string): void {
-    if (!this.currentUser || !this.userEmailKey) return;
+    if ((!this.currentUser || !this.userEmailKey) && !this.isExample) return;
 
     this.ngZone.run(() => {
       this.resetUploadState();
-      this.updateUserVideos([...this.state.userVideos, downloadURL]).then(() =>
-        this.loadVideos(this.userEmailKey!)
+      this.updateVideos([...this.state.userVideos, downloadURL]).then(() =>
+        this.loadVideos(this.userEmailKey || '')
       );
     });
   }

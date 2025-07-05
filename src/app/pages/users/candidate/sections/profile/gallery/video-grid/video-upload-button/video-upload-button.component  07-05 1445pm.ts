@@ -36,52 +36,27 @@ export class VideoUploadButtonComponent implements OnDestroy {
   // Maneja la selección de archivos desde el input
   // Verifica si el usuario tiene permisos y si el archivo es válido
   async onFileSelected(event: Event): Promise<void> {
-    console.log('[VideoUpload] Iniciando selección de archivo...');
-    console.log('[VideoUpload] isEditor:', this.isEditor, '| isExample:', this.isExample, '| userEmailKey:', this.userEmailKey);
-    
-    const input = event.target as HTMLInputElement;
-    if (!input.files?.length) {
-      console.log('[VideoUpload] No se seleccionó ningún archivo');
+    if (this.readOnly && !this.isEditor) {
+      this.toast.show('No tienes permisos para subir videos', 'error');
       return;
     }
 
+    const input = event.target as HTMLInputElement;
+    if (!input.files?.length) return;
+
     const file = input.files[0];
-    console.log('[VideoUpload] Archivo seleccionado:', file.name, '| Tipo:', file.type, '| Tamaño:', file.size);
     if (!file.type.startsWith('video/')) {
-      console.error('[VideoUpload] Error: Formato de archivo no es un video');
-      this.toast.show('Formato de archivo inválido. Solo se permiten videos.', 'error');
-      input.value = '';
-      return;
+      throw new Error('Solo se permiten archivos de video');
     }
 
     if (file.size > 100 * 1024 * 1024) {
-      console.error('[VideoUpload] Error: Archivo demasiado grande:', file.size, 'bytes');
-      this.toast.show('El video debe ser menor a 100MB', 'error');
+      this.toast.show('Solo se permiten archivos de videos.', 'error');
       input.value = '';
       return;
     }
 
-    // Verificar permisos antes de continuar
-    console.log('[VideoUpload] Verificando permisos...');
-    
-    // En modo ejemplo, se requiere ser editor
-    if (this.isExample && !this.isEditor) {
-      console.error('[VideoUpload] Error: Se requieren permisos de editor en modo ejemplo');
-      this.toast.show('Se requieren permisos de editor para subir videos en modo ejemplo', 'error');
-      return;
-    }
-    
-    // En modo normal, solo necesitamos el userEmailKey
-    if (!this.isExample && !this.userEmailKey) {
-      console.error('[VideoUpload] Error: No se encontró el ID de usuario');
-      this.toast.show('No se pudo identificar el usuario', 'error');
-      return;
-    }
-    
-    console.log('[VideoUpload] Permisos verificados correctamente');
-
     try {
-      await this.uploadVideo(file);
+      this.uploadVideo(file);
     } catch (error) {
       console.error('Error al subir el video:', error);
       this.toast.show('Error al procesar el video', 'error');
@@ -94,30 +69,19 @@ export class VideoUploadButtonComponent implements OnDestroy {
   // Sube el video al almacenamiento de Firebase
   // Guarda la URL en la base de datos del usuario o del ejemplo según corresponda
   private async uploadVideo(file: File): Promise<void> {
-    console.log('[VideoUpload] Iniciando subida de video...');
     return runInInjectionContext(this.injector, async () => {
       const videoName = `gallery-video-${Date.now()}.${file.name.split('.').pop()}`;
       let storagePath: string;
-      console.log('[VideoUpload] Nombre generado para el video:', videoName);
 
-      // Usar la estructura de rutas definida en las reglas de seguridad
       if (this.isExample) {
         const exampleId = this.examplesService.getCurrentExampleId();
         storagePath = `cv-app/examples/${exampleId}/gallery-videos/${videoName}`;
-        console.log('[VideoUpload] Modo ejemplo - Ruta de almacenamiento:', storagePath);
       } else {
-        if (!this.userEmailKey) {
-          console.error('[VideoUpload] Error: userEmailKey no está definido');
-          return;
-        }
-        // Usar la ruta gallery-videos que está definida en las reglas de seguridad
+        // Modo normal - solo guardar en rutas de usuario
         storagePath = `cv-app/users/${this.userEmailKey}/gallery-videos/${videoName}`;
-        console.log('[VideoUpload] Modo usuario normal - Ruta de almacenamiento:', storagePath);
       }
 
-      console.log('[VideoUpload] Creando referencia de almacenamiento...');
       const storageRef = ref(this.storage, storagePath);
-      console.log('[VideoUpload] Iniciando tarea de subida...');
       const uploadTask = uploadBytesResumable(storageRef, file);
 
       uploadTask.on(
@@ -140,9 +104,8 @@ export class VideoUploadButtonComponent implements OnDestroy {
   // Actualiza la galería de videos del usuario o del ejemplo según corresponda
   private async handleUploadComplete(uploadTask: any): Promise<void> {
     try {
-      console.log('[VideoUpload] Subida completada, obteniendo URL de descarga...');
       const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-      console.log('[VideoUpload] URL de descarga obtenida:', downloadURL);
+
       if (this.isExample) {
         const exampleId = this.examplesService.getCurrentExampleId();
         const dbPath = `cv-app/examples/${exampleId}/gallery-videos`;
