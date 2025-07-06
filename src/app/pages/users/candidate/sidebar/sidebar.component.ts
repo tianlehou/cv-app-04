@@ -2,7 +2,6 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { FirebaseService } from 'src/app/shared/services/firebase.service';
 import { AuthService } from 'src/app/pages/home/auth/auth.service';
 
 @Component({
@@ -21,7 +20,6 @@ export class SidebarComponent {
   @Output() referClicked = new EventEmitter<void>();
 
   constructor(
-    private firebaseService: FirebaseService,
     private authService: AuthService,
   ) { }
 

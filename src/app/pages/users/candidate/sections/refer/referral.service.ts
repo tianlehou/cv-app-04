@@ -29,11 +29,6 @@ export class ReferralService {
   private referralStatsSource = new BehaviorSubject<{ count: number, referrals: any[] }>({ count: 0, referrals: [] });
   currentReferralStats = this.referralStatsSource.asObservable();
 
-  // Formatear email para claves de Firebase
-  private formatEmailKey(email: string): string {
-    return email.replace(/\./g, '_');
-  }
-
   // Gestión del ID de referencia
   setReferralId(referralId: string) {
     this.referralSource.next(referralId);
@@ -65,7 +60,7 @@ export class ReferralService {
         const currentUser = await this.authService.getCurrentAuthUser();
         if (!currentUser?.email) throw new Error('Usuario no autenticado');
 
-        const referredEmailKey = this.formatEmailKey(referredEmail);
+        const referredEmailKey = this.authService.formatEmailKey(referredEmail);
         const timestamp = new Date().toISOString();
 
         // Obtener emailKey del referente
@@ -73,7 +68,7 @@ export class ReferralService {
         if (!referrerEmailKey) throw new Error('Referente no encontrado');
 
         // Prevenir autoreferencias
-        if (referrerEmailKey === this.formatEmailKey(currentUser.email)) {
+        if (referrerEmailKey === this.authService.formatEmailKey(currentUser.email)) {
           throw new Error('No puedes autoreferenciarte');
         }
 
@@ -115,7 +110,7 @@ export class ReferralService {
   ): Promise<void> {
     return runInInjectionContext(this.injector, async () => {
       try {
-        const referredEmailKey = this.formatEmailKey(referredEmail);
+        const referredEmailKey = this.authService.formatEmailKey(referredEmail);
 
         // 1. Obtener referente del usuario
         const referredUserRef = ref(this.db, `cv-app/users/${referredEmailKey}/metadata`);

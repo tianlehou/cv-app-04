@@ -1,7 +1,6 @@
 // video-upload-button.component.ts
 import { CommonModule } from '@angular/common';
-import { Component, Output, EventEmitter, Input, inject, NgZone, EnvironmentInjector, OnDestroy } from '@angular/core';
-import { runInInjectionContext } from '@angular/core';
+import { Component, Output, EventEmitter, Input, inject, NgZone, EnvironmentInjector, OnDestroy, runInInjectionContext } from '@angular/core';
 import { Storage, ref, uploadBytesResumable, getDownloadURL } from '@angular/fire/storage';
 import { Database, ref as dbRef, set, get } from '@angular/fire/database';
 import { ToastService } from 'src/app/shared/services/toast.service';
@@ -123,24 +122,26 @@ export class VideoUploadButtonComponent implements OnDestroy {
   // Maneja la finalización de la subida
   // Actualiza la galería de videos del usuario o del ejemplo según corresponda
   private async handleUploadComplete(uploadTask: any): Promise<void> {
-    try {
-      const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-      if (this.isExample) {
-        const exampleId = this.examplesService.getCurrentExampleId();
-        const dbPath = `cv-app/examples/${exampleId}/gallery-videos`;
-        await this.updateExampleGallery(downloadURL, dbPath);
-      } else if (this.userEmailKey) {
-        const dbPath = `cv-app/users/${this.userEmailKey}/gallery-videos`;
-        await this.updateUserGallery(downloadURL, dbPath);
-      }
+    return runInInjectionContext(this.injector, async () => {
+      try {
+        const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+        if (this.isExample) {
+          const exampleId = this.examplesService.getCurrentExampleId();
+          const dbPath = `cv-app/examples/${exampleId}/gallery-videos`;
+          await this.updateExampleGallery(downloadURL, dbPath);
+        } else if (this.userEmailKey) {
+          const dbPath = `cv-app/users/${this.userEmailKey}/gallery-videos`;
+          await this.updateUserGallery(downloadURL, dbPath);
+        }
 
-      this.ngZone.run(() => {
-        this.toast.show('Video subido exitosamente', 'success');
-        this.uploadComplete.emit(downloadURL);
-      });
-    } catch (error) {
-      this.handleUploadError(error);
-    }
+        this.ngZone.run(() => {
+          this.toast.show('Video subido exitosamente', 'success');
+          this.uploadComplete.emit(downloadURL);
+        });
+      } catch (error) {
+        this.handleUploadError(error);
+      }
+    });
   }
 
   // Actualiza la galería de videos del usuario

@@ -11,6 +11,10 @@ export class AuthService {
   private injector = inject(EnvironmentInjector);
   private authState = new BehaviorSubject<boolean>(false);
 
+  public formatEmailKey(email: string): string {
+    return email.replace(/\./g, '_');
+  }
+
   constructor() {
     this.monitorAuthState();
   }

@@ -9,14 +9,10 @@ import { FirebaseService } from '../../../../shared/services/firebase.service';
 export class PersonalDataService {
   constructor(private firebaseService: FirebaseService) {}
 
-  formatEmailKey(email: string): string {
-    return email.replace(/\./g, '_');
-  }
-
   async loadUserData(user: User | null) {
     if (!user?.email) return null;
 
-    const userEmailKey = this.formatEmailKey(user.email);
+    const userEmailKey = this.firebaseService.formatEmailKey(user.email);
     try {
       const userData = await this.firebaseService.getUserData(userEmailKey);
       return {

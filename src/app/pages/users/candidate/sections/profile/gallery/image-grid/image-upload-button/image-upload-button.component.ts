@@ -1,12 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { Component, Output, EventEmitter, Input, inject, ChangeDetectorRef, NgZone, EnvironmentInjector, OnDestroy } from '@angular/core';
+import { Component, Output, EventEmitter, Input, inject, ChangeDetectorRef, NgZone, EnvironmentInjector, OnDestroy, runInInjectionContext } from '@angular/core';
 import { Storage, ref, uploadBytesResumable, getDownloadURL } from '@angular/fire/storage';
 import { Database, ref as dbRef, set, get } from '@angular/fire/database';
-import { ToastService } from 'src/app/shared/services/toast.service';
-import { runInInjectionContext } from '@angular/core';
 import { ImageCompressionService } from 'src/app/shared/services/image-compression.service';
 import { FirebaseService } from 'src/app/shared/services/firebase.service';
 import { ExamplesService } from 'src/app/shared/services/examples.service';
+import { ToastService } from 'src/app/shared/services/toast.service';
 
 @Component({
   selector: 'app-image-upload-button',
