@@ -21,7 +21,7 @@
   background-size: cover;
   background-position: center center;
   background-repeat: no-repeat;
-  background-color: #f0f0f0;
+  background-image: url('./default-profile-picture.jpg');
   display: block;
   position: relative;
   overflow: hidden;
