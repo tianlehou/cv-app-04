@@ -48,7 +48,7 @@ export class EditProfilePictureComponent implements OnInit, OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['currentUser'] && this.currentUser?.email) {
-      this.userEmailKey = this.formatEmailKey(this.currentUser.email);
+      this.userEmailKey = this.firebaseService.formatEmailKey(this.currentUser.email);
       this.loadUserData();
     }
   }
@@ -56,13 +56,9 @@ export class EditProfilePictureComponent implements OnInit, OnChanges {
   ngOnInit(): void {
     this.initializeForm();
     if (this.currentUser?.email) {
-      this.userEmailKey = this.formatEmailKey(this.currentUser.email);
+      this.userEmailKey = this.firebaseService.formatEmailKey(this.currentUser.email);
       this.loadUserData();
     }
-  }
-
-  private formatEmailKey(email: string): string {
-    return email.replace(/\./g, '_');
   }
 
   private initializeForm(): void {
@@ -191,15 +187,5 @@ export class EditProfilePictureComponent implements OnInit, OnChanges {
         'error'
       );
     }
-  }
-
-  // método para abrir about-me-info
-  openInfoModal(): void {
-    this.showInfoComponent = true;
-  }
-
-  // método para cerrar about-me-info
-  toggleInfoView(): void {
-    this.showInfoComponent = !this.showInfoComponent;
   }
 }

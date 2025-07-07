@@ -9,9 +9,4 @@ import { CommonModule } from '@angular/common';
   styleUrls: ['./profile-picture-info.component.css']
 })
 export class ProfilePictureInfoComponent {
-  @Output() back = new EventEmitter<void>();
-
-  goBack(): void {
-    this.back.emit();
-  }
 }
