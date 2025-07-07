@@ -36,6 +36,11 @@ export class FeaturesSectionComponent {
       icon: 'globe-outline',
       title: 'Visibilidad global',
       description: 'Accede a oportunidades laborales locales e internacionales sin moverte de tu ciudad.'
+    },
+    {
+      icon: 'refresh-outline',
+      title: 'Actualización continua',
+      description: 'Edita y mejora tu currículum en cualquier momento. A diferencia de un CV tradicional, puedes actualizar tu información cuando lo necesites.'
     }
   ];
 }

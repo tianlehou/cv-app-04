@@ -5,7 +5,7 @@ import { HeaderComponent } from './header/header.component';
 import { FeaturesSectionComponent } from './features-section/features-section.component';
 import { HowItWorksComponent } from './how-it-works/how-it-works.component';
 import { TestimonialsSectionComponent } from './testimonials-section/testimonials-section.component';
-import { CallToActionComponent } from './call-to-action/call-to-action.component';
+// import { CallToActionComponent } from './call-to-action/call-to-action.component';
 import { ComparisonSectionComponent } from './comparison-section/comparison-section.component';
 
 @Component({
@@ -18,7 +18,7 @@ import { ComparisonSectionComponent } from './comparison-section/comparison-sect
     FeaturesSectionComponent,
     HowItWorksComponent,
     TestimonialsSectionComponent,
-    CallToActionComponent,
+    // CallToActionComponent,
     ComparisonSectionComponent,
   ],
   templateUrl: './home.component.html',

@@ -93,7 +93,6 @@
 .modal-content {
   position: relative;
   background: var(--clr-white);
-  padding: 20px;
   padding-bottom: 3rem;
   width: 100%;
   max-width: 800px;
