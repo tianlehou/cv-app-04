@@ -56,7 +56,6 @@ export class ImageGridComponent implements OnInit, OnDestroy {
           this.loadExampleImages(exampleId);
         });
     } else if (this.currentUser?.email) {
-      console.log('Cargando en modo usuario normal');
       this.userEmailKey = this.firebaseService.formatEmailKey(this.currentUser.email);
       this.loadUserImages();
     } else {

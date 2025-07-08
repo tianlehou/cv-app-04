@@ -1,0 +1,22 @@
+<div
+  class="upload-button"
+  [class.paused]="showOptions"
+  (click)="toggleOptions($event)"
+>
+  <label>
+    <i class="fas" [ngClass]="showOptions ? 'fa-times' : 'fa-id-card'"></i>
+  </label>
+
+  <div class="options-popover" *ngIf="showOptions">
+    <header>
+      <h4>Editar</h4>
+    </header>
+
+    <div class="option" (click)="selectOption('foto-perfil', $event)">
+      <i class="fas fa-camera"></i><span> Foto de perfil</span>
+    </div>
+    <div class="option" (click)="selectOption('datos-personales', $event)">
+      <i class="fas fa-id-card"></i><span> Datos de Contacto</span>
+    </div>
+  </div>
+</div>

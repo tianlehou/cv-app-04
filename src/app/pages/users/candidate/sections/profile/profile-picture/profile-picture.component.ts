@@ -1,10 +1,12 @@
 import { Component, Input, OnInit, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { ProfileService } from '../../../services/profile.service';
+import { EditPictureAndDataButtonComponent } from './edit-picture-and-data-button/edit-picture-and-data-button.component';
 
 @Component({
   selector: 'app-profile-picture',
   standalone: true,
+  imports: [EditPictureAndDataButtonComponent],
   templateUrl: './profile-picture.component.html',
   styleUrls: ['./profile-picture.component.css'],
 })

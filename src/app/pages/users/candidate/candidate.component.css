@@ -46,11 +46,6 @@ app-custom-button {
   .profile-components-row {
     flex-direction: column;
   }
-
-  app-profile-picture {
-    width: 150px;
-    height: 150px;
-  }
 }
 
 #candidate, #subscription, #refer {

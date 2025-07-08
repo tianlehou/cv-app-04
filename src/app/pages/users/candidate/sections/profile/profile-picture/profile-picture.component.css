@@ -1,7 +1,7 @@
 .profile-container {
   width: 100%;
-  width: 200px;
-  height: 200px;
+  width: 250px;
+  height: 250px;
   aspect-ratio: 1/1;
   padding-left: 10px;
   position: relative;
@@ -27,11 +27,18 @@
   overflow: hidden;
 }
 
+app-edit-picture-button {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  z-index: 1;
+}
+
 /* Móvil */
 @media (max-width: 480px) {
   .profile-container {
-    max-width: 150px;
-    max-height: 150px;
+    max-width: 250px;
+    max-height: 250px;
     padding: 0;
   }
 }
