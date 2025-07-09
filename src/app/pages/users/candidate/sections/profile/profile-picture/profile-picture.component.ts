@@ -1,11 +1,9 @@
-import { Component, Input, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { ProfileService } from '../../../services/profile.service';
 import { EditPictureAndDataButtonComponent } from './edit-picture-and-data-button/edit-picture-and-data-button.component';
 import { EditProfilePictureComponent } from './edit-profile-picture/edit-profile-picture.component';
 import { EditPersonalDataComponent } from './edit-personal-data/edit-personal-data.component';
-
-declare var bootstrap: any; // Para acceder a los modales de Bootstrap
 
 @Component({
   selector: 'app-profile-picture',
@@ -19,13 +17,9 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
   profilePictureUrl: string | null = null;
   private subscription!: Subscription;
 
-  // Referencias a los modales
-  @ViewChild('profilePictureModal') profilePictureModal!: ElementRef;
-  @ViewChild('personalDataModal') personalDataModal!: ElementRef;
-  
-  // Instancias de los modales de Bootstrap
-  private bsProfilePictureModal: any;
-  private bsPersonalDataModal: any;
+  // Estado de visibilidad de los modales
+  showProfilePictureModal = false;
+  showPersonalDataModal = false;
 
   constructor(
     private profileService: ProfileService
@@ -43,16 +37,6 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
         }
       }
     );
-  }
-
-  ngAfterViewInit(): void {
-    // Inicializar los modales de Bootstrap después de que la vista esté lista
-    if (this.profilePictureModal) {
-      this.bsProfilePictureModal = new bootstrap.Modal(this.profilePictureModal.nativeElement);
-    }
-    if (this.personalDataModal) {
-      this.bsPersonalDataModal = new bootstrap.Modal(this.personalDataModal.nativeElement);
-    }
   }
 
   ngOnDestroy(): void {
@@ -76,16 +60,16 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
 
   // Método para manejar la edición de la foto de perfil
   onEditProfilePicture(): void {
-    if (this.bsProfilePictureModal) {
-      this.bsProfilePictureModal.show();
-    }
+    this.showProfilePictureModal = true;
+    // Desplazar al inicio de la página para asegurar que el modal sea visible
+    window.scrollTo(0, 0);
   }
 
   // Método para manejar la edición de datos personales
   onEditPersonalData(): void {
-    if (this.bsPersonalDataModal) {
-      this.bsPersonalDataModal.show();
-    }
+    this.showPersonalDataModal = true;
+    // Desplazar al inicio de la página para asegurar que el modal sea visible
+    window.scrollTo(0, 0);
   }
 
   // Método para manejar el cierre del modal de foto de perfil
@@ -93,15 +77,11 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
     if (updated) {
       this.loadProfilePicture();
     }
-    if (this.bsProfilePictureModal) {
-      this.bsProfilePictureModal.hide();
-    }
+    this.showProfilePictureModal = false;
   }
 
   // Método para manejar el cierre del modal de datos personales
   onPersonalDataUpdated(updated: boolean): void {
-    if (this.bsPersonalDataModal) {
-      this.bsPersonalDataModal.hide();
-    }
+    this.showPersonalDataModal = false;
   }
 }

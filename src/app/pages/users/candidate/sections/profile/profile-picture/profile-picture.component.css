@@ -36,22 +36,36 @@ app-edit-picture-and-data-button {
   z-index: 1;
 }
 
-/* Móvil */
-@media (max-width: 480px) {
-  .profile-container {
-    max-width: 250px;
-    max-height: 250px;
-    padding: 0;
-  }
+/* Modal Styles */
+.profile-picture-modal,
+.personal-data-modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  z-index: 1000;
+  justify-content: center;
+  align-items: flex-start;
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
 }
 
-.header {
+.profile-picture-modal.show,
+.personal-data-modal.show {
+  display: flex;
+  opacity: 1;
+}
+
+.modal-header {
   position: fixed;
   top: 0;
   left: 50%;
   transform: translate(-50%, -50%);
   width: 100%;
-  max-width: 576px;
+  max-width: 800px;
   max-height: 10vh;
   z-index: 1002;
 }
@@ -68,4 +82,15 @@ app-edit-picture-and-data-button {
   font-size: 2rem;
   cursor: pointer;
   z-index: 5;
+}
+
+.modal-content {
+  position: relative;
+  background: white;
+  width: 100%;
+  height: 100%;
+  max-width: 800px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  overflow-y: auto;
 }

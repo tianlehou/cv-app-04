@@ -5,36 +5,37 @@
 </div>
 
 <!-- Modal para editar foto de perfil -->
-<div class="modal" #profilePictureModal>
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <div class="header">
-        <button type="button" class="close-btn" data-bs-dismiss="modal" aria-label="Cerrar">
-          &times;
-        </button>
-      </div>
-      <div class="modal-body">
-        <app-edit-profile-picture [currentUser]="currentUser" (saved)="onProfilePictureUpdated(true)"
-          (canceled)="onProfilePictureUpdated(false)">
-        </app-edit-profile-picture>
-      </div>
+<div class="profile-picture-modal" [class.show]="showProfilePictureModal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <button type="button" class="close-btn" (click)="onProfilePictureUpdated(false)" aria-label="Cerrar">
+        &times;
+      </button>
+    </div>
+    <div class="modal-body">
+      <app-edit-profile-picture 
+        [currentUser]="currentUser" 
+        (saved)="onProfilePictureUpdated(true)"
+        (canceled)="onProfilePictureUpdated(false)">
+      </app-edit-profile-picture>
     </div>
   </div>
 </div>
 
 <!-- Modal para editar datos personales -->
-<div class="modal fade" #personalDataModal>
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <div class="header">
-        <button type="button" class="close-btn" data-bs-dismiss="modal" aria-label="Cerrar">
-          &times;
-        </button>
-      </div>
-      <div class="modal-body">
-        <app-edit-personal-data [currentUser]="currentUser" (saved)="onPersonalDataUpdated(true)"
-          (canceled)="onPersonalDataUpdated(false)"></app-edit-personal-data>
-      </div>
+<div class="personal-data-modal" [class.show]="showPersonalDataModal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <button type="button" class="close-btn" (click)="onPersonalDataUpdated(false)" aria-label="Cerrar">
+        &times;
+      </button>
+    </div>
+    <div class="modal-body">
+      <app-edit-personal-data 
+        [currentUser]="currentUser" 
+        (saved)="onPersonalDataUpdated(true)"
+        (canceled)="onPersonalDataUpdated(false)">
+      </app-edit-personal-data>
     </div>
   </div>
 </div>
