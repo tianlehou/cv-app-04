@@ -1,12 +1,16 @@
-import { Component, Input, OnInit, OnDestroy } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { ProfileService } from '../../../services/profile.service';
 import { EditPictureAndDataButtonComponent } from './edit-picture-and-data-button/edit-picture-and-data-button.component';
+import { EditProfilePictureComponent } from './edit-profile-picture/edit-profile-picture.component';
+import { EditPersonalDataComponent } from './edit-personal-data/edit-personal-data.component';
+
+declare var bootstrap: any; // Para acceder a los modales de Bootstrap
 
 @Component({
   selector: 'app-profile-picture',
   standalone: true,
-  imports: [EditPictureAndDataButtonComponent],
+  imports: [EditPictureAndDataButtonComponent, EditProfilePictureComponent, EditPersonalDataComponent],
   templateUrl: './profile-picture.component.html',
   styleUrls: ['./profile-picture.component.css'],
 })
@@ -15,7 +19,17 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
   profilePictureUrl: string | null = null;
   private subscription!: Subscription;
 
-  constructor(private profileService: ProfileService) {}
+  // Referencias a los modales
+  @ViewChild('profilePictureModal') profilePictureModal!: ElementRef;
+  @ViewChild('personalDataModal') personalDataModal!: ElementRef;
+  
+  // Instancias de los modales de Bootstrap
+  private bsProfilePictureModal: any;
+  private bsPersonalDataModal: any;
+
+  constructor(
+    private profileService: ProfileService
+  ) {}
 
   ngOnInit(): void {
     // Cargar la imagen directamente del objeto de usuario
@@ -29,6 +43,16 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
         }
       }
     );
+  }
+
+  ngAfterViewInit(): void {
+    // Inicializar los modales de Bootstrap después de que la vista esté lista
+    if (this.profilePictureModal) {
+      this.bsProfilePictureModal = new bootstrap.Modal(this.profilePictureModal.nativeElement);
+    }
+    if (this.personalDataModal) {
+      this.bsPersonalDataModal = new bootstrap.Modal(this.personalDataModal.nativeElement);
+    }
   }
 
   ngOnDestroy(): void {
@@ -47,6 +71,37 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
       else if (this.currentUser?.multimedia?.picture?.profilePicture) {
         this.profilePictureUrl = this.currentUser.multimedia.picture.profilePicture;
       }
+    }
+  }
+
+  // Método para manejar la edición de la foto de perfil
+  onEditProfilePicture(): void {
+    if (this.bsProfilePictureModal) {
+      this.bsProfilePictureModal.show();
+    }
+  }
+
+  // Método para manejar la edición de datos personales
+  onEditPersonalData(): void {
+    if (this.bsPersonalDataModal) {
+      this.bsPersonalDataModal.show();
+    }
+  }
+
+  // Método para manejar el cierre del modal de foto de perfil
+  onProfilePictureUpdated(updated: boolean): void {
+    if (updated) {
+      this.loadProfilePicture();
+    }
+    if (this.bsProfilePictureModal) {
+      this.bsProfilePictureModal.hide();
+    }
+  }
+
+  // Método para manejar el cierre del modal de datos personales
+  onPersonalDataUpdated(updated: boolean): void {
+    if (this.bsPersonalDataModal) {
+      this.bsPersonalDataModal.hide();
     }
   }
 }

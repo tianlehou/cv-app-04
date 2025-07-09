@@ -6,7 +6,7 @@ import { Subscription } from 'rxjs';
 import { ConfirmationModalService } from 'src/app/shared/services/confirmation-modal.service';
 import { ToastService } from 'src/app/shared/services/toast.service';
 import { PersonalDataInfoComponent } from './personal-data-info/personal-data-info.component';
-import { CvEditButtonRowComponent } from '../../cv-edit-button-row/cv-edit-button-row.component';
+import { CvEditButtonRowComponent } from '../../gallery/cv-grid/cv-edit-button/cv-edit-button-row/cv-edit-button-row.component';
 import { PersonalDataService } from 'src/app/pages/users/candidate/services/personal-data.service';
 import { ProfileService } from 'src/app/pages/users/candidate/services/profile.service';
 import { FirebaseService } from 'src/app/shared/services/firebase.service';

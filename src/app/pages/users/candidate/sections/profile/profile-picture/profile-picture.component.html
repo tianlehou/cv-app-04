@@ -1,8 +1,40 @@
-<div class="profile-container" (contextmenu)="false" draggable="false" ondrop="return false;">
-  <img 
-    [src]="profilePictureUrl" 
-    class="profile-picture-preview" 
-    draggable="false"
-  />
-  <app-edit-picture-and-data-button></app-edit-picture-and-data-button>
+<div class="profile-container" (contextmenu)="(false)" draggable="false" ondrop="return false;">
+  <img [src]="profilePictureUrl" class="profile-picture-preview" draggable="false" />
+  <app-edit-picture-and-data-button (editProfilePicture)="onEditProfilePicture()"
+    (editPersonalData)="onEditPersonalData()"></app-edit-picture-and-data-button>
+</div>
+
+<!-- Modal para editar foto de perfil -->
+<div class="modal" #profilePictureModal>
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="header">
+        <button type="button" class="close-btn" data-bs-dismiss="modal" aria-label="Cerrar">
+          &times;
+        </button>
+      </div>
+      <div class="modal-body">
+        <app-edit-profile-picture [currentUser]="currentUser" (saved)="onProfilePictureUpdated(true)"
+          (canceled)="onProfilePictureUpdated(false)">
+        </app-edit-profile-picture>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal para editar datos personales -->
+<div class="modal fade" #personalDataModal>
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="header">
+        <button type="button" class="close-btn" data-bs-dismiss="modal" aria-label="Cerrar">
+          &times;
+        </button>
+      </div>
+      <div class="modal-body">
+        <app-edit-personal-data [currentUser]="currentUser" (saved)="onPersonalDataUpdated(true)"
+          (canceled)="onPersonalDataUpdated(false)"></app-edit-personal-data>
+      </div>
+    </div>
+  </div>
 </div>

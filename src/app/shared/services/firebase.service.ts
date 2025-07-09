@@ -1,10 +1,5 @@
 // firebase.service.ts
-import {
-  Injectable,
-  inject,
-  runInInjectionContext,
-  EnvironmentInjector,
-} from '@angular/core';
+import { Injectable, inject, runInInjectionContext, EnvironmentInjector } from '@angular/core';
 import { Database, ref, set, get, update } from '@angular/fire/database';
 import { BehaviorSubject } from 'rxjs';
 import { ComponentStyles } from 'src/app/pages/users/candidate/sections/profile/gallery/cv-grid/cv-gallery-grid/style-control/component-styles.model';
@@ -144,7 +139,7 @@ export class FirebaseService {
       const userEmailKey = this.formatEmailKey(email);
       const userId = this.generateUserId();
       const userRef = ref(this.db, `cv-app/users/${userEmailKey}`);
-      
+
       // Primero, crear la estructura básica del usuario
       const userData = {
         metadata: {
@@ -387,16 +382,20 @@ export class FirebaseService {
             }
           }
           if (Object.keys(profileDataUpdates).length > 0) {
-            await update(ref(this.db, `${basePath}/${userEmailKey}`), profileDataUpdates);
+            return runInInjectionContext(this.injector, async () => {
+              await update(ref(this.db, `${basePath}/${userEmailKey}`), profileDataUpdates);
+            });
           }
         }
 
         // Actualizar cv-styles si existe
-        if (data['cv-styles']) {
-          await update(ref(this.db, `${basePath}/${userEmailKey}`), {
-            'cv-styles': data['cv-styles']
-          });
-        }
+        return runInInjectionContext(this.injector, async () => {
+          if (data['cv-styles']) {
+            await update(ref(this.db, `${basePath}/${userEmailKey}`), {
+              'cv-styles': data['cv-styles']
+            });
+          }
+        });
       } catch (error) {
         console.error('Error al actualizar:', error);
         throw error;

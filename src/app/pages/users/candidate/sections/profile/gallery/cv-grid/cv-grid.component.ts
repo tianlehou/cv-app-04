@@ -14,8 +14,6 @@ import { EditAboutMeComponent } from './cv-edit-button/components/edit-about-me/
 import { EditEducationComponent } from './cv-edit-button/components/edit-education/edit-education.component';
 import { EditExperienceComponent } from './cv-edit-button/components/edit-experience/edit-experience.component';
 import { EditLanguagesComponent } from './cv-edit-button/components/edit-languages/edit-languages.component';
-import { EditPersonalDataComponent } from './cv-edit-button/components/edit-personal-data/edit-personal-data.component';
-import { EditProfilePictureComponent } from './cv-edit-button/components/edit-profile-picture/edit-profile-picture.component';
 import { EditSkillsComponent } from './cv-edit-button/components/edit-skills/edit-skills.component';
 
 @Component({
@@ -32,8 +30,6 @@ import { EditSkillsComponent } from './cv-edit-button/components/edit-skills/edi
     EditEducationComponent,
     EditExperienceComponent,
     EditLanguagesComponent,
-    EditPersonalDataComponent,
-    EditProfilePictureComponent,
     EditSkillsComponent,
   ],
   templateUrl: './cv-grid.component.html',

@@ -18,16 +18,18 @@
   user-select: none;
   -webkit-user-drag: none;
   pointer-events: none;
-  background-size: cover;
-  background-position: center center;
-  background-repeat: no-repeat;
-  background-image: url('./default-profile-picture.jpg');
+  object-fit: cover;
+  object-position: center;
   display: block;
-  position: relative;
-  overflow: hidden;
+  margin: 0 auto;
+  background-color: #f8f9fa;
+  background-image: url('./default-profile-picture.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
-app-edit-picture-button {
+app-edit-picture-and-data-button {
   position: absolute;
   bottom: 0;
   right: 0;
@@ -41,4 +43,29 @@ app-edit-picture-button {
     max-height: 250px;
     padding: 0;
   }
+}
+
+.header {
+  position: fixed;
+  top: 0;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  max-width: 576px;
+  max-height: 10vh;
+  z-index: 1002;
+}
+
+.close-btn {
+  position: fixed !important;
+  top: 50px;
+  right: 50px;
+  padding: 0 12px;
+  background: var(--bg-red);
+  color: var(--clr-red);
+  border: 2px dashed var(--clr-red-light);
+  border-radius: 50%;
+  font-size: 2rem;
+  cursor: pointer;
+  z-index: 5;
 }

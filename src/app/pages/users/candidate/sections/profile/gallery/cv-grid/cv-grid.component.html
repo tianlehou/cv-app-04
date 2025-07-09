@@ -18,10 +18,6 @@
 </ng-container>
 
 <section class="gallery-grid" *ngIf="showGalleryGrid">
-  <app-edit-profile-picture *ngIf="shouldShowComponent('foto-perfil')"
-    [currentUser]="currentUser"></app-edit-profile-picture>
-  <app-edit-personal-data *ngIf="shouldShowComponent('datos-personales')"
-    [currentUser]="currentUser"></app-edit-personal-data>
   <app-edit-about-me *ngIf="shouldShowComponent('sobre-mi')" [currentUser]="currentUser"></app-edit-about-me>
   <app-edit-education *ngIf="shouldShowComponent('educacion')" [currentUser]="currentUser"></app-edit-education>
   <app-edit-experience *ngIf="shouldShowComponent('experiencias')" [currentUser]="currentUser"></app-edit-experience>

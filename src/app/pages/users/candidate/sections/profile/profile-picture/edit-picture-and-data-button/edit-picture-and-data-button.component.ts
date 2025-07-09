@@ -9,7 +9,8 @@ import { Component, EventEmitter, Output, HostListener, ChangeDetectorRef } from
   styleUrls: ['./edit-picture-and-data-button.component.css'],
 })
 export class EditPictureAndDataButtonComponent {
-  @Output() optionSelected = new EventEmitter<string>();
+  @Output() editProfilePicture = new EventEmitter<void>();
+  @Output() editPersonalData = new EventEmitter<void>();
   @Output() backToPrincipal = new EventEmitter<void>();
   showOptions = false;
 
@@ -30,7 +31,16 @@ export class EditPictureAndDataButtonComponent {
 
   selectOption(option: string, event: Event) {
     event.stopPropagation();
-    this.optionSelected.emit(option);
+    
+    switch(option) {
+      case 'foto-perfil':
+        this.editProfilePicture.emit();
+        break;
+      case 'datos-personales':
+        this.editPersonalData.emit();
+        break;
+    }
+    
     this.closePopover();
   }
 

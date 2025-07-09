@@ -45,7 +45,7 @@ i {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, var(--clr-purple) 0%, var(--clr-purple-dark) 100%);
+  background: linear-gradient(135deg, var(--clr-green) 0%, var(--clr-green-dark) 100%);
   color: var(--clr-white);
   font-size: 1rem;
   border-bottom: none;
@@ -87,7 +87,7 @@ i {
   width: 20px;
   text-align: center;
   font-size: 1.1rem;
-  color: var(--clr-purple-dark);
+  color: var(--clr-green-dark);
 }
 
 .option span {

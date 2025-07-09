@@ -1,12 +1,7 @@
 import { FormGroup, FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import {
-  Component,
-  OnInit,
-  Input,
-  SimpleChanges,
-  OnChanges,
-} from '@angular/core';
+import { Component, OnInit, Input, SimpleChanges, OnChanges } from '@angular/core';
+import { inject, runInInjectionContext, EnvironmentInjector } from '@angular/core';
 import {
   Storage,
   ref,
@@ -35,6 +30,8 @@ export class EditProfilePictureComponent implements OnInit, OnChanges {
   userEmailKey: string | null = null;
   selectedFile: File | null = null;
   showInfoComponent = false;
+
+  injector = inject(EnvironmentInjector);
 
   constructor(
     private fb: FormBuilder,
@@ -131,14 +128,19 @@ export class EditProfilePictureComponent implements OnInit, OnChanges {
   private async updateProfilePicture(): Promise<void> {
     try {
       const PROFILE_PIC_NAME = 'profile-picture.jpg';
-      const storageRef = ref(
-        this.storage,
-        `cv-app/users/${this.userEmailKey}/profile-pictures/${PROFILE_PIC_NAME}`
-      );
+      let storageRef: any;
+      await runInInjectionContext(this.injector, async () => {
+        storageRef = ref(
+          this.storage,
+          `cv-app/users/${this.userEmailKey}/profile-pictures/${PROFILE_PIC_NAME}`
+        );
+      });
 
       // 1. Eliminar la imagen anterior si existe
       try {
-        await deleteObject(storageRef);
+        await runInInjectionContext(this.injector, async () => {
+          await deleteObject(storageRef);
+        });
         console.log('Imagen anterior eliminada correctamente');
       } catch (deleteError) {
         console.log('No existía imagen previa o error al eliminar:', deleteError);
@@ -146,11 +148,17 @@ export class EditProfilePictureComponent implements OnInit, OnChanges {
 
       // 2. Subir la nueva imagen
       if (this.selectedFile) {
-        await uploadBytes(storageRef, this.selectedFile);
+        await runInInjectionContext(this.injector, async () => {
+          await uploadBytes(storageRef, this.selectedFile!);
+        });
       } else {
         throw new Error('No file selected for upload');
       }
-      const downloadURL = await getDownloadURL(storageRef);
+      // Obtener el downloadURL en el contexto de inyección
+      let downloadURL: string = '';
+      await runInInjectionContext(this.injector, async () => {
+        downloadURL = await getDownloadURL(storageRef);
+      });
 
       // 3. Obtener datos actuales del usuario
       const userData = await this.firebaseService.getUserData(this.userEmailKey!);
