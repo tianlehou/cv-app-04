@@ -1,5 +1,5 @@
 import { Injectable, inject, EnvironmentInjector, runInInjectionContext } from '@angular/core';
-import { Database, ref, set, remove, get } from '@angular/fire/database';
+import { Database, ref, set, remove, get, update } from '@angular/fire/database';
 import { Storage, ref as storageRef, deleteObject } from '@angular/fire/storage';
 import { BehaviorSubject } from 'rxjs';
 
@@ -26,6 +26,18 @@ export class ExamplesService {
   // Utiliza el ID del ejemplo para construir la ruta.
   getExamplePath(exampleId: string): string {
     return `cv-app/examples/${exampleId}/gallery-images`;
+  }
+
+  // Actualiza los datos de un ejemplo específico en la base de datos.
+  // Utiliza el ID del ejemplo y los datos a actualizar.
+  async updateExampleData(exampleId: string, data: any): Promise<void> {
+    try {
+      const exampleRef = ref(this.db, `cv-app/examples/${exampleId}`);
+      await update(exampleRef, data);
+    } catch (error) {
+      console.error('Error al actualizar el ejemplo:', error);
+      throw error;
+    }
   }
 
   // Obtiene el siguiente número de ejemplo disponible en la base de datos.

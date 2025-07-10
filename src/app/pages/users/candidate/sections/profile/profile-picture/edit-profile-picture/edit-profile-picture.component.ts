@@ -11,6 +11,7 @@ import {
 } from '@angular/fire/storage';
 import { ProfileService } from 'src/app/pages/users/candidate/services/profile.service';
 import { FirebaseService } from 'src/app/shared/services/firebase.service';
+import { ExamplesService } from 'src/app/shared/services/examples.service';
 import { User } from '@angular/fire/auth';
 import { ToastService } from 'src/app/shared/services/toast.service';
 import { ConfirmationModalService } from 'src/app/shared/services/confirmation-modal.service';
@@ -26,6 +27,10 @@ import { ImageCompressionService } from 'src/app/shared/services/image-compressi
 })
 export class EditProfilePictureComponent implements OnInit, OnChanges {
   @Input() currentUser: User | null = null;
+  @Input() isEditor = false;
+  @Input() isExample = false;
+  @Input() exampleId: string | null = null;
+
   profileForm!: FormGroup;
   userEmailKey: string | null = null;
   selectedFile: File | null = null;
@@ -37,6 +42,7 @@ export class EditProfilePictureComponent implements OnInit, OnChanges {
     private fb: FormBuilder,
     private storage: Storage,
     private firebaseService: FirebaseService,
+    private examplesService: ExamplesService,
     private profileService: ProfileService,
     private toastService: ToastService,
     private confirmationModalService: ConfirmationModalService,
@@ -105,10 +111,22 @@ export class EditProfilePictureComponent implements OnInit, OnChanges {
 
   async onSubmit(): Promise<void> {
     if (!this.selectedFile) {
+      console.warn('No se seleccionó ningún archivo');
       this.toastService.show('Selecciona una imagen válida', 'warning');
       return;
     }
-    if (!this.userEmailKey || !this.currentUser?.email) {
+
+    // Validación para modo ejemplo
+    if (this.isExample) {
+      if (!this.exampleId) {
+        console.error('Modo ejemplo activado pero no se proporcionó exampleId');
+        this.toastService.show('Error de configuración del ejemplo', 'error');
+        return;
+      }
+    }
+    // Validación para modo normal (usuario autenticado)
+    else if (!this.userEmailKey || !this.currentUser?.email) {
+      console.warn('Intento de subida sin autenticación en modo normal');
       this.toastService.show('Debes iniciar sesión para guardar cambios', 'error');
       return;
     }
@@ -128,12 +146,17 @@ export class EditProfilePictureComponent implements OnInit, OnChanges {
   private async updateProfilePicture(): Promise<void> {
     try {
       const PROFILE_PIC_NAME = 'profile-picture.jpg';
+      let storagePath: string;
+
+      if (this.isExample && this.exampleId) {
+        storagePath = `cv-app/examples/${this.exampleId}/profile-picture/${PROFILE_PIC_NAME}`;
+      } else {
+        storagePath = `cv-app/users/${this.userEmailKey}/profile-pictures/${PROFILE_PIC_NAME}`;
+      }
+
       let storageRef: any;
       await runInInjectionContext(this.injector, async () => {
-        storageRef = ref(
-          this.storage,
-          `cv-app/users/${this.userEmailKey}/profile-pictures/${PROFILE_PIC_NAME}`
-        );
+        storageRef = ref(this.storage, storagePath);
       });
 
       // 1. Eliminar la imagen anterior si existe
@@ -141,50 +164,55 @@ export class EditProfilePictureComponent implements OnInit, OnChanges {
         await deleteObject(storageRef);
       });
 
-      // 2. Subir la nueva imagen
+      // 2. Subir la nueva imagen;
       if (this.selectedFile) {
-        await runInInjectionContext(this.injector, async () => {
-          await uploadBytes(storageRef, this.selectedFile!);
+        // Subir la imagen
+        const uploadTask = await runInInjectionContext(this.injector, async () => {
+          return await uploadBytes(storageRef, this.selectedFile!);
         });
-      } else {
-        throw new Error('No file selected for upload');
-      }
-      // Obtener el downloadURL en el contexto de inyección
-      let downloadURL: string = '';
-      await runInInjectionContext(this.injector, async () => {
-        downloadURL = await getDownloadURL(storageRef);
-      });
 
-      // 3. Obtener datos actuales del usuario
-      const userData = await this.firebaseService.getUserData(this.userEmailKey!);
+        // Obtener la URL de descarga
+        const downloadURL = await runInInjectionContext(this.injector, async () => {
+          return await getDownloadURL(uploadTask.ref);
+        });
 
-      // 4. Crear objeto actualizado manteniendo todos los datos existentes
-      const updatedData = {
-        profileData: {
-          ...(userData?.profileData || {}),
-          multimedia: {
-            ...(userData?.profileData?.multimedia || {}),
-            picture: {
-              ...(userData?.profileData?.multimedia?.picture || {}),
-              profilePicture: downloadURL,
+        // Actualizar la base de datos según el modo
+        if (this.isExample && this.exampleId) {
+          // Modo ejemplo: Actualizar en la colección de ejemplos
+          const exampleData = {
+            profilePicture: downloadURL,
+          };
+
+          await this.examplesService.updateExampleData(this.exampleId, exampleData);
+        } else if (this.userEmailKey) {
+          // Modo usuario normal: Actualizar datos del usuario
+          const userData = await this.firebaseService.getUserData(this.userEmailKey);
+
+          const updatedData = {
+            profileData: {
+              ...(userData?.profileData || {}),
+              multimedia: {
+                ...(userData?.profileData?.multimedia || {}),
+                picture: {
+                  ...(userData?.profileData?.multimedia?.picture || {}),
+                  profilePicture: downloadURL,
+                },
+              },
             },
-          },
-        },
-      };
+          };
 
-      // 5. Actualizar en Firebase
-      if (this.currentUser?.email) {
-        await this.firebaseService.updateUserData(this.currentUser.email, updatedData);
-      } else {
-        throw new Error('User email is null or undefined');
+          await this.firebaseService.updateUserData(this.userEmailKey, updatedData);
+
+          // Notifica el cambio
+          this.profileService.notifyProfilePictureUpdate(downloadURL);
+        }
+
+        // Actualizar la vista previa
+        this.profileForm.patchValue({ profilePicture: downloadURL });
+        this.toastService.show('¡Foto actualizada correctamente!', 'success');
       }
-      // Notifica el cambio
-      this.profileService.notifyProfilePictureUpdate(downloadURL);
-
-      this.toastService.show('¡Foto actualizada correctamente!', 'success');
-      await this.loadUserData();
     } catch (error) {
-      console.error('Error:', error);
+      console.error('Error al actualizar la foto de perfil:', error);
       this.toastService.show(
         `Error al guardar: ${error instanceof Error ? error.message : 'Intenta nuevamente'}`,
         'error'

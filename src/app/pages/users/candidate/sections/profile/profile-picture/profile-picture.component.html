@@ -18,6 +18,9 @@
     <div class="modal-body">
       <app-edit-profile-picture 
         [currentUser]="currentUser" 
+        [isExample]="isExample"
+        [exampleId]="exampleId"
+        [isEditor]="isEditor"
         (saved)="onProfilePictureUpdated(true)"
         (canceled)="onProfilePictureUpdated(false)">
       </app-edit-profile-picture>
