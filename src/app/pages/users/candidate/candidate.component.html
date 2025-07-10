@@ -29,6 +29,9 @@
             <app-profile-picture
               *ngIf="currentUser"
               [currentUser]="currentUser"
+              [isEditor]="isEditor"
+              [isExample]="isExample"
+              [readOnly]="readOnly"
             ></app-profile-picture>
             <app-personal-data
               *ngIf="currentUser"

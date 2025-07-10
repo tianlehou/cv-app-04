@@ -10,13 +10,18 @@
   <div class="modal-content">
     <div class="modal-body">
       <div *ngIf="isEditor">
-        <app-example-editor-actions 
+        <app-example-editor-actions
           (addExample)="addExample()"
           (deleteExample)="deleteExample()">
         </app-example-editor-actions>
       </div>
 
-      <app-profile-picture [currentUser]="null"></app-profile-picture>
+      <app-profile-picture
+        [currentUser]="null"
+        [isExample]="true"
+        [isEditor]="isEditor"
+        [readOnly]="!isEditor"
+      ></app-profile-picture>
       <app-personal-data [currentUser]="null"></app-personal-data>
       <app-gallery
         [currentUser]="null"
@@ -27,7 +32,7 @@
       </app-gallery>
     </div>
   </div>
-  <app-example-pagination 
+  <app-example-pagination
     [isExample]="true"
     [totalItems]="exampleIds.length"
     [pageSize]="1"

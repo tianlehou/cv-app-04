@@ -4,16 +4,21 @@ import { ProfileService } from '../../../services/profile.service';
 import { EditPictureAndDataButtonComponent } from './edit-picture-and-data-button/edit-picture-and-data-button.component';
 import { EditProfilePictureComponent } from './edit-profile-picture/edit-profile-picture.component';
 import { EditPersonalDataComponent } from './edit-personal-data/edit-personal-data.component';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-profile-picture',
   standalone: true,
-  imports: [EditPictureAndDataButtonComponent, EditProfilePictureComponent, EditPersonalDataComponent],
+  imports: [CommonModule, EditPictureAndDataButtonComponent, EditProfilePictureComponent, EditPersonalDataComponent],
   templateUrl: './profile-picture.component.html',
   styleUrls: ['./profile-picture.component.css'],
 })
 export class ProfilePictureComponent implements OnInit, OnDestroy {
   @Input() currentUser: any; // Aceptamos cualquier estructura de usuario
+  @Input() isEditor: boolean = false;
+  @Input() isExample: boolean = false;
+  @Input() readOnly: boolean = false;
+  
   profilePictureUrl: string | null = null;
   private subscription!: Subscription;
 

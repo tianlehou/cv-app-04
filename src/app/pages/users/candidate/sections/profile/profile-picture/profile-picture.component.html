@@ -1,7 +1,10 @@
 <div class="profile-container" (contextmenu)="(false)" draggable="false" ondrop="return false;">
   <img [src]="profilePictureUrl" class="profile-picture-preview" draggable="false" />
-  <app-edit-picture-and-data-button (editProfilePicture)="onEditProfilePicture()"
-    (editPersonalData)="onEditPersonalData()"></app-edit-picture-and-data-button>
+  <app-edit-picture-and-data-button 
+    *ngIf="isEditor || (!isExample && !readOnly)"
+    (editProfilePicture)="onEditProfilePicture()"
+    (editPersonalData)="onEditPersonalData()">
+  </app-edit-picture-and-data-button>
 </div>
 
 <!-- Modal para editar foto de perfil -->

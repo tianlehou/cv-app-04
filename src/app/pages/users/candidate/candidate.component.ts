@@ -37,6 +37,7 @@ import { HeroSectionComponent } from './sections/home/hero-section/hero-section.
 export class CandidateComponent implements OnInit {
   @Input() currentUser: any = null;
   @Input() readOnly: boolean = false;
+  @Input() isExample: boolean = false;
   userRole: string | null = null;
   isEditor: boolean = false;
   showSubscription = false;
