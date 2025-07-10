@@ -137,14 +137,9 @@ export class EditProfilePictureComponent implements OnInit, OnChanges {
       });
 
       // 1. Eliminar la imagen anterior si existe
-      try {
-        await runInInjectionContext(this.injector, async () => {
-          await deleteObject(storageRef);
-        });
-        console.log('Imagen anterior eliminada correctamente');
-      } catch (deleteError) {
-        console.log('No existía imagen previa o error al eliminar:', deleteError);
-      }
+      await runInInjectionContext(this.injector, async () => {
+        await deleteObject(storageRef);
+      });
 
       // 2. Subir la nueva imagen
       if (this.selectedFile) {
