@@ -3,9 +3,9 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FirebaseService } from '../../../shared/services/firebase.service';
 import { AuthService } from '../../home/auth/auth.service';
-import { BusinessDashboardComponent } from './business-dashboard/business-dashboard.component';
 import { BusinessSidebarComponent } from './sidebar/business-sidebar.component';
-import { BusinessSubscriptionComponent } from './sidebar/subscription/business-subscription.component';
+import { BusinessDashboardComponent } from './sections/business-dashboard/business-dashboard.component';
+import { BusinessSubscriptionComponent } from './sections/business-subscription/business-subscription.component';
 
 @Component({
   selector: 'app-business',

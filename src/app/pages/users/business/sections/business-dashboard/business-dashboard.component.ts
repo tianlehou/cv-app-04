@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { get, ref, update } from 'firebase/database';
-import { FirebaseService } from '../../../../shared/services/firebase.service';
+import { FirebaseService } from 'src/app/shared/services/firebase.service';
 import { BusinessStatsGridComponent } from './stats-grid/business-stats-grid.component';
 import { BusinessFiltersComponent } from './filters/business-filters.component';
 import { BusinessUserTableComponent } from './user-table/business-user-table.component';
