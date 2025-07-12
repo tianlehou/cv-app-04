@@ -135,7 +135,6 @@ export class ProfilePictureComponent implements OnInit, OnDestroy, OnChanges {
         } else if (profileData.multimedia?.picture?.profilePicture) {
           this.profilePictureUrl = profileData.multimedia.picture.profilePicture;
         } else {
-          console.warn('No se encontró la propiedad profilePicture en los datos recibidos');
           this.profilePictureUrl = null;
         }
       } else {

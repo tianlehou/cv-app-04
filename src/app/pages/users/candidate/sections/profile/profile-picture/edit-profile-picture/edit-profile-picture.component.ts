@@ -1,10 +1,11 @@
 import { FormGroup, FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, Input, SimpleChanges, OnChanges } from '@angular/core';
+import { Component, OnInit, Input, SimpleChanges, OnChanges, Output, EventEmitter } from '@angular/core';
 import { inject, runInInjectionContext, EnvironmentInjector } from '@angular/core';
+import { Database, ref as dbRef, get } from '@angular/fire/database';
 import {
   Storage,
-  ref,
+  ref as storageRef,
   uploadBytes,
   getDownloadURL,
   deleteObject,
@@ -30,6 +31,8 @@ export class EditProfilePictureComponent implements OnInit, OnChanges {
   @Input() isEditor = false;
   @Input() isExample = false;
   @Input() exampleId: string | null = null;
+  @Output() saved = new EventEmitter<boolean>(); // Nuevo EventEmitter
+  @Output() canceled = new EventEmitter<void>(); // Opcional: para manejar cancelación
 
   profileForm!: FormGroup;
   userEmailKey: string | null = null;
@@ -47,10 +50,13 @@ export class EditProfilePictureComponent implements OnInit, OnChanges {
     private toastService: ToastService,
     private confirmationModalService: ConfirmationModalService,
     private imageCompression: ImageCompressionService,
+    private db: Database
   ) { }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['currentUser'] && this.currentUser?.email) {
+    if (changes['exampleId'] || changes['isExample']) {
+      this.loadUserData();
+    } else if (changes['currentUser'] && this.currentUser?.email) {
       this.userEmailKey = this.firebaseService.formatEmailKey(this.currentUser.email);
       this.loadUserData();
     }
@@ -71,22 +77,85 @@ export class EditProfilePictureComponent implements OnInit, OnChanges {
   }
 
   private async loadUserData(): Promise<void> {
-    if (!this.userEmailKey) return;
-
     try {
-      const userData = await this.firebaseService.getUserData(this.userEmailKey!);
-
-      if (userData?.profileData?.multimedia?.picture?.profilePicture) {
-        const timestamp = new Date().getTime();
-        const imageUrl = `${userData.profileData.multimedia.picture.profilePicture}?${timestamp}`;
-        this.profileForm.patchValue({ profilePicture: imageUrl });
+      if (this.isExample && this.exampleId) {
+        // Cargar datos del ejemplo
+        await this.loadExampleData();
+      } else if (this.userEmailKey) {
+        // Cargar datos del usuario normal
+        await this.loadNormalUserData();
       } else {
+        // No hay usuario ni ejemplo, establecer valor por defecto
         this.profileForm.patchValue({ profilePicture: '' });
       }
     } catch (error) {
-      console.error('Error cargando datos:', error);
-      this.toastService.show('No se pudo cargar la imagen actual', 'error');
     }
+  }
+
+  private async loadExampleData(): Promise<void> {
+    return runInInjectionContext(this.injector, async () => {
+      try {
+        const exampleRef = dbRef(this.db, `cv-app/examples/${this.exampleId}`);
+        const snapshot = await get(exampleRef);
+
+        if (snapshot.exists()) {
+          const exampleData = snapshot.val();
+
+          // Intentar obtener la URL de la imagen de perfil
+          const profilePictureUrl = exampleData?.profilePicture ||
+            exampleData?.profileData?.multimedia?.picture?.profilePicture;
+
+          if (profilePictureUrl) {
+            const timestamp = new Date().getTime();
+            const imageUrl = `${profilePictureUrl}?${timestamp}`;
+            this.profileForm.patchValue({ profilePicture: imageUrl });
+            return; // Salir si la imagen se cargó correctamente
+          }
+        }
+
+        // Si llegamos aquí, no se encontró la imagen
+        console.log('EditProfilePicture - No se encontró imagen de perfil en los datos del ejemplo');
+        this.profileForm.patchValue({ profilePicture: '' });
+        throw new Error('NO_IMAGE');
+
+      } catch (error) {
+        console.error('Error cargando datos de ejemplo:', error);
+        if (error instanceof Error && error.message !== 'NO_IMAGE') {
+          throw error; // Relanzar el error solo si no es el nuestro
+        }
+        throw error;
+      }
+    });
+  }
+
+  private async loadNormalUserData(): Promise<void> {
+    return runInInjectionContext(this.injector, async () => {
+      if (!this.userEmailKey) {
+        throw new Error('NO_EMAIL_KEY');
+      }
+
+      try {
+        const userData = await this.firebaseService.getUserData(this.userEmailKey);
+        if (userData?.profileData?.multimedia?.picture?.profilePicture) {
+          const timestamp = new Date().getTime();
+          const imageUrl = `${userData.profileData.multimedia.picture.profilePicture}?${timestamp}`;
+          this.profileForm.patchValue({ profilePicture: imageUrl });
+          return; // Salir si la imagen se cargó correctamente
+        }
+
+        // Si llegamos aquí, no se encontró la imagen
+        console.log('EditProfilePicture - No se encontró imagen de perfil para el usuario');
+        this.profileForm.patchValue({ profilePicture: '' });
+        throw new Error('NO_IMAGE');
+
+      } catch (error) {
+        console.error('Error cargando datos de usuario:', error);
+        if (error instanceof Error && error.message !== 'NO_IMAGE' && error.message !== 'NO_EMAIL_KEY') {
+          throw error; // Relanzar el error solo si no es el nuestro
+        }
+        throw error;
+      }
+    });
   }
 
   async onFileSelected(event: Event): Promise<void> {
@@ -150,25 +219,33 @@ export class EditProfilePictureComponent implements OnInit, OnChanges {
 
       if (this.isExample && this.exampleId) {
         storagePath = `cv-app/examples/${this.exampleId}/profile-picture/${PROFILE_PIC_NAME}`;
-      } else {
+      } else if (this.userEmailKey) {
         storagePath = `cv-app/users/${this.userEmailKey}/profile-pictures/${PROFILE_PIC_NAME}`;
+      } else {
+        throw new Error('No se pudo determinar la ruta de almacenamiento: falta userEmailKey o exampleId');
       }
 
-      let storageRef: any;
+      // Usar un nombre de variable diferente para evitar conflicto con la función importada
+      let fileRef: any;
       await runInInjectionContext(this.injector, async () => {
-        storageRef = ref(this.storage, storagePath);
+        fileRef = storageRef(this.storage, storagePath);
       });
 
-      // 1. Eliminar la imagen anterior si existe
-      await runInInjectionContext(this.injector, async () => {
-        await deleteObject(storageRef);
-      });
+      // 1. Intentar eliminar la imagen anterior si existe
+      try {
+        await runInInjectionContext(this.injector, async () => {
+          await deleteObject(fileRef);
+        });
+      } catch (error) {
+        // Ignorar el error si la imagen no existe
+        console.log('No se encontró imagen previa para eliminar, continuando con la subida...');
+      }
 
-      // 2. Subir la nueva imagen;
+      // 2. Subir la nueva imagen
       if (this.selectedFile) {
         // Subir la imagen
         const uploadTask = await runInInjectionContext(this.injector, async () => {
-          return await uploadBytes(storageRef, this.selectedFile!);
+          return await uploadBytes(fileRef, this.selectedFile!);
         });
 
         // Obtener la URL de descarga
@@ -182,12 +259,10 @@ export class EditProfilePictureComponent implements OnInit, OnChanges {
           const exampleData = {
             profilePicture: downloadURL,
           };
-
           await this.examplesService.updateExampleData(this.exampleId, exampleData);
         } else if (this.userEmailKey) {
           // Modo usuario normal: Actualizar datos del usuario
           const userData = await this.firebaseService.getUserData(this.userEmailKey);
-
           const updatedData = {
             profileData: {
               ...(userData?.profileData || {}),
@@ -200,7 +275,6 @@ export class EditProfilePictureComponent implements OnInit, OnChanges {
               },
             },
           };
-
           await this.firebaseService.updateUserData(this.userEmailKey, updatedData);
 
           // Notifica el cambio
@@ -210,6 +284,9 @@ export class EditProfilePictureComponent implements OnInit, OnChanges {
         // Actualizar la vista previa
         this.profileForm.patchValue({ profilePicture: downloadURL });
         this.toastService.show('¡Foto actualizada correctamente!', 'success');
+        
+        // Emitir evento de guardado exitoso
+        this.saved.emit(true);
       }
     } catch (error) {
       console.error('Error al actualizar la foto de perfil:', error);
@@ -217,6 +294,7 @@ export class EditProfilePictureComponent implements OnInit, OnChanges {
         `Error al guardar: ${error instanceof Error ? error.message : 'Intenta nuevamente'}`,
         'error'
       );
+      this.saved.emit(false);
     }
   }
 }

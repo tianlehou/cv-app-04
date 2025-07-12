@@ -38,7 +38,9 @@
     </div>
     <div class="modal-body">
       <app-edit-personal-data 
-        [currentUser]="currentUser" 
+        [currentUser]="currentUser"
+        [isExample]="isExample"
+        [exampleId]="exampleId"
         (saved)="onPersonalDataUpdated(true)"
         (canceled)="onPersonalDataUpdated(false)">
       </app-edit-personal-data>

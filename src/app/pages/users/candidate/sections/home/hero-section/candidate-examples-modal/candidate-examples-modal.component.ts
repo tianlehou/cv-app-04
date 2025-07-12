@@ -46,6 +46,7 @@ export class CandidateExamplesModalComponent implements OnInit {
 
     // Si no hay ejemplos, crear el primero
     if (this.exampleIds.length === 0) {
+      console.log('CandidateExamplesModal - No examples found, creating first example...');
       try {
         const firstExampleId = await this.examplesService.generateExampleId();
         await this.examplesService.createExample(firstExampleId, {
@@ -63,8 +64,11 @@ export class CandidateExamplesModalComponent implements OnInit {
     if (this.exampleIds.length > 0) {
       this.currentIndex = 0;
       this.currentExampleId = this.exampleIds[this.currentIndex];
-      this.examplesService.setCurrentExampleId(this.currentExampleId);
+      this.cdr.detectChanges();
+    } else {
+      console.warn('CandidateExamplesModal - No example IDs available');
     }
+    this.examplesService.setCurrentExampleId(this.currentExampleId);
     this.cdr.detectChanges();
   }
 

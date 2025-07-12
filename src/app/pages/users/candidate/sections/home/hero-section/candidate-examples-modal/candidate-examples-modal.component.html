@@ -23,7 +23,11 @@
         [readOnly]="!isEditor"
         [exampleId]="currentExampleId"
       ></app-profile-picture>
-      <app-personal-data [currentUser]="null"></app-personal-data>
+      <app-personal-data 
+        [currentUser]="null"
+        [isExample]="true"
+        [exampleId]="currentExampleId"
+      ></app-personal-data>
       <app-gallery
         [currentUser]="null"
         [isExample]="true"

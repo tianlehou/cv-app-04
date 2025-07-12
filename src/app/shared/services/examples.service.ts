@@ -31,13 +31,15 @@ export class ExamplesService {
   // Actualiza los datos de un ejemplo específico en la base de datos.
   // Utiliza el ID del ejemplo y los datos a actualizar.
   async updateExampleData(exampleId: string, data: any): Promise<void> {
-    try {
-      const exampleRef = ref(this.db, `cv-app/examples/${exampleId}`);
-      await update(exampleRef, data);
-    } catch (error) {
-      console.error('Error al actualizar el ejemplo:', error);
-      throw error;
-    }
+    return runInInjectionContext(this.injector, async () => {
+      try {
+        const exampleRef = ref(this.db, `cv-app/examples/${exampleId}`);
+        await update(exampleRef, data);
+      } catch (error) {
+        console.error('Error al actualizar el ejemplo:', error);
+        throw error;
+      }
+    });
   }
 
   // Obtiene el siguiente número de ejemplo disponible en la base de datos.
@@ -82,7 +84,7 @@ export class ExamplesService {
   async createExample(exampleId: string, initialData: any): Promise<void> {
     return runInInjectionContext(this.injector, async () => {
       try {
-        const exampleRef = ref(this.db, this.getExamplePath(exampleId));
+        const exampleRef = ref(this.db, `cv-app/examples/${exampleId}`);
         await set(exampleRef, initialData);
       } catch (error) {
         console.error('Error creating example:', error);
@@ -95,19 +97,18 @@ export class ExamplesService {
   // Devuelve un objeto con los IDs restantes y el nuevo ID actual si corresponde.
   async deleteExample(exampleId: string): Promise<{ remainingIds: string[], newCurrentId?: string }> {
     return runInInjectionContext(this.injector, async () => {
-      // 1. Obtener lista de imágenes desde Database
-      const exampleRef = ref(this.db, this.getExamplePath(exampleId));
+      // 1. Obtener lista de imágenes
+      const exampleRef = ref(this.db, `cv-app/examples/${exampleId}/gallery-images`);
       const snapshot = await get(exampleRef);
 
       // 2. Eliminar nodo en Database
-      await remove(exampleRef);
+      await remove(ref(this.db, `cv-app/examples/${exampleId}`));
 
       // 3. Eliminar archivos en Storage
       try {
         if (snapshot.exists()) {
           const images = snapshot.val();
           if (Array.isArray(images)) {
-            // Eliminar cada imagen individualmente usando su ruta completa
             const deletePromises = images.map(imageUrl => {
               const fileRef = storageRef(this.storage, imageUrl);
               return deleteObject(fileRef);
@@ -132,7 +133,7 @@ export class ExamplesService {
         throw new Error('No se pudieron eliminar todos los archivos del ejemplo');
       }
 
-      // 4. Obtener IDs restantes y determinar nuevo ID a mostrar
+      // 4. Obtener IDs restantes
       const remainingIds = await this.getAllExampleIds();
       let newCurrentId;
 
@@ -159,12 +160,7 @@ export class ExamplesService {
     return runInInjectionContext(this.injector, async () => {
       const examplesRef = ref(this.db, 'cv-app/examples');
       const snapshot = await get(examplesRef);
-
-      if (!snapshot.exists()) {
-        return [];
-      }
-
-      return Object.keys(snapshot.val());
+      return snapshot.exists() ? Object.keys(snapshot.val()) : [];
     });
   }
 

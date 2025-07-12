@@ -5,29 +5,17 @@
       <span>Foto de Perfil</span>
     </h3>
   </header>
-  
+
   <body>
     <form [formGroup]="profileForm" (ngSubmit)="onSubmit()">
       <div class="form-group">
         <div class="display-flex-center">
-          <img
-          [src]="profileForm.get('profilePicture')?.value"
-          class="profile-picture-preview"
-          />
+          <img class="profile-picture-preview" [src]="profileForm.get('profilePicture')?.value" />
           <label>Selecciona una imagen:</label>
         </div>
-        <input
-          type="file"
-          accept="image/*"
-          (change)="onFileSelected($event)"
-          class="form-control"
-        />
+        <input type="file" accept="image/*" (change)="onFileSelected($event)" class="form-control" />
       </div>
-      <button
-        type="submit"
-        class="btn"
-        [disabled]="profileForm.invalid"
-      >
+      <button type="submit" class="btn" [disabled]="profileForm.invalid">
         <i class="fas fa-save"></i> Guardar Cambios
       </button>
     </form>
