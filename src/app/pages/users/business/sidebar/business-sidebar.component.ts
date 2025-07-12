@@ -14,8 +14,9 @@ import { FirebaseService } from 'src/app/shared/services/firebase.service';
 })
 export class BusinessSidebarComponent {
   isMenuOpen = false;
-  @Input() activeSection: 'home' | 'subscription' = 'home'; 
+  @Input() activeSection: 'home' | 'publications' | 'subscription' = 'home'; 
   @Output() homeClicked = new EventEmitter<void>();
+  @Output() publicationsClicked = new EventEmitter<void>();
   @Output() subscriptionClicked = new EventEmitter<void>();
 
   constructor(
@@ -33,6 +34,11 @@ export class BusinessSidebarComponent {
 
   onHomeClick() {
     this.homeClicked.emit();
+    this.toggleMenu();
+  }
+
+  onPublicationsClick() {
+    this.publicationsClicked.emit();
     this.toggleMenu();
   }
 

@@ -4,12 +4,19 @@
     class="profile-header"
     [activeSection]="activeSection"
     (homeClicked)="showHome()"
+    (publicationsClicked)="showPublications()"
     (subscriptionClicked)="toggleSubscription()"
   ></app-business-sidebar>
 
-  <app-business-dashboard *ngIf="activeSection === 'home' && userRole === 'business'"></app-business-dashboard>
-
-  <section id="subscription" *ngIf="activeSection === 'subscription'">
-    <app-business-subscription></app-business-subscription>
-  </section>
+  @if (activeSection === 'home' && userRole === 'business') {
+    <app-business-dashboard></app-business-dashboard>
+  } @else if (activeSection === 'publications') {
+    <section id="publications">
+      <app-business-publication></app-business-publication>
+    </section>
+  } @else if (activeSection === 'subscription') {
+    <section id="subscription">
+      <app-business-subscription></app-business-subscription>
+    </section>
+  }
 </div>

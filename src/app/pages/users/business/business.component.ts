@@ -6,18 +6,25 @@ import { AuthService } from '../../home/auth/auth.service';
 import { BusinessSidebarComponent } from './sidebar/business-sidebar.component';
 import { BusinessDashboardComponent } from './sections/business-dashboard/business-dashboard.component';
 import { BusinessSubscriptionComponent } from './sections/business-subscription/business-subscription.component';
+import { BusinessPublicationComponent } from './sections/business-publication/business-publication.component';
 
 @Component({
   selector: 'app-business',
   standalone: true,
-  imports: [CommonModule, BusinessSidebarComponent, BusinessDashboardComponent, BusinessSubscriptionComponent],
+  imports: [
+    CommonModule, 
+    BusinessSidebarComponent, 
+    BusinessDashboardComponent, 
+    BusinessSubscriptionComponent,
+    BusinessPublicationComponent
+  ],
   templateUrl: './business.component.html',
   styleUrl: './business.component.css',
 })
 export class BusinessComponent implements OnInit {
   currentUser: any = null;
   userRole: string | null = null;
-  activeSection: 'home' | 'subscription' = 'home';
+  activeSection: 'home' | 'publications' | 'subscription' = 'home';
 
   constructor(
     private firebaseService: FirebaseService,
@@ -48,5 +55,9 @@ export class BusinessComponent implements OnInit {
 
   showHome() {
     this.activeSection = 'home';
+  }
+
+  showPublications() {
+    this.activeSection = 'publications';
   }
 }

@@ -26,6 +26,20 @@
       </li>
 
       <li
+        [class.active]="activeSection === 'publications'"
+        [class.disabled]="activeSection === 'publications'"
+      >
+        <a
+          (click)="
+            activeSection !== 'publications' ? onPublicationsClick() : null
+          "
+        >
+          <i class="fas fa-newspaper" style="color: var(--clr-purple)"></i>
+          <span>Publicaciones</span>
+        </a>
+      </li>
+
+      <li
         [class.active]="activeSection === 'subscription'"
         [class.disabled]="activeSection === 'subscription'"
       >
