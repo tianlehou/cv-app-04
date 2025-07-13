@@ -1,0 +1,171 @@
+<div class="container mt-4">
+    <!-- Alertas de éxito/error -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div *ngIf="showAlert" class="alert alert-{{alertType}} alert-dismissible fade show" role="alert">
+                {{ alertMessage }}
+                <button type="button" class="btn-close" (click)="showAlert = false" aria-label="Cerrar"></button>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            <h2 class="h4 mb-0">Publicar Oferta de Trabajo</h2>
+            <p class="mb-0">Completa el siguiente formulario para publicar una nueva oferta de empleo.</p>
+        </div>
+
+        <div class="card-body">
+            <form [formGroup]="jobForm" (ngSubmit)="onSubmit()" class="needs-validation" novalidate>
+                <!-- Título del Puesto -->
+                <div class="mb-3">
+                    <label for="jobTitle" class="form-label">Título del Puesto <span
+                            class="text-danger">*</span></label>
+                    <input type="text" id="jobTitle" formControlName="title" class="form-control"
+                        [class.is-invalid]="jobForm.get('title')?.invalid && jobForm.get('title')?.touched"
+                        placeholder="Ej: Desarrollador Frontend Senior" required>
+                    <div *ngIf="jobForm.get('title')?.errors?.['required'] && jobForm.get('title')?.touched"
+                        class="invalid-feedback">
+                        El título es requerido
+                    </div>
+                </div>
+
+                <!-- Descripción -->
+                <div class="mb-3">
+                    <label for="jobDescription" class="form-label">Descripción del Puesto <span
+                            class="text-danger">*</span></label>
+                    <textarea id="jobDescription" formControlName="description" class="form-control" rows="4"
+                        [class.is-invalid]="jobForm.get('description')?.invalid && jobForm.get('description')?.touched"
+                        placeholder="Describe las responsabilidades del puesto" required></textarea>
+                    <div *ngIf="jobForm.get('description')?.errors?.['required'] && jobForm.get('description')?.touched"
+                        class="invalid-feedback">
+                        La descripción es requerida
+                    </div>
+                </div>
+
+                <!-- Requisitos -->
+                <div class="mb-3">
+                    <label for="jobRequirements" class="form-label">Requisitos <span
+                            class="text-danger">*</span></label>
+                    <textarea id="jobRequirements" formControlName="requirements" class="form-control" rows="4"
+                        [class.is-invalid]="jobForm.get('requirements')?.invalid && jobForm.get('requirements')?.touched"
+                        placeholder="Lista los requisitos necesarios" required></textarea>
+                    <div class="form-text">Menciona las habilidades técnicas, experiencia y formación requerida.</div>
+                    <div *ngIf="jobForm.get('requirements')?.errors?.['required'] && jobForm.get('requirements')?.touched"
+                        class="invalid-feedback">
+                        Los requisitos son requeridos
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <!-- Tipo de Contrato -->
+                    <div class="col-md-6 mb-3 mb-md-0">
+                        <label for="contractType" class="form-label">Tipo de Contrato <span
+                                class="text-danger">*</span></label>
+                        <select id="contractType" formControlName="contractType" class="form-select"
+                            [class.is-invalid]="jobForm.get('contractType')?.invalid && jobForm.get('contractType')?.touched"
+                            required>
+                            <option value="" disabled selected>Selecciona un tipo</option>
+                            <option *ngFor="let type of contractTypes" [value]="type.value">{{type.label}}</option>
+                        </select>
+                        <div *ngIf="jobForm.get('contractType')?.errors?.['required'] && jobForm.get('contractType')?.touched"
+                            class="invalid-feedback">
+                            El tipo de contrato es requerido
+                        </div>
+                    </div>
+
+                    <!-- Jornada -->
+                    <div class="col-md-6">
+                        <label for="workday" class="form-label">Jornada <span class="text-danger">*</span></label>
+                        <select id="workday" formControlName="workday" class="form-select"
+                            [class.is-invalid]="jobForm.get('workday')?.invalid && jobForm.get('workday')?.touched"
+                            required>
+                            <option value="" disabled selected>Selecciona una opción</option>
+                            <option *ngFor="let workday of workdayTypes" [value]="workday.value">{{workday.label}}
+                            </option>
+                        </select>
+                        <div *ngIf="jobForm.get('workday')?.errors?.['required'] && jobForm.get('workday')?.touched"
+                            class="invalid-feedback">
+                            La jornada es requerida
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <!-- Salario -->
+                    <div class="col-md-6 mb-3 mb-md-0">
+                        <label for="salary" class="form-label">Salario (anual bruto) <span
+                                class="text-danger">*</span></label>
+                        <div class="input-group">
+                            <input type="number" id="salary" formControlName="salary" class="form-control"
+                                [class.is-invalid]="jobForm.get('salary')?.invalid && jobForm.get('salary')?.touched"
+                                placeholder="30000" min="0" required>
+                            <span class="input-group-text">€</span>
+                            <div *ngIf="jobForm.get('salary')?.errors?.['required'] && jobForm.get('salary')?.touched"
+                                class="invalid-feedback">
+                                El salario es requerido
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Fecha Límite -->
+                    <div class="col-md-6">
+                        <label for="deadline" class="form-label">Fecha Límite <span class="text-danger">*</span></label>
+                        <input type="date" id="deadline" formControlName="deadline" class="form-control"
+                            [class.is-invalid]="jobForm.get('deadline')?.invalid && jobForm.get('deadline')?.touched"
+                            [min]="minDate" required>
+                        <div *ngIf="jobForm.get('deadline')?.errors?.['required'] && jobForm.get('deadline')?.touched"
+                            class="invalid-feedback">
+                            La fecha límite es requerida
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mb-4">
+                    <!-- Ubicación -->
+                    <div class="col-md-6 mb-3 mb-md-0">
+                        <label for="location" class="form-label">Ubicación <span class="text-danger">*</span></label>
+                        <input type="text" id="location" formControlName="location" class="form-control"
+                            [class.is-invalid]="jobForm.get('location')?.invalid && jobForm.get('location')?.touched"
+                            placeholder="Ciudad, País" required>
+                        <div *ngIf="jobForm.get('location')?.errors?.['required'] && jobForm.get('location')?.touched"
+                            class="invalid-feedback">
+                            La ubicación es requerida
+                        </div>
+                    </div>
+
+                    <!-- Modalidad -->
+                    <div class="col-md-6">
+                        <label class="form-label d-block">Modalidad <span class="text-danger">*</span></label>
+                        <div class="form-check form-check-inline" *ngFor="let mod of modalities">
+                            <input class="form-check-input" type="radio" formControlName="modality"
+                                [id]="'modality-'+mod.value" [value]="mod.value" required>
+                            <label class="form-check-label" [for]="'modality-'+mod.value">{{mod.label}}</label>
+                        </div>
+                        <div *ngIf="jobForm.get('modality')?.errors?.['required'] && jobForm.get('modality')?.touched"
+                            class="invalid-feedback d-block">
+                            La modalidad es requerida
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Botones -->
+                <div class="d-flex justify-content-end gap-2">
+                    <button type="button" class="btn btn-outline-secondary" (click)="resetForm()"
+                        [disabled]="isSubmitting">
+                        <i class="bi bi-x-lg me-1"></i> Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-primary" [disabled]="!jobForm.valid || isSubmitting">
+                        <span *ngIf="!isSubmitting">
+                            <i class="bi bi-send-check me-1"></i> Publicar Oferta
+                        </span>
+                        <span *ngIf="isSubmitting">
+                            <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+                            Publicando...
+                        </span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
