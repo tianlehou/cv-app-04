@@ -3,12 +3,12 @@
   <app-business-sidebar 
     class="profile-header"
     [activeSection]="activeSection"
-    (homeClicked)="showHome()"
+    (dashboardClicked)="showDashboard()"
     (publicationsClicked)="showPublications()"
     (subscriptionClicked)="toggleSubscription()"
   ></app-business-sidebar>
 
-  @if (activeSection === 'home' && userRole === 'business') {
+  @if (activeSection === 'dashboard' && userRole === 'business') {
     <app-business-dashboard></app-business-dashboard>
   } @else if (activeSection === 'publications') {
     <section id="publications">

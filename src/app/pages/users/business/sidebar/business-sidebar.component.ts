@@ -3,7 +3,6 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from 'src/app/pages/home/auth/auth.service';
-import { FirebaseService } from 'src/app/shared/services/firebase.service';
 
 @Component({
   selector: 'app-business-sidebar',
@@ -14,13 +13,12 @@ import { FirebaseService } from 'src/app/shared/services/firebase.service';
 })
 export class BusinessSidebarComponent {
   isMenuOpen = false;
-  @Input() activeSection: 'home' | 'publications' | 'subscription' = 'home'; 
-  @Output() homeClicked = new EventEmitter<void>();
+  @Input() activeSection: 'dashboard' | 'publications' | 'subscription' = 'dashboard'; 
+  @Output() dashboardClicked = new EventEmitter<void>();
   @Output() publicationsClicked = new EventEmitter<void>();
   @Output() subscriptionClicked = new EventEmitter<void>();
 
   constructor(
-    private firebaseService: FirebaseService,
     private authService: AuthService,
   ) {}
 
@@ -32,8 +30,8 @@ export class BusinessSidebarComponent {
     event.stopPropagation();
   }
 
-  onHomeClick() {
-    this.homeClicked.emit();
+  onDashboardClick() {
+    this.dashboardClicked.emit();
     this.toggleMenu();
   }
 

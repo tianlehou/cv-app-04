@@ -24,7 +24,7 @@ import { BusinessPublicationComponent } from './sections/business-publication/bu
 export class BusinessComponent implements OnInit {
   currentUser: any = null;
   userRole: string | null = null;
-  activeSection: 'home' | 'publications' | 'subscription' = 'home';
+  activeSection: 'dashboard' | 'publications' | 'subscription' = 'dashboard';
 
   constructor(
     private firebaseService: FirebaseService,
@@ -50,11 +50,11 @@ export class BusinessComponent implements OnInit {
   }
 
   toggleSubscription() {
-    this.activeSection = this.activeSection === 'subscription' ? 'home' : 'subscription';
+    this.activeSection = this.activeSection === 'subscription' ? 'dashboard' : 'subscription';
   }
 
-  showHome() {
-    this.activeSection = 'home';
+  showDashboard() {
+    this.activeSection = 'dashboard';
   }
 
   showPublications() {

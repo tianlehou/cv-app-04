@@ -16,10 +16,10 @@
   <nav>
     <ul class="main-menu">
       <li
-        [class.active]="activeSection === 'home'"
-        [class.disabled]="activeSection === 'home'"
+        [class.active]="activeSection === 'dashboard'"
+        [class.disabled]="activeSection === 'dashboard'"
       >
-        <a (click)="activeSection !== 'home' ? onHomeClick() : null">
+        <a (click)="activeSection !== 'dashboard' ? onDashboardClick() : null">
           <i class="fas fa-home" style="color: var(--clr-blue)"></i>
           <span>Inicio</span>
         </a>
