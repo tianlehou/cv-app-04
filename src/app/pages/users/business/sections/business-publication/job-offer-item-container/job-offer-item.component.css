@@ -7,6 +7,7 @@
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   margin-bottom: 1.5rem;
   border: 1px solid #e0e0e0;
+  max-width: 500px;
 }
 
 .job-offer-card:hover {
@@ -30,22 +31,43 @@
 
 .job-meta {
   display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
+  flex-direction: column;
+  gap: 0.5rem;
   font-size: 0.9rem;
   color: #7f8c8d;
+}
+
+.job-company-row {
+  width: 100%;
+  text-align: left;
+}
+
+.job-details-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: center;
 }
 
 .job-company {
   font-weight: 500;
   color: #3498db;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.25rem;
+}
+
+.job-company i {
+  color: #7f8c8d;
+  text-align: center;
 }
 
 .job-location,
 .job-modality {
   display: flex;
   align-items: center;
-  gap: 0.25rem;
+  gap: 0.5rem;
 }
 
 /* Cuerpo de la tarjeta */

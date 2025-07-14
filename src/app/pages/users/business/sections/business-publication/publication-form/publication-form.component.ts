@@ -25,9 +25,6 @@ export class PublicationFormComponent implements OnInit, OnChanges, OnDestroy {
   
   jobForm!: FormGroup;
   isSubmitting = false;
-  showAlert = false;
-  alertMessage = '';
-  alertType: 'success' | 'error' | 'info' | 'warning' = 'info';
   
   // Evento que se emite cuando se guarda exitosamente
   @Output() saved = new EventEmitter<boolean>();
