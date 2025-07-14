@@ -1,0 +1,59 @@
+<div class="job-offer-card">
+  <div class="job-offer-header">
+    <h3 class="job-title">{{ jobOffer.title }}</h3>
+    <div class="job-meta">
+      <span class="job-company">{{ jobOffer.companyName }}</span>
+      <span class="job-location">
+        <i class="fas fa-map-marker-alt"></i> {{ jobOffer.location }}
+      </span>
+      <span class="job-modality">
+        <i class="fas fa-briefcase"></i> {{ getModalityLabel(jobOffer.modality) }}
+      </span>
+    </div>
+  </div>
+
+  <div class="job-offer-body">
+    <div class="job-description">
+      <p>{{ jobOffer.description | slice:0:200 }}...</p>
+    </div>
+    
+    <div class="job-details">
+      <div class="detail">
+        <i class="fas fa-file-contract"></i>
+        <span>{{ getContractTypeLabel(jobOffer.contractType) }}</span>
+      </div>
+      <div class="detail">
+        <i class="fas fa-clock"></i>
+        <span>{{ getWorkdayLabel(jobOffer.workday) }}</span>
+      </div>
+      <div class="detail">
+        <i class="fas fa-dollar-sign"></i>
+        <span>{{ formatSalary(jobOffer.salary) }}</span>
+      </div>
+      <div class="detail">
+        <i class="fas fa-calendar-alt"></i>
+        <span>Vence: {{ formatDate(jobOffer.deadline) }}</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="job-offer-footer">
+    <div class="job-stats">
+      <span class="stat">
+        <i class="fas fa-eye"></i> {{ jobOffer.views || 0 }}
+      </span>
+      <span class="stat">
+        <i class="fas fa-file-alt"></i> {{ jobOffer.applications || 0 }}
+      </span>
+    </div>
+    
+    <div class="job-actions" *ngIf="isOwner">
+      <button class="btn-edit" (click)="onEdit()">
+        <i class="fas fa-edit"></i> Editar
+      </button>
+      <button class="btn-delete" (click)="onDelete()">
+        <i class="fas fa-trash"></i> Eliminar
+      </button>
+    </div>
+  </div>
+</div>

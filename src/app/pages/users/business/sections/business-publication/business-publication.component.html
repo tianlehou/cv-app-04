@@ -1,15 +1,29 @@
 <div class="publication-container">
-    <h2>Publicaciones</h2>
-    <p>Bienvenido a la sección de publicaciones. Aquí podrás gestionar todos tus anuncios de empleos.</p>
+    <div class="publication-header">
+        <div class="header-content">
+            <h2>Publicaciones</h2>
+            <p>Gestiona tus ofertas de empleo publicadas y crea nuevas ofertas para encontrar al mejor talento.</p>
+        </div>
+        <app-create-publication-button (createClick)="togglePublicationModal(true)"></app-create-publication-button>
+    </div>
     
-    <!-- Botón de crear publicación -->
-    <app-create-publication-button (createClick)="togglePublicationModal(true)"></app-create-publication-button>
-    
-    <!-- Contenido del componente de publicaciones -->
-    @if (hasPublications) {
-        <!-- Aquí iría la lista de publicaciones cuando existan -->
-        <div class="publications-list">
-            <!-- Las publicaciones se mostrarán aquí -->
+    <!-- Indicador de carga -->
+    @if (isLoading) {
+        <div class="loading-container">
+            <div class="spinner"></div>
+            <p>Cargando ofertas de trabajo...</p>
+        </div>
+    } @else if (hasPublications) {
+        <!-- Lista de ofertas de trabajo -->
+        <div class="job-offers-grid">
+            @for (jobOffer of jobOffers; track jobOffer.id) {
+                <app-job-offer-item 
+                    [jobOffer]="jobOffer"
+                    [currentUser]="currentUser"
+                    [isOwner]="true"
+                    (deleted)="onJobOfferDeleted($event)">
+                </app-job-offer-item>
+            }
         </div>
     } @else {
         <!-- Mensaje cuando no hay publicaciones -->
