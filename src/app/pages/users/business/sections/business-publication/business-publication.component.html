@@ -2,6 +2,20 @@
     <h2>Publicaciones</h2>
     <p>Bienvenido a la sección de publicaciones. Aquí podrás gestionar todos tus anuncios de empleos.</p>
     <!-- Contenido del componente de publicaciones -->
+    <app-create-publication-button (createClick)="togglePublicationModal(true)"></app-create-publication-button>
 </div>
 
-<app-publication-form></app-publication-form>
+<!-- Modal para el formulario de publicación -->
+<div class="modal-overlay" *ngIf="showPublicationModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Crear Nueva Publicación</h3>
+            <button type="button" class="close-btn" (click)="togglePublicationModal(false)" aria-label="Cerrar">
+               <span>&times;</span>Cerrar
+            </button>
+        </div>
+        <div class="modal-body">
+            <app-publication-form (formSubmitted)="onFormSubmitted()"></app-publication-form>
+        </div>
+    </div>
+</div>
