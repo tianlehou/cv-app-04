@@ -1,8 +1,20 @@
 <div class="publication-container">
     <h2>Publicaciones</h2>
     <p>Bienvenido a la sección de publicaciones. Aquí podrás gestionar todos tus anuncios de empleos.</p>
-    <!-- Contenido del componente de publicaciones -->
+    
+    <!-- Botón de crear publicación -->
     <app-create-publication-button (createClick)="togglePublicationModal(true)"></app-create-publication-button>
+    
+    <!-- Contenido del componente de publicaciones -->
+    @if (hasPublications) {
+        <!-- Aquí iría la lista de publicaciones cuando existan -->
+        <div class="publications-list">
+            <!-- Las publicaciones se mostrarán aquí -->
+        </div>
+    } @else {
+        <!-- Mensaje cuando no hay publicaciones -->
+        <app-empty-publication-message></app-empty-publication-message>
+    }
 </div>
 
 <!-- Modal para el formulario de publicación -->
@@ -15,7 +27,10 @@
             </button>
         </div>
         <div class="modal-body">
-            <app-publication-form (formSubmitted)="onFormSubmitted()"></app-publication-form>
+            <app-publication-form 
+                (formSubmitted)="onFormSubmitted()"
+                (saved)="onPublicationSaved()">
+            </app-publication-form>
         </div>
     </div>
 </div>

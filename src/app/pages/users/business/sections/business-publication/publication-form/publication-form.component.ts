@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, inject, NgZone } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, AbstractControl, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
@@ -25,6 +25,9 @@ export class PublicationFormComponent implements OnInit {
   showAlert = false;
   alertMessage = '';
   alertType: 'success' | 'error' | 'info' | 'warning' = 'info';
+  
+  // Evento que se emite cuando se guarda exitosamente
+  @Output() saved = new EventEmitter<boolean>();
 
   // Fecha mínima para el selector de fechas
   minDate: string;
@@ -56,6 +59,7 @@ export class PublicationFormComponent implements OnInit {
   private toastService = inject(ToastService);
   private router = inject(Router);
   private fb = inject(FormBuilder);
+  private ngZone = inject(NgZone);
   
   constructor() {
     // Establecer la fecha mínima como hoy
@@ -112,6 +116,20 @@ export class PublicationFormComponent implements OnInit {
       return;
     }
 
+    // Mostrar confirmación antes de guardar
+    this.confirmationModalService.show(
+      {
+        title: 'Confirmar Publicación',
+        message: '¿Estás seguro de que deseas publicar esta oferta?',
+        confirmText: 'Sí, publicar',
+        cancelText: 'Cancelar'
+      },
+      () => this.saveJobOffer(), // Función que se ejecuta al confirmar
+      () => this.toastService.show('Publicación cancelada', 'info') // Función que se ejecuta al cancelar
+    );
+  }
+
+  private saveJobOffer(): void {
     this.isSubmitting = true;
     
     // Obtener el usuario actual
@@ -136,14 +154,18 @@ export class PublicationFormComponent implements OnInit {
 
       this.jobOfferService.createJobOffer(jobOffer).subscribe({
         next: () => {
-          this.showMessage('Oferta publicada exitosamente', 'success');
+          this.toastService.show('¡Oferta publicada exitosamente!', 'success');
           this.jobForm.reset();
-          this.router.navigate(['/business/dashboard']);
+          
+          // Asegurarse de que el evento se emita dentro de la zona de Angular
+          this.ngZone.run(() => {
+            this.saved.emit(true);
+          });
         },
         error: (error: Error) => {
           console.error('Error al publicar la oferta:', error);
-          this.showMessage('Error al publicar la oferta. Por favor, inténtalo de nuevo.', 'error');
-          this.isSubmitting = false;
+          this.toastService.show('Error al publicar la oferta. Por favor, inténtalo de nuevo.', 'error');
+          this.saved.emit(false);
         },
         complete: () => {
           this.isSubmitting = false;
@@ -151,8 +173,9 @@ export class PublicationFormComponent implements OnInit {
       });
     } catch (error) {
       console.error('Error inesperado:', error);
-      this.showMessage('Ocurrió un error inesperado. Por favor, inténtalo de nuevo.', 'error');
+      this.toastService.show('Ocurrió un error inesperado. Por favor, inténtalo de nuevo.', 'error');
       this.isSubmitting = false;
+      this.saved.emit(false);
     }
   }
 
@@ -183,10 +206,12 @@ export class PublicationFormComponent implements OnInit {
     // Hacer scroll al inicio para ver el mensaje
     window.scrollTo(0, 0);
     
-    // Ocultar el mensaje después de 5 segundos
-    setTimeout(() => {
-      this.showAlert = false;
-    }, 5000);
+    // Ocultar el mensaje después de 3 segundos (solo para mensajes de éxito)
+    if (type === 'success') {
+      setTimeout(() => {
+        this.showAlert = false;
+      }, 3000);
+    }
   }
 
   // Reiniciar el formulario con confirmación
