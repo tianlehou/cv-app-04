@@ -32,6 +32,8 @@ export class BusinessPublicationComponent implements OnInit, OnDestroy {
   currentUser: any = null;
   showPublicationModal = false;
   hasPublications = false;
+  isEditing = false;
+  currentJobOffer: JobOffer | null = null;
 
   ngOnInit(): void {
     this.currentUser = this.authService.getCurrentAuthUser();
@@ -42,8 +44,10 @@ export class BusinessPublicationComponent implements OnInit, OnDestroy {
     this.subscriptions.unsubscribe();
   }
 
-  togglePublicationModal(show: boolean): void {
+  togglePublicationModal(show: boolean, jobOffer: JobOffer | null = null): void {
     this.showPublicationModal = show;
+    this.isEditing = !!jobOffer;
+    this.currentJobOffer = jobOffer;
   }
 
   onFormSubmitted(): void {

@@ -21,7 +21,8 @@
                     [jobOffer]="jobOffer"
                     [currentUser]="currentUser"
                     [isOwner]="true"
-                    (deleted)="onJobOfferDeleted($event)">
+                    (deleted)="onJobOfferDeleted($event)"
+                    (edit)="togglePublicationModal(true, $event)">
                 </app-job-offer-item>
             }
         </div>
@@ -35,13 +36,15 @@
 <div class="modal-overlay" *ngIf="showPublicationModal">
     <div class="modal-content">
         <div class="modal-header">
-            <h3>Crear Nueva Publicación</h3>
+            <h3>{{ isEditing ? 'Editar Publicación' : 'Crear Nueva Publicación' }}</h3>
             <button type="button" class="close-btn" (click)="togglePublicationModal(false)" aria-label="Cerrar">
                <span>&times;</span>Cerrar
             </button>
         </div>
         <div class="modal-body">
             <app-publication-form 
+                [jobOffer]="currentJobOffer"
+                [isEditing]="isEditing"
                 (formSubmitted)="onFormSubmitted()"
                 (saved)="onPublicationSaved()">
             </app-publication-form>

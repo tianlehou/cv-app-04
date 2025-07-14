@@ -1,7 +1,7 @@
-import { Component, OnInit, Output, EventEmitter, inject, NgZone } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, inject, NgZone, Input, OnChanges, SimpleChanges, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, AbstractControl, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { Subject } from 'rxjs';
 import { JobOfferService } from '../job-offer.service';
 import { JobOffer } from '../job-offer.model';
 import { AuthService } from 'src/app/pages/home/auth/auth.service';
@@ -19,7 +19,10 @@ import { ToastService } from 'src/app/shared/services/toast.service';
   templateUrl: './publication-form.component.html',
   styleUrls: ['./publication-form.component.css']
 })
-export class PublicationFormComponent implements OnInit {
+export class PublicationFormComponent implements OnInit, OnChanges, OnDestroy {
+  @Input() jobOffer: JobOffer | null = null;
+  @Input() isEditing = false;
+  
   jobForm!: FormGroup;
   isSubmitting = false;
   showAlert = false;
@@ -57,7 +60,6 @@ export class PublicationFormComponent implements OnInit {
   private jobOfferService = inject(JobOfferService);
   private confirmationModalService = inject(ConfirmationModalService);
   private toastService = inject(ToastService);
-  private router = inject(Router);
   private fb = inject(FormBuilder);
   private ngZone = inject(NgZone);
   
@@ -68,16 +70,38 @@ export class PublicationFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // Configurar fecha mínima (hoy)
-    const today = new Date();
-    this.minDate = today.toISOString().split('T')[0];
-    
     this.initForm();
+    if (this.isEditing && this.jobOffer) {
+      this.populateForm(this.jobOffer);
+    }
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['jobOffer'] && this.jobForm) {
+      this.populateForm(changes['jobOffer'].currentValue);
+    }
+  }
+
+  private populateForm(jobOffer: JobOffer): void {
+    this.jobForm.patchValue({
+      title: jobOffer.title,
+      description: jobOffer.description,
+      requirements: jobOffer.requirements,
+      contractType: jobOffer.contractType,
+      workday: jobOffer.workday,
+      salary: jobOffer.salary,
+      deadline: jobOffer.deadline.split('T')[0], // Asegurar el formato de fecha
+      location: jobOffer.location,
+      modality: jobOffer.modality
+    });
   }
 
   // Limpiar suscripciones al destruir el componente
+  private destroy$ = new Subject<void>();
+
   ngOnDestroy(): void {
-    // No es necesario limpiar nada ya que el servicio de confirmación maneja sus propias suscripciones
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   private initForm(): void {
@@ -112,7 +136,7 @@ export class PublicationFormComponent implements OnInit {
     this.markFormGroupTouched(this.jobForm);
     
     if (this.jobForm.invalid) {
-      this.showMessage('Por favor, completa correctamente todos los campos obligatorios.', 'error');
+      this.toastService.show('Por favor, completa correctamente todos los campos obligatorios.', 'error');
       return;
     }
 
@@ -129,48 +153,84 @@ export class PublicationFormComponent implements OnInit {
     );
   }
 
+  private handleSaveSuccess(id: string): void {
+    this.ngZone.run(() => {
+      const message = this.isEditing 
+        ? 'Oferta actualizada exitosamente' 
+        : 'Oferta publicada exitosamente';
+      this.toastService.show(message, 'success');
+      this.saved.emit(true);
+      if (!this.isEditing) {
+        this.jobForm.reset();
+      }
+    });
+  }
+
+  private handleSaveError(error: any): void {
+    console.error('Error al guardar la oferta:', error);
+    const message = this.isEditing
+      ? 'Error al actualizar la oferta: '
+      : 'Error al guardar la oferta: ';
+    this.toastService.show(message + (error.message || ''), 'error');
+    this.isSubmitting = false;
+  }
+
+  private handleSaveComplete(): void {
+    this.isSubmitting = false;
+  }
+
   private saveJobOffer(): void {
     this.isSubmitting = true;
     
     // Obtener el usuario actual
     const currentUser = this.authService.getCurrentAuthUser();
     if (!currentUser) {
-      this.showMessage('Debes iniciar sesión para publicar una oferta', 'error');
+      this.toastService.show('Debes iniciar sesión para publicar una oferta', 'error');
       this.isSubmitting = false;
       return;
     }
 
     try {
-      const jobOffer: JobOffer = {
+      const jobOfferData: any = {
         ...this.jobForm.value,
-        companyId: currentUser.uid,
-        companyName: currentUser.displayName || 'Empresa',
-        publicationDate: new Date().toISOString(),
-        status: 'active',
         requiredSkills: this.extractSkills(this.jobForm.get('requirements')?.value || ''),
+        updatedAt: new Date().toISOString(),
         applications: 0,
         views: 0
       };
 
-      this.jobOfferService.createJobOffer(jobOffer).subscribe({
-        next: () => {
-          this.toastService.show('¡Oferta publicada exitosamente!', 'success');
-          this.jobForm.reset();
-          
-          // Asegurarse de que el evento se emita dentro de la zona de Angular
-          this.ngZone.run(() => {
-            this.saved.emit(true);
-          });
-        },
-        error: (error: Error) => {
-          console.error('Error al publicar la oferta:', error);
-          this.toastService.show('Error al publicar la oferta. Por favor, inténtalo de nuevo.', 'error');
-          this.saved.emit(false);
-        },
-        complete: () => {
-          this.isSubmitting = false;
-        }
-      });
+      // Si es una edición, mantener el ID y la fecha de publicación original
+      if (this.isEditing && this.jobOffer) {
+        jobOfferData.id = this.jobOffer.id;
+        jobOfferData.publicationDate = this.jobOffer.publicationDate;
+        jobOfferData.companyId = this.jobOffer.companyId;
+        jobOfferData.companyName = this.jobOffer.companyName;
+        // Usar un tipo any para evitar errores con la propiedad status
+        jobOfferData.status = (this.jobOffer as any).status || 'active';
+      } else {
+        // Si es una nueva oferta, establecer la fecha de publicación actual
+        jobOfferData.publicationDate = new Date().toISOString();
+        jobOfferData.companyId = currentUser.uid;
+        jobOfferData.companyName = currentUser.displayName || 'Empresa';
+        jobOfferData.status = 'active';
+      }
+
+      // Guardar o actualizar la oferta de trabajo
+      if (this.isEditing && this.jobOffer && jobOfferData.id) {
+        // Actualizar oferta existente
+        this.jobOfferService.updateJobOffer(jobOfferData.id, jobOfferData).subscribe({
+          next: () => this.handleSaveSuccess(jobOfferData.id!),
+          error: (error: any) => this.handleSaveError(error),
+          complete: () => this.handleSaveComplete()
+        });
+      } else {
+        // Crear nueva oferta
+        this.jobOfferService.createJobOffer(jobOfferData as JobOffer).subscribe({
+          next: (id: string) => this.handleSaveSuccess(id),
+          error: (error: any) => this.handleSaveError(error),
+          complete: () => this.handleSaveComplete()
+        });
+      }
     } catch (error) {
       console.error('Error inesperado:', error);
       this.toastService.show('Ocurrió un error inesperado. Por favor, inténtalo de nuevo.', 'error');
@@ -197,22 +257,7 @@ export class PublicationFormComponent implements OnInit {
     ))].slice(0, 5); // Limitar a 5 habilidades
   }
 
-  // Mostrar mensaje de feedback al usuario
-  private showMessage(message: string, type: 'success' | 'error'): void {
-    this.alertMessage = message;
-    this.alertType = type;
-    this.showAlert = true;
-    
-    // Hacer scroll al inicio para ver el mensaje
-    window.scrollTo(0, 0);
-    
-    // Ocultar el mensaje después de 3 segundos (solo para mensajes de éxito)
-    if (type === 'success') {
-      setTimeout(() => {
-        this.showAlert = false;
-      }, 3000);
-    }
-  }
+
 
   // Reiniciar el formulario con confirmación
   resetForm(): void {

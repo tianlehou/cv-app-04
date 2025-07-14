@@ -16,7 +16,7 @@ export class JobOfferItemComponent {
   @Input() currentUser: User | null = null;
   @Input() isOwner: boolean = false;
   @Output() deleted = new EventEmitter<string>();
-  @Output() edit = new EventEmitter<string>();
+  @Output() edit = new EventEmitter<any>();
 
   // Formatear la fecha para mostrarla de manera legible
   formatDate(dateString: string): string {
@@ -71,7 +71,7 @@ export class JobOfferItemComponent {
 
   // Manejar la edición de la oferta
   onEdit(): void {
-    this.edit.emit(this.jobOffer.id);
+    this.edit.emit(this.jobOffer);
   }
 
   private confirmationModalService = inject(ConfirmationModalService);
