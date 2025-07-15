@@ -8,13 +8,14 @@ import { JobOfferService } from './job-offer.service';
 import { JobOffer } from './job-offer.model';
 import { AuthService } from 'src/app/pages/home/auth/auth.service';
 import { Subscription } from 'rxjs';
+import { FirebaseService } from 'src/app/shared/services/firebase.service';
 
 @Component({
   selector: 'app-business-publication',
   standalone: true,
   imports: [
-    CommonModule, 
-    PublicationFormComponent, 
+    CommonModule,
+    PublicationFormComponent,
     CreatePublicationButtonComponent,
     EmptyPublicationMessageComponent,
     JobOfferItemComponent
@@ -25,8 +26,9 @@ import { Subscription } from 'rxjs';
 export class BusinessPublicationComponent implements OnInit, OnDestroy {
   private jobOfferService = inject(JobOfferService);
   private authService = inject(AuthService);
+    private firebaseService = inject(FirebaseService);
   private subscriptions = new Subscription();
-  
+
   jobOffers: JobOffer[] = [];
   isLoading = true;
   currentUser: any = null;
@@ -55,16 +57,19 @@ export class BusinessPublicationComponent implements OnInit, OnDestroy {
   }
 
   // Cargar las ofertas de trabajo del usuario actual
+  // En el método loadJobOffers, cambia:
   private loadJobOffers(): void {
     this.isLoading = true;
+    const userEmailKey = this.firebaseService.formatEmailKey(this.currentUser.email);
+
     this.subscriptions.add(
-      this.jobOfferService.getJobOffersByCompany(this.currentUser.uid).subscribe({
-        next: (offers) => {
+      this.jobOfferService.getJobOffersByCompany(userEmailKey).subscribe({
+        next: (offers: JobOffer[]) => {
           this.jobOffers = offers;
           this.hasPublications = offers.length > 0;
           this.isLoading = false;
         },
-        error: (error) => {
+        error: (error: any) => {
           console.error('Error al cargar las ofertas:', error);
           this.isLoading = false;
         }
@@ -127,10 +132,10 @@ export class BusinessPublicationComponent implements OnInit, OnDestroy {
 
   // Formatear la fecha
   formatDate(dateString: string): string {
-    const options: Intl.DateTimeFormatOptions = { 
-      year: 'numeric', 
-      month: 'long', 
-      day: 'numeric' 
+    const options: Intl.DateTimeFormatOptions = {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
     };
     return new Date(dateString).toLocaleDateString('es-ES', options);
   }

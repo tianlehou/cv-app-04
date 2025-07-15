@@ -4,30 +4,19 @@
 
     <!-- Tipo de Usuario -->
     <div class="form-group">
-      <label>¿Qué tipo de usuario eres?</label>
-      <div class="user-type-options">
-        <div *ngFor="let type of userTypes" class="form-check">
-          <input type="radio" id="{{type.value}}" class="form-check-input" formControlName="userType"
-            [value]="type.value" [checked]="type.value === 'candidate'">
-          <label for="{{type.value}}" class="form-check-label">{{type.label}}</label>
-        </div>
-      </div>
+      <label for="userType">Tipo de usuario</label>
+      <select id="userType" class="form-control" formControlName="userType" [ngClass]="{
+        'is-invalid': registerForm.get('userType')?.invalid &&
+                    (registerForm.get('userType')?.touched ||
+                     registerForm.get('userType')?.dirty)
+      }">
+        <option value="" disabled selected>Selecciona un tipo de usuario</option>
+        <option *ngFor="let type of userTypes" [value]="type.value" [selected]="type.value === 'candidate'">
+          {{type.label}}
+        </option>
+      </select>
       <div class="invalid-feedback" *ngIf="registerForm.get('userType')?.errors?.['required']">
         Por favor selecciona un tipo de usuario.
-      </div>
-    </div>
-
-    <!-- Nombre Completo -->
-    <div class="form-group">
-      <label for="fullName">Nombre Completo</label>
-      <input type="text" id="fullName" class="form-control" formControlName="fullName" [ngClass]="{
-          'is-invalid':
-            registerForm.get('fullName')?.invalid &&
-            (registerForm.get('fullName')?.touched ||
-              registerForm.get('fullName')?.dirty)
-        }" />
-      <div class="invalid-feedback" *ngIf="registerForm.get('fullName')?.errors?.['required']">
-        El nombre completo es obligatorio.
       </div>
     </div>
 
@@ -47,6 +36,20 @@
       </select>
       <div class="invalid-feedback" *ngIf="registerForm.get('country')?.errors?.['required']">
         Por favor selecciona tu país.
+      </div>
+    </div>
+
+    <!-- Nombre Completo -->
+    <div class="form-group">
+      <label for="fullName">Nombre Completo</label>
+      <input type="text" id="fullName" class="form-control" formControlName="fullName" [ngClass]="{
+          'is-invalid':
+            registerForm.get('fullName')?.invalid &&
+            (registerForm.get('fullName')?.touched ||
+              registerForm.get('fullName')?.dirty)
+        }" />
+      <div class="invalid-feedback" *ngIf="registerForm.get('fullName')?.errors?.['required']">
+        El nombre completo es obligatorio.
       </div>
     </div>
 

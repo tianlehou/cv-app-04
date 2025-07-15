@@ -27,7 +27,7 @@ export class RegisterComponent implements OnInit {
   isLoading = false;
 
   userTypes = [
-    { value: 'candidate', label: 'Candidato (Busco trabajo)' },
+    { value: 'candidate', label: 'Candidato (Busco oportunidades)' },
     { value: 'business', label: 'Empresa (Busco talento)' }
   ];
 
@@ -71,7 +71,7 @@ export class RegisterComponent implements OnInit {
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(8)]],
       confirmPassword: ['', Validators.required],
-      userType: ['candidate', Validators.required],
+      userType: ['', Validators.required],
       country: ['', Validators.required],
       referredBy: [''],
     });
