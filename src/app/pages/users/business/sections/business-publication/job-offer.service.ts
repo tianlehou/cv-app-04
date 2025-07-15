@@ -1,10 +1,11 @@
-import { Injectable, inject } from '@angular/core';
+import { EnvironmentInjector, Injectable, inject, runInInjectionContext } from '@angular/core';
 import { JobOffer } from './job-offer.model';
 import { Observable, from, throwError } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 import { FirebaseService } from 'src/app/shared/services/firebase.service';
 import { DataSnapshot } from '@angular/fire/database';
 import { AuthService } from 'src/app/pages/home/auth/auth.service';
+import { Database, get, ref } from '@angular/fire/database';
 
 @Injectable({
   providedIn: 'root'
@@ -12,6 +13,8 @@ import { AuthService } from 'src/app/pages/home/auth/auth.service';
 export class JobOfferService {
   private firebaseService = inject(FirebaseService);
   private authService = inject(AuthService);
+  private db = inject(Database);
+  private injector = inject(EnvironmentInjector);
 
   // Método para obtener el userEmailKey del usuario actual
   private getCurrentUserEmailKey(): string {
@@ -22,20 +25,40 @@ export class JobOfferService {
     return this.firebaseService.formatEmailKey(currentUser.email);
   }
 
-  // Crear una nueva oferta de trabajo
+  // Método para encontrar el próximo ID disponible
+  private async getNextAvailableJobId(userEmailKey: string): Promise<string> {
+    return runInInjectionContext(this.injector, async () => {
+      const jobOffersRef = ref(this.db, `cv-app/users/${userEmailKey}/job-offer`);
+      const snapshot = await get(jobOffersRef);
+
+      if (!snapshot.exists()) {
+        return '0001';
+      }
+
+      const existingIds = Object.keys(snapshot.val())
+        .map(id => parseInt(id))
+        .sort((a, b) => a - b);
+
+      // Buscar el primer hueco disponible en la secuencia
+      for (let i = 1; i <= existingIds.length + 1; i++) {
+        const expectedId = i.toString().padStart(4, '0');
+        if (!existingIds.includes(i) && !snapshot.val()[expectedId]) {
+          return expectedId;
+        }
+      }
+
+      // Si no hay huecos, devolver el siguiente número secuencial
+      const maxId = Math.max(...existingIds);
+      return (maxId + 1).toString().padStart(4, '0');
+    });
+  }
+
+  // Crear una nueva oferta de trabajo con ID disponible
   createJobOffer(jobOffer: Omit<JobOffer, 'id'>): Observable<string> {
     const userEmailKey = this.getCurrentUserEmailKey();
-    const userJobOffersRef = this.firebaseService.getDatabaseRef(`cv-app/users/${userEmailKey}/job-offer`);
-
-    return from(this.firebaseService.getDatabaseValue(userJobOffersRef)).pipe(
-      switchMap((snapshot: DataSnapshot) => {
-        // Generar ID incremental
-        let nextId = '0001';
-        if (snapshot.exists()) {
-          const jobCount = Object.keys(snapshot.val()).length;
-          nextId = (jobCount + 1).toString().padStart(4, '0');
-        }
-
+    
+    return from(this.getNextAvailableJobId(userEmailKey)).pipe(
+      switchMap(nextId => {
         const newJobOffer: JobOffer = {
           ...jobOffer,
           id: nextId,
@@ -46,6 +69,7 @@ export class JobOfferService {
           deadline: jobOffer.deadline,
           publicationDate: new Date().toISOString(),
           companyId: userEmailKey,
+          companyName: '',
           createdBy: userEmailKey
         };
 
@@ -97,8 +121,20 @@ export class JobOfferService {
   // Obtener ofertas por empresa (alias para getJobOffersByUser)
   getJobOffersByCompany(companyEmailKey: string): Observable<JobOffer[]> {
     return this.getJobOffersByUser(companyEmailKey).pipe(
-      map(jobOffers => 
-        jobOffers.sort((a, b) => 
+      switchMap(jobOffers => {
+        // Obtener nombre de la empresa
+        return from(this.getCompanyName(companyEmailKey)).pipe(
+          map(companyName => {
+            // Actualizar cada oferta con el nombre de la empresa
+            return jobOffers.map(job => ({
+              ...job,
+              companyName
+            }));
+          })
+        );
+      }),
+      map(sortedJobOffers => 
+        sortedJobOffers.sort((a, b) => 
           new Date(b.publicationDate).getTime() - new Date(a.publicationDate).getTime()
         )
       )
@@ -163,6 +199,15 @@ export class JobOfferService {
     );
   }
 
+  // Método para obtener el nombre de la empresa
+  private async getCompanyName(userEmailKey: string): Promise<string> {
+    return runInInjectionContext(this.injector, async () => {
+      const userRef = ref(this.db, `cv-app/users/${userEmailKey}/profileData/personalData`);
+      const snapshot = await get(userRef);
+      return snapshot.exists() ? snapshot.val().fullName : '';
+    });
+  }
+
   // Método auxiliar para mapear datos de oferta
   private mapJobOffer(id: string, jobData: any): JobOffer {
     return {
@@ -171,7 +216,8 @@ export class JobOfferService {
       createdAt: jobData.createdAt ? new Date(jobData.createdAt) : new Date(),
       updatedAt: jobData.updatedAt ? new Date(jobData.updatedAt) : new Date(),
       deadline: jobData.deadline,
-      publicationDate: jobData.publicationDate
+      publicationDate: jobData.publicationDate,
+      companyName: jobData.companyName || ''
     };
   }
 }
