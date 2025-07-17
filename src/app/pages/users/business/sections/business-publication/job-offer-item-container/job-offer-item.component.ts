@@ -18,6 +18,81 @@ export class JobOfferItemComponent {
   @Output() deleted = new EventEmitter<string>();
   @Output() edit = new EventEmitter<any>();
 
+  // Estado para controlar la expansión de texto
+  showFullDescription = false;
+  showFullRequirements = false;
+  private clickListener: (() => void) | null = null;
+
+  // Limites de caracteres
+  private readonly MAX_PREVIEW_LENGTH = 25;
+  private readonly MAX_FULL_LENGTH = 1000;
+
+  // Obtener texto recortado para vista previa
+  getPreviewText(text: string | undefined): string {
+    if (!text) return '';
+    return text.length > this.MAX_PREVIEW_LENGTH 
+      ? text.slice(0, this.MAX_PREVIEW_LENGTH) + '...' 
+      : text;
+  }
+
+  // Obtener texto completo con límite
+  getFullText(text: string | undefined): string {
+    if (!text) return '';
+    return text.length > this.MAX_FULL_LENGTH 
+      ? text.slice(0, this.MAX_FULL_LENGTH) + '...' 
+      : text;
+  }
+
+  // Ver si el texto es más largo que el límite de vista previa
+  isTextLong(text: string | undefined): boolean {
+    return text ? text.length > this.MAX_PREVIEW_LENGTH : false;
+  }
+
+  // Manejar clic en ver más/menos
+  toggleShowMore(section: 'description' | 'requirements', event: MouseEvent): void {
+    event.stopPropagation();
+    
+    if (section === 'description') {
+      this.showFullDescription = !this.showFullDescription;
+    } else {
+      this.showFullRequirements = !this.showFullRequirements;
+    }
+
+    // Configurar listener para cerrar al hacer clic fuera
+    this.setupOutsideClickListener();
+  }
+
+  // Configurar listener para cerrar al hacer clic fuera
+  private setupOutsideClickListener(): void {
+    // Remover listener anterior si existe
+    this.removeOutsideClickListener();
+
+    // Agregar nuevo listener
+    this.clickListener = () => {
+      this.showFullDescription = false;
+      this.showFullRequirements = false;
+      this.removeOutsideClickListener();
+    };
+
+    // Usar setTimeout para evitar que el clic actual active el listener
+    setTimeout(() => {
+      document.addEventListener('click', this.clickListener!);
+    }, 0);
+  }
+
+  // Remover listener
+  private removeOutsideClickListener(): void {
+    if (this.clickListener) {
+      document.removeEventListener('click', this.clickListener);
+      this.clickListener = null;
+    }
+  }
+
+  // Limpiar listener al destruir el componente
+  ngOnDestroy(): void {
+    this.removeOutsideClickListener();
+  }
+
   // Formatear la fecha para mostrarla de manera legible
   formatDate(dateString: string): string {
     const options: Intl.DateTimeFormatOptions = { 
@@ -26,16 +101,6 @@ export class JobOfferItemComponent {
       day: 'numeric' 
     };
     return new Date(dateString).toLocaleDateString('es-ES', options);
-  }
-
-  // Formatear el salario con separadores de miles
-  formatSalary(salary: number): string {
-    return new Intl.NumberFormat('es-ES', {
-      style: 'currency',
-      currency: 'USD',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0
-    }).format(salary);
   }
 
   // Obtener el texto de la modalidad

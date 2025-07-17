@@ -28,7 +28,7 @@ export class RegisterComponent implements OnInit {
 
   userTypes = [
     { value: 'candidate', label: 'Candidato (Busco oportunidades)' },
-    { value: 'business', label: 'Empresa (Busco talento)' }
+    { value: 'business', label: 'Empresa (Busco talentos)' }
   ];
 
   // Lista de países

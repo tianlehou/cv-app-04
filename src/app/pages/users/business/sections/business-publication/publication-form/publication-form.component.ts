@@ -20,17 +20,73 @@ import { ToastService } from 'src/app/shared/services/toast.service';
   styleUrls: ['./publication-form.component.css']
 })
 export class PublicationFormComponent implements OnInit, OnChanges, OnDestroy {
+  // Constantes para los límites de caracteres
+  readonly MAX_DESCRIPTION_LENGTH = 1000;
+  readonly MAX_REQUIREMENTS_LENGTH = 1000;
+  
   @Input() jobOffer: JobOffer | null = null;
   @Input() isEditing = false;
   
   jobForm!: FormGroup;
   isSubmitting = false;
   
+  // Contadores de caracteres
+  descriptionLength = 0;
+  requirementsLength = 0;
+  
   // Evento que se emite cuando se guarda exitosamente
   @Output() saved = new EventEmitter<boolean>();
 
   // Fecha mínima para el selector de fechas
   minDate: string;
+
+  // Formatear salario con comas para miles, punto para decimales y 2 decimales
+  formatSalary(salary: number | null): string {
+    if (salary === null) return '';
+    
+    // Formatear el número con comas para miles y punto para decimales
+    return salary.toFixed(2)
+      .toString()
+      .replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  }
+
+  // Formatear el valor del input mientras se escribe
+  formatSalaryInput(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    let value = input.value.replace(/[^0-9.]/g, ''); // Solo números y puntos
+    
+    // Si hay más de un punto, mantener solo el último
+    const decimalSplit = value.split('.');
+    if (decimalSplit.length > 2) {
+      value = `${decimalSplit.slice(0, -1).join('')}.${decimalSplit[decimalSplit.length - 1]}`;
+    }
+    
+    // Actualizar el valor del control del formulario
+    this.jobForm.patchValue({
+      salary: value
+    }, { emitEvent: false });
+  }
+
+  // Formatear el valor cuando el campo pierde el foco
+  onSalaryBlur(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    let value = input.value;
+    
+    // Si el valor está vacío, no hacer nada
+    if (!value) return;
+    
+    // Eliminar comas y convertir a número
+    const cleanValue = value.replace(/,/g, '');
+    const numberValue = parseFloat(cleanValue);
+    
+    if (!isNaN(numberValue)) {
+      // Formatear con comas para miles y punto para decimales
+      const formattedValue = this.formatSalary(numberValue);
+      this.jobForm.patchValue({
+        salary: formattedValue
+      }, { emitEvent: false });
+    }
+  }
 
   // Opciones para los selectores
   contractTypes = [
@@ -104,14 +160,31 @@ export class PublicationFormComponent implements OnInit, OnChanges, OnDestroy {
   private initForm(): void {
     this.jobForm = this.fb.group({
       title: ['', [Validators.required, Validators.minLength(5)]],
-      description: ['', [Validators.required, Validators.minLength(20)]],
-      requirements: ['', [Validators.required, Validators.minLength(20)]],
+      description: ['', [
+        Validators.required, 
+        Validators.minLength(20),
+        Validators.maxLength(this.MAX_DESCRIPTION_LENGTH)
+      ]],
+      requirements: ['', [
+        Validators.required, 
+        Validators.minLength(20),
+        Validators.maxLength(this.MAX_REQUIREMENTS_LENGTH)
+      ]],
       contractType: ['', Validators.required],
       workday: ['', Validators.required],
       salary: ['', [Validators.required, Validators.min(0)]],
       deadline: ['', [Validators.required, this.futureDateValidator.bind(this)]],
       location: ['', [Validators.required, Validators.minLength(3)]],
       modality: ['', Validators.required]
+    });
+
+    // Suscribirse a cambios en los campos de texto para actualizar contadores
+    this.jobForm.get('description')?.valueChanges.subscribe((value: string) => {
+      this.descriptionLength = value?.length || 0;
+    });
+
+    this.jobForm.get('requirements')?.valueChanges.subscribe((value: string) => {
+      this.requirementsLength = value?.length || 0;
     });
   }
 

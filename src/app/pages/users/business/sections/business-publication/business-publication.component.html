@@ -2,33 +2,30 @@
     <div class="publication-header">
         <div class="header-content">
             <h2>Publicaciones</h2>
-            <p>Gestiona tus ofertas de empleo publicadas y crea nuevas ofertas para encontrar al mejor talento.</p>
+            <p>Gestiona tus ofertas de empleo para encontrar a los mejores talentos. <br>
+                Crea, Ajusta y Publica ¡Todo desde aquí!</p>
         </div>
         <app-create-publication-button (createClick)="togglePublicationModal(true)"></app-create-publication-button>
     </div>
-    
+
     <!-- Indicador de carga -->
     @if (isLoading) {
-        <div class="loading-container">
-            <div class="spinner"></div>
-            <p>Cargando ofertas de trabajo...</p>
-        </div>
+    <div class="loading-container">
+        <div class="spinner"></div>
+        <p>Cargando ofertas de trabajo...</p>
+    </div>
     } @else if (hasPublications) {
-        <!-- Lista de ofertas de trabajo -->
-        <div class="job-offers-grid">
-            @for (jobOffer of jobOffers; track jobOffer.id) {
-                <app-job-offer-item 
-                    [jobOffer]="jobOffer"
-                    [currentUser]="currentUser"
-                    [isOwner]="true"
-                    (deleted)="onJobOfferDeleted($event)"
-                    (edit)="togglePublicationModal(true, $event)">
-                </app-job-offer-item>
-            }
-        </div>
+    <!-- Lista de ofertas de trabajo -->
+    <div class="job-offers-grid">
+        @for (jobOffer of jobOffers; track jobOffer.id) {
+        <app-job-offer-item [jobOffer]="jobOffer" [currentUser]="currentUser" [isOwner]="true"
+            (deleted)="onJobOfferDeleted($event)" (edit)="togglePublicationModal(true, $event)">
+        </app-job-offer-item>
+        }
+    </div>
     } @else {
-        <!-- Mensaje cuando no hay publicaciones -->
-        <app-empty-publication-message></app-empty-publication-message>
+    <!-- Mensaje cuando no hay publicaciones -->
+    <app-empty-publication-message></app-empty-publication-message>
     }
 </div>
 
@@ -38,15 +35,12 @@
         <div class="modal-header">
             <h3>{{ isEditing ? 'Editar Publicación' : 'Crear Nueva Publicación' }}</h3>
             <button type="button" class="close-btn" (click)="togglePublicationModal(false)" aria-label="Cerrar">
-               <span>&times;</span>Cerrar
+                <span>&times;</span>Cerrar
             </button>
         </div>
         <div class="modal-body">
-            <app-publication-form 
-                [jobOffer]="currentJobOffer"
-                [isEditing]="isEditing"
-                (formSubmitted)="onFormSubmitted()"
-                (saved)="onPublicationSaved()">
+            <app-publication-form [jobOffer]="currentJobOffer" [isEditing]="isEditing"
+                (formSubmitted)="onFormSubmitted()" (saved)="onPublicationSaved()">
             </app-publication-form>
         </div>
     </div>
