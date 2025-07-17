@@ -1,5 +1,21 @@
-<div class="job-offer-card">
+<div class="job-offer-card border-red" (mouseleave)="onMouseLeave()">
   <div class="job-offer-header">
+    <div class="menu-container">
+      <button class="menu-button" (click)="toggleMenu($event)">
+        <i class="bi bi-three-dots-vertical"></i>
+      </button>
+      <div class="popover" [class.show]="isMenuOpen">
+        <button class="popover-item" (click)="onEdit()">
+          <i class="bi bi-pencil"></i> Editar
+        </button>
+        <button class="popover-item" (click)="onDuplicate()">
+          <i class="bi bi-files"></i> Duplicar
+        </button>
+        <button class="popover-item danger" (click)="onDelete()">
+          <i class="bi bi-trash"></i> Eliminar
+        </button>
+      </div>
+    </div>
     <h3 class="job-title">{{ jobOffer.title }}</h3>
     <div class="job-meta">
       <div class="job-details-row" style="justify-content: space-between;">
@@ -79,26 +95,6 @@
       <span class="stat">
         <i class="fas fa-file-alt"></i> {{ jobOffer.applications || 0 }}
       </span>
-    </div>
-
-    <div class="job-actions" *ngIf="isOwner">
-      <button class="btn-edit" (click)="onEdit()">
-        <i class="fas fa-edit"></i>
-        <!-- Editar -->
-      </button>
-      <button class="btn-delete" (click)="onDelete()">
-        <i class="fas fa-trash"></i>
-        <!-- Eliminar -->
-      </button>
-      <button class="btn-duplicate" (click)="onDuplicate()" [disabled]="isDuplicating">
-        <span *ngIf="!isDuplicating">
-          <i class="fas fa-copy"></i> Duplicar
-        </span>
-        <span *ngIf="isDuplicating">
-          <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
-          Duplicando...
-        </span>
-      </button>
     </div>
   </div>
 </div>

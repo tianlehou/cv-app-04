@@ -21,10 +21,20 @@ export class JobOfferItemComponent {
   @Output() edit = new EventEmitter<any>();
   @Output() duplicated = new EventEmitter<any>();
 
+  isMenuOpen = false;
+  isDuplicating = false;
+
   // Estado para controlar la expansión de texto
   showFullDescription = false;
   showFullRequirements = false;
   private clickListener: (() => void) | null = null;
+  private menuClickListener: (() => void) | null = null;
+
+  // Inyectar servicios necesarios
+  private confirmationModalService = inject(ConfirmationModalService);
+  private toast = inject(ToastService);
+  private ngZone = inject(NgZone);
+  private jobOfferService = inject(JobOfferService);
 
   // Limites de caracteres
   private readonly MAX_PREVIEW_LENGTH = 25;
@@ -33,17 +43,58 @@ export class JobOfferItemComponent {
   // Obtener texto recortado para vista previa
   getPreviewText(text: string | undefined): string {
     if (!text) return '';
-    return text.length > this.MAX_PREVIEW_LENGTH 
-      ? text.slice(0, this.MAX_PREVIEW_LENGTH) + '...' 
+    return text.length > this.MAX_PREVIEW_LENGTH
+      ? text.slice(0, this.MAX_PREVIEW_LENGTH) + '...'
       : text;
   }
 
   // Obtener texto completo con límite
   getFullText(text: string | undefined): string {
     if (!text) return '';
-    return text.length > this.MAX_FULL_LENGTH 
-      ? text.slice(0, this.MAX_FULL_LENGTH) + '...' 
+    return text.length > this.MAX_FULL_LENGTH
+      ? text.slice(0, this.MAX_FULL_LENGTH) + '...'
       : text;
+  }
+
+  // Métodos para manejar el menú desplegable
+  toggleMenu(event: Event): void {
+    event.stopPropagation();
+    this.isMenuOpen = !this.isMenuOpen;
+
+    if (this.isMenuOpen) {
+      // Cerrar el menú al hacer clic fuera de él
+      setTimeout(() => {
+        this.menuClickListener = () => {
+          this.isMenuOpen = false;
+          this.removeClickListener();
+        };
+        document.addEventListener('click', this.menuClickListener);
+      });
+    } else {
+      this.removeClickListener();
+    }
+  }
+
+  private removeClickListener(): void {
+    if (this.menuClickListener) {
+      document.removeEventListener('click', this.menuClickListener);
+      this.menuClickListener = null;
+    }
+  }
+
+  // Manejar cuando el mouse sale del componente
+  onMouseLeave(): void {
+    if (this.isMenuOpen) {
+      this.isMenuOpen = false;
+      this.removeClickListener();
+    }
+  }
+
+  // Manejar clic en editar
+  // Este método emite el evento de edición con la oferta de trabajo
+  onEdit(): void {
+    this.edit.emit(this.jobOffer);
+    this.isMenuOpen = false;
   }
 
   // Ver si el texto es más largo que el límite de vista previa
@@ -54,7 +105,7 @@ export class JobOfferItemComponent {
   // Manejar clic en ver más/menos
   toggleShowMore(section: 'description' | 'requirements', event: MouseEvent): void {
     event.stopPropagation();
-    
+
     if (section === 'description') {
       this.showFullDescription = !this.showFullDescription;
     } else {
@@ -98,10 +149,10 @@ export class JobOfferItemComponent {
 
   // Formatear la fecha para mostrarla de manera legible
   formatDate(dateString: string): string {
-    const options: Intl.DateTimeFormatOptions = { 
-      year: 'numeric', 
-      month: 'long', 
-      day: 'numeric' 
+    const options: Intl.DateTimeFormatOptions = {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
     };
     return new Date(dateString).toLocaleDateString('es-ES', options);
   }
@@ -137,19 +188,6 @@ export class JobOfferItemComponent {
     return workdays[workday] || workday;
   }
 
-  // Manejar la edición de la oferta
-  onEdit(): void {
-    this.edit.emit(this.jobOffer);
-  }
-
-  private confirmationModalService = inject(ConfirmationModalService);
-  private toast = inject(ToastService);
-  private ngZone = inject(NgZone);
-  private jobOfferService = inject(JobOfferService);
-  
-  // Estado para controlar la carga al duplicar
-  isDuplicating = false;
-
   // Manejar la eliminación de la oferta
   onDelete(): void {
     this.confirmationModalService.show(
@@ -171,7 +209,7 @@ export class JobOfferItemComponent {
   // Manejar la duplicación de la oferta
   onDuplicate(): void {
     if (this.isDuplicating) return;
-    
+
     this.confirmationModalService.show(
       {
         title: 'Duplicar Oferta',
@@ -190,29 +228,29 @@ export class JobOfferItemComponent {
   // Método para duplicar la oferta de trabajo
   private duplicateJobOffer(): void {
     this.isDuplicating = true;
-    
+
     // Crear una copia profunda del objeto jobOffer
     const jobOfferCopy: Partial<JobOffer> = { ...this.jobOffer };
-    
+
     // Eliminar el ID para que se genere uno nuevo
     delete jobOfferCopy.id;
-    
+
     // Actualizar fechas y metadatos
     const now = new Date();
     jobOfferCopy.createdAt = now;
     jobOfferCopy.updatedAt = now;
     jobOfferCopy.publicationDate = now.toISOString();
     jobOfferCopy.isActive = false; // La oferta duplicada comienza como inactiva
-    
+
     // Limpiar estadísticas y postulantes
     jobOfferCopy.views = 0;
     jobOfferCopy.applicants = [];
-    
+
     // Agregar "Copia de" al título si no lo tiene ya
     if (jobOfferCopy.title && !jobOfferCopy.title.startsWith('Copia de ')) {
       jobOfferCopy.title = `Copia de ${jobOfferCopy.title}`;
     }
-    
+
     // Llamar al servicio para crear la nueva oferta
     this.jobOfferService.createJobOffer(jobOfferCopy as Omit<JobOffer, 'id'>).subscribe({
       next: (newJobId) => {

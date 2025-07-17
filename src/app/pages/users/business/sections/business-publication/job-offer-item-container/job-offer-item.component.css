@@ -15,6 +15,112 @@
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
 }
 
+.menu-container {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 10;
+}
+
+.menu-button {
+  background: var(--clr-blue);
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  opacity: 0;
+  transition: all 0.3s ease;
+  z-index: 3;
+
+  .bi-three-dots-vertical {
+    font-size: 1.25rem;
+    color: white;
+  }
+
+  &:hover {
+    background: var(--clr-blue-dark);
+    transform: scale(1.05);
+  }
+}
+
+.popover {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+  min-width: 180px;
+  overflow: hidden;
+  transform: translateY(10px);
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.2s ease;
+  z-index: 1000;
+  margin-top: 8px;
+
+  &.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: -8px;
+    right: 16px;
+    width: 16px;
+    height: 16px;
+    background: white;
+    transform: rotate(45deg);
+    box-shadow: -2px -2px 5px rgba(0, 0, 0, 0.05);
+  }
+}
+
+.popover-item {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 10px 16px;
+  font-size: 0.9rem;
+  color: #333;
+  background: none;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  gap: 8px;
+
+  &:hover {
+    background: #f5f5f5;
+    color: var(--clr-blue);
+  }
+
+  i {
+    font-size: 1rem;
+    width: 20px;
+    display: inline-flex;
+    justify-content: center;
+  }
+
+  &.danger {
+    color: #e74c3c;
+
+    &:hover {
+      background: #fde8e8;
+    }
+  }
+}
+
+.job-offer-card:hover .menu-button {
+  opacity: 1;
+}
+
 /* Encabezado de la tarjeta */
 .job-offer-header {
   padding: 1.25rem 1.5rem;
