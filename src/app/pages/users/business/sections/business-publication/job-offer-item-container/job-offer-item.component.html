@@ -5,14 +5,21 @@
         <i class="bi bi-three-dots-vertical"></i>
       </button>
       <div class="popover" [class.show]="isMenuOpen">
-        <button class="popover-item" (click)="onEdit()">
-          <i class="bi bi-pencil"></i> Editar
+        <button class="popover-item info" (click)="openInfoModal()">
+          <i class="bi bi-info-circle" style="color: var(--clr-blue);"></i> Información
         </button>
+        <div class="popover-divider"></div>
         <button class="popover-item" (click)="onDuplicate()">
           <i class="bi bi-files"></i> Duplicar
         </button>
+        <button class="popover-item" (click)="onEdit()">
+          <i class="fas fa-pencil-alt"></i> Editar
+        </button>
         <button class="popover-item danger" (click)="onDelete()">
-          <i class="bi bi-trash"></i> Eliminar
+          <i class="bi bi-trash" style="color: var(--clr-red);"></i> Eliminar
+        </button>
+        <button class="popover-item" style="color: var(--clr-blue);">
+          <i class="bi bi-send-check" style="color: var(--clr-blue);"></i> Publicar
         </button>
       </div>
     </div>
@@ -98,3 +105,6 @@
     </div>
   </div>
 </div>
+
+<!-- Componente de Modal de Información -->
+<app-job-offer-info-modal *ngIf="showInfoModal" (closeModal)="onInfoModalClose()"></app-job-offer-info-modal>

@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input, Output, EventEmitter, inject, NgZone } from '@angular/core';
+import { JobOfferInfoModalComponent } from './job-offer-info-modal/job-offer-info-modal.component';
 import { User } from '@angular/fire/auth';
 import { ConfirmationModalService } from 'src/app/shared/services/confirmation-modal.service';
 import { ToastService } from 'src/app/shared/services/toast.service';
@@ -9,7 +10,7 @@ import { JobOffer } from '../job-offer.model';
 @Component({
   selector: 'app-job-offer-item',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, JobOfferInfoModalComponent],
   templateUrl: './job-offer-item.component.html',
   styleUrls: ['./job-offer-item.component.css']
 })
@@ -81,6 +82,30 @@ export class JobOfferItemComponent {
       this.menuClickListener = null;
     }
   }
+
+  //==============================
+  // Estado para controlar la visibilidad del modal de información
+  showInfoModal = false;
+
+  // Abrir el modal de información
+  openInfoModal(): void {
+    this.showInfoModal = true;
+    this.isMenuOpen = false; // Cerrar el menú popover
+  }
+
+  // Cerrar el modal de información
+  closeInfoModal(event?: MouseEvent): void {
+    if (event) {
+      event.stopPropagation();
+    }
+    this.showInfoModal = false;
+  }
+
+  // Manejar el cierre del modal desde el componente hijo
+  onInfoModalClose(): void {
+    this.showInfoModal = false;
+  }
+  //==============================
 
   // Manejar cuando el mouse sale del componente
   onMouseLeave(): void {

@@ -1,0 +1,67 @@
+<div class="modal-overlay" (click)="onClose()">
+  <div class="modal-content" (click)="onContentClick($event)">
+    <div class="modal-header">
+      <h3>Comparativa de Estados</h3>
+      <button class="close-btn" (click)="onClose()">&times;</button>
+    </div>
+    <div class="modal-body">
+      <table class="comparison-table">
+        <thead>
+          <tr>
+            <th>Características</th>
+            <th>No Publicado</th>
+            <th>Publicado</th>
+            <th>Vencido</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Visible para candidatos</td>
+            <td><i class="bi bi-x-circle text-danger"></i></td>
+            <td><i class="bi bi-check-circle text-success"></i></td>
+            <td><i class="bi bi-x-circle text-danger"></i></td>
+          </tr>
+          <tr>
+            <td>Puede recibir postulaciones</td>
+            <td><i class="bi bi-x-circle text-danger"></i></td>
+            <td><i class="bi bi-check-circle text-success"></i></td>
+            <td><i class="bi bi-x-circle text-danger"></i></td>
+          </tr>
+          <tr>
+            <td>Visible en búsquedas</td>
+            <td><i class="bi bi-x-circle text-danger"></i></td>
+            <td><i class="bi bi-check-circle text-success"></i></td>
+            <td><i class="bi bi-x-circle text-danger"></i></td>
+          </tr>
+          <tr>
+            <td>Puede ser duplicada</td>
+            <td><i class="bi bi-check-circle text-success"></i></td>
+            <td><i class="bi bi-check-circle text-success"></i></td>
+            <td><i class="bi bi-check-circle text-success"></i></td>
+          </tr>
+          <tr>
+            <td>Puede ser editada</td>
+            <td><i class="bi bi-check-circle text-success"></i></td>
+            <td><i class="bi bi-x-circle text-danger"></i></td>
+            <td><i class="bi bi-x-circle text-danger"></i></td>
+          </tr>
+          <tr>
+            <td>Puede ser eliminada</td>
+            <td><i class="bi bi-check-circle text-success"></i></td>
+            <td><i class="bi bi-x-circle text-danger"></i></td>
+            <td><i class="bi bi-x-circle text-danger"></i></td>
+          </tr>
+          <tr>
+            <td>Puede ser publicado</td>
+            <td><i class="bi bi-check-circle text-success"></i></td>
+            <td><i class="bi bi-x-circle text-danger"></i></td>
+            <td><i class="bi bi-x-circle text-danger"></i></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-primary" (click)="onClose()">Entendido</button>
+    </div>
+  </div>
+</div>
