@@ -3,6 +3,8 @@ import { Component, Input, Output, EventEmitter, inject, NgZone } from '@angular
 import { User } from '@angular/fire/auth';
 import { ConfirmationModalService } from 'src/app/shared/services/confirmation-modal.service';
 import { ToastService } from 'src/app/shared/services/toast.service';
+import { JobOfferService } from '../job-offer.service';
+import { JobOffer } from '../job-offer.model';
 
 @Component({
   selector: 'app-job-offer-item',
@@ -17,6 +19,7 @@ export class JobOfferItemComponent {
   @Input() isOwner: boolean = false;
   @Output() deleted = new EventEmitter<string>();
   @Output() edit = new EventEmitter<any>();
+  @Output() duplicated = new EventEmitter<any>();
 
   // Estado para controlar la expansión de texto
   showFullDescription = false;
@@ -142,6 +145,10 @@ export class JobOfferItemComponent {
   private confirmationModalService = inject(ConfirmationModalService);
   private toast = inject(ToastService);
   private ngZone = inject(NgZone);
+  private jobOfferService = inject(JobOfferService);
+  
+  // Estado para controlar la carga al duplicar
+  isDuplicating = false;
 
   // Manejar la eliminación de la oferta
   onDelete(): void {
@@ -159,5 +166,73 @@ export class JobOfferItemComponent {
         });
       }
     );
+  }
+
+  // Manejar la duplicación de la oferta
+  onDuplicate(): void {
+    if (this.isDuplicating) return;
+    
+    this.confirmationModalService.show(
+      {
+        title: 'Duplicar Oferta',
+        message: '¿Deseas crear una copia de esta oferta de trabajo?',
+        confirmText: 'Duplicar',
+        cancelText: 'Cancelar'
+      },
+      () => {
+        this.ngZone.run(() => {
+          this.duplicateJobOffer();
+        });
+      }
+    );
+  }
+
+  // Método para duplicar la oferta de trabajo
+  private duplicateJobOffer(): void {
+    this.isDuplicating = true;
+    
+    // Crear una copia profunda del objeto jobOffer
+    const jobOfferCopy: Partial<JobOffer> = { ...this.jobOffer };
+    
+    // Eliminar el ID para que se genere uno nuevo
+    delete jobOfferCopy.id;
+    
+    // Actualizar fechas y metadatos
+    const now = new Date();
+    jobOfferCopy.createdAt = now;
+    jobOfferCopy.updatedAt = now;
+    jobOfferCopy.publicationDate = now.toISOString();
+    jobOfferCopy.isActive = false; // La oferta duplicada comienza como inactiva
+    
+    // Limpiar estadísticas y postulantes
+    jobOfferCopy.views = 0;
+    jobOfferCopy.applicants = [];
+    
+    // Agregar "Copia de" al título si no lo tiene ya
+    if (jobOfferCopy.title && !jobOfferCopy.title.startsWith('Copia de ')) {
+      jobOfferCopy.title = `Copia de ${jobOfferCopy.title}`;
+    }
+    
+    // Llamar al servicio para crear la nueva oferta
+    this.jobOfferService.createJobOffer(jobOfferCopy as Omit<JobOffer, 'id'>).subscribe({
+      next: (newJobId) => {
+        this.ngZone.run(() => {
+          this.toast.show('Oferta duplicada exitósamente', 'success');
+          // Emitir el evento de duplicación con la nueva oferta
+          this.duplicated.emit({ ...jobOfferCopy, id: newJobId });
+        });
+      },
+      error: (error) => {
+        console.error('Error al duplicar la oferta:', error);
+        this.ngZone.run(() => {
+          this.toast.show('Error al duplicar la oferta', 'error');
+        });
+      },
+      complete: () => {
+        this.ngZone.run(() => {
+          this.isDuplicating = false;
+        });
+      }
+    });
   }
 }

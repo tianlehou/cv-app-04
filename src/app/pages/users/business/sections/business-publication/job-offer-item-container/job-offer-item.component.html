@@ -2,9 +2,14 @@
   <div class="job-offer-header">
     <h3 class="job-title">{{ jobOffer.title }}</h3>
     <div class="job-meta">
-      <span class="job-company">
-        <i class="fas fa-building"></i> {{ jobOffer.companyName }}
-      </span>
+      <div class="job-details-row" style="justify-content: space-between;">
+        <span class="job-company">
+          <i class="fas fa-building"></i> {{ jobOffer.companyName }}
+        </span>
+        <span class="job-id">
+          <i class="bi bi-hash"></i> {{ jobOffer.id }}
+        </span>
+      </div>
       <span class="job-location">
         <i class="fas fa-map-marker-alt"></i> {{ jobOffer.location }}
       </span>
@@ -78,10 +83,21 @@
 
     <div class="job-actions" *ngIf="isOwner">
       <button class="btn-edit" (click)="onEdit()">
-        <i class="fas fa-edit"></i> Editar
+        <i class="fas fa-edit"></i>
+        <!-- Editar -->
       </button>
       <button class="btn-delete" (click)="onDelete()">
-        <i class="fas fa-trash"></i> Eliminar
+        <i class="fas fa-trash"></i>
+        <!-- Eliminar -->
+      </button>
+      <button class="btn-duplicate" (click)="onDuplicate()" [disabled]="isDuplicating">
+        <span *ngIf="!isDuplicating">
+          <i class="fas fa-copy"></i> Duplicar
+        </span>
+        <span *ngIf="isDuplicating">
+          <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+          Duplicando...
+        </span>
       </button>
     </div>
   </div>

@@ -18,9 +18,12 @@
     <!-- Lista de ofertas de trabajo -->
     <div class="job-offers-grid">
         @for (jobOffer of jobOffers; track jobOffer.id) {
-        <app-job-offer-item [jobOffer]="jobOffer" [currentUser]="currentUser" [isOwner]="true"
-            (deleted)="onJobOfferDeleted($event)" (edit)="togglePublicationModal(true, $event)">
-        </app-job-offer-item>
+        <div [class.new-duplicated-card]="lastDuplicatedId === jobOffer.id">
+            <app-job-offer-item [jobOffer]="jobOffer" [currentUser]="currentUser" [isOwner]="true"
+                (deleted)="onJobOfferDeleted($event)" (edit)="togglePublicationModal(true, $event)"
+                (duplicated)="onJobOfferDuplicated($event)">
+            </app-job-offer-item>
+        </div>
         }
     </div>
     } @else {

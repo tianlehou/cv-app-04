@@ -36,6 +36,7 @@ export class BusinessPublicationComponent implements OnInit, OnDestroy {
   hasPublications = false;
   isEditing = false;
   currentJobOffer: JobOffer | null = null;
+  lastDuplicatedId: string | null = null; // Para rastrear la última oferta duplicada
 
   ngOnInit(): void {
     this.currentUser = this.authService.getCurrentAuthUser();
@@ -97,6 +98,23 @@ export class BusinessPublicationComponent implements OnInit, OnDestroy {
         }
       })
     );
+  }
+
+  // Manejar la duplicación de una oferta
+  onJobOfferDuplicated(newJobOffer: JobOffer): void {
+    // Establecer el ID de la oferta recién duplicada para la animación
+    if (newJobOffer.id) {
+      this.lastDuplicatedId = newJobOffer.id;
+      
+      // Agregar la nueva oferta al principio de la lista
+      this.jobOffers = [newJobOffer, ...this.jobOffers];
+      this.hasPublications = true;
+      
+      // Remover la clase de animación después de que termine
+      setTimeout(() => {
+        this.lastDuplicatedId = null;
+      }, 3000); // Duración de la animación en ms
+    }
   }
 
   // Obtener el texto del tipo de contrato
