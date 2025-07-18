@@ -4,10 +4,98 @@
   border-radius: 8px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   overflow: hidden;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition: all 0.3s ease;
   margin-bottom: 1.5rem;
-  border: 1px solid #e0e0e0;
+  border: 2px solid #e0e0e0;
   max-width: 500px;
+  position: relative;
+}
+
+/* Bordes según estado */
+.border-published {
+  border-color: #28a745;
+  border-left: 4px solid #28a745;
+}
+
+.border-draft {
+  border-color: #ffc107;
+  border-left: 4px solid #ffc107;
+}
+
+.border-expired {
+  border-color: #dc3545;
+  border-left: 4px solid #dc3545;
+  opacity: 0.8;
+}
+
+/* Fila del título y estado */
+.job-title-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+/* Badge de estado */
+.status-badge {
+  padding: 0.25rem 0.75rem;
+  border-radius: 1rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: capitalize;
+  white-space: nowrap;
+}
+
+.status-borrador {
+  background-color: #fff3cd;
+  color: #856404;
+  border: 1px solid #ffeeba;
+}
+
+.status-publicado {
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.status-vencido {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
+/* Fechas */
+.job-date {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.8rem;
+  color: #6c757d;
+  margin-right: 1rem;
+}
+
+.job-date i {
+  margin-right: 0.25rem;
+}
+
+/* Botones deshabilitados */
+.popover-item:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  background-color: transparent !important;
+}
+
+.popover-item:disabled:hover {
+  background-color: transparent !important;
+}
+
+.text-success {
+  color: #28a745 !important;
+}
+
+.text-muted {
+  color: #6c757d !important;
 }
 
 .job-offer-card:hover {

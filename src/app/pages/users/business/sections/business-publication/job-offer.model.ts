@@ -11,7 +11,8 @@ export interface JobOffer {
   deadline: string; // Fecha en formato ISO string
   companyId: string;
   companyName: string;
-  publicationDate: string; // Fecha en formato ISO string
+  status: 'borrador' | 'publicado' | 'vencido'; // Estado de la oferta
+  publicationDate?: string; // Fecha en formato ISO string - opcional para borradores
   isActive: boolean;
   applicants?: string[]; // IDs de los usuarios que han aplicado
   views?: number; // Número de visualizaciones

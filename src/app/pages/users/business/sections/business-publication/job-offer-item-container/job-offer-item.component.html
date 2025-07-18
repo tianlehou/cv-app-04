@@ -1,29 +1,66 @@
-<div class="job-offer-card border-red" (mouseleave)="onMouseLeave()">
+<!-- [class.border-draft]="jobOffer.status === 'borrador'"
+[class.border-published]="jobOffer.status === 'publicado'"
+[class.border-expired]="jobOffer.status === 'vencido'" -->
+<div class="job-offer-card"
+  (mouseleave)="onMouseLeave()">
   <div class="job-offer-header">
+
+    <!-- Menú de Opciones -->
     <div class="menu-container">
+      <!-- Botón de Menú -->
       <button class="menu-button" (click)="toggleMenu($event)">
         <i class="bi bi-three-dots-vertical"></i>
       </button>
+      <!-- Contenido del Menú -->
       <div class="popover" [class.show]="isMenuOpen">
+        <!-- Boton de Información -->
         <button class="popover-item info" (click)="openInfoModal()">
           <i class="bi bi-info-circle" style="color: var(--clr-blue);"></i> Información
         </button>
         <div class="popover-divider"></div>
+        <!-- Boton de Duplicar -->
         <button class="popover-item" (click)="onDuplicate()">
           <i class="bi bi-files"></i> Duplicar
         </button>
-        <button class="popover-item" (click)="onEdit()">
-          <i class="fas fa-pencil-alt"></i> Editar
+        <!-- Boton de Editar -->
+        <button class="popover-item" (click)="onEdit()"
+          [disabled]="jobOffer.status === 'publicado' || jobOffer.status === 'vencido'">
+          <i class="fas fa-pencil-alt"
+            [class.text-muted]="jobOffer.status === 'publicado' || jobOffer.status === 'vencido'"></i> Editar
         </button>
-        <button class="popover-item danger" (click)="onDelete()">
-          <i class="bi bi-trash" style="color: var(--clr-red);"></i> Eliminar
+        <!-- Boton de Eliminar -->
+        <button class="popover-item danger" (click)="onDelete()"
+          [disabled]="jobOffer.status === 'publicado' || jobOffer.status === 'vencido'">
+          <i class="bi bi-trash" style="color: var(--clr-red);"
+            [class.text-muted]="jobOffer.status === 'publicado' || jobOffer.status === 'vencido'"></i> Eliminar
         </button>
-        <button class="popover-item" style="color: var(--clr-blue);">
-          <i class="bi bi-send-check" style="color: var(--clr-blue);"></i> Publicar
+        <!-- Boton de Publicar -->
+        <button class="popover-item" (click)="onPublish()"
+          [disabled]="jobOffer.status === 'publicado' || jobOffer.status === 'vencido'"
+          [class.text-success]="jobOffer.status === 'publicado'"
+          [class.text-muted]="jobOffer.status === 'publicado' || jobOffer.status === 'vencido'">
+          <i class="bi" [ngClass]="{
+            'bi-send-check': jobOffer.status !== 'publicado',
+            'bi-check-circle': jobOffer.status === 'publicado',
+            'text-success': jobOffer.status === 'publicado',
+            'text-muted': jobOffer.status === 'publicado' || jobOffer.status === 'vencido'
+          }"></i>
+          {{ jobOffer.status === 'publicado' ? 'Publicado' : 'Publicar' }}
         </button>
       </div>
     </div>
+    <!-- Título y Estado del Puesto -->
+
     <h3 class="job-title">{{ jobOffer.title }}</h3>
+    <!-- Badge de Estado -->
+    <div class="job-title-row">
+      <span class="job-date" *ngIf="jobOffer.publicationDate">
+        <i class="bi bi-calendar-event"></i> Publicada: {{ formatDate(jobOffer.publicationDate) }}
+      </span>
+      <span class="status-badge" [ngClass]="'status-' + jobOffer.status">
+        {{ jobOffer.status | titlecase }}
+      </span>
+    </div>
     <div class="job-meta">
       <div class="job-details-row" style="justify-content: space-between;">
         <span class="job-company">
@@ -88,8 +125,10 @@
         </div>
       </div>
       <div class="detail">
-        <i class="fas fa-calendar-alt"></i>
-        <span>Vence: {{ formatDate(jobOffer.deadline) }}</span>
+        <i class="fas fa-calendar-alt"></i><span>Vence: {{formatDate(jobOffer.deadline)}}</span>
+      </div>
+      <div class="detail">
+        <i class="bi bi-hourglass-split"></i><span>{{ timeRemaining }}</span>
       </div>
     </div>
   </div>

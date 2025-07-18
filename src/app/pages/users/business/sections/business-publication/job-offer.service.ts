@@ -67,7 +67,6 @@ export class JobOfferService {
           createdAt: new Date(),
           updatedAt: new Date(),
           deadline: jobOffer.deadline,
-          publicationDate: new Date().toISOString(),
           companyId: userEmailKey,
           companyName: '',
           createdBy: userEmailKey
@@ -88,10 +87,38 @@ export class JobOfferService {
     );
   }
 
+  // Verificar si una oferta está vencida
+  private isOfferExpired(offer: JobOffer): boolean {
+    // Si no hay fecha límite o no está publicada, no está vencida
+    if (!offer.deadline || offer.status !== 'publicado') {
+      return false;
+    }
+    
+    const deadline = new Date(offer.deadline);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    return deadline < today;
+  }
+
+  // Actualizar el estado de vencimiento de una oferta
+  private updateExpiredStatus(offer: JobOffer): JobOffer {
+    if (this.isOfferExpired(offer)) {
+      return {
+        ...offer,
+        status: 'vencido',
+        isActive: false
+      };
+    }
+    return offer;
+  }
+
   // Obtener todas las ofertas del usuario actual
   getJobOffers(): Observable<JobOffer[]> {
     const userEmailKey = this.getCurrentUserEmailKey();
-    return this.getJobOffersByUser(userEmailKey);
+    return this.getJobOffersByUser(userEmailKey).pipe(
+      map(offers => offers.map(offer => this.updateExpiredStatus(offer)))
+    );
   }
 
   // Obtener ofertas por usuario (método interno)
@@ -122,21 +149,25 @@ export class JobOfferService {
   getJobOffersByCompany(companyEmailKey: string): Observable<JobOffer[]> {
     return this.getJobOffersByUser(companyEmailKey).pipe(
       switchMap(jobOffers => {
-        // Obtener nombre de la empresa
+        // Convertir la promesa a observable
         return from(this.getCompanyName(companyEmailKey)).pipe(
           map(companyName => {
-            // Actualizar cada oferta con el nombre de la empresa
-            return jobOffers.map(job => ({
-              ...job,
-              companyName
-            }));
+            // Actualizar cada oferta con el nombre de la empresa y verificar vencimiento
+            return jobOffers.map(job => 
+              this.updateExpiredStatus({
+                ...job,
+                companyName
+              })
+            );
           })
         );
       }),
-      map(sortedJobOffers => 
-        sortedJobOffers.sort((a, b) => 
-          new Date(b.publicationDate).getTime() - new Date(a.publicationDate).getTime()
-        )
+      map(offers => 
+        [...offers].sort((a, b) => {
+          const dateA = a.publicationDate ? new Date(a.publicationDate).getTime() : 0;
+          const dateB = b.publicationDate ? new Date(b.publicationDate).getTime() : 0;
+          return dateB - dateA;
+        })
       )
     );
   }
@@ -149,9 +180,10 @@ export class JobOfferService {
     );
     
     return from(this.firebaseService.getDatabaseValue(jobOfferRef)).pipe(
-      map((snapshot: DataSnapshot) => {
-        if (!snapshot.exists()) return undefined;
-        return this.mapJobOffer(jobId, snapshot.val());
+      map(jobData => {
+        if (!jobData) return undefined;
+        const jobOffer = this.mapJobOffer(jobId, jobData);
+        return this.updateExpiredStatus(jobOffer);
       }),
       catchError(error => {
         console.error(`Error al obtener oferta ${jobId}:`, error);
@@ -199,6 +231,51 @@ export class JobOfferService {
     );
   }
 
+  // Publicar una oferta de trabajo
+  publishJobOffer(jobId: string): Observable<void> {
+    const userEmailKey = this.getCurrentUserEmailKey();
+    const jobOfferRef = this.firebaseService.getDatabaseRef(
+      `cv-app/users/${userEmailKey}/job-offer/${jobId}`
+    );
+
+    // Obtener la oferta actual primero
+    return from(this.firebaseService.getDatabaseValue(jobOfferRef)).pipe(
+      switchMap((snapshot: DataSnapshot) => {
+        if (!snapshot.exists()) {
+          return throwError(() => new Error('La oferta no existe'));
+        }
+
+        const jobOffer = { ...snapshot.val() };
+        const now = new Date();
+        
+        // Si no hay fecha límite, establecer una por defecto (30 días a partir de ahora)
+        if (!jobOffer.deadline) {
+          const defaultDeadline = new Date();
+          defaultDeadline.setDate(now.getDate() + 30);
+          jobOffer.deadline = defaultDeadline.toISOString();
+        }
+
+        // Actualizar solo los campos necesarios
+        const updatedJobOffer = {
+          ...jobOffer,
+          status: 'publicado',
+          publicationDate: now.toISOString(),
+          updatedAt: new Date().toISOString(),
+          isActive: true
+        };
+
+        // Aplicar actualizaciones
+        return from(
+          this.firebaseService.setDatabaseValue(jobOfferRef, updatedJobOffer)
+        );
+      }),
+      catchError(error => {
+        console.error(`Error al publicar oferta ${jobId}:`, error);
+        return throwError(() => new Error(`Error al publicar oferta: ${error.message || 'Error desconocido'}`));
+      })
+    );
+  }
+
   // Método para obtener el nombre de la empresa
   private async getCompanyName(userEmailKey: string): Promise<string> {
     return runInInjectionContext(this.injector, async () => {
@@ -213,11 +290,13 @@ export class JobOfferService {
     return {
       ...jobData,
       id,
+      status: jobData.status || 'borrador', // Valor por defecto 'borrador' si no existe
       createdAt: jobData.createdAt ? new Date(jobData.createdAt) : new Date(),
       updatedAt: jobData.updatedAt ? new Date(jobData.updatedAt) : new Date(),
       deadline: jobData.deadline,
-      publicationDate: jobData.publicationDate,
-      companyName: jobData.companyName || ''
-    };
+      publicationDate: jobData.publicationDate || undefined,
+      companyName: jobData.companyName || '',
+      isActive: jobData.isActive !== undefined ? jobData.isActive : true // Valor por defecto true si no existe
+    } as JobOffer; // Asegurar que el objeto cumple con la interfaz JobOffer
   }
 }

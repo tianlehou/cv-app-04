@@ -278,11 +278,9 @@ export class PublicationFormComponent implements OnInit, OnChanges, OnDestroy {
         // Usar un tipo any para evitar errores con la propiedad status
         jobOfferData.status = (this.jobOffer as any).status || 'active';
       } else {
-        // Si es una nueva oferta, establecer la fecha de publicación actual
-        jobOfferData.publicationDate = new Date().toISOString();
         jobOfferData.companyId = currentUser.uid;
         jobOfferData.companyName = currentUser.displayName || 'Empresa';
-        jobOfferData.status = 'active';
+        jobOfferData.status = 'borrador';
       }
 
       // Guardar o actualizar la oferta de trabajo

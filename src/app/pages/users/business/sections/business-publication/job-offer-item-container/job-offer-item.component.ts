@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, Output, EventEmitter, inject, NgZone } from '@angular/core';
+import { Component, Input, Output, EventEmitter, inject, NgZone, OnDestroy, OnInit } from '@angular/core';
+import { interval, Subscription } from 'rxjs';
 import { JobOfferInfoModalComponent } from './job-offer-info-modal/job-offer-info-modal.component';
 import { User } from '@angular/fire/auth';
 import { ConfirmationModalService } from 'src/app/shared/services/confirmation-modal.service';
@@ -14,21 +15,66 @@ import { JobOffer } from '../job-offer.model';
   templateUrl: './job-offer-item.component.html',
   styleUrls: ['./job-offer-item.component.css']
 })
-export class JobOfferItemComponent {
+export class JobOfferItemComponent implements OnInit, OnDestroy {
+
+  // Contador regresivo
+  private countdownSub: Subscription | null = null;
+  timeRemaining: string = '';
+  private timeZone = 'America/Panama';
+
+
+
+  private updateTimeRemaining() {
+    if (!this.jobOffer?.deadline) {
+      this.timeRemaining = '';
+      return;
+    }
+
+    const now = new Date();
+    const deadline = new Date(this.jobOffer.deadline);
+
+    // Asegurarse de que estamos comparando en la misma zona horaria
+    const nowPanama = new Date(now.toLocaleString('en-US', { timeZone: this.timeZone }));
+    const deadlinePanama = new Date(deadline.toLocaleString('en-US', { timeZone: this.timeZone }));
+
+    const diffMs = deadlinePanama.getTime() - nowPanama.getTime();
+
+    if (diffMs <= 0) {
+      this.timeRemaining = 'Expirado';
+      return;
+    }
+
+    const days = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((diffMs % (1000 * 60)) / 1000);
+
+    this.timeRemaining = `Restante (${days}d ${hours}h ${minutes}m ${seconds}s)`;
+  }
   @Input() jobOffer: any;
   @Input() currentUser: User | null = null;
   @Input() isOwner: boolean = false;
-  @Output() deleted = new EventEmitter<string>();
-  @Output() edit = new EventEmitter<any>();
   @Output() duplicated = new EventEmitter<any>();
+  @Output() edit = new EventEmitter<any>();
+  @Output() deleted = new EventEmitter<string>();
 
   isMenuOpen = false;
   isDuplicating = false;
+
+  ngOnInit() {
+    this.updateTimeRemaining();
+    // Actualizar cada segundo
+    this.countdownSub = interval(1000).subscribe(() => {
+      this.updateTimeRemaining();
+    });
+  }
 
   // Estado para controlar la expansión de texto
   showFullDescription = false;
   showFullRequirements = false;
   private clickListener: (() => void) | null = null;
+
+  // Listener para el menú desplegable
   private menuClickListener: (() => void) | null = null;
 
   // Inyectar servicios necesarios
@@ -167,19 +213,41 @@ export class JobOfferItemComponent {
     }
   }
 
-  // Limpiar listener al destruir el componente
+  // Limpiar todas las suscripciones y listeners al destruir el componente
   ngOnDestroy(): void {
+    // Limpiar suscripción del contador regresivo
+    if (this.countdownSub) {
+      this.countdownSub.unsubscribe();
+    }
+    // Limpiar listeners de clic
     this.removeOutsideClickListener();
+    this.removeClickListener();
   }
 
   // Formatear la fecha para mostrarla de manera legible
-  formatDate(dateString: string): string {
-    const options: Intl.DateTimeFormatOptions = {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    };
-    return new Date(dateString).toLocaleDateString('es-ES', options);
+  formatDate(dateString: string | undefined | null): string {
+    if (!dateString) return 'No especificada';
+
+    try {
+      // Intentar formatear con el locale 'es' (que registramos en main.ts)
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) {
+        throw new Error('Fecha inválida');
+      }
+      return date.toLocaleDateString('es', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit'
+      });
+    } catch (error) {
+      console.error('Error al formatear fecha:', error);
+      // Si hay un error, devolver la fecha en formato ISO o el string original
+      try {
+        return new Date(dateString).toISOString().split('T')[0];
+      } catch (e) {
+        return dateString;
+      }
+    }
   }
 
   // Obtener el texto de la modalidad
@@ -231,40 +299,70 @@ export class JobOfferItemComponent {
     );
   }
 
-  // Manejar la duplicación de la oferta
-  onDuplicate(): void {
-    if (this.isDuplicating) return;
+  // Manejar la publicación de la oferta
+  onPublish(): void {
+    if (this.jobOffer.status === 'publicado') {
+      this.toast.show('Esta oferta ya está publicada', 'info');
+      this.isMenuOpen = false;
+      return;
+    }
 
     this.confirmationModalService.show(
       {
-        title: 'Duplicar Oferta',
-        message: '¿Deseas crear una copia de esta oferta de trabajo?',
+        title: 'Publicar oferta',
+        message: '¿Estás seguro de que deseas publicar esta oferta de trabajo? Una vez publicada, no podrá ser editada.',
+        confirmText: 'Publicar',
+        cancelText: 'Cancelar'
+      },
+      () => {
+        this.jobOfferService.publishJobOffer(this.jobOffer.id).subscribe({
+          next: () => {
+            this.toast.show('Oferta publicada exitosamente', 'success');
+            // Actualizar el estado local de la oferta
+            this.jobOffer.status = 'publicado';
+            this.jobOffer.publicationDate = new Date().toISOString();
+            this.jobOffer.isActive = true;
+          },
+          error: (error: Error) => {
+            console.error('Error al publicar oferta:', error);
+            this.toast.show(error.message || 'Error al publicar la oferta', 'error');
+          },
+          complete: () => {
+            this.isMenuOpen = false;
+          }
+        });
+      }
+    );
+  }
+
+  // Manejar la duplicación de la oferta
+  onDuplicate(): void {
+    this.confirmationModalService.show(
+      {
+        title: '¿Duplicar oferta?',
+        message: '¿Estás seguro de que deseas duplicar esta oferta de trabajo?',
         confirmText: 'Duplicar',
         cancelText: 'Cancelar'
       },
       () => {
-        this.ngZone.run(() => {
-          this.duplicateJobOffer();
-        });
+        this.duplicateJobOffer();
       }
     );
   }
 
   // Método para duplicar la oferta de trabajo
   private duplicateJobOffer(): void {
-    this.isDuplicating = true;
-
     // Crear una copia profunda del objeto jobOffer
-    const jobOfferCopy: Partial<JobOffer> = { ...this.jobOffer };
+    const jobOfferCopy: Partial<JobOffer> = JSON.parse(JSON.stringify(this.jobOffer));
 
     // Eliminar el ID para que se genere uno nuevo
     delete jobOfferCopy.id;
 
-    // Actualizar fechas y metadatos
+    // Asegurarse de que los campos requeridos estén presentes
     const now = new Date();
     jobOfferCopy.createdAt = now;
     jobOfferCopy.updatedAt = now;
-    jobOfferCopy.publicationDate = now.toISOString();
+    jobOfferCopy.status = 'borrador'; // La oferta duplicada comienza como borrador
     jobOfferCopy.isActive = false; // La oferta duplicada comienza como inactiva
 
     // Limpiar estadísticas y postulantes
@@ -293,7 +391,6 @@ export class JobOfferItemComponent {
       },
       complete: () => {
         this.ngZone.run(() => {
-          this.isDuplicating = false;
         });
       }
     });
