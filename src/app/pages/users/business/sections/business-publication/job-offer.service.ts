@@ -59,25 +59,31 @@ export class JobOfferService {
     
     return from(this.getNextAvailableJobId(userEmailKey)).pipe(
       switchMap(nextId => {
-        const newJobOffer: JobOffer = {
-          ...jobOffer,
-          id: nextId,
-          applicants: [],
-          views: 0,
-          createdAt: new Date(),
-          updatedAt: new Date(),
-          deadline: jobOffer.deadline,
-          companyId: userEmailKey,
-          companyName: '',
-          createdBy: userEmailKey
-        };
+        // Obtener el nombre de la empresa del usuario actual
+        return from(this.getCompanyName(userEmailKey)).pipe(
+          switchMap(companyName => {
+            const newJobOffer: JobOffer = {
+              ...jobOffer,
+              id: nextId,
+              applicants: [],
+              views: 0,
+              createdAt: new Date(),
+              updatedAt: new Date(),
+              deadline: jobOffer.deadline,
+              companyId: userEmailKey,
+              companyName: companyName,
+              createdBy: userEmailKey,
+              status: 'borrador' // Asegurar que el estado inicial sea 'borrador'
+            };
 
-        const jobOfferRef = this.firebaseService.getDatabaseRef(
-          `cv-app/users/${userEmailKey}/job-offer/${nextId}`
-        );
-        
-        return from(this.firebaseService.setDatabaseValue(jobOfferRef, newJobOffer)).pipe(
-          map(() => nextId)
+            const jobOfferRef = this.firebaseService.getDatabaseRef(
+              `cv-app/users/${userEmailKey}/job-offer/${nextId}`
+            );
+            
+            return from(this.firebaseService.setDatabaseValue(jobOfferRef, newJobOffer)).pipe(
+              map(() => nextId)
+            );
+          })
         );
       }),
       catchError(error => {
@@ -277,7 +283,7 @@ export class JobOfferService {
   }
 
   // Método para obtener el nombre de la empresa
-  private async getCompanyName(userEmailKey: string): Promise<string> {
+  async getCompanyName(userEmailKey: string): Promise<string> {
     return runInInjectionContext(this.injector, async () => {
       const userRef = ref(this.db, `cv-app/users/${userEmailKey}/profileData/personalData`);
       const snapshot = await get(userRef);

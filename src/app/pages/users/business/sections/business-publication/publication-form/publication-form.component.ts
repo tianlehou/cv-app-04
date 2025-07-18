@@ -249,7 +249,7 @@ export class PublicationFormComponent implements OnInit, OnChanges, OnDestroy {
     this.isSubmitting = false;
   }
 
-  private saveJobOffer(): void {
+  private async saveJobOffer(): Promise<void> {
     this.isSubmitting = true;
     
     // Obtener el usuario actual
@@ -261,6 +261,8 @@ export class PublicationFormComponent implements OnInit, OnChanges, OnDestroy {
     }
 
     try {
+      // Obtener el nombre de la empresa
+      const companyName = await this.jobOfferService.getCompanyName(currentUser.uid);
       const jobOfferData: any = {
         ...this.jobForm.value,
         requiredSkills: this.extractSkills(this.jobForm.get('requirements')?.value || ''),
@@ -279,7 +281,7 @@ export class PublicationFormComponent implements OnInit, OnChanges, OnDestroy {
         jobOfferData.status = (this.jobOffer as any).status || 'active';
       } else {
         jobOfferData.companyId = currentUser.uid;
-        jobOfferData.companyName = currentUser.displayName || 'Empresa';
+        jobOfferData.companyName = companyName || currentUser.displayName;
         jobOfferData.status = 'borrador';
       }
 

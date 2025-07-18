@@ -357,6 +357,9 @@ export class JobOfferItemComponent implements OnInit, OnDestroy {
 
     // Eliminar el ID para que se genere uno nuevo
     delete jobOfferCopy.id;
+    
+    // Eliminar la fecha de publicación para que no se copie al duplicar
+    delete jobOfferCopy.publicationDate;
 
     // Asegurarse de que los campos requeridos estén presentes
     const now = new Date();
