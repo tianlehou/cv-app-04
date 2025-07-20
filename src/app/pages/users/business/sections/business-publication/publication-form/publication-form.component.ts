@@ -274,7 +274,6 @@ export class PublicationFormComponent implements OnInit, OnChanges, OnDestroy {
       const companyName = await this.jobOfferService.getCompanyName(currentUser.uid);
       const jobOfferData: any = {
         ...this.jobForm.value,
-        requiredSkills: this.extractSkills(this.jobForm.get('requirements')?.value || ''),
         updatedAt: new Date().toISOString(),
         applications: 0,
         views: 0
@@ -316,24 +315,6 @@ export class PublicationFormComponent implements OnInit, OnChanges, OnDestroy {
       this.isSubmitting = false;
       this.saved.emit(false);
     }
-  }
-
-  private extractSkills(requirements: string): string[] {
-    if (!requirements) return [];
-    
-    // Palabras clave comunes en habilidades
-    const skillKeywords = [
-      'javascript', 'typescript', 'angular', 'react', 'vue', 'node', 'python', 'java', 'c#', 'c++',
-      'html', 'css', 'sass', 'less', 'git', 'docker', 'aws', 'azure', 'sql', 'nosql', 'mongodb',
-      'express', 'nestjs', 'graphql', 'rest', 'api', 'testing', 'jest', 'cypress', 'ci/cd', 'agile',
-      'JavaScript', 'TypeScript', 'Angular', 'React', 'Vue', 'Node.js', 'Python', 'Java',
-      'SQL', 'NoSQL', 'Git', 'Docker', 'AWS', 'Azure', 'HTML', 'CSS', 'SCSS', 'Responsive', 'Design'
-    ];
-    
-    const words = requirements.toLowerCase().split(/\s+/);
-    return [...new Set(words.filter(word => 
-      skillKeywords.some((skill: string) => word.includes(skill.toLowerCase()))
-    ))].slice(0, 5); // Limitar a 5 habilidades
   }
 
 

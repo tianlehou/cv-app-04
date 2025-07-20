@@ -20,15 +20,20 @@ export class JobOfferItemComponent implements OnInit, OnDestroy {
   // Contador regresivo
   private countdownSub: Subscription | null = null;
   timeRemaining: string = '';
+  isTimeCritical: boolean = false; // Indica si faltan menos de 24 horas o está expirado
   private timeZone = 'America/Panama';
 
   private updateTimeRemaining() {
     if (!this.jobOffer?.deadline) {
       this.timeRemaining = '';
+      this.isTimeCritical = false;
       return;
     }
 
     const now = new Date();
+    // Ajustar 5 horas a la fecha actual
+    now.setHours(now.getHours() - 5);
+    
     const deadline = new Date(this.jobOffer.deadline);
 
     // Asegurarse de que estamos comparando en la misma zona horaria
@@ -36,6 +41,10 @@ export class JobOfferItemComponent implements OnInit, OnDestroy {
     const deadlinePanama = new Date(deadline.toLocaleString('en-US', { timeZone: this.timeZone }));
 
     const diffMs = deadlinePanama.getTime() - nowPanama.getTime();
+    const hoursDiff = diffMs / (1000 * 60 * 60); // Convertir a horas
+
+    // Verificar si faltan menos de 24 horas o si ya expiró
+    this.isTimeCritical = hoursDiff < 24 || diffMs <= 0;
 
     if (diffMs <= 0) {
       this.timeRemaining = 'Expirado';
@@ -303,16 +312,10 @@ export class JobOfferItemComponent implements OnInit, OnDestroy {
     jobOfferCopy.createdAt = now;
     jobOfferCopy.updatedAt = now;
     jobOfferCopy.status = 'borrador'; // La oferta duplicada comienza como borrador
-    jobOfferCopy.isActive = false; // La oferta duplicada comienza como inactiva
 
     // Limpiar estadísticas y postulantes
     jobOfferCopy.views = 0;
-    jobOfferCopy.applicants = [];
-
-    // Agregar "Copia de" al título si no lo tiene ya
-    if (jobOfferCopy.title && !jobOfferCopy.title.startsWith('Copia de ')) {
-      jobOfferCopy.title = `Copia de ${jobOfferCopy.title}`;
-    }
+    jobOfferCopy.applications = [];
 
     // Llamar al servicio para crear la nueva oferta
     this.jobOfferService.createJobOffer(jobOfferCopy as Omit<JobOffer, 'id'>).subscribe({
@@ -361,6 +364,32 @@ export class JobOfferItemComponent implements OnInit, OnDestroy {
     );
   }
 
+  // Verificar si la fecha de vencimiento es válida (al menos 24 horas en el futuro)
+  private isDeadlineValid(deadline: string): { isValid: boolean, title: string, message: string } {
+    if (!deadline) {
+      return { 
+        isValid: false, 
+        title: 'Fecha de vencimiento requerida',
+        message: 'La oferta no tiene una fecha de vencimiento configurada. Por favor, edita la oferta y establece una fecha de vencimiento válida.' 
+      };
+    }
+
+    const now = new Date();
+    const deadlineDate = new Date(deadline);
+    const timeDiff = deadlineDate.getTime() - now.getTime();
+    const hoursDiff = timeDiff / (1000 * 60 * 60); // Convertir a horas
+
+    if (hoursDiff < 24) {
+      return { 
+        isValid: false, 
+        title: 'Fecha de vencimiento inválida',
+        message: 'No se puede publicar porque la fecha de vencimiento debe ser al menos 24 horas después de la fecha actual.\n\nCambie la fecha y vuelva a intentarlo.'
+      };
+    }
+
+    return { isValid: true, title: '', message: '' };
+  }
+
   // Manejar la publicación de la oferta
   onPublish(): void {
     if (this.jobOffer.status === 'publicado') {
@@ -369,6 +398,29 @@ export class JobOfferItemComponent implements OnInit, OnDestroy {
       return;
     }
 
+    // Verificar si la fecha de vencimiento es válida
+    const deadlineValidation = this.isDeadlineValid(this.jobOffer.deadline);
+    if (!deadlineValidation.isValid) {
+      this.confirmationModalService.show(
+        {
+          title: deadlineValidation.title,
+          message: deadlineValidation.message,
+          confirmText: '',
+          cancelText: 'Entendido',
+        },
+        () => {
+          // Cerrar el menú después de que el usuario haga clic en "Entendido"
+          this.isMenuOpen = false;
+        },
+        () => {
+          // Manejar cancelación (por si acaso)
+          this.isMenuOpen = false;
+        }
+      );
+      return;
+    }
+
+    // Si la fecha es válida, mostrar el modal de confirmación
     this.confirmationModalService.show(
       {
         title: 'Publicar oferta',
@@ -383,7 +435,6 @@ export class JobOfferItemComponent implements OnInit, OnDestroy {
             // Actualizar el estado local de la oferta
             this.jobOffer.status = 'publicado';
             this.jobOffer.publicationDate = new Date().toISOString();
-            this.jobOffer.isActive = true;
           },
           error: (error: Error) => {
             console.error('Error al publicar oferta:', error);
@@ -393,6 +444,10 @@ export class JobOfferItemComponent implements OnInit, OnDestroy {
             this.isMenuOpen = false;
           }
         });
+      },
+      () => {
+        // Acción al cancelar
+        this.isMenuOpen = false;
       }
     );
   }
@@ -418,7 +473,6 @@ export class JobOfferItemComponent implements OnInit, OnDestroy {
             this.toast.show('Publicación cancelada exitosamente', 'success');
             // Actualizar el estado local de la oferta
             this.jobOffer.status = 'cancelado';
-            this.jobOffer.isActive = false;
             this.jobOffer.updatedAt = new Date().toISOString();
           },
           error: (error: Error) => {

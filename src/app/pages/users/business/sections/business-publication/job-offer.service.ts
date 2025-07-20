@@ -57,6 +57,7 @@ export class JobOfferService {
   createJobOffer(jobOffer: Omit<JobOffer, 'id'>): Observable<string> {
     const userEmailKey = this.getCurrentUserEmailKey();
     const now = new Date();
+    const nowISO = now.toISOString();
     
     return from(this.getNextAvailableJobId(userEmailKey)).pipe(
       switchMap(nextId => {
@@ -64,13 +65,13 @@ export class JobOfferService {
         return from(this.getCompanyName(userEmailKey)).pipe(
           switchMap(companyName => {
             // Crear el objeto de oferta con los datos proporcionados
-            const newJobOffer: JobOffer = {
+            const newJobOffer: Record<string, any> = {
               ...jobOffer,
               id: nextId,
-              applicants: [],
+              applications: [],
               views: 0,
-              createdAt: new Date(),
-              updatedAt: new Date(),
+              createdAt: nowISO,
+              updatedAt: nowISO,
               deadline: jobOffer.deadline,
               companyId: userEmailKey,
               companyName: companyName,
@@ -114,7 +115,6 @@ export class JobOfferService {
       return {
         ...offer,
         status: 'vencido',
-        isActive: false
       };
     }
     return offer;
@@ -316,6 +316,15 @@ export class JobOfferService {
           const defaultDeadline = new Date();
           defaultDeadline.setDate(now.getDate() + 30);
           jobOffer.deadline = defaultDeadline.toISOString();
+        } else {
+          // Validar que falten al menos 24 horas para la fecha de vencimiento
+          const deadlineDate = new Date(jobOffer.deadline);
+          const timeDiff = deadlineDate.getTime() - now.getTime();
+          const hoursDiff = timeDiff / (1000 * 60 * 60); // Convertir a horas
+          
+          if (hoursDiff < 24) {
+            return throwError(() => new Error('La fecha de vencimiento debe ser al menos 24 horas después de la fecha actual'));
+          }
         }
 
         // Actualizar solo los campos necesarios
@@ -324,7 +333,6 @@ export class JobOfferService {
           status: 'publicado',
           publicationDate: now.toISOString(),
           updatedAt: new Date().toISOString(),
-          isActive: true
         };
 
         // Aplicar actualizaciones
@@ -360,7 +368,6 @@ export class JobOfferService {
           ...jobOffer,
           status: 'cancelado',
           updatedAt: new Date().toISOString(),
-          isActive: false
         };
 
         // Aplicar actualizaciones
@@ -395,7 +402,6 @@ export class JobOfferService {
       deadline: jobData.deadline,
       publicationDate: jobData.publicationDate || undefined,
       companyName: jobData.companyName || '',
-      isActive: jobData.isActive !== undefined ? jobData.isActive : true // Valor por defecto true si no existe
     } as JobOffer; // Asegurar que el objeto cumple con la interfaz JobOffer
   }
 }

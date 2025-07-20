@@ -292,6 +292,11 @@ p {
   margin-bottom: 0.5rem;
 }
 
+/* Estilos para el contador de tiempo crítico */
+.time-critical {
+  color: var(--clr-red) !important;
+}
+
 /* Estilo para el botón de ver más/menos */
 .btn-text-link {
   background: none;
