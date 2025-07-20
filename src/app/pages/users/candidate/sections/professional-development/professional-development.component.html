@@ -1,0 +1,49 @@
+<div class="professional-development-container">
+  <div class="section-title">
+    <h2>Desarrollo Profesional</h2>
+    <p>Amplía tus conocimientos y habilidades con estas oportunidades de desarrollo profesional.</p>
+  </div>
+
+  <div class="categories-grid">
+    <div *ngFor="let category of categories" class="category-card" [id]="'category-' + category.id" [attr.data-category]="category.id">
+      <div class="category-header">
+        <div class="feature-icon">
+          <i [class]="category.icon"></i>
+        </div>
+        <h3>{{ category.title }}</h3>
+      </div>
+      <p class="category-description">{{ category.description }}</p>
+      
+      <div class="items-list" *ngIf="category.items && category.items.length > 0; else emptyState">
+        <div class="item" *ngFor="let item of category.items">
+          <div class="item-content">
+            <h3>{{ item.title }}</h3>
+            <p>{{ item.description }}</p>
+            <div class="item-meta">
+              <span *ngIf="item.date"><i class="far fa-calendar-alt"></i> {{ item.date }}</span>
+              <span *ngIf="item.duration"><i class="far fa-clock"></i> {{ item.duration }}</span>
+            </div>
+          </div>
+          <div class="item-actions" *ngIf="isEditor">
+            <button class="btn-icon" (click)="editItem(category.id, item.id)" title="Editar">
+              <i class="fas fa-edit"></i>
+            </button>
+            <button class="btn-icon danger" (click)="deleteItem(category.id, item.id)" title="Eliminar">
+              <i class="fas fa-trash"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      <ng-template #emptyState>
+        <div class="empty-state">
+          <p>No hay {{ category.title.toLowerCase() }} registrados aún.</p>
+        </div>
+      </ng-template>
+      
+      <button *ngIf="isEditor" class="btn-add-item" (click)="addItem(category.id)">
+        <i class="fas fa-plus"></i> Agregar {{ category.title.slice(0, -1) }}
+      </button>
+    </div>
+  </div>
+</div>

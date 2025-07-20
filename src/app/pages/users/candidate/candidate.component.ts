@@ -15,6 +15,7 @@ import { HomeComponent } from './sections/home/home.component';
 import { SubscriptionComponent } from './sections/subscription/subscription.component';
 import { ReferComponent } from './sections/refer/refer.component';
 import { HeroSectionComponent } from './sections/home/hero-section/hero-section.component';
+import { ProfessionalDevelopmentComponent } from './sections/professional-development/professional-development.component';
 
 @Component({
   selector: 'app-candidate',
@@ -30,6 +31,7 @@ import { HeroSectionComponent } from './sections/home/hero-section/hero-section.
     SubscriptionComponent,
     ReferComponent,
     HeroSectionComponent,
+    ProfessionalDevelopmentComponent,
   ],
   templateUrl: './candidate.component.html',
   styleUrls: ['./candidate.component.css'],
@@ -41,7 +43,17 @@ export class CandidateComponent implements OnInit {
   userRole: string | null = null;
   isEditor: boolean = false;
   showSubscription = false;
-  activeSection: 'home' | 'profile' | 'subscription' | 'refer' = 'home';
+  // Usar el mismo tipo que en el sidebar para mantener consistencia
+  activeSection: 'home' | 'profile' | 'subscription' | 'refer' | 'professional-development' = 'home';
+  
+  // Definir el tipo para las secciones (igual que en sidebar.component.ts)
+  sectionType = {
+    home: 'home',
+    profile: 'profile',
+    subscription: 'subscription',
+    refer: 'refer',
+    professionalDevelopment: 'professional-development'
+  } as const;
 
   constructor(
     private firebaseService: FirebaseService,
@@ -86,7 +98,13 @@ export class CandidateComponent implements OnInit {
   }
 
   toggleRefer() {
-    this.activeSection = this.activeSection === 'refer' ? 'profile' : 'refer';
+    this.activeSection = 'refer';
+    this.showSubscription = false;
+  }
+
+  toggleProfessionalDevelopment() {
+    this.activeSection = 'professional-development';
+    this.showSubscription = false;
   }
 
   toggleSubscription() {

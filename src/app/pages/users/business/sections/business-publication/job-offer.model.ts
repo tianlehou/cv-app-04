@@ -28,7 +28,6 @@ export interface JobOffer {
   travelRequired?: boolean; // Si se requiere viajar
   availability?: string; // Disponibilidad requerida
   // Metadatos
-  createdAt?: Date;
-  updatedAt?: Date;
-  createdBy?: string; // ID del usuario que creó la oferta
+  createdAt?: Date | string;
+  updatedAt?: Date | string;
 }

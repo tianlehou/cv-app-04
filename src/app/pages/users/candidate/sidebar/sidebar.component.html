@@ -12,33 +12,38 @@
   <nav>
     <ul class="main-menu">
 
-      <li [class.active]="activeSection === 'home'" [class.disabled]="activeSection === 'home'">
-        <a (click)="activeSection !== 'home' ? onHomeClick() : null">
+      <li [class.active]="activeSection === sectionType.home" [class.disabled]="activeSection === sectionType.home">
+        <a (click)="activeSection !== sectionType.home ? onHomeClick() : null">
           <i class="fas fa-home" style="color: var(--clr-orange)"></i>
           <span>Inicio</span>
         </a>
       </li>
 
-      <li [class.active]="activeSection === 'profile'" [class.disabled]="activeSection === 'profile'">
-        <a (click)="activeSection !== 'profile' ? onProfileClick() : null">
+      <li [class.active]="activeSection === sectionType.profile" [class.disabled]="activeSection === sectionType.profile">
+        <a (click)="activeSection !== sectionType.profile ? onProfileClick() : null">
           <i class="fas fa-user" style="color: var(--clr-blue)"></i>
           <span>Perfil</span>
         </a>
       </li>
 
-      <li [class.active]="activeSection === 'subscription'" [class.disabled]="activeSection === 'subscription'">
-        <a (click)="
-            activeSection !== 'subscription' ? onSubscriptionClick() : null
-          ">
+      <li [class.active]="activeSection === sectionType.subscription" [class.disabled]="activeSection === sectionType.subscription">
+        <a (click)="activeSection !== sectionType.subscription ? onSubscriptionClick() : null">
           <i class="fas fa-credit-card" style="color: var(--clr-green)"></i>
           <span>Suscripciones</span>
         </a>
       </li>
 
-      <li [class.active]="activeSection === 'refer'" [class.disabled]="activeSection === 'refer'">
-        <a (click)="activeSection !== 'refer' ? onReferClick() : null">
+      <li [class.active]="activeSection === sectionType.refer" [class.disabled]="activeSection === sectionType.refer">
+        <a (click)="activeSection !== sectionType.refer ? onReferClick() : null">
           <i class="fas fa-share-alt" style="color: var(--clr-purple)"></i>
           <span>Referir</span>
+        </a>
+      </li>
+
+      <li [class.active]="activeSection === sectionType.professionalDevelopment" [class.disabled]="activeSection === sectionType.professionalDevelopment">
+        <a (click)="activeSection !== sectionType.professionalDevelopment ? onProfessionalDevelopmentClick() : null">
+          <i class="fas fa-graduation-cap" style="color: var(--clr-teal)"></i>
+          <span>Desarrollo Profesional</span>
         </a>
       </li>
     </ul>

@@ -33,7 +33,7 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   gap: 2rem;
-  margin-top: 2rem;
+  margin: 2rem;
 }
 
 .feature-card {
@@ -87,24 +87,4 @@
   line-height: 1.6;
   margin: 0;
   flex-grow: 1;
-}
-
-/* Responsive styles */
-@media (max-width: 768px) {
-  .features {
-    padding: 3rem 0;
-  }
-  
-  .section-title h2 {
-    font-size: 2rem;
-  }
-  
-  .features-grid {
-    grid-template-columns: 1fr;
-    gap: 1.5rem;
-  }
-  
-  .feature-card {
-    padding: 1.5rem;
-  }
 }

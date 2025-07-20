@@ -111,7 +111,7 @@
 }
 
 .menu-button {
-  background: var(--clr-blue);
+  background: var(--clr-orange);
   border: none;
   border-radius: 50%;
   width: 40px;
@@ -130,7 +130,7 @@
   }
 
   &:hover {
-    background: var(--clr-blue-dark);
+    background: var(--clr-orange-dark);
     transform: scale(1.05);
   }
 }

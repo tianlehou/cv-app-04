@@ -27,20 +27,7 @@
 }
 
 .create-button:hover {
-    transform: translateY(-2px);
+    transform: translateY(-5px);
     background: linear-gradient(135deg, #1e3a8a 0%, #1d4ed8 100%);
     box-shadow: 0 4px 12px rgba(30, 64, 175, 0.2);
-}
-
-.create-button:active {
-    transform: translateY(0);
-    background: linear-gradient(135deg, #1e3a8a 0%, #1e3a8a 100%);
-    box-shadow: 0 2px 4px rgba(30, 64, 175, 0.1);
-}
-
-/* Focus state for accessibility */
-.create-button:focus {
-    outline: none;
-    box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.3);
-    border-color: #3b82f6;
 }

@@ -37,7 +37,7 @@
 
     app-create-publication-button {
         position: fixed;
-        top: 20px;
+        top: 10px;
         right: 20px;
         z-index: 1000;
     }
@@ -92,7 +92,7 @@
 
     .close-btn {
         position: fixed;
-        top: 10px;
+        top: 0;
         right: 0;
         display: inline-flex;
         align-items: center;
@@ -114,15 +114,9 @@
     }
 
     .close-btn:hover {
-        transform: translateY(-2px);
+        transform: translateY(-5px);
         background: linear-gradient(135deg, #1e3a8a 0%, #1d4ed8 100%);
         box-shadow: 0 4px 12px rgba(30, 64, 175, 0.2);
-    }
-
-    .close-btn:active {
-        transform: translateY(0);
-        background: linear-gradient(135deg, #1e3a8a 0%, #1e3a8a 100%);
-        box-shadow: 0 2px 4px rgba(30, 64, 175, 0.1);
     }
 
     span {
@@ -137,7 +131,7 @@
         animation: slideInRight 3s cubic-bezier(0.23, 1, 0.32, 1) forwards;
     }
 
-        /* Animación para la nueva oferta duplicada */
+    /* Animación para la nueva oferta duplicada */
     @keyframes slideInRight {
         from {
             transform: translateX(100%);

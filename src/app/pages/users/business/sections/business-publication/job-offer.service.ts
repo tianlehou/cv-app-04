@@ -56,12 +56,14 @@ export class JobOfferService {
   // Crear una nueva oferta de trabajo con ID disponible
   createJobOffer(jobOffer: Omit<JobOffer, 'id'>): Observable<string> {
     const userEmailKey = this.getCurrentUserEmailKey();
+    const now = new Date();
     
     return from(this.getNextAvailableJobId(userEmailKey)).pipe(
       switchMap(nextId => {
         // Obtener el nombre de la empresa del usuario actual
         return from(this.getCompanyName(userEmailKey)).pipe(
           switchMap(companyName => {
+            // Crear el objeto de oferta con los datos proporcionados
             const newJobOffer: JobOffer = {
               ...jobOffer,
               id: nextId,
@@ -72,7 +74,6 @@ export class JobOfferService {
               deadline: jobOffer.deadline,
               companyId: userEmailKey,
               companyName: companyName,
-              createdBy: userEmailKey,
               status: 'borrador' // Asegurar que el estado inicial sea 'borrador'
             };
 
@@ -205,17 +206,73 @@ export class JobOfferService {
       `cv-app/users/${userEmailKey}/job-offer/${jobId}`
     );
     
-    const updatedJobOffer: Partial<JobOffer> = {
-      ...jobOffer,
-      updatedAt: new Date()
-    };
-
-    return from(
-      this.firebaseService.setDatabaseValue(jobOfferRef, updatedJobOffer)
-    ).pipe(
+    // Primero obtener la oferta actual
+    return from(this.firebaseService.getDatabaseValue(jobOfferRef)).pipe(
+      switchMap((snapshot: DataSnapshot) => {
+        if (!snapshot.exists()) {
+          return throwError(() => new Error(`No se encontró la oferta con ID ${jobId}`));
+        }
+        
+        // Obtener los datos actuales y asegurar que las fechas sean objetos Date
+        const currentData = snapshot.val();
+        
+        // Convertir las fechas de string a Date si es necesario
+        if (currentData.createdAt && typeof currentData.createdAt === 'string') {
+          currentData.createdAt = new Date(currentData.createdAt);
+        }
+        if (currentData.updatedAt && typeof currentData.updatedAt === 'string') {
+          currentData.updatedAt = new Date(currentData.updatedAt);
+        }
+        if (currentData.publicationDate && typeof currentData.publicationDate === 'string') {
+          currentData.publicationDate = new Date(currentData.publicationDate).toISOString();
+        }
+        
+        // Crear un objeto con solo los campos que no son undefined
+        const cleanJobOffer = Object.entries(jobOffer).reduce((acc, [key, value]) => {
+          if (value !== undefined) {
+            // Convertir fechas de string a Date si es necesario
+            if ((key === 'createdAt' || key === 'updatedAt') && typeof value === 'string') {
+              acc[key] = new Date(value);
+            } else if (key === 'publicationDate' && value) {
+              acc[key] = new Date(value as string).toISOString();
+            } else {
+              acc[key] = value;
+            }
+          }
+          return acc;
+        }, {} as Record<string, any>);
+        
+        // Crear el objeto actualizado
+        const updatedJobOffer: JobOffer = {
+          ...currentData,
+          ...cleanJobOffer,
+          id: jobId, // Asegurar que el ID no se sobrescriba
+          updatedAt: new Date()
+        };
+        
+        console.log('Actualizando oferta con datos:', updatedJobOffer);
+        
+        // Crear un objeto para Firebase convirtiendo las fechas a strings ISO
+        const firebaseData: Record<string, any> = {};
+        
+        Object.entries(updatedJobOffer).forEach(([key, value]) => {
+          if (value === undefined) return;
+          
+          if (value instanceof Date) {
+            firebaseData[key] = value.toISOString();
+          } else if (key === 'publicationDate' && value) {
+            firebaseData[key] = new Date(value).toISOString();
+          } else {
+            firebaseData[key] = value;
+          }
+        });
+        
+        // Guardar la oferta actualizada
+        return from(this.firebaseService.setDatabaseValue(jobOfferRef, firebaseData));
+      }),
       catchError(error => {
         console.error(`Error al actualizar oferta ${jobId}:`, error);
-        return throwError(() => new Error(`Error al actualizar oferta ${jobId}`));
+        return throwError(() => new Error(`Error al actualizar oferta ${jobId}: ${error.message || error}`));
       })
     );
   }
@@ -278,6 +335,42 @@ export class JobOfferService {
       catchError(error => {
         console.error(`Error al publicar oferta ${jobId}:`, error);
         return throwError(() => new Error(`Error al publicar oferta: ${error.message || 'Error desconocido'}`));
+      })
+    );
+  }
+
+  // Cancelar la publicación de una oferta de trabajo
+  cancelJobOffer(jobId: string): Observable<void> {
+    const userEmailKey = this.getCurrentUserEmailKey();
+    const jobOfferRef = this.firebaseService.getDatabaseRef(
+      `cv-app/users/${userEmailKey}/job-offer/${jobId}`
+    );
+
+    // Obtener la oferta actual primero
+    return from(this.firebaseService.getDatabaseValue(jobOfferRef)).pipe(
+      switchMap((snapshot: DataSnapshot) => {
+        if (!snapshot.exists()) {
+          return throwError(() => new Error('La oferta no existe'));
+        }
+
+        const jobOffer = { ...snapshot.val() };
+
+        // Actualizar solo los campos necesarios
+        const updatedJobOffer = {
+          ...jobOffer,
+          status: 'cancelado',
+          updatedAt: new Date().toISOString(),
+          isActive: false
+        };
+
+        // Aplicar actualizaciones
+        return from(
+          this.firebaseService.setDatabaseValue(jobOfferRef, updatedJobOffer)
+        );
+      }),
+      catchError(error => {
+        console.error(`Error al cancelar oferta ${jobId}:`, error);
+        return throwError(() => new Error(`Error al cancelar oferta: ${error.message || 'Error desconocido'}`));
       })
     );
   }

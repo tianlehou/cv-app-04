@@ -13,11 +13,21 @@ import { AuthService } from 'src/app/pages/home/auth/auth.service';
 })
 export class SidebarComponent {
   isMenuOpen = false;
-  @Input() activeSection: 'home' | 'profile' | 'subscription' | 'refer' = 'home';
+  @Input() activeSection: 'home' | 'profile' | 'subscription' | 'refer' | 'professional-development' = 'home';
   @Output() homeClicked = new EventEmitter<void>();
   @Output() profileClicked = new EventEmitter<void>();
   @Output() subscriptionClicked = new EventEmitter<void>();
   @Output() referClicked = new EventEmitter<void>();
+  @Output() professionalDevelopmentClicked = new EventEmitter<void>();
+  
+  // Definir el tipo para las secciones
+  sectionType = {
+    home: 'home',
+    profile: 'profile',
+    subscription: 'subscription',
+    refer: 'refer',
+    professionalDevelopment: 'professional-development'
+  } as const;
 
   constructor(
     private authService: AuthService,
@@ -48,6 +58,11 @@ export class SidebarComponent {
 
   onReferClick() {
     this.referClicked.emit();
+    this.toggleMenu();
+  }
+
+  onProfessionalDevelopmentClick() {
+    this.professionalDevelopmentClicked.emit();
     this.toggleMenu();
   }
 

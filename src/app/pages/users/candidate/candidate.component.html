@@ -7,11 +7,13 @@
         (profileClicked)="showProfile()"
         (subscriptionClicked)="toggleSubscription()"
         (referClicked)="toggleRefer()"
+        (professionalDevelopmentClicked)="toggleProfessionalDevelopment()"
       ></app-sidebar>
     </div>
 
     <div class="main-content">
-      <section id="home" *ngIf="activeSection === 'home'">
+      <!-- Sección de Inicio -->
+      <section id="home" *ngIf="activeSection === sectionType.home">
         <app-hero-section 
           (startNow)="onHeaderStartNow()"
           [isEditor]="isEditor">
@@ -19,9 +21,10 @@
         <app-home (startNow)="showProfile()"></app-home>
       </section>
 
+      <!-- Sección de Perfil -->
       <section
         id="candidate"
-        *ngIf="activeSection === 'profile'"
+        *ngIf="activeSection === sectionType.profile"
         (contextmenu)="(false)"
       >
         <div class="profile-container">
@@ -31,28 +34,37 @@
               [currentUser]="currentUser"
               [isEditor]="isEditor"
               [isExample]="isExample"
-              [readOnly]="readOnly"
-            ></app-profile-picture>
+              [readOnly]="readOnly">
+            </app-profile-picture>
+            
             <app-personal-data
               *ngIf="currentUser"
-              [currentUser]="currentUser"
-            ></app-personal-data>
+              [currentUser]="currentUser">
+            </app-personal-data>
           </div>
+          
           <app-gallery
             *ngIf="currentUser"
             [currentUser]="currentUser"
             [readOnly]="readOnly"
-            [isOwner]="!readOnly"
-          ></app-gallery>
+            [isOwner]="!readOnly">
+          </app-gallery>
         </div>
       </section>
 
-      <section id="subscription" *ngIf="activeSection === 'subscription'">
+      <!-- Sección de Suscripción -->
+      <section id="subscription" *ngIf="activeSection === sectionType.subscription && showSubscription">
         <app-subscription></app-subscription>
       </section>
 
-      <section id="refer" *ngIf="activeSection === 'refer'">
+      <!-- Sección de Referidos -->
+      <section id="refer" *ngIf="activeSection === sectionType.refer">
         <app-refer></app-refer>
+      </section>
+
+      <!-- Sección de Desarrollo Profesional -->
+      <section id="professional-development" *ngIf="activeSection === sectionType.professionalDevelopment">
+        <app-professional-development [isEditor]="isEditor"></app-professional-development>
       </section>
     </div>
   </div>

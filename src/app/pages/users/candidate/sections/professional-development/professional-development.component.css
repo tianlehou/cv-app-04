@@ -1,0 +1,245 @@
+/* Contenedor principal */
+.professional-development-container {
+  padding: 2rem 0;
+  background-color: var(--bg-blue);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Títulos y texto */
+.section-title {
+  text-align: center;
+  margin-bottom: 3.5rem;
+  padding: 0 1.5rem;
+}
+
+.section-title h2 {
+  font-size: 2.5rem;
+  color: #1a1a1a;
+  margin-bottom: 1rem;
+  font-weight: 700;
+}
+
+.section-title p {
+  color: #4a5568;
+  font-size: 1.1rem;
+  max-width: 700px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+/* Grid de categorías */
+.categories-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 2rem;
+  margin: 2rem auto 0;
+  padding: 0 1.5rem;
+  max-width: 1200px;
+}
+
+/* Tarjeta de categoría */
+.category-card {
+  --border-color: #e2e8f0;
+  background: #fff;
+  border-radius: 12px;
+  padding: 2rem;
+  text-align: center;
+  transition: all 0.3s ease;
+  border: 1px solid var(--border-color);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Efectos hover */
+.category-card:hover {
+  transform: translateY(-10px);
+}
+
+
+/* Cabecera de la tarjeta */
+.category-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  width: 100%;
+}
+
+/* Icono de la categoría */
+.feature-icon {
+  --size: 80px;
+  width: var(--size);
+  height: var(--size);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+  font-size: 2rem;
+  transition: all 0.3s ease;
+}
+
+/* Variables de color por categoría */
+.category-card[data-category="courses"] {
+  --color: #3B82F6;
+  --light-color: #e0f2fe;
+  --dark-color: #1d4ed8;
+}
+
+.category-card[data-category="workshops"] {
+  --color: #8B5CF6;
+  --light-color: #f3e8ff;
+  --dark-color: #7e22ce;
+}
+
+.category-card[data-category="seminars"] {
+  --color: #10B981;
+  --light-color: #dcfce7;
+  --dark-color: #15803d;
+}
+
+.category-card[data-category="trainings"] {
+  --color: #EC4899;
+  --light-color: #fce7f3;
+  --dark-color: #be185d;
+}
+
+.category-card[data-category="technical-studies"] {
+  --color: #F59E0B;
+  --light-color: #fef3c7;
+  --dark-color: #b45309;
+}
+
+.category-card[data-category="degrees"] {
+  --color: #EF4444;
+  --light-color: #fee2e2;
+  --dark-color: #b91c1c;
+}
+
+/* Aplicar colores a bordes e iconos */
+.category-card[data-category] {
+  border-top: 4px solid var(--color);
+}
+
+.category-card[data-category] .feature-icon {
+  background-color: var(--light-color);
+  color: var(--dark-color);
+}
+
+.category-card[data-category]:hover .feature-icon {
+  background-color: var(--dark-color);
+  color: white;
+}
+
+/* Botones de acción */
+.item-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.item-actions button {
+  background: rgba(0, 0, 0, 0.03);
+  border: none;
+  border-radius: 50%;
+  color: #6B7280;
+  cursor: pointer;
+  font-size: 1.1rem;
+  height: 30px;
+  opacity: 0.8;
+  padding: 0.3rem;
+  transition: all 0.3s ease;
+  width: 30px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.item-actions button.edit { color: #3B82F6; }
+.item-actions button.delete { color: #EF4444; }
+
+.item-actions button:hover {
+  opacity: 1;
+  transform: scale(1.1);
+}
+
+/* Botón de agregar */
+.btn-add-item {
+  align-items: center;
+  background-color: #3B82F6;
+  border: none;
+  border-radius: 50px;
+  box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+  color: white;
+  cursor: pointer;
+  display: flex;
+  font-size: 1rem;
+  font-weight: 600;
+  gap: 0.8rem;
+  justify-content: center;
+  letter-spacing: 0.5px;
+  margin-top: auto;
+  overflow: hidden;
+  padding: 1rem 2rem;
+  position: relative;
+  text-transform: uppercase;
+  transition: all 0.3s ease;
+  width: 100%;
+  z-index: 1;
+}
+
+.btn-add-item:hover {
+  background-color: #2563EB;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4);
+}
+
+/* Animaciones */
+@keyframes rotate {
+  to { transform: rotate(360deg); }
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .categories-grid {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .professional-development-container {
+    padding: 1.5rem 1rem;
+  }
+  
+  .section-title h2 {
+    font-size: 2rem;
+  }
+  
+  .section-description {
+    font-size: 1rem;
+    margin-bottom: 2rem;
+  }
+  
+  .categories-grid {
+    grid-template-columns: 1fr;
+    gap: 1.2rem;
+  }
+  
+  .category-card {
+    padding: 1.5rem;
+  }
+  
+  .item-actions {
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    opacity: 1;
+    padding: 0.3rem;
+  }
+}

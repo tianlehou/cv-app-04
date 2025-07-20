@@ -29,6 +29,7 @@ export class PublicationFormComponent implements OnInit, OnChanges, OnDestroy {
   
   jobForm!: FormGroup;
   isSubmitting = false;
+  isFormPristine = true; // Para rastrear si el formulario está en su estado inicial
   
   // Contadores de caracteres
   descriptionLength = 0;
@@ -176,6 +177,14 @@ export class PublicationFormComponent implements OnInit, OnChanges, OnDestroy {
       deadline: ['', [Validators.required, this.futureDateValidator.bind(this)]],
       location: ['', [Validators.required, Validators.minLength(3)]],
       modality: ['', Validators.required]
+    });
+
+    // Verificar si el formulario está en su estado inicial (vacío)
+    this.updateFormPristineState();
+    
+    // Suscribirse a los cambios del formulario para actualizar el estado
+    this.jobForm.valueChanges.subscribe(() => {
+      this.updateFormPristineState();
     });
 
     // Suscribirse a cambios en los campos de texto para actualizar contadores
@@ -353,6 +362,16 @@ export class PublicationFormComponent implements OnInit, OnChanges, OnDestroy {
     this.toastService.show('Los cambios han sido descartados, el formulario ha sido reiniciado.', 'success');
   }
 
+  // Método para actualizar el estado de isFormPristine
+  private updateFormPristineState(): void {
+    const formValue = this.jobForm.value;
+    this.isFormPristine = Object.values(formValue).every(value => {
+      // Considerar vacío: null, undefined, string vacío o array vacío
+      return value === null || value === undefined || value === '' || 
+             (Array.isArray(value) && value.length === 0);
+    });
+  }
+
   // Reiniciar los campos del formulario
   private resetFormFields(): void {
     this.jobForm.reset({
@@ -362,7 +381,7 @@ export class PublicationFormComponent implements OnInit, OnChanges, OnDestroy {
       salary: null,
       deadline: ''
     });
-    
+    this.updateFormPristineState();
     // Marcar como no tocado y sin errores
     this.jobForm.markAsPristine();
     this.jobForm.markAsUntouched();

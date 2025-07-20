@@ -58,7 +58,6 @@ export class BusinessPublicationComponent implements OnInit, OnDestroy {
   }
 
   // Cargar las ofertas de trabajo del usuario actual
-  // En el método loadJobOffers, cambia:
   private loadJobOffers(): void {
     this.isLoading = true;
     const userEmailKey = this.firebaseService.formatEmailKey(this.currentUser.email);
@@ -66,7 +65,50 @@ export class BusinessPublicationComponent implements OnInit, OnDestroy {
     this.subscriptions.add(
       this.jobOfferService.getJobOffersByCompany(userEmailKey).subscribe({
         next: (offers: JobOffer[]) => {
-          this.jobOffers = offers;
+          // Ordenar las ofertas según el estado: borrador, publicado, cancelado, vencido
+          this.jobOffers = offers.sort((a, b) => {
+            // Definir el orden de los estados
+            const statusOrder: {[key: string]: number} = {
+              'borrador': 0,
+              'publicado': 1,
+              'cancelado': 2,
+              'vencido': 3
+            };
+            
+            // Comparar los estados según el orden definido
+            const orderA = statusOrder[a.status] ?? 4; // Si el estado no está en la lista, va al final
+            const orderB = statusOrder[b.status] ?? 4;
+            
+            // Si los estados son iguales, ordenar según el tipo de estado
+            if (orderA === orderB) {
+              let dateA: number;
+              let dateB: number;
+              
+              // Determinar qué fecha usar según el estado
+              if (a.status === 'borrador') {
+                // Para borradores, usar fecha de creación
+                dateA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+                dateB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+              } else if (a.status === 'publicado' || a.status === 'vencido') {
+                // Para publicados o vencidos, usar fecha de vencimiento
+                dateA = a.deadline ? new Date(a.deadline).getTime() : 0;
+                dateB = b.deadline ? new Date(b.deadline).getTime() : 0;
+              } else if (a.status === 'cancelado') {
+                // Para cancelados, usar fecha de actualización (que sería cuando se canceló)
+                dateA = a.updatedAt ? new Date(a.updatedAt).getTime() : 0;
+                dateB = b.updatedAt ? new Date(b.updatedAt).getTime() : 0;
+              } else {
+                // Para cualquier otro estado, usar la fecha de creación por defecto
+                dateA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+                dateB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+              }
+              
+              return dateB - dateA; // Orden descendente (más reciente primero)
+            }
+            
+            return orderA - orderB; // Ordenar según el orden de estados definido
+          });
+          
           this.hasPublications = offers.length > 0;
           this.isLoading = false;
         },

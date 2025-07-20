@@ -22,8 +22,6 @@ export class JobOfferItemComponent implements OnInit, OnDestroy {
   timeRemaining: string = '';
   private timeZone = 'America/Panama';
 
-
-
   private updateTimeRemaining() {
     if (!this.jobOffer?.deadline) {
       this.timeRemaining = '';
@@ -49,7 +47,7 @@ export class JobOfferItemComponent implements OnInit, OnDestroy {
     const minutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
     const seconds = Math.floor((diffMs % (1000 * 60)) / 1000);
 
-    this.timeRemaining = `Restante (${days}d ${hours}h ${minutes}m ${seconds}s)`;
+    this.timeRemaining = `Tiempo Restante (${days}d ${hours}h ${minutes}m ${seconds}s)`;
   }
   @Input() jobOffer: any;
   @Input() currentUser: User | null = null;
@@ -159,13 +157,6 @@ export class JobOfferItemComponent implements OnInit, OnDestroy {
       this.isMenuOpen = false;
       this.removeClickListener();
     }
-  }
-
-  // Manejar clic en editar
-  // Este método emite el evento de edición con la oferta de trabajo
-  onEdit(): void {
-    this.edit.emit(this.jobOffer);
-    this.isMenuOpen = false;
   }
 
   // Ver si el texto es más largo que el límite de vista previa
@@ -281,6 +272,77 @@ export class JobOfferItemComponent implements OnInit, OnDestroy {
     return workdays[workday] || workday;
   }
 
+  // Manejar la duplicación de la oferta
+  onDuplicate(): void {
+    this.confirmationModalService.show(
+      {
+        title: '¿Duplicar oferta?',
+        message: '¿Estás seguro de que deseas duplicar esta oferta de trabajo?',
+        confirmText: 'Duplicar',
+        cancelText: 'Cancelar'
+      },
+      () => {
+        this.duplicateJobOffer();
+      }
+    );
+  }
+
+  // Método para duplicar la oferta de trabajo
+  private duplicateJobOffer(): void {
+    // Crear una copia profunda del objeto jobOffer
+    const jobOfferCopy: Partial<JobOffer> = JSON.parse(JSON.stringify(this.jobOffer));
+
+    // Eliminar el ID para que se genere uno nuevo
+    delete jobOfferCopy.id;
+
+    // Eliminar la fecha de publicación para que no se copie al duplicar
+    delete jobOfferCopy.publicationDate;
+
+    // Asegurarse de que los campos requeridos estén presentes
+    const now = new Date();
+    jobOfferCopy.createdAt = now;
+    jobOfferCopy.updatedAt = now;
+    jobOfferCopy.status = 'borrador'; // La oferta duplicada comienza como borrador
+    jobOfferCopy.isActive = false; // La oferta duplicada comienza como inactiva
+
+    // Limpiar estadísticas y postulantes
+    jobOfferCopy.views = 0;
+    jobOfferCopy.applicants = [];
+
+    // Agregar "Copia de" al título si no lo tiene ya
+    if (jobOfferCopy.title && !jobOfferCopy.title.startsWith('Copia de ')) {
+      jobOfferCopy.title = `Copia de ${jobOfferCopy.title}`;
+    }
+
+    // Llamar al servicio para crear la nueva oferta
+    this.jobOfferService.createJobOffer(jobOfferCopy as Omit<JobOffer, 'id'>).subscribe({
+      next: (newJobId) => {
+        this.ngZone.run(() => {
+          this.toast.show('Oferta duplicada exitósamente', 'success');
+          // Emitir el evento de duplicación con la nueva oferta
+          this.duplicated.emit({ ...jobOfferCopy, id: newJobId });
+        });
+      },
+      error: (error) => {
+        console.error('Error al duplicar la oferta:', error);
+        this.ngZone.run(() => {
+          this.toast.show('Error al duplicar la oferta', 'error');
+        });
+      },
+      complete: () => {
+        this.ngZone.run(() => {
+        });
+      }
+    });
+  }
+
+  // Manejar clic en editar
+  // Este método emite el evento de edición con la oferta de trabajo
+  onEdit(): void {
+    this.edit.emit(this.jobOffer);
+    this.isMenuOpen = false;
+  }
+
   // Manejar la eliminación de la oferta
   onDelete(): void {
     this.confirmationModalService.show(
@@ -335,67 +397,39 @@ export class JobOfferItemComponent implements OnInit, OnDestroy {
     );
   }
 
-  // Manejar la duplicación de la oferta
-  onDuplicate(): void {
-    this.confirmationModalService.show(
-      {
-        title: '¿Duplicar oferta?',
-        message: '¿Estás seguro de que deseas duplicar esta oferta de trabajo?',
-        confirmText: 'Duplicar',
-        cancelText: 'Cancelar'
-      },
-      () => {
-        this.duplicateJobOffer();
-      }
-    );
-  }
-
-  // Método para duplicar la oferta de trabajo
-  private duplicateJobOffer(): void {
-    // Crear una copia profunda del objeto jobOffer
-    const jobOfferCopy: Partial<JobOffer> = JSON.parse(JSON.stringify(this.jobOffer));
-
-    // Eliminar el ID para que se genere uno nuevo
-    delete jobOfferCopy.id;
-    
-    // Eliminar la fecha de publicación para que no se copie al duplicar
-    delete jobOfferCopy.publicationDate;
-
-    // Asegurarse de que los campos requeridos estén presentes
-    const now = new Date();
-    jobOfferCopy.createdAt = now;
-    jobOfferCopy.updatedAt = now;
-    jobOfferCopy.status = 'borrador'; // La oferta duplicada comienza como borrador
-    jobOfferCopy.isActive = false; // La oferta duplicada comienza como inactiva
-
-    // Limpiar estadísticas y postulantes
-    jobOfferCopy.views = 0;
-    jobOfferCopy.applicants = [];
-
-    // Agregar "Copia de" al título si no lo tiene ya
-    if (jobOfferCopy.title && !jobOfferCopy.title.startsWith('Copia de ')) {
-      jobOfferCopy.title = `Copia de ${jobOfferCopy.title}`;
+  // Manejar la cancelación de la oferta
+  onCancelPublish(): void {
+    if (this.jobOffer.status !== 'publicado') {
+      this.toast.show('Solo se pueden cancelar ofertas publicadas', 'info');
+      this.isMenuOpen = false;
+      return;
     }
 
-    // Llamar al servicio para crear la nueva oferta
-    this.jobOfferService.createJobOffer(jobOfferCopy as Omit<JobOffer, 'id'>).subscribe({
-      next: (newJobId) => {
-        this.ngZone.run(() => {
-          this.toast.show('Oferta duplicada exitósamente', 'success');
-          // Emitir el evento de duplicación con la nueva oferta
-          this.duplicated.emit({ ...jobOfferCopy, id: newJobId });
-        });
+    this.confirmationModalService.show(
+      {
+        title: 'Cancelar publicación',
+        message: '¿Estás seguro de que deseas cancelar la publicación de esta oferta de trabajo?',
+        confirmText: 'Sí, cancelar',
+        cancelText: 'No, mantener publicada'
       },
-      error: (error) => {
-        console.error('Error al duplicar la oferta:', error);
-        this.ngZone.run(() => {
-          this.toast.show('Error al duplicar la oferta', 'error');
-        });
-      },
-      complete: () => {
-        this.ngZone.run(() => {
+      () => {
+        this.jobOfferService.cancelJobOffer(this.jobOffer.id).subscribe({
+          next: () => {
+            this.toast.show('Publicación cancelada exitosamente', 'success');
+            // Actualizar el estado local de la oferta
+            this.jobOffer.status = 'cancelado';
+            this.jobOffer.isActive = false;
+            this.jobOffer.updatedAt = new Date().toISOString();
+          },
+          error: (error: Error) => {
+            console.error('Error al cancelar publicación de oferta:', error);
+            this.toast.show(error.message || 'Error al cancelar la publicación', 'error');
+          },
+          complete: () => {
+            this.isMenuOpen = false;
+          }
         });
       }
-    });
+    );
   }
 }
