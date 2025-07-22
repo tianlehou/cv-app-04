@@ -13,7 +13,7 @@ import { AuthService } from 'src/app/pages/home/auth/auth.service';
 })
 export class SidebarComponent {
   isMenuOpen = false;
-  @Input() activeSection: 'home' | 'profile' | 'subscription' | 'refer' | 'professional-development' = 'home';
+  @Input() activeSection: 'profile' | 'subscription' | 'refer' | 'professional-development' = 'profile';
   @Output() homeClicked = new EventEmitter<void>();
   @Output() profileClicked = new EventEmitter<void>();
   @Output() subscriptionClicked = new EventEmitter<void>();
@@ -22,7 +22,6 @@ export class SidebarComponent {
   
   // Definir el tipo para las secciones
   sectionType = {
-    home: 'home',
     profile: 'profile',
     subscription: 'subscription',
     refer: 'refer',
@@ -39,11 +38,6 @@ export class SidebarComponent {
 
   preventClose(event: Event) {
     event.stopPropagation();
-  }
-
-  onHomeClick() {
-    this.homeClicked.emit();
-    this.toggleMenu();
   }
 
   onProfileClick() {

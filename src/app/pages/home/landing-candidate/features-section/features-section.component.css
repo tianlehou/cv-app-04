@@ -1,0 +1,156 @@
+.features {
+  padding: 0;
+  width: 100%;
+}
+
+.container {
+  margin: 0 auto;
+  padding: 0;
+}
+
+.section-title {
+  text-align: center;
+  padding: 2rem 0;
+}
+
+.section-title h2 {
+  font-size: 2.5rem;
+  color: #1a1a1a;
+  margin-bottom: 1rem;
+  font-weight: 700;
+}
+
+.section-title p {
+  color: #4a5568;
+  font-size: 1.1rem;
+  max-width: 700px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+/* Contenedor del carrusel */
+.carousel-container {
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+  margin: 0;
+}
+
+/* Contenedor de las tarjetas */
+.features-carousel {
+  display: flex;
+  gap: 1rem;
+  padding: 1rem 0;
+  animation: scroll 120s linear infinite;
+  width: max-content;
+}
+
+/* Animación del carrusel */
+@keyframes scroll {
+  0% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(calc(-250px * 30));
+    /* Ajusta según el ancho de las tarjetas */
+  }
+}
+
+/* Pausar animación al hacer hover */
+.carousel-container:hover .features-carousel {
+  animation-play-state: paused;
+}
+
+.feature-card {
+  border-radius: 12px;
+  padding: 2rem;
+  text-align: center;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  max-width: 250px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  color: #1a1a1a;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Asegurar que el texto sea legible en todos los fondos */
+.feature-card h3 {
+  position: relative;
+  z-index: 1;
+  color: #1a1a1d;
+  margin-bottom: 0.8rem;
+}
+
+.feature-card p {
+  position: relative;
+  z-index: 1;
+  color: #2d3748;
+}
+
+/* Efecto de superposición para mejorar la legibilidad */
+.feature-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 0;
+  border-radius: 8px;
+}
+
+/* Ajustar el icono */
+.feature-icon {
+  position: relative;
+  z-index: 1;
+  margin-bottom: 1rem;
+}
+
+.feature-icon ion-icon {
+  font-size: 2.5rem;
+  color: #1a1a1d;
+}
+
+.feature-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  border-color: transparent;
+}
+
+.feature-icon {
+  width: 80px;
+  height: 80px;
+  background: #f0f4ff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+  font-size: 2rem;
+  transition: all 0.3s ease;
+}
+
+.feature-card:hover .feature-icon {
+  color: white;
+  transform: scale(1.1);
+}
+
+.feature-card h3 {
+  font-size: 1.3rem;
+  color: var(--text-color);
+  margin-bottom: 1rem;
+  font-weight: 600;
+}
+
+.feature-card p {
+  color: #4a5568;
+  line-height: 1.6;
+  margin: 0;
+  flex-grow: 1;
+}

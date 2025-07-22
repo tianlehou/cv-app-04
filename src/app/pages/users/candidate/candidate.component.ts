@@ -11,10 +11,8 @@ import { GalleryComponent } from './sections/profile/gallery/gallery.component';
 
 // Others components
 import { SidebarComponent } from './sidebar/sidebar.component';
-import { HomeComponent } from './sections/home/home.component';
 import { SubscriptionComponent } from './sections/subscription/subscription.component';
 import { ReferComponent } from './sections/refer/refer.component';
-import { HeroSectionComponent } from './sections/home/hero-section/hero-section.component';
 import { ProfessionalDevelopmentComponent } from './sections/professional-development/professional-development.component';
 
 @Component({
@@ -27,10 +25,8 @@ import { ProfessionalDevelopmentComponent } from './sections/professional-develo
     ProfilePictureComponent,
     PersonalDataComponent,
     GalleryComponent,
-    HomeComponent,
     SubscriptionComponent,
     ReferComponent,
-    HeroSectionComponent,
     ProfessionalDevelopmentComponent,
   ],
   templateUrl: './candidate.component.html',
@@ -44,11 +40,10 @@ export class CandidateComponent implements OnInit {
   isEditor: boolean = false;
   showSubscription = false;
   // Usar el mismo tipo que en el sidebar para mantener consistencia
-  activeSection: 'home' | 'profile' | 'subscription' | 'refer' | 'professional-development' = 'home';
+  activeSection: 'profile' | 'subscription' | 'refer' | 'professional-development' = 'profile';
   
   // Definir el tipo para las secciones (igual que en sidebar.component.ts)
   sectionType = {
-    home: 'home',
     profile: 'profile',
     subscription: 'subscription',
     refer: 'refer',
@@ -85,11 +80,6 @@ export class CandidateComponent implements OnInit {
           }
         });
     }
-  }
-
-  showHome() {
-    this.showSubscription = false;
-    this.activeSection = 'home';
   }
 
   showProfile() {

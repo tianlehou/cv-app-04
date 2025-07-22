@@ -1,0 +1,28 @@
+<section class="features" id="features">
+    <div class="container">
+        <div class="section-title">
+            <h2>¿Por qué elegirnos?</h2>
+            <p>Olvídate de los currículums aburridos. Aquí tu experiencia se ve, no solo se lee.</p>
+        </div>
+        <div class="carousel-container">
+            <div class="features-carousel">
+                <!-- Primera copia de las características -->
+                <div class="feature-card" *ngFor="let feature of features" [style.background]="feature.bgColor">
+                    <div class="feature-icon">
+                        <ion-icon [name]="feature.icon" [style.color]="feature.iconColor"></ion-icon>
+                    </div>
+                    <h3>{{feature.title}}</h3>
+                    <p>{{feature.description}}</p>
+                </div>
+                <!-- Segunda copia para el efecto infinito -->
+                <div class="feature-card" *ngFor="let feature of features" [style.background]="feature.bgColor">
+                    <div class="feature-icon">
+                        <ion-icon [name]="feature.icon" [style.color]="feature.iconColor"></ion-icon>
+                    </div>
+                    <h3>{{feature.title}}</h3>
+                    <p>{{feature.description}}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

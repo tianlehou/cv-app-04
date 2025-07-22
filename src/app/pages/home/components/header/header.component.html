@@ -1,0 +1,30 @@
+<section id="header" class="text-center">
+  <header>
+    <div class="container">
+      <nav>
+        <!-- Botón de menú móvil -->
+        <button class="menu-toggle" (click)="toggleMenu()" aria-label="Menú">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+        
+        <div class="logo">Talento<span>Visual</span></div>
+        
+        <!-- Menú de navegación -->
+        <div class="nav-links" [class.active]="isMenuOpen">
+          <a (click)="onCandidateClick(); closeMenu()">
+            Candidatos
+          </a>
+          <a (click)="onBusinessClick(); closeMenu()">
+            Empresas
+          </a>
+          <button class="btn mobile-login" (click)="onLoginClick(); closeMenu()">Iniciar Sesión</button>
+        </div>
+        
+        <!-- Botón de inicio de sesión en desktop -->
+        <button class="btn desktop-login" (click)="onLoginClick()">Iniciar Sesión</button>
+      </nav>
+    </div>
+  </header>
+</section>

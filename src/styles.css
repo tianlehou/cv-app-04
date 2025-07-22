@@ -42,6 +42,14 @@
     --clr-orange: #ff9800;
     --clr-orange-dark: #f57c00;
     --bg-orange: rgba(255, 152, 0, 0.08);
+
+    /* Colores corporativos */
+    --primary: #1a73e8;
+    --secondary: #ff6d00;
+    --dark: #202124;
+    --light: #f5f7fa;
+    --success: #34a853;
+    --danger: #ea4335;
 }
 
 body,

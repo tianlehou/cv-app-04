@@ -1,37 +1,21 @@
 <ng-container *ngIf="showHomeSection">
-  <section #home>
-    <button class="custom-button"
-      (click)="showAuthLogin()"
-      >Ingresar
-    </button>
+  <app-header
+    (candidateClick)="showCandidate()"
+    (businessClick)="showBusiness()"
+    (loginClick)="showAuthLogin()">
+  </app-header>
+  <app-hero></app-hero>
 
-    <app-hero></app-hero>
-    <app-features></app-features>
-    <app-testimonials></app-testimonials>
-    <app-call-to-action
-      (registerClicked)="showAuthRegister()"
-    ></app-call-to-action>
-    <app-footer></app-footer>
-  </section>
+  <app-landing-candidate *ngIf="currentHomeView === 'candidate'"></app-landing-candidate>
+  <app-landing-business *ngIf="currentHomeView === 'business'"></app-landing-business>
+
+  <app-footer></app-footer>
 </ng-container>
 
 <ng-container *ngIf="showAuthSection">
-  <section #candidate>
-    <app-login
-      *ngIf="currentAuthView === 'login'"
-      (showRegister)="showRegister()"
-      (showForgotPassword)="showForgotPassword()"
-      (showHome)="showHomeSection = true; showAuthSection = false"
-    ></app-login>
-
-    <app-register
-      *ngIf="currentAuthView === 'register'"
-      (showLogin)="showLogin()"
-    ></app-register>
-
-    <app-forgot-password
-      *ngIf="currentAuthView === 'forgot-password'"
-      (showLogin)="showLogin()"
-    ></app-forgot-password>
-  </section>
+  <app-login *ngIf="currentAuthView === 'login'" (showRegister)="showRegister()"
+    (showForgotPassword)="showForgotPassword()"
+    (showHome)="showHomeSection = true; showAuthSection = false"></app-login>
+  <app-register *ngIf="currentAuthView === 'register'" (showLogin)="showLogin()"></app-register>
+  <app-forgot-password *ngIf="currentAuthView === 'forgot-password'" (showLogin)="showLogin()"></app-forgot-password>
 </ng-container>

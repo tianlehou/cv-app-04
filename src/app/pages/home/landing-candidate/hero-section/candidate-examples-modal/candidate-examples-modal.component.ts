@@ -1,9 +1,9 @@
 import { Component, EventEmitter, Output, Input, OnInit } from '@angular/core';
 import { NgIf } from '@angular/common';
 import { ExamplesService } from 'src/app/shared/services/examples.service';
-import { GalleryComponent } from '../../../profile/gallery/gallery.component';
-import { ProfilePictureComponent } from '../../../profile/profile-picture/profile-picture.component';
-import { PersonalDataComponent } from '../../../profile/personal-data/personal-data.component';
+import { ProfilePictureComponent } from 'src/app/pages/users/candidate/sections/profile/profile-picture/profile-picture.component';
+import { PersonalDataComponent } from 'src/app/pages/users/candidate/sections/profile/personal-data/personal-data.component';
+import { GalleryComponent } from 'src/app/pages/users/candidate/sections/profile/gallery/gallery.component';
 import { ExamplePaginationComponent } from './example-pagination/example-pagination.component';
 import { ExampleEditorActionsComponent } from './example-editor-actions/example-editor-actions.component';
 import { ChangeDetectorRef } from '@angular/core';

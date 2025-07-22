@@ -3,7 +3,6 @@
     <div class="profile-header" *ngIf="!readOnly">
       <app-sidebar
         [activeSection]="activeSection"
-        (homeClicked)="showHome()"
         (profileClicked)="showProfile()"
         (subscriptionClicked)="toggleSubscription()"
         (referClicked)="toggleRefer()"
@@ -12,15 +11,6 @@
     </div>
 
     <div class="main-content">
-      <!-- Sección de Inicio -->
-      <section id="home" *ngIf="activeSection === sectionType.home">
-        <app-hero-section 
-          (startNow)="onHeaderStartNow()"
-          [isEditor]="isEditor">
-        </app-hero-section>
-        <app-home (startNow)="showProfile()"></app-home>
-      </section>
-
       <!-- Sección de Perfil -->
       <section
         id="candidate"

@@ -3,10 +3,12 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { ReferralService } from '../users/candidate/sections/refer/referral.service';
 
+import { HeaderComponent } from './components/header/header.component';
 import { HeroComponent } from './components/hero/hero.component';
-import { FeaturesComponent } from './components/features/features.component';
-import { CallToActionComponent } from './components/call-to-action/call-to-action.component';
-import { TestimonialsComponent } from './components/testimonials/testimonials.component';
+// import { FeaturesComponent } from './components/features/features.component';
+
+import { LandingCandidateComponent } from './landing-candidate/landing-candidate.component';
+import { LandingBusinessComponent } from './landing-business/landing-business.component';
 import { FooterComponent } from './components/footer/footer.component';
 
 import { LoginComponent } from './auth/login/login.component';
@@ -18,10 +20,11 @@ import { ForgotPasswordComponent } from './auth/forgot-password/forgot-password.
   standalone: true,
   imports: [
     CommonModule,
+    HeaderComponent,
     HeroComponent,
-    FeaturesComponent,
-    CallToActionComponent,
-    TestimonialsComponent,
+    LandingCandidateComponent,
+    LandingBusinessComponent,
+    // FeaturesComponent,
     FooterComponent,
     LoginComponent,
     RegisterComponent,
@@ -33,6 +36,7 @@ import { ForgotPasswordComponent } from './auth/forgot-password/forgot-password.
 export class HomeComponent implements OnInit {
   showHomeSection = true;
   showAuthSection = false;
+  currentHomeView: 'candidate' | 'business' = 'candidate';
   currentAuthView: 'login' | 'register' | 'forgot-password' = 'login';
 
   constructor(
@@ -68,7 +72,24 @@ export class HomeComponent implements OnInit {
     });
   }
 
-  // Nuevos métodos para cambiar vistas
+  // Nuevos métodos para cambiar vista
+  showBusiness() {
+    this.currentHomeView = 'business';
+    this.cd.detectChanges();
+  }
+
+  showCandidate() {
+    this.currentHomeView = 'candidate';
+    this.cd.detectChanges();
+  }
+
+  showHomeBusiness() {
+    this.showHomeSection = true;
+    this.showAuthSection = false;
+    this.currentHomeView = 'business';
+    this.cd.detectChanges();
+  }
+
   showLogin() {
     this.currentAuthView = 'login';
   }
