@@ -3,7 +3,6 @@
   max-width: 400px;
   margin: 50px auto;
   padding: 20px;
-  border: 1px solid var(--text-color);
   border-radius: 8px;
   background: var(--clr-white);
   transition: all 1s ease-in-out;

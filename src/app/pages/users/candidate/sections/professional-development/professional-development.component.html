@@ -5,7 +5,7 @@
   </div>
 
   <div class="categories-grid">
-    <div *ngFor="let category of categories" class="category-card" [id]="'category-' + category.id" [attr.data-category]="category.id">
+    <div *ngFor="let category of categories" class="category-card card-border" [id]="'category-' + category.id" [attr.data-category]="category.id">
       <div class="category-header">
         <div class="feature-icon">
           <i [class]="category.icon"></i>

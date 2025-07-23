@@ -1,10 +1,12 @@
 <div class="modal-container" [class.show]="isVisible">
   <div class="modal-header">
     <h1 class="modal-title">
-      ej. {{currentIndex + 1}} de {{exampleIds.length}}
-      <span *ngIf="isEditor"> | ID:{{currentExampleId}}</span>
+      ej. {{ currentIndex + 1 }} de {{ exampleIds.length }}
+      <span *ngIf="isEditor"> | ID:{{ currentExampleId }}</span>
     </h1>
-    <span class="close-btn" (click)="onClose()"><i class="fas fa-times"></i></span>
+    <span class="close-btn" (click)="onClose()">
+      <i class="fas fa-times"></i>
+    </span>
   </div>
 
   <div class="modal-content">
@@ -12,22 +14,25 @@
       <div *ngIf="isEditor">
         <app-example-editor-actions
           (addExample)="addExample()"
-          (deleteExample)="deleteExample()">
+          (deleteExample)="deleteExample()"
+        >
         </app-example-editor-actions>
       </div>
 
-      <app-profile-picture
-        [currentUser]="null"
-        [isExample]="true"
-        [isEditor]="isEditor"
-        [readOnly]="!isEditor"
-        [exampleId]="currentExampleId"
-      ></app-profile-picture>
-      <app-personal-data 
-        [currentUser]="null"
-        [isExample]="true"
-        [exampleId]="currentExampleId"
-      ></app-personal-data>
+      <div class="profile-components-row">
+        <app-profile-picture
+          [currentUser]="null"
+          [isExample]="true"
+          [isEditor]="isEditor"
+          [readOnly]="!isEditor"
+          [exampleId]="currentExampleId"
+        ></app-profile-picture>
+        <app-personal-data
+          [currentUser]="null"
+          [isExample]="true"
+          [exampleId]="currentExampleId"
+        ></app-personal-data>
+      </div>
       <app-gallery
         [currentUser]="null"
         [isExample]="true"

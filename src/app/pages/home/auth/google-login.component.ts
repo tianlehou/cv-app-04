@@ -15,8 +15,7 @@ import { FirebaseService } from 'src/app/shared/services/firebase.service';
       Continuar con Google
     </button>
   `,
-  styles: [
-    `
+  styles: [`
       .google-login-btn {
         width: 100%;
         padding: 10px 15px;
@@ -38,12 +37,7 @@ import { FirebaseService } from 'src/app/shared/services/firebase.service';
         background-color: var(--clr-green);
         border: 1px solid var(--clr-green);
       }
-
-      .google-login-btn:active {
-        transform: scale(0.98);
-      }
-    `,
-  ],
+    `],
 })
 export class GoogleLoginComponent {
   @Output() loginSuccess = new EventEmitter<void>();
@@ -53,7 +47,7 @@ export class GoogleLoginComponent {
     private auth: Auth,
     private router: Router,
     private firebaseService: FirebaseService
-  ) {}
+  ) { }
 
   async signInWithGoogle() {
     try {

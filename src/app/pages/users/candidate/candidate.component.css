@@ -29,20 +29,12 @@ app-custom-button {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 20px;
   margin-top: 1rem;
   width: 100%;
 }
 
-/* Responsive para tablet */
-@media (max-width: 768px) {
-  .profile-components-row {
-    gap: 15px;
-  }
-}
-
 /* Responsive para móvil */
-@media (max-width: 480px) {
+@media (max-width: 520px) {
   .profile-components-row {
     flex-direction: column;
   }

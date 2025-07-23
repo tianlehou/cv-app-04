@@ -57,6 +57,21 @@
   z-index: 5;
 }
 
+.profile-components-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 1rem;
+  width: 100%;
+}
+
+/* Responsive para móvil */
+@media (max-width: 520px) {
+  .profile-components-row {
+    flex-direction: column;
+  }
+}
+
 /* Controles de ejemplo */
 .example-controls {
   position: fixed !important;

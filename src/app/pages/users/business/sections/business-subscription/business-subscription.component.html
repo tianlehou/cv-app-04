@@ -5,7 +5,7 @@
   </app-business-comparison-table>
 
   <div class="plans">
-    <div class="plan-card" *ngFor="let plan of plans" (click)="selectPlan(plan)">
+    <div class="plan-card card-border" *ngFor="let plan of plans" (click)="selectPlan(plan)">
       <h2>{{ plan.nombre }}</h2>
       <p>{{ plan.descripcion }}</p>
       <p class="price">{{ plan.precio | currency : "USD" }}</p>

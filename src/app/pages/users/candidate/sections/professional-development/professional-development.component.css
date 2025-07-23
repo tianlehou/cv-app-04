@@ -40,13 +40,11 @@
 
 /* Tarjeta de categoría */
 .category-card {
-  --border-color: #e2e8f0;
   background: #fff;
   border-radius: 12px;
   padding: 2rem;
   text-align: center;
   transition: all 0.3s ease;
-  border: 1px solid var(--border-color);
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -86,44 +84,44 @@
 
 /* Variables de color por categoría */
 .category-card[data-category="courses"] {
-  --color: #3B82F6;
-  --light-color: #e0f2fe;
-  --dark-color: #1d4ed8;
+  --color: var(--clr-blue);
+  --light-color: var(--bg-blue);
+  --dark-color: var(--clr-blue);
 }
 
 .category-card[data-category="workshops"] {
-  --color: #8B5CF6;
-  --light-color: #f3e8ff;
-  --dark-color: #7e22ce;
+  --color: var(--clr-green);
+  --light-color: var(--bg-green);
+  --dark-color: var(--clr-green);
 }
 
 .category-card[data-category="seminars"] {
-  --color: #10B981;
-  --light-color: #dcfce7;
-  --dark-color: #15803d;
+  --color: var(--clr-yellow);
+  --light-color: var(--bg-yellow);
+  --dark-color: var(--clr-yellow);
 }
 
 .category-card[data-category="trainings"] {
-  --color: #EC4899;
-  --light-color: #fce7f3;
-  --dark-color: #be185d;
+  --color: var(--clr-orange);
+  --light-color: var(--bg-orange);
+  --dark-color: var(--clr-orange);
 }
 
 .category-card[data-category="technical-studies"] {
-  --color: #F59E0B;
-  --light-color: #fef3c7;
-  --dark-color: #b45309;
+  --color: var(--clr-red);
+  --light-color: var(--bg-red);
+  --dark-color: var(--clr-red);
 }
 
 .category-card[data-category="degrees"] {
-  --color: #EF4444;
-  --light-color: #fee2e2;
-  --dark-color: #b91c1c;
+  --color: var(--clr-purple);
+  --light-color: var(--bg-purple);
+  --dark-color: var(--clr-purple);
 }
 
 /* Aplicar colores a bordes e iconos */
 .category-card[data-category] {
-  border-top: 4px solid var(--color);
+  border-left: 4px solid var(--color);
 }
 
 .category-card[data-category] .feature-icon {
@@ -160,8 +158,13 @@
   justify-content: center;
 }
 
-.item-actions button.edit { color: #3B82F6; }
-.item-actions button.delete { color: #EF4444; }
+.item-actions button.edit {
+  color: #3B82F6;
+}
+
+.item-actions button.delete {
+  color: #EF4444;
+}
 
 .item-actions button:hover {
   opacity: 1;
@@ -201,7 +204,9 @@
 
 /* Animaciones */
 @keyframes rotate {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* Responsive */
@@ -216,25 +221,25 @@
   .professional-development-container {
     padding: 1.5rem 1rem;
   }
-  
+
   .section-title h2 {
     font-size: 2rem;
   }
-  
+
   .section-description {
     font-size: 1rem;
     margin-bottom: 2rem;
   }
-  
+
   .categories-grid {
     grid-template-columns: 1fr;
     gap: 1.2rem;
   }
-  
+
   .category-card {
     padding: 1.5rem;
   }
-  
+
   .item-actions {
     background: rgba(255, 255, 255, 0.9);
     border-radius: 8px;
