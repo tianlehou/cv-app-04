@@ -33,9 +33,9 @@
   min-width: 250px;
   text-align: center;
   padding: 2rem;
-  background: white;
   border-radius: 10px;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s ease;
 }
 
@@ -46,9 +46,10 @@
 .step-number {
   width: 60px;
   height: 60px;
-  background: #4a6cf7;
-  color: white;
+  background: var(--clr-white);
+  color: var(--text-color);
   border-radius: 50%;
+  border: 1px solid rgba(0, 0, 0, 0.1);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -66,4 +67,11 @@
 .step p {
   color: #666;
   line-height: 1.6;
+}
+
+/* Media query para dispositivos móviles */
+@media (max-width: 768px) {
+  .step {
+    margin: 0 4rem;
+  }
 }

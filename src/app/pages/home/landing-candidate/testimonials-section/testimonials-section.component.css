@@ -28,10 +28,10 @@
 }
 
 .testimonial-card {
-  background: white;
   padding: 2rem;
   border-radius: 10px;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
   position: relative;
   transition: transform 0.3s ease;
 }
@@ -47,18 +47,6 @@
   margin-bottom: 1.5rem;
   position: relative;
   padding-left: 1.5rem;
-}
-
-.testimonial-text::before {
-  content: '\201C';
-  position: absolute;
-  left: 0;
-  top: -10px;
-  font-size: 4rem;
-  color: #4a6cf7;
-  opacity: 0.2;
-  font-family: serif;
-  line-height: 1;
 }
 
 .testimonial-author {

@@ -13,10 +13,10 @@
         
         <!-- Menú de navegación -->
         <div class="nav-links" [class.active]="isMenuOpen">
-          <a (click)="onCandidateClick(); closeMenu()">
+          <a [class.active]="currentView === 'candidate'" (click)="onCandidateClick(); closeMenu()">
             Candidatos
           </a>
-          <a (click)="onBusinessClick(); closeMenu()">
+          <a [class.active]="currentView === 'business'" (click)="onBusinessClick(); closeMenu()">
             Empresas
           </a>
           <button class="btn mobile-login" (click)="onLoginClick(); closeMenu()">Iniciar Sesión</button>

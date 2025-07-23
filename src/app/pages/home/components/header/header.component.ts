@@ -1,4 +1,4 @@
-import { Component, Output, EventEmitter, HostListener } from '@angular/core';
+import { Component, Output, EventEmitter, HostListener, Input } from '@angular/core';
 
 @Component({
   selector: 'app-header',
@@ -12,7 +12,7 @@ export class HeaderComponent {
   @Output() candidateClick = new EventEmitter<void>();
   @Output() businessClick = new EventEmitter<void>();
 
-  isBusinessActive = false;
+  @Input() currentView: 'candidate' | 'business' = 'candidate';
   isMenuOpen = false;
 
   // Cerrar menú cuando se redimensiona la pantalla a un tamaño mayor

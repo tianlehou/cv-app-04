@@ -35,19 +35,22 @@
         </option>
       </select>
       <div class="invalid-feedback" *ngIf="registerForm.get('country')?.errors?.['required']">
-        Por favor selecciona tu país.
+        Por favor selecciona tu país de residencia.
       </div>
     </div>
 
     <!-- Nombre Completo -->
     <div class="form-group">
       <label for="fullName">Nombre Completo</label>
-      <input type="text" id="fullName" class="form-control" formControlName="fullName" [ngClass]="{
-          'is-invalid':
-            registerForm.get('fullName')?.invalid &&
-            (registerForm.get('fullName')?.touched ||
-              registerForm.get('fullName')?.dirty)
-        }" />
+      <div class="input-with-icon">
+        <i class="fas fa-user icon"></i>
+        <input type="text" id="fullName" class="form-control" formControlName="fullName" [ngClass]="{
+            'is-invalid':
+              registerForm.get('fullName')?.invalid &&
+              (registerForm.get('fullName')?.touched ||
+                registerForm.get('fullName')?.dirty)
+          }" />
+      </div>
       <div class="invalid-feedback" *ngIf="registerForm.get('fullName')?.errors?.['required']">
         El nombre completo es obligatorio.
       </div>
@@ -56,12 +59,15 @@
     <!-- Email -->
     <div class="form-group">
       <label for="email">Email</label>
-      <input type="email" id="email" class="form-control" formControlName="email" [ngClass]="{
-          'is-invalid':
-            registerForm.get('email')?.invalid &&
-            (registerForm.get('email')?.touched ||
-              registerForm.get('email')?.dirty)
-        }" />
+      <div class="input-with-icon">
+        <i class="fas fa-envelope icon"></i>
+        <input type="email" id="email" class="form-control" formControlName="email" [ngClass]="{
+            'is-invalid':
+              registerForm.get('email')?.invalid &&
+              (registerForm.get('email')?.touched ||
+                registerForm.get('email')?.dirty)
+          }" />
+      </div>
       <div class="invalid-feedback" *ngIf="registerForm.get('email')?.errors?.['required']">
         El correo es obligatorio.
       </div>
@@ -73,7 +79,8 @@
     <!-- Contraseña -->
     <div class="form-group">
       <label for="password">Contraseña</label>
-      <div class="input-group">
+      <div class="input-with-icon password-field">
+        <i class="fas fa-lock icon"></i>
         <input [type]="showPassword ? 'text' : 'password'" id="password" class="form-control" formControlName="password"
           [ngClass]="{
             'is-invalid':
@@ -81,9 +88,9 @@
               (registerForm.get('password')?.touched ||
                 registerForm.get('password')?.dirty)
           }" />
-        <button type="button" class="btn btn-outline-secondary" (click)="togglePasswordVisibility()">
-          {{ showPassword ? "Ocultar" : "Mostrar" }}
-        </button>
+        <span class="toggle-password" (click)="togglePasswordVisibility()">
+          <i class="fas" [ngClass]="{'fa-eye': !showPassword, 'fa-eye-slash': showPassword}"></i>
+        </span>
       </div>
       <div class="invalid-feedback" *ngIf="registerForm.get('password')?.errors?.['required']">
         La contraseña es obligatoria.
@@ -96,7 +103,8 @@
     <!-- Confirmar Contraseña -->
     <div class="form-group">
       <label for="confirmPassword">Confirmar Contraseña</label>
-      <div class="input-group">
+      <div class="input-with-icon password-field">
+        <i class="fas fa-lock icon"></i>
         <input [type]="showConfirmPassword ? 'text' : 'password'" id="confirmPassword" class="form-control"
           formControlName="confirmPassword" [ngClass]="{
             'is-invalid':
@@ -104,9 +112,9 @@
               (registerForm.get('confirmPassword')?.touched ||
                 registerForm.get('confirmPassword')?.dirty)
           }" />
-        <button type="button" class="btn btn-outline-secondary" (click)="toggleConfirmPasswordVisibility()">
-          {{ showConfirmPassword ? "Ocultar" : "Mostrar" }}
-        </button>
+        <span class="toggle-password" (click)="toggleConfirmPasswordVisibility()">
+          <i class="fas" [ngClass]="{'fa-eye': !showConfirmPassword, 'fa-eye-slash': showConfirmPassword}"></i>
+        </span>
       </div>
       <div class="invalid-feedback" *ngIf="registerForm.get('confirmPassword')?.errors?.['required']">
         Confirma tu contraseña.

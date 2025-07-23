@@ -114,17 +114,17 @@ h1 {
 }
 
 .leadUp {
-    animation-delay: 4s;
+    animation-delay: 3s;
 }
 
 .leadDown {
-    animation-delay: 5s;
+    animation-delay: 4s;
 }
 
 @keyframes hologramIn {
     0% {
         opacity: 0;
-        transform: rotateX(360deg) translateY(75px);
+        transform: rotateX(360deg) translateY(100px);
         text-shadow: 0 0 10px var(--clr-orange);
     }
 

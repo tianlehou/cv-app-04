@@ -31,6 +31,7 @@
 .comparison-table-container {
   overflow-x: auto;
   margin-top: 2rem;
+  border: 1px solid rgba(0, 0, 0, 0.1);
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
   border-radius: 10px;
   background: white;
@@ -40,7 +41,7 @@
 .comparison-table {
   width: 100%;
   border-collapse: collapse;
-  min-width: 600px;
+  min-width: 300px;
 }
 
 .comparison-table th,
@@ -97,13 +98,17 @@
   .comparison {
     padding: 3rem 0;
   }
-  
+
   .section-title h2 {
     font-size: 2rem;
   }
-  
+
   .comparison-table th,
   .comparison-table td {
     padding: 1rem;
+  }
+
+  span {
+    font-size: 0.9rem;
   }
 }

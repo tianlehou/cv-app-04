@@ -5,7 +5,7 @@
             <p>Lo que dicen profesionales como tú que encontraron trabajo con TalentoVisual</p>
         </div>
         <div class="testimonial-grid">
-            <div class="testimonial-card" *ngFor="let testimonial of testimonials">
+            <div class="testimonial-card" *ngFor="let testimonial of testimonials" [style.background]="testimonial.bgColor">
                 <p class="testimonial-text">{{testimonial.text}}</p>
                 <p class="testimonial-author">{{testimonial.author}}, {{testimonial.role}}</p>
             </div>

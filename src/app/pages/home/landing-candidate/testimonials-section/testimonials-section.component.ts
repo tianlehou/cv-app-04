@@ -5,6 +5,7 @@ interface Testimonial {
   text: string;
   author: string;
   role: string;
+  bgColor: string;
 }
 
 @Component({
@@ -19,17 +20,20 @@ export class TestimonialsSectionComponent {
     {
       text: '"Gracias a los videos que subí, un restaurante en España me contrató como chef. ¡Nunca pensé que sería tan fácil!"',
       author: 'Carlos',
-      role: 'Chef'
+      role: 'Chef',
+      bgColor: 'var(--bg-blue)',
     },
     {
       text: '"Subí un video arreglando un motor y al día siguiente me llamaron de un taller. Ahora tengo trabajo estable."',
       author: 'Ana',
-      role: 'Mecánica'
+      role: 'Mecánica',
+      bgColor: 'var(--bg-orange)',
     },
     {
       text: '"Las empresas me contactaban a mí gracias a mi perfil visual. En una semana tenía 3 ofertas para elegir."',
       author: 'Miguel',
-      role: 'Electricista'
+      role: 'Electricista',
+      bgColor: 'var(--bg-green)',
     }
   ];
 }

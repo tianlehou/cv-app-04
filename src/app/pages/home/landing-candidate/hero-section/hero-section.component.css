@@ -59,21 +59,22 @@
 }
 
 .btn-secondary {
-  background: white;
-  color: #4a6cf7;
+  background: var(--clr-white);
+  color: var(--clr-blue);
   padding: 0.8rem 2rem;
   border-radius: 50px;
   text-decoration: none;
   transition: all 0.3s ease;
-  border: 1px solid #4a6cf7;
+  border: 2px solid var(--clr-blue);
   cursor: pointer;
   font-size: 1rem;
 }
 
 .btn-secondary:hover {
-  background: #f8f9ff;
-  border-color: #4a6cf7;
+  background: var(--clr-white);
+  color: var(--clr-blue);
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
 }
 
 /* Responsive styles */
@@ -81,17 +82,17 @@
   .hero {
     text-align: center;
   }
-  
+
   .hero h1 {
     font-size: 1.8rem;
   }
-  
+
   .hero p {
     font-size: 1.1rem;
     margin-left: auto;
     margin-right: auto;
   }
-  
+
   .hero-btns {
     justify-content: center;
   }
@@ -102,9 +103,11 @@
   0% {
     transform: translateY(0px);
   }
+
   50% {
     transform: translateY(-20px);
   }
+
   100% {
     transform: translateY(0px);
   }

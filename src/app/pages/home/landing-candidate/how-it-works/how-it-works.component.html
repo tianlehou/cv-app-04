@@ -5,7 +5,7 @@
             <p>Sigue estos 3 simples pasos para comenzar a recibir ofertas de trabajo</p>
         </div>
         <div class="steps">
-            <div class="step" *ngFor="let step of steps">
+            <div class="step" *ngFor="let step of steps" [style.background]="step.bgColor">
                 <div class="step-number">{{step.number}}</div>
                 <h3>{{step.title}}</h3>
                 <p>{{step.description}}</p>

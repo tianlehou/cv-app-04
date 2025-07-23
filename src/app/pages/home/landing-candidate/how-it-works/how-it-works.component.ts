@@ -5,6 +5,7 @@ interface Step {
   number: number;
   title: string;
   description: string;
+  bgColor: string;
 }
 
 @Component({
@@ -19,17 +20,20 @@ export class HowItWorksComponent {
     {
       number: 1,
       title: 'Crea tu perfil',
-      description: 'Llena tus datos básicos y añade fotos de tu trabajo y experiencia.'
+      description: 'Llena tus datos básicos y añade fotos de tu trabajo y experiencia.',
+      bgColor: 'var(--bg-yellow)',
     },
     {
       number: 2,
       title: 'Sube tu "Demo Laboral"',
-      description: 'Graba un video corto mostrando tus habilidades (ej: "Mira cómo preparo un plato estrella").'
+      description: 'Graba un video corto mostrando tus habilidades (ej: "Mira cómo preparo un plato estrella").',
+      bgColor: 'var(--bg-red)',
     },
     {
       number: 3,
       title: 'Recibe ofertas',
-      description: 'Las empresas te contactarán directamente cuando encajes en sus vacantes.'
+      description: 'Las empresas te contactarán directamente cuando encajes en sus vacantes.',
+      bgColor: 'var(--bg-purple)',
     }
   ];
 }

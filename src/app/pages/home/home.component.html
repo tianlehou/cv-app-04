@@ -1,11 +1,13 @@
 <ng-container *ngIf="showHomeSection">
   <app-header
+    [currentView]="currentHomeView"
     (candidateClick)="showCandidate()"
     (businessClick)="showBusiness()"
     (loginClick)="showAuthLogin()">
   </app-header>
-  <app-hero></app-hero>
+  <app-hero [currentView]="currentHomeView"></app-hero>
 
+  <!-- Conditionally render the landing page based on the current view -->
   <app-landing-candidate *ngIf="currentHomeView === 'candidate'"></app-landing-candidate>
   <app-landing-business *ngIf="currentHomeView === 'business'"></app-landing-business>
 
