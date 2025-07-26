@@ -1,5 +1,5 @@
 <!-- business.component.html -->
-<div class="main-container">
+<main class="main-container" (contextmenu)="(false)">
   <app-business-sidebar 
     class="profile-header"
     [activeSection]="activeSection"
@@ -19,4 +19,4 @@
       <app-business-subscription></app-business-subscription>
     </section>
   }
-</div>
+</main>

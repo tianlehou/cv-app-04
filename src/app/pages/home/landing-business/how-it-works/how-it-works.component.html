@@ -1,0 +1,19 @@
+<!-- How It Works Section -->
+<section class="section how-it-works" id="how-it-works">
+  <div class="container">
+    <div class="section-title">
+      <h2>{{title}}</h2>
+      <p>{{subtitle}}</p>
+    </div>
+
+    <div class="steps-grid">
+      <div class="step-card card-border" *ngFor="let step of steps" [style.background]="step.bgColor">
+        <div class="step-icon card-border">
+          <i class="fas {{step.icon}}" [style.color]="step.iconColor"></i>
+        </div>
+        <h3>{{step.title}}</h3>
+        <p>{{step.description}}</p>
+      </div>
+    </div>
+  </div>
+</section>

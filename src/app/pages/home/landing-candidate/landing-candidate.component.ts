@@ -1,6 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Output } from '@angular/core';
-import { HeroSectionComponent } from './hero-section/hero-section.component';
+import { Component } from '@angular/core';
 import { FeaturesSectionComponent } from './features-section/features-section.component';
 import { HowItWorksComponent } from './how-it-works/how-it-works.component';
 import { TestimonialsSectionComponent } from './testimonials-section/testimonials-section.component';
@@ -12,7 +11,6 @@ import { ComparisonSectionComponent } from './comparison-section/comparison-sect
   standalone: true,
   imports: [
     CommonModule, 
-    HeroSectionComponent,
     FeaturesSectionComponent,
     HowItWorksComponent,
     TestimonialsSectionComponent,
@@ -23,9 +21,5 @@ import { ComparisonSectionComponent } from './comparison-section/comparison-sect
   styleUrl: './landing-candidate.component.css'
 })
 export class LandingCandidateComponent {
-  @Output() startNow = new EventEmitter<void>();
 
-  onHeaderStartNow(): void {
-    this.startNow.emit();
-  }
 }

@@ -1,0 +1,113 @@
+/* Secciones comunes */
+.section {
+  padding: 2rem 1rem;
+  background-color: var(--clr-white);
+}
+
+.container {
+  width: 100%;
+  max-width: 1200px;
+  padding: 0 1.5rem;
+}
+
+.section-title {
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.section-title h2 {
+  font-size: 2.2rem;
+  color: var(--dark);
+}
+
+.section-title p {
+  font-size: 1.1rem;
+  color: #666;
+}
+
+/* How It Works Section */
+.how-it-works {
+  background-color: var(--clr-white);
+  position: relative;
+  overflow: hidden;
+}
+
+.steps-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 30px;
+}
+
+.step-card {
+  flex: 1;
+  min-width: 250px;
+  text-align: center;
+  padding: 2rem;
+  border-radius: 10px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.step-icon {
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 1.5rem;
+  background: linear-gradient(135deg, var(--primary-light), var(--primary-color));
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: black;
+  font-size: 2rem;
+  transition: all 0.3s ease;
+}
+
+.step-card:hover .step-icon {
+  transform: rotateY(180deg);
+  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+}
+
+.step-card h3 {
+  font-size: 1.375rem;
+  color: var(--text-color);
+  margin-bottom: 1rem;
+  font-weight: 600;
+  position: relative;
+  padding-bottom: 0.75rem;
+}
+
+.step-card h3::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 50px;
+  height: 3px;
+  background: var(--primary-color);
+  transition: width 0.3s ease;
+}
+
+.step-card:hover h3::after {
+  width: 80px;
+}
+
+.step-card p {
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin-bottom: 0;
+  font-size: 0.95rem;
+}

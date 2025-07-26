@@ -1,0 +1,114 @@
+ /* Colores corporativos */
+ :root {
+   --primary: #1a73e8;
+   --secondary: #ff6d00;
+   --dark: #202124;
+   --light: #f5f7fa;
+   --success: #34a853;
+   --danger: #ea4335;
+ }
+
+/* Secciones comunes */
+.section {
+  padding: 2rem 1rem;
+  background-color: var(--clr-white);
+}
+
+.section-title {
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.section-title h2 {
+  font-size: 2.2rem;
+  color: var(--dark);
+}
+
+.section-title p {
+  font-size: 1.1rem;
+  color: #666;
+}
+
+ /* Comparison Section */
+ .comparison {
+   padding: 2rem 0;
+   background-color: var(--clr-white);
+
+   .section-title {
+     text-align: center;
+
+     h2 {
+       color: #2c3e50;
+     }
+
+     p {
+       color: #7f8c8d;
+       font-size: 1.1rem;
+     }
+   }
+
+   .table-container {
+     width: 100%;
+     overflow-x: auto;
+     -webkit-overflow-scrolling: touch;
+     margin: 1rem 0;
+     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+     border-radius: 8px;
+   }
+
+   .comparison-table {
+     width: 100%;
+     min-width: 700px;
+     /* Ancho mínimo para forzar el scroll en pantallas pequeñas */
+     border-collapse: collapse;
+     background: white;
+     border-radius: 8px;
+     overflow: hidden;
+
+     th,
+     td {
+       padding: 1.2rem 1.5rem;
+       text-align: left;
+       border-bottom: 1px solid #e9ecef;
+
+       &:first-child {
+         font-weight: 600;
+         color: #2c3e50;
+         background-color: #f8f9fa;
+       }
+     }
+
+     th {
+       background-color: #3498db;
+       color: white;
+       font-weight: 600;
+       text-transform: uppercase;
+       font-size: 0.85rem;
+       letter-spacing: 0.5px;
+
+       &:first-child {
+         border-top-left-radius: 8px;
+         background-color: #3498db;
+         color: white;
+       }
+
+       &:last-child {
+         border-top-right-radius: 8px;
+       }
+     }
+
+     tr:last-child td {
+       border-bottom: none;
+     }
+
+     .check {
+       color: #2ecc71;
+       margin-right: 0.5rem;
+     }
+
+     .cross {
+       color: #e74c3c;
+       margin-right: 0.5rem;
+     }
+   }
+ }

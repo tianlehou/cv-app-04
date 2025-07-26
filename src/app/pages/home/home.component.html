@@ -1,23 +1,22 @@
-<ng-container *ngIf="showHomeSection">
-  <app-header
-    [currentView]="currentHomeView"
-    (candidateClick)="showCandidate()"
-    (businessClick)="showBusiness()"
-    (loginClick)="showAuthLogin()">
-  </app-header>
-  <app-hero [currentView]="currentHomeView"></app-hero>
+<body>
+  <ng-container *ngIf="showHomeSection">
+    <app-header [currentView]="currentHomeView" (candidateClick)="showCandidate()" (businessClick)="showBusiness()"
+      (loginClick)="showAuthLogin()">
+    </app-header>
+    <app-hero [currentView]="currentHomeView"></app-hero>
 
-  <!-- Conditionally render the landing page based on the current view -->
-  <app-landing-candidate *ngIf="currentHomeView === 'candidate'"></app-landing-candidate>
-  <app-landing-business *ngIf="currentHomeView === 'business'"></app-landing-business>
+    <!-- Conditionally render the landing page based on the current view -->
+    <app-landing-candidate *ngIf="currentHomeView === 'candidate'"></app-landing-candidate>
+    <app-landing-business *ngIf="currentHomeView === 'business'"></app-landing-business>
 
-  <app-footer></app-footer>
-</ng-container>
+    <app-footer></app-footer>
+  </ng-container>
 
-<ng-container *ngIf="showAuthSection">
-  <app-login *ngIf="currentAuthView === 'login'" (showRegister)="showRegister()"
-    (showForgotPassword)="showForgotPassword()"
-    (showHome)="showHomeSection = true; showAuthSection = false"></app-login>
-  <app-register *ngIf="currentAuthView === 'register'" (showLogin)="showLogin()"></app-register>
-  <app-forgot-password *ngIf="currentAuthView === 'forgot-password'" (showLogin)="showLogin()"></app-forgot-password>
-</ng-container>
+  <ng-container *ngIf="showAuthSection">
+    <app-login *ngIf="currentAuthView === 'login'" (showRegister)="showRegister()"
+      (showForgotPassword)="showForgotPassword()"
+      (showHome)="showHomeSection = true; showAuthSection = false"></app-login>
+    <app-register *ngIf="currentAuthView === 'register'" (showLogin)="showLogin()"></app-register>
+    <app-forgot-password *ngIf="currentAuthView === 'forgot-password'" (showLogin)="showLogin()"></app-forgot-password>
+  </ng-container>
+</body>

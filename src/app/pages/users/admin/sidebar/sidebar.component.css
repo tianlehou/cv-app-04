@@ -33,7 +33,7 @@
   background: rgba(255, 255, 255, 0.7); /* Fondo blanco translúcido */
   color: var(--text-color-dark);
   transform: translateX(-100%);
-  transition: transform 0.5s ease-in-out;
+  transition: transform 0.3s ease;
   z-index: 9999;
   backdrop-filter: blur(10px);
   border-right: 1px solid rgba(255, 255, 255, 0.5);

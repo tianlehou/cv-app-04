@@ -1,0 +1,74 @@
+ /* Secciones comunes */
+ .section {
+     padding: 2rem 1rem;
+     background-color: var(--clr-white);
+ }
+
+ .section-title {
+     margin-bottom: 1rem;
+     text-align: center;
+ }
+
+ .section-title h2 {
+     font-size: 2.2rem;
+     color: var(--dark);
+ }
+
+ .section-title p {
+     font-size: 1.1rem;
+     color: #666;
+ }
+
+ /* Testimonials Section */
+ .testimonial-grid {
+     display: grid;
+     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+     gap: 30px;
+ }
+
+ .testimonial-card {
+     background-color: var(--light);
+     border-radius: 10px;
+     padding: 30px;
+     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+ }
+
+ .testimonial-text {
+     font-style: italic;
+     margin-bottom: 20px;
+     position: relative;
+ }
+
+ .testimonial-text::before {
+     content: '"';
+     font-size: 4rem;
+     color: var(--primary);
+     opacity: 0.2;
+     position: absolute;
+     top: -20px;
+     left: -10px;
+ }
+
+ .testimonial-author {
+     font-weight: bold;
+     color: var(--dark);
+ }
+
+ .testimonial-company {
+     color: #666;
+     font-size: 0.9rem;
+ }
+
+ .testimonial-metrics {
+     display: flex;
+     gap: 15px;
+     margin-top: 15px;
+ }
+
+ .metric-item {
+     background-color: white;
+     padding: 8px 15px;
+     border-radius: 5px;
+     font-size: 0.9rem;
+     font-weight: 600;
+ }

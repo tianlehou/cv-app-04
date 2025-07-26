@@ -11,3 +11,16 @@
     <!-- <a href="#cta" class="btn btn-primary btn-lg">Descubre cómo</a> -->
   </div>
 </section>
+
+<main class="main-hero">
+  <div class="container">
+    <h2>{{h2}}</h2>
+    <span>{{p1}}</span><br>
+    <span>{{p2}}</span>
+    <div class="hero-btns">
+      <a class="btn btn-secondary" (click)="showExamplesModal()">Ver ejemplos</a>
+    </div>
+  </div>
+</main>
+<app-candidate-examples-modal [isVisible]="isModalVisible" (closeModal)="onCloseModal()">
+</app-candidate-examples-modal>
