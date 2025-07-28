@@ -3,14 +3,16 @@
      aria-labelledby="modal-title" aria-describedby="modal-message"
      (click)="ConfirmationModalService.onCancel()">
   <div class="modal-content" (click)="$event.stopPropagation()" *ngIf="ConfirmationModalService.config | async as config">
-    <h2 id="modal-title">{{ config.title }}</h2>
+    <h2 id="modal-title"><span>{{ config.title }}</span></h2>
     <p id="modal-message">{{ config.message }}</p>
     <div class="modal-actions">
       <button class="btn confirm-btn" (click)="ConfirmationModalService.onConfirm()">
-        {{ config.confirmText }}
+        <span class="icon">&#10003;</span>
+        <span>{{ config.confirmText }}</span>
       </button>
       <button class="btn cancel-btn" (click)="ConfirmationModalService.onCancel()">
-        {{ config.cancelText }}
+        <span class="icon">&#10005;</span>
+        <span>{{ config.cancelText }}</span>
       </button>
     </div>
   </div>

@@ -9,7 +9,7 @@ import {
 import { AuthService } from '../auth.service';
 import { FirebaseService } from 'src/app/shared/services/firebase.service';
 import { ReferralService } from 'src/app/pages/users/candidate/sections/refer/referral.service';
-import { ToastService } from 'src/app/shared/services/toast.service';
+import { ToastService } from 'src/app/shared/components/toast/toast.service';
 
 @Component({
   selector: 'app-register',

@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { FirebaseService } from 'src/app/shared/services/firebase.service';
 import { User } from '@angular/fire/auth';
 import { AboutMeInfoComponent } from './about-me-info/about-me-info.component';
-import { ToastService } from 'src/app/shared/services/toast.service';
+import { ToastService } from 'src/app/shared/components/toast/toast.service';
 import { ConfirmationModalService } from 'src/app/shared/services/confirmation-modal.service';
 import { CvEditButtonRowComponent } from '../../cv-edit-button-row/cv-edit-button-row.component';
 

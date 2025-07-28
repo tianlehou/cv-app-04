@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Component, Output, EventEmitter, Input, inject, NgZone, EnvironmentInjector, OnDestroy, runInInjectionContext } from '@angular/core';
 import { Storage, ref, uploadBytesResumable, getDownloadURL } from '@angular/fire/storage';
 import { Database, ref as dbRef, set, get } from '@angular/fire/database';
-import { ToastService } from 'src/app/shared/services/toast.service';
+import { ToastService } from 'src/app/shared/components/toast/toast.service';
 import { User } from '@angular/fire/auth';
 import { FirebaseService } from 'src/app/shared/services/firebase.service';
 import { ExamplesService } from 'src/app/shared/services/examples.service';

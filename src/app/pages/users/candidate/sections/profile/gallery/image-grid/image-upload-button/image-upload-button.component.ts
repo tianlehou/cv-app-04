@@ -5,7 +5,7 @@ import { Database, ref as dbRef, set, get } from '@angular/fire/database';
 import { ImageCompressionService } from 'src/app/shared/services/image-compression.service';
 import { FirebaseService } from 'src/app/shared/services/firebase.service';
 import { ExamplesService } from 'src/app/shared/services/examples.service';
-import { ToastService } from 'src/app/shared/services/toast.service';
+import { ToastService } from 'src/app/shared/components/toast/toast.service';
 
 @Component({
   selector: 'app-image-upload-button',

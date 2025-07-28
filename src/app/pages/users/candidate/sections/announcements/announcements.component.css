@@ -1,9 +1,14 @@
+main {
+  width: 100%;
+  height: 100%;
+  background: #e4e8f0;
+}
+
 /* Estilos para el contenedor principal */
 .announcements-container {
   max-width: 1200px;
   margin: 0 auto;
   padding: 2rem;
-  background-color: var(--bg-yellow);
 }
 
 /* Estilos para el encabezado */
@@ -94,16 +99,42 @@
 
 .job-offer-description h4,
 .job-offer-requirements h4 {
-  color: var(--text-color);
   font-size: 1rem;
+  font-weight: 500;
+  text-align: left;
 }
 
 .job-offer-description p,
 .job-offer-requirements p {
-  color: var(--text-color-light);
-  line-height: 1.6;
+  margin: 0;
   font-size: 0.8rem;
-  margin: 0.5rem 0;
+  font-weight: 300;
+  text-align: justify;
+  line-height: 1.5;
+  white-space: pre-line;
+  word-wrap: break-word;
+  margin-bottom: 0.5rem;
+}
+
+/* Estilo para el botón de ver más/menos */
+.btn-text-link {
+  background: none;
+  border: none;
+  color: var(--clr-blue);
+  cursor: pointer;
+  padding: 0 0.25rem;
+  font-size: 0.8rem;
+  font-weight: 500;
+  text-decoration: none;
+  display: inline;
+  margin: 0;
+  transition: color 0.2s ease;
+  white-space: nowrap; /* Asegurar que el botón no se rompa en una línea nueva */
+}
+
+.btn-text-link:hover {
+  color: #2980b9;
+  text-decoration: none;
 }
 
 .job-offer-requirements ul {

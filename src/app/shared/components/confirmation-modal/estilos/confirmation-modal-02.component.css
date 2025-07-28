@@ -1,0 +1,127 @@
+/* Modern styles for the confirmation modal */
+
+/* Overlay: Adds a blurred background effect */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* Slightly lighter overlay */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1050; /* Ensure it's on top */
+  backdrop-filter: blur(8px); /* Increased blur for a more modern feel */
+  -webkit-backdrop-filter: blur(8px);
+  opacity: 0;
+  animation: fadeIn 0.3s ease-out forwards;
+}
+
+/* Modal container: The main dialog box */
+.modal-content {
+  background: #ffffff;
+  border-radius: 16px; /* Softer corners */
+  width: 90%;
+  max-width: 420px; /* Slightly wider */
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15); /* Softer, deeper shadow */
+  overflow: hidden;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  transform: translateY(20px) scale(0.98);
+  animation: slideUpFadeIn 0.4s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
+  text-align: center; /* Center align text for a cleaner look */
+  padding: 24px;
+}
+
+/* Modal title */
+.modal-content h2 {
+  font-size: 1.5rem; /* Larger title */
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 0 0 12px 0; /* Spacing below the title */
+  padding: 0;
+  background: none; /* Remove background for a cleaner look */
+}
+
+/* Modal message/paragraph */
+.modal-content p {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #666666; /* Softer text color */
+  margin: 0 0 24px 0; /* Spacing below the message */
+  padding: 0;
+  background: none;
+}
+
+/* Container for action buttons */
+.modal-actions {
+  display: flex;
+  justify-content: center; /* Center buttons */
+  gap: 12px; /* Space between buttons */
+  padding: 0;
+  background: none;
+  border-top: none; /* Remove separator line */
+}
+
+/* General button styling */
+.btn {
+  padding: 12px 24px;
+  border-radius: 12px; /* Softer corners for buttons */
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  border: 2px solid transparent;
+  width: 140px; /* Fixed width for uniform buttons */
+}
+
+.btn:focus-visible {
+  outline: 2px solid var(--clr-blue);
+  outline-offset: 2px;
+}
+
+/* Primary action button (e.g., Confirm, Delete) */
+.confirm-btn {
+  background-color: var(--clr-red, #e53e3e);
+  color: #ffffff;
+}
+
+.confirm-btn:hover {
+  background-color: var(--clr-red-dark, #c53030);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(229, 62, 62, 0.2);
+}
+
+/* Secondary action button (e.g., Cancel) */
+.cancel-btn {
+  background-color: #E2E8F0; /* Light gray background */
+  color: #2D3748; /* Dark text */
+}
+
+.cancel-btn:hover {
+  background-color: #CBD5E0; /* Slightly darker gray on hover */
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+
+/* Disabled state for the confirm button */
+.confirm-btn[disabled] {
+  background-color: #a0aec0;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Keyframe animations */
+@keyframes fadeIn {
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUpFadeIn {
+  to {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}

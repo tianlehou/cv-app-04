@@ -1,87 +1,102 @@
-<div class="announcements-container">
-  <div class="announcements-header">
-    <h2>Ofertas de Trabajo Disponibles</h2>
-    <p>Explora las últimas ofertas de trabajo publicadas por empresas.</p>
-  </div>
+<main>
+  <div class="announcements-container">
+    <div class="announcements-header">
+      <h2>Ofertas de Trabajo Disponibles</h2>
+      <p>Explora las últimas ofertas de trabajo publicadas por empresas.</p>
+    </div>
 
-  <!-- Indicador de carga -->
-  @if (isLoading) {
+    <!-- Indicador de carga -->
+    @if (isLoading) {
     <div class="loading-container">
       <div class="spinner"></div>
       <p>Cargando ofertas de trabajo...</p>
     </div>
-  }
-  
-  <!-- Mensaje de error -->
-  @if (error) {
+    }
+
+    <!-- Mensaje de error -->
+    @if (error) {
     <div class="error-message">
       <p>{{ error }}</p>
       <button class="retry-button" (click)="loadJobOffers()">Reintentar</button>
     </div>
-  }
-
-  <!-- Lista de ofertas de trabajo -->
-  @if (!isLoading && !error) {
-    @if (jobOffers.length > 0) {
-      <div class="job-offers-grid">
-        @for (jobOffer of jobOffers; track jobOffer.id) {
-          <div class="job-offer-card card-border">
-            <div class="job-offer-header">
-              <h3>{{ jobOffer.title || 'Título no especificado' }}</h3>
-              <span class="company-name">{{ jobOffer.companyName || 'Empresa confidencial' }}</span>
-              <span class="publish-date" *ngIf="jobOffer.publicationDate">Publicado el: {{ formatDate(jobOffer.publicationDate) }}</span>
-            </div>
-            
-            <div class="job-offer-details">
-              <div class="detail">
-                <i class="fas fa-map-marker-alt"></i>
-                <span>{{ jobOffer.location || 'Ubicación no especificada' }}</span>
-              </div>
-              <div class="detail">
-                <i class="fas fa-briefcase"></i>
-                <span>{{ jobOffer.contractType || 'Tipo de contrato no especificado' }}</span>
-              </div>
-              <div class="detail">
-                <i class="fas fa-money-bill-wave"></i>
-                <span>{{ jobOffer.salary ? ('$' + jobOffer.salary) : 'Salario no especificado' }}</span>
-              </div>
-              <div class="detail">
-                <i class="fas fa-clock"></i>
-                <span>{{ jobOffer.workday || 'Jornada no especificada' }}</span>
-              </div>
-              <div class="detail">
-                <i class="fas fa-laptop-house"></i>
-                <span>{{ jobOffer.modality || 'Modalidad no especificada' }}</span>
-              </div>
-            </div>
-            
-            <div class="job-offer-description">
-              <h4>Descripción del puesto:</h4>
-              <p>{{ jobOffer.description || 'Sin descripción disponible.' }}</p>
-            </div>
-            
-            <div class="job-offer-requirements">
-              <h4>Requisitos:</h4>
-              @if (jobOffer.requirements) {
-                <p>{{ jobOffer.requirements }}</p>
-              } @else {
-                <p>No se especificaron requisitos.</p>
-              }
-            </div>
-            
-            <div class="job-offer-actions">
-              <button class="apply-button">Postularme</button>
-              <button class="save-button">Guardar</button>
-            </div>
-          </div>
-        }
-      </div>
-    } @else {
-      <div class="no-offers">
-        <i class="fas fa-search"></i>
-        <p>No hay ofertas de trabajo disponibles en este momento.</p>
-        <p>Vuelve más tarde para ver nuevas ofertas.</p>
-      </div>
     }
-  }
-</div>
+
+    <!-- Lista de ofertas de trabajo -->
+    @if (!isLoading && !error) {
+    @if (jobOffers.length > 0) {
+    <div class="job-offers-grid">
+      @for (jobOffer of jobOffers; track jobOffer.id) {
+      <div class="job-offer-card card-border">
+        <div class="job-offer-header">
+          <h3>{{ jobOffer.title || 'Título no especificado' }}</h3>
+          <span class="company-name">{{ jobOffer.companyName || 'Empresa confidencial' }}</span>
+          <span class="publish-date" *ngIf="jobOffer.publicationDate">Publicado el: {{
+            formatDate(jobOffer.publicationDate) }}</span>
+        </div>
+
+        <div class="job-offer-details">
+          <div class="detail">
+            <i class="fas fa-map-marker-alt"></i>
+            <span>{{ jobOffer.location || 'Ubicación no especificada' }}</span>
+          </div>
+          <div class="detail">
+            <i class="fas fa-briefcase"></i>
+            <span>{{ jobOffer.contractType || 'Tipo de contrato no especificado' }}</span>
+          </div>
+          <div class="detail">
+            <i class="fas fa-money-bill-wave"></i>
+            <span>{{ jobOffer.salary ? ('$' + jobOffer.salary) : 'Salario no especificado' }}</span>
+          </div>
+          <div class="detail">
+            <i class="fas fa-clock"></i>
+            <span>{{ jobOffer.workday || 'Jornada no especificada' }}</span>
+          </div>
+          <div class="detail">
+            <i class="fas fa-laptop-house"></i>
+            <span>{{ jobOffer.modality || 'Modalidad no especificada' }}</span>
+          </div>
+        </div>
+
+        @if (jobOffer.id) {
+        <div class="job-offer-description">
+          <h4>Descripción del puesto:</h4>
+          <p>
+            {{ expandedStates[jobOffer.id].description ? getFullText(jobOffer.description) : getPreviewText(jobOffer.description) }}
+            <button *ngIf="isTextLong(jobOffer.description)" (click)="toggleShowMore(jobOffer.id, 'description', $event)"
+              class="btn-text-link">
+              {{ expandedStates[jobOffer.id].description ? 'ver menos' : 'ver más' }}
+            </button>
+          </p>
+        </div>
+        }
+
+        @if (jobOffer.id) {
+        <div class="job-offer-requirements">
+          <h4>Requisitos:</h4>
+          <p>
+            {{ expandedStates[jobOffer.id].requirements ? getFullText(jobOffer.requirements) : getPreviewText(jobOffer.requirements) }}
+            <button *ngIf="isTextLong(jobOffer.requirements)" (click)="toggleShowMore(jobOffer.id, 'requirements', $event)"
+              class="btn-text-link">
+              {{ expandedStates[jobOffer.id].requirements ? 'ver menos' : 'ver más' }}
+            </button>
+          </p>
+        </div>
+        }
+
+        <div class="job-offer-actions">
+          <button class="apply-button">Postularme</button>
+          <button class="save-button">Guardar</button>
+        </div>
+      </div>
+      }
+    </div>
+    } @else {
+    <div class="no-offers">
+      <i class="fas fa-search"></i>
+      <p>No hay ofertas de trabajo disponibles en este momento.</p>
+      <p>Vuelve más tarde para ver nuevas ofertas.</p>
+    </div>
+    }
+    }
+  </div>
+</main>

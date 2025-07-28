@@ -4,7 +4,7 @@ import { Database, set, ref, update } from '@angular/fire/database';
 import { ReferralService } from '../../../candidate/sections/refer/referral.service';
 import { AuthService } from 'src/app/pages/home/auth/auth.service';
 import { FirebaseService } from 'src/app/shared/services/firebase.service';
-import { ToastService } from 'src/app/shared/services/toast.service';
+import { ToastService } from 'src/app/shared/components/toast/toast.service';
 import { BusinessComparisonTableComponent } from './comparison-table/business-comparison-table.component';
 
 @Component({

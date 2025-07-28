@@ -5,7 +5,7 @@ import { CommonModule } from '@angular/common';
 import { Database, ref, get, set } from '@angular/fire/database';
 import { Subscription } from 'rxjs';
 import { ConfirmationModalService } from 'src/app/shared/services/confirmation-modal.service';
-import { ToastService } from 'src/app/shared/services/toast.service';
+import { ToastService } from 'src/app/shared/components/toast/toast.service';
 import { PersonalDataInfoComponent } from './personal-data-info/personal-data-info.component';
 import { CvEditButtonRowComponent } from '../../gallery/cv-grid/cv-edit-button/cv-edit-button-row/cv-edit-button-row.component';
 import { User } from '@angular/fire/auth';

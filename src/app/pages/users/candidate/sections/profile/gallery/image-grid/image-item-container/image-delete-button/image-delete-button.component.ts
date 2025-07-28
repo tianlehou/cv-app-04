@@ -6,7 +6,7 @@ import { Storage, ref, deleteObject } from '@angular/fire/storage';
 import { Database, ref as dbRef, get, set } from '@angular/fire/database';
 import { FirebaseService } from 'src/app/shared/services/firebase.service';
 import { ConfirmationModalService } from 'src/app/shared/services/confirmation-modal.service';
-import { ToastService } from 'src/app/shared/services/toast.service';
+import { ToastService } from 'src/app/shared/components/toast/toast.service';
 import { ExamplesService } from 'src/app/shared/services/examples.service';
 
 @Component({

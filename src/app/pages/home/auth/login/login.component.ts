@@ -9,7 +9,7 @@ import {
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../auth.service';
 import { FirebaseService } from 'src/app/shared/services/firebase.service';
-import { ToastService } from 'src/app/shared/services/toast.service';
+import { ToastService } from 'src/app/shared/components/toast/toast.service';
 import { GoogleLoginComponent } from '../google-login.component';
 
 @Component({

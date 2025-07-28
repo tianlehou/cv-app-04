@@ -4,7 +4,7 @@ import { interval, Subscription } from 'rxjs';
 import { JobOfferInfoModalComponent } from './job-offer-info-modal/job-offer-info-modal.component';
 import { User } from '@angular/fire/auth';
 import { ConfirmationModalService } from 'src/app/shared/services/confirmation-modal.service';
-import { ToastService } from 'src/app/shared/services/toast.service';
+import { ToastService } from 'src/app/shared/components/toast/toast.service';
 import { JobOfferService } from '../job-offer.service';
 import { JobOffer } from '../job-offer.model';
 

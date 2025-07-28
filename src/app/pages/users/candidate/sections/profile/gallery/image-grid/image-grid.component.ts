@@ -5,7 +5,7 @@ import { Subscription } from 'rxjs';
 import { filter, distinctUntilChanged } from 'rxjs/operators';
 import { Database, ref, get, onValue } from '@angular/fire/database';
 import { FirebaseService } from 'src/app/shared/services/firebase.service';
-import { ToastService } from 'src/app/shared/services/toast.service';
+import { ToastService } from 'src/app/shared/components/toast/toast.service';
 import { ExamplesService } from 'src/app/shared/services/examples.service';
 import { ImageInfoBarComponent } from './image-info-bar/image-info-bar.component';
 import { ImageUploadButtonComponent } from './image-upload-button/image-upload-button.component';

@@ -11,7 +11,7 @@ import { User } from '@angular/fire/auth';
 import { CommonModule } from '@angular/common';
 import { FirebaseService } from 'src/app/shared/services/firebase.service';
 import { ConfirmationModalService } from 'src/app/shared/services/confirmation-modal.service';
-import { ToastService } from 'src/app/shared/services/toast.service';
+import { ToastService } from 'src/app/shared/components/toast/toast.service';
 import { EducationInfoComponent } from './education-info/education-info.component';
 import { CvEditButtonRowComponent } from '../../cv-edit-button-row/cv-edit-button-row.component';
 import { DeleteButtonBComponent } from 'src/app/shared/components/buttons/delete-button/delete-button.component';

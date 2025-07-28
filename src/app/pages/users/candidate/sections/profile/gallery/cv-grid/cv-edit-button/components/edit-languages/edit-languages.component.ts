@@ -12,7 +12,7 @@ import { FirebaseService } from 'src/app/shared/services/firebase.service';
 import { ConfirmationModalService } from 'src/app/shared/services/confirmation-modal.service';
 import { User } from '@angular/fire/auth';
 import { LanguagesInfoComponent } from './languages-info/languages-info.component';
-import { ToastService } from 'src/app/shared/services/toast.service';
+import { ToastService } from 'src/app/shared/components/toast/toast.service';
 import { CvEditButtonRowComponent } from '../../cv-edit-button-row/cv-edit-button-row.component';
 import { DeleteButtonBComponent } from 'src/app/shared/components/buttons/delete-button/delete-button.component';
 

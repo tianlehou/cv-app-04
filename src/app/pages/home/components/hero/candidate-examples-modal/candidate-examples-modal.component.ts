@@ -7,7 +7,7 @@ import { GalleryComponent } from 'src/app/pages/users/candidate/sections/profile
 import { ExamplePaginationComponent } from './example-pagination/example-pagination.component';
 import { ExampleEditorActionsComponent } from './example-editor-actions/example-editor-actions.component';
 import { ChangeDetectorRef } from '@angular/core';
-import { ToastService } from 'src/app/shared/services/toast.service';
+import { ToastService } from 'src/app/shared/components/toast/toast.service';
 
 @Component({
   selector: 'app-candidate-examples-modal',

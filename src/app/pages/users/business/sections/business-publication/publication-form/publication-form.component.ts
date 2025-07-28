@@ -6,7 +6,7 @@ import { JobOfferService } from '../job-offer.service';
 import { JobOffer } from '../job-offer.model';
 import { AuthService } from 'src/app/pages/home/auth/auth.service';
 import { ConfirmationModalService } from 'src/app/shared/services/confirmation-modal.service';
-import { ToastService } from 'src/app/shared/services/toast.service';
+import { ToastService } from 'src/app/shared/components/toast/toast.service';
 
 @Component({
   selector: 'app-publication-form',

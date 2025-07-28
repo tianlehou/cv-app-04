@@ -10,7 +10,7 @@ import {
 import { CommonModule } from '@angular/common';
 import { User } from '@angular/fire/auth';
 import { FirebaseService } from 'src/app/shared/services/firebase.service';
-import { ToastService } from 'src/app/shared/services/toast.service';
+import { ToastService } from 'src/app/shared/components/toast/toast.service';
 import { SkillsInfoComponent } from './skills-info/skills-info.component';
 import { CvEditButtonRowComponent } from '../../cv-edit-button-row/cv-edit-button-row.component';
 

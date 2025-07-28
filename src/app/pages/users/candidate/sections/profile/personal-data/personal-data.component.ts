@@ -7,7 +7,7 @@ import { Database, ref, get, onValue } from '@angular/fire/database';
 import { Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { ProfileService } from '../../../services/profile.service';
-import { ToastService } from 'src/app/shared/services/toast.service';
+import { ToastService } from 'src/app/shared/components/toast/toast.service';
 import { FirebaseService } from 'src/app/shared/services/firebase.service';
 
 @Component({

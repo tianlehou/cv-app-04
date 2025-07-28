@@ -5,7 +5,7 @@ import { Subscription } from 'rxjs';
 import { filter, distinctUntilChanged } from 'rxjs/operators';
 import { User } from '@angular/fire/auth';
 import { CommonModule } from '@angular/common';
-import { ToastService } from 'src/app/shared/services/toast.service';
+import { ToastService } from 'src/app/shared/components/toast/toast.service';
 import { FirebaseService } from 'src/app/shared/services/firebase.service';
 import { ConfirmationModalService } from 'src/app/shared/services/confirmation-modal.service';
 import { Storage, ref, deleteObject } from '@angular/fire/storage';

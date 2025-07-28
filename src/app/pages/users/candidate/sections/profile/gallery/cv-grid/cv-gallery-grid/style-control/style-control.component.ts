@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { FirebaseService } from 'src/app/shared/services/firebase.service';
 import { ComponentStyles } from './component-styles.model';
 import { ConfirmationModalService } from 'src/app/shared/services/confirmation-modal.service';
-import { ToastService } from 'src/app/shared/services/toast.service';
+import { ToastService } from 'src/app/shared/components/toast/toast.service';
 import { StyleService } from './style-control.service';
 
 @Component({
