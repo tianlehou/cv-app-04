@@ -10,19 +10,19 @@
 
 .section-title {
   text-align: center;
-  padding: 2rem 0;
+  padding: 2rem 1rem;
 }
 
 .section-title h2 {
-  font-size: 2.5rem;
-  color: #1a1a1a;
-  margin-bottom: 1rem;
-  font-weight: 700;
+  font-size: 2rem;
+  color: var(--text-color);
+  line-height: 1.2;
+  font-weight: 600;
 }
 
 .section-title p {
-  color: #4a5568;
-  font-size: 1.1rem;
+  color: var(--text-color-light);
+  font-size: 1rem;
   max-width: 700px;
   margin: 0 auto;
   line-height: 1.6;
@@ -79,39 +79,7 @@
   overflow: hidden;
 }
 
-/* Asegurar que el texto sea legible en todos los fondos */
-.feature-card h3 {
-  position: relative;
-  z-index: 1;
-  color: #1a1a1d;
-  margin-bottom: 0.8rem;
-}
-
-.feature-card p {
-  position: relative;
-  z-index: 1;
-  color: #2d3748;
-}
-
-/* Efecto de superposición para mejorar la legibilidad */
-.feature-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 0;
-  border-radius: 8px;
-}
-
 /* Ajustar el icono */
-.feature-icon {
-  position: relative;
-  z-index: 1;
-  margin-bottom: 1rem;
-}
-
 .feature-icon ion-icon {
   font-size: 2.5rem;
   color: #1a1a1d;
@@ -143,14 +111,15 @@
 }
 
 .feature-card h3 {
-  font-size: 1.3rem;
+  font-size: 1.2rem;
   color: var(--text-color);
   margin-bottom: 1rem;
   font-weight: 600;
 }
 
 .feature-card p {
-  color: #4a5568;
+  color: var(--text-color-light);
+  font-size: 1rem;
   line-height: 1.6;
   margin: 0;
   flex-grow: 1;

@@ -1,0 +1,255 @@
+/* Estilos para el contenedor principal */
+.announcements-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  background-color: var(--bg-yellow);
+}
+
+/* Estilos para el encabezado */
+.announcements-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.announcements-header h2 {
+  color: var(--text-color);
+  font-size: 2rem;
+}
+
+.announcements-header p {
+  color: var(--text-color-light);
+  font-size: 1rem;
+}
+
+/* Estilos para la cuadrícula de ofertas */
+.job-offers-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+/* Estilos para las tarjetas de ofertas */
+.job-offer-card {
+  background: white;
+  border-radius: 10px;
+  padding: 1.5rem;
+  transition: all 0.3s ease, box-shadow 0.3s ease;
+}
+
+.job-offer-card:hover {
+  transform: translateY(-1rem);
+  background-color: var(--clr-white);
+}
+
+/* Estilos para el encabezado de la oferta */
+.job-offer-header {
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--text-color-light);
+}
+
+.job-offer-header h3 {
+  color: var(--text-color);
+  font-size: 1.4rem;
+}
+
+.company-name {
+  display: block;
+  color: var(--clr-blue);
+  font-weight: 500;
+}
+
+.publish-date {
+  font-size: 0.85rem;
+  color: var(--text-color-light);
+}
+
+/* Estilos para los detalles de la oferta */
+.job-offer-details {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.detail {
+  display: flex;
+  align-items: center;
+  font-size: 0.9rem;
+  color: var(--text-color-light);
+}
+
+.detail i {
+  margin-right: 0.5rem;
+  width: 16px;
+  text-align: center;
+}
+
+/* Estilos para la descripción y requisitos */
+.job-offer-description,
+.job-offer-requirements {
+  margin: 1.2rem 0;
+}
+
+.job-offer-description h4,
+.job-offer-requirements h4 {
+  color: var(--text-color);
+  font-size: 1rem;
+}
+
+.job-offer-description p,
+.job-offer-requirements p {
+  color: var(--text-color-light);
+  line-height: 1.6;
+  font-size: 0.8rem;
+  margin: 0.5rem 0;
+}
+
+.job-offer-requirements ul {
+  list-style-type: none;
+  padding-left: 1.2rem;
+  margin: 0.5rem 0;
+}
+
+.job-offer-requirements li {
+  position: relative;
+  padding-left: 1.2rem;
+  margin-bottom: 0.4rem;
+  color: #34495e;
+}
+
+.job-offer-requirements li:before {
+  content: '•';
+  position: absolute;
+  left: 0;
+  color: #3498db;
+  font-weight: bold;
+}
+
+/* Estilos para los botones de acción */
+.job-offer-actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid #ecf0f1;
+}
+
+.apply-button,
+.save-button {
+  padding: 0.6rem 1.2rem;
+  border: none;
+  border-radius: 5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.apply-button {
+  background-color: var(--clr-orange);
+  color: white;
+  flex: 2;
+}
+
+.apply-button:hover {
+  border: 1px solid var(--clr-orange);
+  background-color: white;
+  color: var(--clr-orange);
+}
+
+.save-button {
+  background-color: #f1f2f6;
+  color: #2c3e50;
+  border: 1px solid #bdc3c7;
+  flex: 1;
+}
+
+.save-button:hover {
+  background-color: #dfe6e9;
+}
+
+/* Estilos para el estado de carga */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 0;
+}
+
+.spinner {
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  border-radius: 50%;
+  border-top: 4px solid #3498db;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+  margin-bottom: 1rem;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Estilos para mensajes de error */
+.error-message {
+  background-color: #fdecea;
+  color: #c62828;
+  padding: 1rem;
+  border-radius: 5px;
+  margin: 1rem 0;
+  text-align: center;
+}
+
+.retry-button {
+  background-color: #e74c3c;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  margin-top: 0.5rem;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.retry-button:hover {
+  background-color: #c0392b;
+}
+
+/* Estilos para cuando no hay ofertas */
+.no-offers {
+  text-align: center;
+  padding: 3rem 1rem;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  color: #7f8c8d;
+}
+
+.no-offers i {
+  font-size: 3rem;
+  color: #bdc3c7;
+  margin-bottom: 1rem;
+}
+
+/* Estilos responsivos */
+@media (max-width: 768px) {
+  .job-offers-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .job-offer-actions {
+    flex-direction: column;
+  }
+
+  .apply-button,
+  .save-button {
+    width: 100%;
+  }
+}

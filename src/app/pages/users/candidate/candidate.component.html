@@ -7,6 +7,7 @@
         (subscriptionClicked)="toggleSubscription()"
         (referClicked)="toggleRefer()"
         (professionalDevelopmentClicked)="toggleProfessionalDevelopment()"
+        (announcementsClicked)="showAnnouncements()"
       ></app-sidebar>
     </div>
 
@@ -55,6 +56,11 @@
       <!-- Sección de Desarrollo Profesional -->
       <section id="professional-development" *ngIf="activeSection === sectionType.professionalDevelopment">
         <app-professional-development [isEditor]="isEditor"></app-professional-development>
+      </section>
+
+      <!-- Sección de Anuncios -->
+      <section id="announcements" *ngIf="activeSection === sectionType.announcements">
+        <app-announcements></app-announcements>
       </section>
     </div>
   </div>

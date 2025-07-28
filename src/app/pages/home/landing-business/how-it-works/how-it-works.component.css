@@ -7,7 +7,6 @@
 .container {
   width: 100%;
   max-width: 1200px;
-  padding: 0 1.5rem;
 }
 
 .section-title {
@@ -16,13 +15,13 @@
 }
 
 .section-title h2 {
-  font-size: 2.2rem;
-  color: var(--dark);
+  font-size: 2rem;
+  color: var(--text-color);
 }
 
 .section-title p {
   font-size: 1.1rem;
-  color: #666;
+  color: var(--text-color-light);
 }
 
 /* How It Works Section */
@@ -39,26 +38,16 @@
 }
 
 .step-card {
-  flex: 1;
-  min-width: 250px;
-  text-align: center;
-  padding: 2rem;
+  background-color: var(--light);
   border-radius: 10px;
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  padding: 2rem;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
   transition: transform 0.3s ease;
 }
 
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+.step-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
 }
 
 .step-icon {
@@ -72,12 +61,6 @@
   justify-content: center;
   color: black;
   font-size: 2rem;
-  transition: all 0.3s ease;
-}
-
-.step-card:hover .step-icon {
-  transform: rotateY(180deg);
-  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
 }
 
 .step-card h3 {
@@ -87,22 +70,6 @@
   font-weight: 600;
   position: relative;
   padding-bottom: 0.75rem;
-}
-
-.step-card h3::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 50px;
-  height: 3px;
-  background: var(--primary-color);
-  transition: width 0.3s ease;
-}
-
-.step-card:hover h3::after {
-  width: 80px;
 }
 
 .step-card p {

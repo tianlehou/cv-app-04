@@ -14,6 +14,7 @@ import { SidebarComponent } from './sidebar/sidebar.component';
 import { SubscriptionComponent } from './sections/subscription/subscription.component';
 import { ReferComponent } from './sections/refer/refer.component';
 import { ProfessionalDevelopmentComponent } from './sections/professional-development/professional-development.component';
+import { AnnouncementsComponent } from './sections/announcements/announcements.component';
 
 @Component({
   selector: 'app-candidate',
@@ -28,6 +29,7 @@ import { ProfessionalDevelopmentComponent } from './sections/professional-develo
     SubscriptionComponent,
     ReferComponent,
     ProfessionalDevelopmentComponent,
+    AnnouncementsComponent,
   ],
   templateUrl: './candidate.component.html',
   styleUrls: ['./candidate.component.css'],
@@ -40,14 +42,15 @@ export class CandidateComponent implements OnInit {
   isEditor: boolean = false;
   showSubscription = false;
   // Usar el mismo tipo que en el sidebar para mantener consistencia
-  activeSection: 'profile' | 'subscription' | 'refer' | 'professional-development' = 'profile';
+  activeSection: 'profile' | 'subscription' | 'refer' | 'professional-development' | 'announcements' = 'profile';
   
   // Definir el tipo para las secciones (igual que en sidebar.component.ts)
   sectionType = {
     profile: 'profile',
     subscription: 'subscription',
     refer: 'refer',
-    professionalDevelopment: 'professional-development'
+    professionalDevelopment: 'professional-development',
+    announcements: 'announcements'
   } as const;
 
   constructor(
@@ -100,6 +103,11 @@ export class CandidateComponent implements OnInit {
   toggleSubscription() {
     this.showSubscription = !this.showSubscription;
     this.activeSection = this.showSubscription ? 'subscription' : 'profile';
+  }
+
+  showAnnouncements() {
+    this.activeSection = 'announcements';
+    this.showSubscription = false;
   }
 
   onHeaderStartNow(): void {

@@ -13,19 +13,21 @@ import { AuthService } from 'src/app/pages/home/auth/auth.service';
 })
 export class SidebarComponent {
   isMenuOpen = false;
-  @Input() activeSection: 'profile' | 'subscription' | 'refer' | 'professional-development' = 'profile';
+  @Input() activeSection: 'profile' | 'subscription' | 'refer' | 'professional-development' | 'announcements' = 'profile';
   @Output() homeClicked = new EventEmitter<void>();
   @Output() profileClicked = new EventEmitter<void>();
   @Output() subscriptionClicked = new EventEmitter<void>();
   @Output() referClicked = new EventEmitter<void>();
   @Output() professionalDevelopmentClicked = new EventEmitter<void>();
+  @Output() announcementsClicked = new EventEmitter<void>();
   
   // Definir el tipo para las secciones
   sectionType = {
     profile: 'profile',
     subscription: 'subscription',
     refer: 'refer',
-    professionalDevelopment: 'professional-development'
+    professionalDevelopment: 'professional-development',
+    announcements: 'announcements'
   } as const;
 
   constructor(
@@ -57,6 +59,11 @@ export class SidebarComponent {
 
   onProfessionalDevelopmentClick() {
     this.professionalDevelopmentClicked.emit();
+    this.toggleMenu();
+  }
+
+  onAnnouncementsClick() {
+    this.announcementsClicked.emit();
     this.toggleMenu();
   }
 

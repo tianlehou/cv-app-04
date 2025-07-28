@@ -11,12 +11,12 @@
 
  .section-title h2 {
      font-size: 2.2rem;
-     color: var(--dark);
+     color: var(--text-color);
  }
 
  .section-title p {
      font-size: 1.1rem;
-     color: #666;
+     color: var(--text-color-light);
  }
 
  /* Testimonials Section */
@@ -29,24 +29,20 @@
  .testimonial-card {
      background-color: var(--light);
      border-radius: 10px;
-     padding: 30px;
+     padding: 2rem;
      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+     transition: transform 0.3s ease;
+ }
+
+ .testimonial-card:hover {
+     transform: translateY(-10px);
+     box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
  }
 
  .testimonial-text {
      font-style: italic;
      margin-bottom: 20px;
      position: relative;
- }
-
- .testimonial-text::before {
-     content: '"';
-     font-size: 4rem;
-     color: var(--primary);
-     opacity: 0.2;
-     position: absolute;
-     top: -20px;
-     left: -10px;
  }
 
  .testimonial-author {
