@@ -79,6 +79,10 @@ export class JobOfferItemComponent implements OnInit, OnDestroy {
   // Estado para controlar la expansión de texto
   showFullDescription = false;
   showFullRequirements = false;
+  
+  // Estados de los iconos interactivos
+  iconStates = { heart: false, bookmark: false, share: false };
+  
   private clickListener: (() => void) | null = null;
 
   // Listener para el menú desplegable
@@ -108,6 +112,12 @@ export class JobOfferItemComponent implements OnInit, OnDestroy {
     return text.length > this.MAX_FULL_LENGTH
       ? text.slice(0, this.MAX_FULL_LENGTH) + '...'
       : text;
+  }
+
+  // Método para alternar el estado de un icono
+  toggleIcon(icon: 'heart' | 'bookmark' | 'share', event: MouseEvent): void {
+    event.stopPropagation();
+    this.iconStates[icon] = !this.iconStates[icon];
   }
 
   // Métodos para manejar el menú desplegable

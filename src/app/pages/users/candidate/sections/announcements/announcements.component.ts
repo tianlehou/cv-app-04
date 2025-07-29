@@ -1,4 +1,5 @@
-import { Component, OnInit, Renderer2, NgZone } from '@angular/core';
+import { Component, OnInit, OnDestroy, Renderer2, NgZone } from '@angular/core';
+import { Subscription, interval } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { PublicJobOfferService } from 'src/app/shared/services/public-job-offer.service';
 import { JobOffer } from 'src/app/pages/users/business/sections/business-publication/job-offer.model';
@@ -10,15 +11,22 @@ import { JobOffer } from 'src/app/pages/users/business/sections/business-publica
   templateUrl: './announcements.component.html',
   styleUrls: ['./announcements.component.css']
 })
-export class AnnouncementsComponent implements OnInit {
+export class AnnouncementsComponent implements OnInit, OnDestroy {
   // Límite de caracteres para la vista previa
   private readonly MAX_PREVIEW_LENGTH = 25;
 
   // Objeto para rastrear el estado de expansión de cada oferta
   expandedStates: { [key: string]: { description: boolean; requirements: boolean } } = {};
+  iconStates: { [key: string]: { heart: boolean; bookmark: boolean; share: boolean } } = {};
   jobOffers: JobOffer[] = [];
   isLoading = true;
   error: string | null = null;
+
+  // Propiedades para el contador de tiempo restante
+  timeRemainingStates: { [key: string]: string } = {};
+  isTimeCriticalStates: { [key: string]: boolean } = {};
+  private countdownSub: Subscription | null = null;
+  private timeZone = 'America/Panama';
 
   private clickListener: (() => void) | null = null;
 
@@ -30,6 +38,13 @@ export class AnnouncementsComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadJobOffers();
+  }
+
+  ngOnDestroy(): void {
+    if (this.countdownSub) {
+      this.countdownSub.unsubscribe();
+    }
+    this.removeOutsideClickListener();
   }
 
   loadJobOffers(): void {
@@ -44,6 +59,7 @@ export class AnnouncementsComponent implements OnInit {
         this.jobOffers.forEach(offer => {
           if (offer.id) {
             this.expandedStates[offer.id] = { description: false, requirements: false };
+            this.iconStates[offer.id] = { heart: false, bookmark: false, share: false };
           }
         });
         this.isLoading = false;
@@ -52,6 +68,7 @@ export class AnnouncementsComponent implements OnInit {
           console.warn('No se encontraron ofertas de trabajo públicas.');
           this.error = 'No hay ofertas de trabajo disponibles en este momento.';
         } else {
+          this.initializeTimeRemaining();
         }
       },
       error: (error) => {
@@ -138,6 +155,57 @@ export class AnnouncementsComponent implements OnInit {
       this.clickListener();
       this.clickListener = null;
     }
+  }
+
+  // Método para alternar el estado de un icono
+  toggleIcon(jobOfferId: string | undefined, icon: 'heart' | 'bookmark' | 'share', event: MouseEvent): void {
+    event.stopPropagation();
+    if (jobOfferId) {
+      this.iconStates[jobOfferId][icon] = !this.iconStates[jobOfferId][icon];
+    }
+  }
+
+  // Método para contraer todas las secciones
+  initializeTimeRemaining(): void {
+    if (this.countdownSub) {
+      this.countdownSub.unsubscribe();
+    }
+    this.updateAllTimeRemainings();
+    this.countdownSub = interval(1000).subscribe(() => {
+      this.updateAllTimeRemainings();
+    });
+  }
+
+  updateAllTimeRemainings(): void {
+    this.jobOffers.forEach(offer => {
+      if (!offer.id || !offer.deadline) {
+        return;
+      }
+
+      const now = new Date();
+      now.setHours(now.getHours() - 5); // Ajuste de zona horaria
+      const deadline = new Date(offer.deadline);
+
+      const nowPanama = new Date(now.toLocaleString('en-US', { timeZone: this.timeZone }));
+      const deadlinePanama = new Date(deadline.toLocaleString('en-US', { timeZone: this.timeZone }));
+
+      const diffMs = deadlinePanama.getTime() - nowPanama.getTime();
+      const hoursDiff = diffMs / (1000 * 60 * 60);
+
+      this.isTimeCriticalStates[offer.id] = hoursDiff < 24 || diffMs <= 0;
+
+      if (diffMs <= 0) {
+        this.timeRemainingStates[offer.id] = 'Expirado';
+        return;
+      }
+
+      const days = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((diffMs % (1000 * 60)) / 1000);
+
+      this.timeRemainingStates[offer.id] = `Tiempo Restante (${days}d ${hours}h ${minutes}m ${seconds}s)`;
+    });
   }
 
   // Método para contraer todas las secciones

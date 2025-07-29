@@ -9,6 +9,7 @@ main {
   max-width: 1200px;
   margin: 0 auto;
   padding: 2rem;
+  color: var(--text-color-light);
 }
 
 /* Estilos para el encabezado */
@@ -23,8 +24,8 @@ main {
 }
 
 .announcements-header p {
-  color: var(--text-color-light);
   font-size: 1rem;
+  font-weight: 500;
 }
 
 /* Estilos para la cuadrícula de ofertas */
@@ -52,23 +53,44 @@ main {
 .job-offer-header {
   margin-bottom: 1rem;
   padding-bottom: 1rem;
-  border-bottom: 1px solid var(--text-color-light);
+  gap: 10px;
+  border-bottom: 2px dashed var(--text-color-light);
 }
 
 .job-offer-header h3 {
   color: var(--text-color);
+  text-align: center;
   font-size: 1.4rem;
 }
 
+.job-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  font-size: 0.9rem;
+}
+
+.job-details-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: center;
+  justify-content: space-between;
+}
+
 .company-name {
-  display: block;
-  color: var(--clr-blue);
   font-weight: 500;
+  color: var(--clr-blue);
+}
+
+.job-location {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .publish-date {
-  font-size: 0.85rem;
-  color: var(--text-color-light);
+  font-size: 0.9rem;
 }
 
 /* Estilos para los detalles de la oferta */
@@ -76,6 +98,7 @@ main {
   display: flex;
   flex-wrap: wrap;
   gap: 1rem;
+  color: var(--text-color-light);
 }
 
 .detail {
@@ -94,7 +117,11 @@ main {
 /* Estilos para la descripción y requisitos */
 .job-offer-description,
 .job-offer-requirements {
-  margin: 1.2rem 0;
+  margin: 0;
+}
+
+.job-offer-requirements {
+  margin-top: 1.2rem;
 }
 
 .job-offer-description h4,
@@ -107,7 +134,7 @@ main {
 .job-offer-description p,
 .job-offer-requirements p {
   margin: 0;
-  font-size: 0.8rem;
+  font-size: 0.9rem;
   font-weight: 300;
   text-align: justify;
   line-height: 1.5;
@@ -129,7 +156,8 @@ main {
   display: inline;
   margin: 0;
   transition: color 0.2s ease;
-  white-space: nowrap; /* Asegurar que el botón no se rompa en una línea nueva */
+  white-space: nowrap;
+  /* Asegurar que el botón no se rompa en una línea nueva */
 }
 
 .btn-text-link:hover {
@@ -160,24 +188,33 @@ main {
 
 /* Estilos para los botones de acción */
 .job-offer-actions {
-  display: flex;
+  display: grid;
   gap: 1rem;
   margin-top: 1.5rem;
   padding-top: 1rem;
-  border-top: 1px solid #ecf0f1;
+  border-top: 2px dashed var(--text-color-light);
 }
 
-.apply-button,
-.save-button {
+.time-remaining {
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+}
+
+.time-critical {
+  color: var(--clr-red) !important;
+  font-weight: 500;
+}
+
+.apply-button {
   padding: 0.6rem 1.2rem;
   border: none;
   border-radius: 5px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
-}
-
-.apply-button {
   background-color: var(--clr-orange);
   color: white;
   flex: 2;
@@ -187,17 +224,6 @@ main {
   border: 1px solid var(--clr-orange);
   background-color: white;
   color: var(--clr-orange);
-}
-
-.save-button {
-  background-color: #f1f2f6;
-  color: #2c3e50;
-  border: 1px solid #bdc3c7;
-  flex: 1;
-}
-
-.save-button:hover {
-  background-color: #dfe6e9;
 }
 
 /* Estilos para el estado de carga */
@@ -267,6 +293,56 @@ main {
   font-size: 3rem;
   color: #bdc3c7;
   margin-bottom: 1rem;
+}
+
+/* Contenedor para el contenido principal y los iconos */
+.card-content-wrapper {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  margin: 1.2rem 0;
+}
+
+.main-content {
+  flex-grow: 1;
+}
+
+/* Estilos para los iconos de la tarjeta */
+.card-icons {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.card-icons i {
+  font-size: 1.2rem;
+  color: var(--text-color-light);
+  cursor: pointer;
+  transition: color 0.3s ease, transform 0.3s ease;
+}
+
+.card-icons i:hover {
+  transform: scale(1.15);
+}
+
+/* Colores para el estado hover y activo */
+/* Rojo para "me gusta" */
+.card-icons .fa-heart:hover,
+.card-icons .fa-heart.active {
+  color: #e74c3c;
+}
+
+/* Naranja para "guardar" */
+.card-icons .fa-bookmark:hover,
+.card-icons .fa-bookmark.active {
+  color: #f39c12;
+}
+
+/* Azul para "compartir" */
+.card-icons .fa-share-alt:hover,
+.card-icons .fa-share-alt.active {
+  color: #3498db;
 }
 
 /* Estilos responsivos */

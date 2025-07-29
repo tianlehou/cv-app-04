@@ -1,5 +1,4 @@
-<div class="job-offer-card card-border"
-  (mouseleave)="onMouseLeave()">
+<div class="job-offer-card card-border" (mouseleave)="onMouseLeave()">
   <div class="job-offer-header">
 
     <!-- Menú de Opciones -->
@@ -50,27 +49,18 @@
         </button>
         <!-- Boton de Cancelar Publicación -->
         <button class="popover-item text-warning" (click)="onCancelPublish()"
-          [disabled]="jobOffer.status !== 'publicado'"
-          [class.text-muted]="jobOffer.status !== 'publicado'">
+          [disabled]="jobOffer.status !== 'publicado'" [class.text-muted]="jobOffer.status !== 'publicado'">
           <i class="bi bi-x-circle" [ngClass]="{'text-muted': jobOffer.status !== 'publicado'}"></i>
           Cancelar Publicación
         </button>
       </div>
     </div>
-    <!-- Título y Estado del Puesto -->
 
+    <!-- Título y Estado del Puesto -->
     <h3 class="job-title">{{ jobOffer.title }}</h3>
-    <!-- Badge de Estado -->
-    <div class="job-title-row">
-      <span class="job-date" *ngIf="jobOffer.publicationDate">
-        <i class="bi bi-calendar-event"></i> Publicada: {{ formatDate(jobOffer.publicationDate) }}
-      </span>
-      <span class="status-badge" [ngClass]="'status-' + jobOffer.status">
-        {{ jobOffer.status | titlecase }}
-      </span>
-    </div>
+
     <div class="job-meta">
-      <div class="job-details-row" style="justify-content: space-between;">
+      <div class="job-title-row">
         <span class="job-company">
           <i class="fas fa-building"></i> {{ jobOffer.companyName }}
         </span>
@@ -78,43 +68,71 @@
           <i class="bi bi-hash"></i> {{ jobOffer.id }}
         </span>
       </div>
-      <span class="job-location">
+      <div class="job-location">
         <i class="fas fa-map-marker-alt"></i> {{ jobOffer.location }}
-      </span>
+      </div>
+      <div class="job-title-row">
+        <span class="job-date" *ngIf="jobOffer.publicationDate">
+          <i class="bi bi-calendar-event"></i> Publicada: {{ formatDate(jobOffer.publicationDate) }}
+        </span>
+        <!-- Badge de Estado -->
+        <span class="status-badge" [ngClass]="'status-' + jobOffer.status">
+          {{ jobOffer.status | titlecase }}
+        </span>
+      </div>
+      <div class="job-location">
+        <i class="fas fa-calendar-alt"></i><span>Vence: {{ jobOffer.deadline }}</span>
+      </div>
     </div>
+
   </div>
 
   <div class="job-offer-body">
-    <!-- Descripción del Puesto -->
-    <div class="job-description">
-      <h4>Descripción del Puesto:</h4>
-      <p>
-        {{ showFullDescription ? getFullText(jobOffer.description) : getPreviewText(jobOffer.description) }}
-        <button *ngIf="isTextLong(jobOffer.description)" (click)="toggleShowMore('description', $event)"
-          class="btn-text-link">
-          {{ showFullDescription ? 'ver menos' : 'ver más' }}
-        </button>
-      </p>
-    </div>
+    <div class="card-content-wrapper">
+      <div class="main-content">
+        <!-- Descripción del Puesto -->
+        <div class="job-description">
+          <h4>Descripción del Puesto:</h4>
+          <p>
+            {{ showFullDescription ? getFullText(jobOffer.description) : getPreviewText(jobOffer.description) }}
+            <button *ngIf="isTextLong(jobOffer.description)" (click)="toggleShowMore('description', $event)"
+              class="btn-text-link">
+              {{ showFullDescription ? 'ver menos' : 'ver más' }}
+            </button>
+          </p>
+        </div>
 
-    <!-- Requisitos -->
-    <div class="job-requirements" *ngIf="jobOffer.requirements">
-      <h4>Requisitos:</h4>
-      <p>
-        {{ showFullRequirements ? getFullText(jobOffer.requirements) : getPreviewText(jobOffer.requirements) }}
-        <button *ngIf="isTextLong(jobOffer.requirements)" (click)="toggleShowMore('requirements', $event)"
-          class="btn-text-link">
-          {{ showFullRequirements ? 'ver menos' : 'ver más' }}
-        </button>
-      </p>
+        <!-- Requisitos -->
+        <div class="job-requirements" *ngIf="jobOffer.requirements">
+          <h4>Requisitos:</h4>
+          <p>
+            {{ showFullRequirements ? getFullText(jobOffer.requirements) : getPreviewText(jobOffer.requirements) }}
+            <button *ngIf="isTextLong(jobOffer.requirements)" (click)="toggleShowMore('requirements', $event)"
+              class="btn-text-link">
+              {{ showFullRequirements ? 'ver menos' : 'ver más' }}
+            </button>
+          </p>
+        </div>
+      </div>
+
+      <!-- Iconos Interactivos -->
+      <div class="card-icons">
+        <i [ngClass]="iconStates.heart ? 'fas fa-heart active' : 'far fa-heart'" title="Me gusta"
+          (click)="toggleIcon('heart', $event)"></i>
+        <i [ngClass]="iconStates.bookmark ? 'fas fa-bookmark active' : 'far fa-bookmark'" title="Guardar"
+          (click)="toggleIcon('bookmark', $event)"></i>
+        <i [ngClass]="{'active': iconStates.share}" class="fas fa-share-alt" title="Compartir"
+          (click)="toggleIcon('share', $event)"></i>
+      </div>
     </div>
 
     <!-- Detalles del Puesto -->
     <div class="job-details">
+      <!-- Fila 1 -->
       <div class="job-details-row">
         <div class="detail">
           <span class="job-modality">
-            <i class="fas fa-briefcase"></i> {{ getModalityLabel(jobOffer.modality) }}
+            <i class="fas fa-laptop-house"></i> {{ getModalityLabel(jobOffer.modality) }}
           </span>
         </div>
         <div class="detail">
@@ -122,34 +140,29 @@
           <span>{{ getContractTypeLabel(jobOffer.contractType) }}</span>
         </div>
       </div>
+      <!-- Fila 2 -->
       <div class="job-details-row">
         <div class="detail">
           <i class="fas fa-clock"></i>
           <span>{{ getWorkdayLabel(jobOffer.workday) }}</span>
         </div>
         <div class="detail">
-          <i class="fas fa-dollar-sign"></i>
+          <i class="fas fa-money-bill-wave"></i>
           <span>{{ (jobOffer.salary) }}</span>
         </div>
-      </div>
-      <div class="detail">
-        <i class="fas fa-calendar-alt"></i><span>Vence: {{ jobOffer.deadline }}</span>
-      </div>
-      <div class="detail" [class.time-critical]="isTimeCritical">
-        <i class="bi bi-hourglass-split"></i><span>{{ timeRemaining }}</span>
       </div>
     </div>
   </div>
 
   <div class="job-offer-footer">
-    <div class="job-stats">
-      <span class="stat">
-        <i class="fas fa-eye"></i> {{ jobOffer.views || 0 }}
-      </span>
-      <span class="stat">
-        <i class="fas fa-file-alt"></i> {{ jobOffer.applications || 0 }}
-      </span>
+    <div class="time-remaining" [class.time-critical]="isTimeCritical">
+      <i class="bi bi-hourglass-split"></i><span>{{ timeRemaining }}</span>
     </div>
+    <button class="apply-button">
+      <i class="fas fa-file-alt"></i>
+      <span>{{ jobOffer.applications || 0 }}</span>
+      <label>Postulados</label>
+    </button>
   </div>
 </div>
 

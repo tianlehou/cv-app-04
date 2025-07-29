@@ -7,23 +7,7 @@
   margin-bottom: 1.5rem;
   max-width: 500px;
   position: relative;
-}
-
-/* Bordes según estado */
-.border-published {
-  border-color: #28a745;
-  border-left: 4px solid #28a745;
-}
-
-.border-draft {
-  border-color: #ffc107;
-  border-left: 4px solid #ffc107;
-}
-
-.border-expired {
-  border-color: #dc3545;
-  border-left: 4px solid #dc3545;
-  opacity: 0.8;
+  color: var(--text-color-light);
 }
 
 /* Fila del título y estado */
@@ -31,9 +15,6 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 0.5rem;
-  flex-wrap: wrap;
-  gap: 0.5rem;
 }
 
 /* Badge de estado */
@@ -227,7 +208,7 @@
 
 .job-title {
   margin: 0 0 0.5rem 0;
-  color: #2c3e50;
+  color: var(--text-color);
   font-size: 1.25rem;
   font-weight: 600;
 }
@@ -235,7 +216,7 @@
 .job-meta {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.75rem;
   font-size: 0.9rem;
   color: #7f8c8d;
 }
@@ -348,25 +329,96 @@ i {
   text-align: center;
 }
 
+/* Contenedor para el contenido principal y los iconos */
+.card-content-wrapper {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  margin: 1.2rem 0;
+}
+
+.main-content {
+  flex-grow: 1;
+}
+
+/* Estilos para los iconos de la tarjeta */
+.card-icons {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.card-icons i {
+  font-size: 1.2rem;
+  color: var(--text-color-light);
+  cursor: pointer;
+  transition: color 0.3s ease, transform 0.3s ease;
+}
+
+.card-icons i:hover {
+  transform: scale(1.15);
+}
+
+/* Colores para el estado hover y activo */
+/* Rojo para "me gusta" */
+.card-icons .fa-heart:hover,
+.card-icons .fa-heart.active {
+  color: #e74c3c;
+}
+
+/* Naranja para "guardar" */
+.card-icons .fa-bookmark:hover,
+.card-icons .fa-bookmark.active {
+  color: #f39c12;
+}
+
+/* Azul para "compartir" */
+.card-icons .fa-share-alt:hover,
+.card-icons .fa-share-alt.active {
+  color: #3498db;
+}
+
 /* Pie de la tarjeta */
 .job-offer-footer {
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  ;
   align-items: center;
   padding: 0.75rem 1.5rem;
   background-color: #f9f9f9;
   border-top: 1px solid #f0f0f0;
+  gap: 0.5rem;
 }
 
-.job-stats {
+.time-remaining {
   display: flex;
-  gap: 1.25rem;
+  justify-content: center;
+
 }
 
-.stat {
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-  font-size: 0.85rem;
-  color: #7f8c8d;
+.apply-button {
+  padding: 0.6rem 1.2rem;
+  border: none;
+  border-radius: 5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background-color: var(--clr-orange);
+  color: white;
+  text-align: center;
+
+  i {
+    color: white;
+    margin-right: 1rem;
+  }
+}
+
+.apply-button:hover {
+  border: 1px solid var(--clr-orange);
+  background-color: white;
+  color: var(--clr-orange);
+
+  i {
+    color: var(--clr-orange);
+  }
 }

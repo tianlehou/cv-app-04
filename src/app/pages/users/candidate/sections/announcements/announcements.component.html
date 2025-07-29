@@ -27,65 +27,111 @@
     <div class="job-offers-grid">
       @for (jobOffer of jobOffers; track jobOffer.id) {
       <div class="job-offer-card card-border">
+
         <div class="job-offer-header">
           <h3>{{ jobOffer.title || 'Título no especificado' }}</h3>
-          <span class="company-name">{{ jobOffer.companyName || 'Empresa confidencial' }}</span>
-          <span class="publish-date" *ngIf="jobOffer.publicationDate">Publicado el: {{
-            formatDate(jobOffer.publicationDate) }}</span>
+
+          <div class="job-meta">
+            <!-- Nombre de Empresa & ID -->
+            <div class="job-details-row">
+              <div class="detail">
+                <i class="fas fa-building"></i>
+                <span class="company-name">{{ jobOffer.companyName }}</span>
+              </div>
+              <span class="job-id">
+                <i class="bi bi-hash"></i>
+                <span>{{ jobOffer.id }}</span>
+              </span>
+            </div>
+            <!-- Ubicación -->
+            <div class="detail">
+              <i class="fas fa-map-marker-alt"></i>
+              <span>{{ jobOffer.location || 'Ubicación no especificada' }}</span>
+            </div>
+            <!-- Fecha de publicación -->
+            <div class="detail" *ngIf="jobOffer.publicationDate">
+              <i class="bi bi-calendar-event"></i>
+              <span>Publicado: {{ formatDate(jobOffer.publicationDate) }}</span>
+            </div>
+            <!-- Fecha de Expiración -->
+            <div class="detail">
+              <i class="fas fa-calendar-alt"></i>
+              <span>Expira: {{ jobOffer.deadline }}</span>
+            </div>
+          </div>
         </div>
 
+        <div class="card-content-wrapper">
+          <div class="main-content">
+            @if (jobOffer.id) {
+            <div class="job-offer-description">
+              <h4>Descripción del puesto:</h4>
+              <p>
+                {{ expandedStates[jobOffer.id].description ? getFullText(jobOffer.description) :
+                getPreviewText(jobOffer.description) }}
+                <button *ngIf="isTextLong(jobOffer.description)"
+                  (click)="toggleShowMore(jobOffer.id, 'description', $event)" class="btn-text-link">
+                  {{ expandedStates[jobOffer.id].description ? 'ver menos' : 'ver más' }}
+                </button>
+              </p>
+            </div>
+            }
+
+            @if (jobOffer.id) {
+            <div class="job-offer-requirements">
+              <h4>Requisitos:</h4>
+              <p>
+                {{ expandedStates[jobOffer.id].requirements ? getFullText(jobOffer.requirements) :
+                getPreviewText(jobOffer.requirements) }}
+                <button *ngIf="isTextLong(jobOffer.requirements)"
+                  (click)="toggleShowMore(jobOffer.id, 'requirements', $event)" class="btn-text-link">
+                  {{ expandedStates[jobOffer.id].requirements ? 'ver menos' : 'ver más' }}
+                </button>
+              </p>
+            </div>
+            }
+          </div>
+          @if (jobOffer.id) {
+          <div class="card-icons">
+            <i [ngClass]="iconStates[jobOffer.id].heart ? 'fas fa-heart active' : 'far fa-heart'" title="Me gusta"
+              (click)="toggleIcon(jobOffer.id, 'heart', $event)"></i>
+            <i [ngClass]="iconStates[jobOffer.id].bookmark ? 'fas fa-bookmark active' : 'far fa-bookmark'"
+              title="Guardar" (click)="toggleIcon(jobOffer.id, 'bookmark', $event)"></i>
+            <i [ngClass]="{'active': iconStates[jobOffer.id].share}" class="fas fa-share-alt" title="Compartir"
+              (click)="toggleIcon(jobOffer.id, 'share', $event)"></i>
+          </div>
+          }
+        </div>
+
+        <!-- Detalles -->
         <div class="job-offer-details">
           <div class="detail">
-            <i class="fas fa-map-marker-alt"></i>
-            <span>{{ jobOffer.location || 'Ubicación no especificada' }}</span>
+            <i class="fas fa-laptop-house"></i>
+            <span>{{ jobOffer.modality || 'Modalidad no especificada' }}</span>
           </div>
           <div class="detail">
-            <i class="fas fa-briefcase"></i>
+            <i class="fas fa-file-contract"></i>
             <span>{{ jobOffer.contractType || 'Tipo de contrato no especificado' }}</span>
-          </div>
-          <div class="detail">
-            <i class="fas fa-money-bill-wave"></i>
-            <span>{{ jobOffer.salary ? ('$' + jobOffer.salary) : 'Salario no especificado' }}</span>
           </div>
           <div class="detail">
             <i class="fas fa-clock"></i>
             <span>{{ jobOffer.workday || 'Jornada no especificada' }}</span>
           </div>
           <div class="detail">
-            <i class="fas fa-laptop-house"></i>
-            <span>{{ jobOffer.modality || 'Modalidad no especificada' }}</span>
+            <i class="fas fa-money-bill-wave"></i>
+            <span>{{ jobOffer.salary ? (jobOffer.salary) : 'Salario no especificado' }}</span>
           </div>
         </div>
 
-        @if (jobOffer.id) {
-        <div class="job-offer-description">
-          <h4>Descripción del puesto:</h4>
-          <p>
-            {{ expandedStates[jobOffer.id].description ? getFullText(jobOffer.description) : getPreviewText(jobOffer.description) }}
-            <button *ngIf="isTextLong(jobOffer.description)" (click)="toggleShowMore(jobOffer.id, 'description', $event)"
-              class="btn-text-link">
-              {{ expandedStates[jobOffer.id].description ? 'ver menos' : 'ver más' }}
-            </button>
-          </p>
-        </div>
-        }
-
-        @if (jobOffer.id) {
-        <div class="job-offer-requirements">
-          <h4>Requisitos:</h4>
-          <p>
-            {{ expandedStates[jobOffer.id].requirements ? getFullText(jobOffer.requirements) : getPreviewText(jobOffer.requirements) }}
-            <button *ngIf="isTextLong(jobOffer.requirements)" (click)="toggleShowMore(jobOffer.id, 'requirements', $event)"
-              class="btn-text-link">
-              {{ expandedStates[jobOffer.id].requirements ? 'ver menos' : 'ver más' }}
-            </button>
-          </p>
-        </div>
-        }
-
+        <!-- Boton de Postulación -->
         <div class="job-offer-actions">
+          @if (jobOffer.id && timeRemainingStates[jobOffer.id]) {
+          <div class="time-remaining" [class.time-critical]="isTimeCriticalStates[jobOffer.id]">
+            <i class="bi bi-hourglass-split"></i>
+            <span>{{ timeRemainingStates[jobOffer.id] }}</span>
+          </div>
+          }
           <button class="apply-button">Postularme</button>
-          <button class="save-button">Guardar</button>
         </div>
       </div>
       }
