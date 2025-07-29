@@ -42,8 +42,8 @@ export class FooterComponent {
     {
       title: 'Contacto',
       links: [
-        { text: 'hola@talentovisual.com', url: 'mailto:hola@talentovisual.com', icon: 'mail-outline' },
-        { text: '+1 234 567 890', url: 'tel:+1234567890', icon: 'call-outline' }
+        { text: 'tianlehou1983@gmail.com', url: 'mailto:tianlehou1983@gmail.com', icon: 'mail-outline' },
+        { text: '+507 6843-0240', url: 'https://wa.me/50768430240', icon: 'logo-whatsapp' }
       ]
     }
   ];

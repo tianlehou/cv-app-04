@@ -352,38 +352,13 @@ i {
 .card-icons i {
   font-size: 1.2rem;
   color: var(--text-color-light);
-  cursor: pointer;
-  transition: color 0.3s ease, transform 0.3s ease;
-}
-
-.card-icons i:hover {
-  transform: scale(1.15);
-}
-
-/* Colores para el estado hover y activo */
-/* Rojo para "me gusta" */
-.card-icons .fa-heart:hover,
-.card-icons .fa-heart.active {
-  color: #e74c3c;
-}
-
-/* Naranja para "guardar" */
-.card-icons .fa-bookmark:hover,
-.card-icons .fa-bookmark.active {
-  color: #f39c12;
-}
-
-/* Azul para "compartir" */
-.card-icons .fa-share-alt:hover,
-.card-icons .fa-share-alt.active {
-  color: #3498db;
 }
 
 /* Pie de la tarjeta */
 .job-offer-footer {
-  display: grid;
-  ;
-  align-items: center;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
   padding: 0.75rem 1.5rem;
   background-color: #f9f9f9;
   border-top: 1px solid #f0f0f0;
@@ -393,14 +368,50 @@ i {
 .time-remaining {
   display: flex;
   justify-content: center;
+  font-size: 0.9rem;
+  color: #7f8c8d;
+}
 
+/* Estilos para las acciones del footer */
+.footer-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 0.5rem;
+}
+
+/* Estilos para el contador de likes */
+.likes-count {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #e74c3c;
+  font-weight: 500;
+  padding: 0.4rem 1rem;
+  border-radius: 20px;
+  background-color: rgba(231, 76, 60, 0.1);
+  transition: all 0.2s ease;
+}
+
+.likes-count i {
+  color: #e74c3c;
+  font-size: 1rem;
+}
+
+.likes-count span {
+  font-weight: 600;
+}
+
+.likes-count label {
+  font-size: 0.8rem;
+  color: #7f8c8d;
+  cursor: default;
 }
 
 .apply-button {
   padding: 0.6rem 1.2rem;
   border: none;
   border-radius: 5px;
-  font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
   background-color: var(--clr-orange);
@@ -409,7 +420,10 @@ i {
 
   i {
     color: white;
-    margin-right: 1rem;
+  }
+
+  span {
+    margin: 0 0.5rem;
   }
 }
 

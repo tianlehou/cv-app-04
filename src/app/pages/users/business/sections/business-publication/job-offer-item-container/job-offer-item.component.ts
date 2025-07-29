@@ -6,6 +6,8 @@ import { User } from '@angular/fire/auth';
 import { ConfirmationModalService } from 'src/app/shared/services/confirmation-modal.service';
 import { ToastService } from 'src/app/shared/components/toast/toast.service';
 import { JobOfferService } from '../job-offer.service';
+import { JobOfferPublishService } from '../job-offer-publish.service';
+import { JobOfferLikeService } from '../services/job-offer-like.service';
 import { JobOffer } from '../job-offer.model';
 
 @Component({
@@ -16,6 +18,90 @@ import { JobOffer } from '../job-offer.model';
   styleUrls: ['./job-offer-item.component.css']
 })
 export class JobOfferItemComponent implements OnInit, OnDestroy {
+  @Input() jobOffer: any;
+  @Input() currentUser: User | null = null;
+  @Input() isOwner: boolean = false;
+  @Output() duplicated = new EventEmitter<any>();
+  @Output() edit = new EventEmitter<any>();
+  @Output() deleted = new EventEmitter<string>();
+
+  isMenuOpen = false;
+  isDuplicating = false;
+
+  // Inyectar servicios necesarios
+  private confirmationModalService = inject(ConfirmationModalService);
+  private toast = inject(ToastService);
+  private ngZone = inject(NgZone);
+  private jobOfferService = inject(JobOfferService);
+  private jobOfferPublishService = inject(JobOfferPublishService);
+  private jobOfferLikeService = inject(JobOfferLikeService);
+
+  // Listener para el menú desplegable
+  private menuClickListener: (() => void) | null = null;
+  private clickListener: (() => void) | null = null;
+
+  // Limites de caracteres
+  private readonly MAX_PREVIEW_LENGTH = 25;
+  private readonly MAX_FULL_LENGTH = 1000;
+
+  // Estado para controlar la expansión de texto
+  showFullDescription = false;
+  showFullRequirements = false;
+
+  // Estado para mostrar el contador de likes
+  likesCount: number = 0;
+  private likesSubscription: any = null;
+
+  ngOnInit() {
+    this.updateTimeRemaining();
+    // Actualizar cada segundo
+    this.countdownSub = interval(1000).subscribe(() => {
+      this.updateTimeRemaining();
+    });
+
+    // Suscribirse a actualizaciones de likes
+    if (this.jobOffer?.id && this.jobOffer?.companyId) {
+      console.log('Iniciando suscripción a likes para oferta:', this.jobOffer.id);
+      this.likesSubscription = this.jobOfferLikeService.getLikesUpdates(
+        this.jobOffer.companyId,
+        this.jobOffer.id
+      ).subscribe({
+        next: (count) => {
+          console.log('Nuevo conteo de likes recibido:', count);
+          this.ngZone.run(() => {
+            this.likesCount = count || 0;
+            // El contador de likes se actualiza, pero no necesitamos cambiar el estado visual
+            // ya que los iconos ahora son solo de visualización
+          });
+        },
+        error: (error) => {
+          console.error('Error al obtener actualizaciones de likes:', error);
+        }
+      });
+    }
+  }
+
+  // Limpiar todas las suscripciones y listeners al destruir el componente
+  ngOnDestroy(): void {
+    // Limpiar suscripción del contador regresivo
+    if (this.countdownSub) {
+      this.countdownSub.unsubscribe();
+      this.countdownSub = null;
+    }
+
+    // Limpiar suscripción de likes
+    if (this.likesSubscription) {
+      this.likesSubscription.unsubscribe();
+      this.likesSubscription = null;
+    }
+
+    // Limpiar listeners de clic
+    this.removeOutsideClickListener();
+    this.removeClickListener();
+
+    // Limpiar cualquier referencia a callbacks para prevenir memory leaks
+    this.menuClickListener = null;
+  }
 
   // Contador regresivo
   private countdownSub: Subscription | null = null;
@@ -33,7 +119,7 @@ export class JobOfferItemComponent implements OnInit, OnDestroy {
     const now = new Date();
     // Ajustar 5 horas a la fecha actual
     now.setHours(now.getHours() - 5);
-    
+
     const deadline = new Date(this.jobOffer.deadline);
 
     // Asegurarse de que estamos comparando en la misma zona horaria
@@ -58,45 +144,6 @@ export class JobOfferItemComponent implements OnInit, OnDestroy {
 
     this.timeRemaining = `Tiempo Restante (${days}d ${hours}h ${minutes}m ${seconds}s)`;
   }
-  @Input() jobOffer: any;
-  @Input() currentUser: User | null = null;
-  @Input() isOwner: boolean = false;
-  @Output() duplicated = new EventEmitter<any>();
-  @Output() edit = new EventEmitter<any>();
-  @Output() deleted = new EventEmitter<string>();
-
-  isMenuOpen = false;
-  isDuplicating = false;
-
-  ngOnInit() {
-    this.updateTimeRemaining();
-    // Actualizar cada segundo
-    this.countdownSub = interval(1000).subscribe(() => {
-      this.updateTimeRemaining();
-    });
-  }
-
-  // Estado para controlar la expansión de texto
-  showFullDescription = false;
-  showFullRequirements = false;
-  
-  // Estados de los iconos interactivos
-  iconStates = { heart: false, bookmark: false, share: false };
-  
-  private clickListener: (() => void) | null = null;
-
-  // Listener para el menú desplegable
-  private menuClickListener: (() => void) | null = null;
-
-  // Inyectar servicios necesarios
-  private confirmationModalService = inject(ConfirmationModalService);
-  private toast = inject(ToastService);
-  private ngZone = inject(NgZone);
-  private jobOfferService = inject(JobOfferService);
-
-  // Limites de caracteres
-  private readonly MAX_PREVIEW_LENGTH = 25;
-  private readonly MAX_FULL_LENGTH = 1000;
 
   // Obtener texto recortado para vista previa
   getPreviewText(text: string | undefined): string {
@@ -112,12 +159,6 @@ export class JobOfferItemComponent implements OnInit, OnDestroy {
     return text.length > this.MAX_FULL_LENGTH
       ? text.slice(0, this.MAX_FULL_LENGTH) + '...'
       : text;
-  }
-
-  // Método para alternar el estado de un icono
-  toggleIcon(icon: 'heart' | 'bookmark' | 'share', event: MouseEvent): void {
-    event.stopPropagation();
-    this.iconStates[icon] = !this.iconStates[icon];
   }
 
   // Métodos para manejar el menú desplegable
@@ -223,17 +264,6 @@ export class JobOfferItemComponent implements OnInit, OnDestroy {
     }
   }
 
-  // Limpiar todas las suscripciones y listeners al destruir el componente
-  ngOnDestroy(): void {
-    // Limpiar suscripción del contador regresivo
-    if (this.countdownSub) {
-      this.countdownSub.unsubscribe();
-    }
-    // Limpiar listeners de clic
-    this.removeOutsideClickListener();
-    this.removeClickListener();
-  }
-
   // Formatear la fecha para mostrarla de manera legible
   formatDate(dateString: string | undefined | null): string {
     if (!dateString) return 'No especificada';
@@ -284,8 +314,8 @@ export class JobOfferItemComponent implements OnInit, OnDestroy {
   // Obtener el texto de la jornada laboral
   getWorkdayLabel(workday: string): string {
     const workdays: { [key: string]: string } = {
-      'completa': 'Jornada Completa',
-      'parcial': 'Media Jornada',
+      'completa': 'Turno completo',
+      'parcial': 'Medio turno',
       'por-horas': 'Por Horas'
     };
     return workdays[workday] || workday;
@@ -325,6 +355,7 @@ export class JobOfferItemComponent implements OnInit, OnDestroy {
 
     // Limpiar estadísticas y postulantes
     jobOfferCopy.views = 0;
+    jobOfferCopy.likes = 0;
     jobOfferCopy.applications = [];
 
     // Llamar al servicio para crear la nueva oferta
@@ -374,126 +405,31 @@ export class JobOfferItemComponent implements OnInit, OnDestroy {
     );
   }
 
-  // Verificar si la fecha de vencimiento es válida (al menos 24 horas en el futuro)
-  private isDeadlineValid(deadline: string): { isValid: boolean, title: string, message: string } {
-    if (!deadline) {
-      return { 
-        isValid: false, 
-        title: 'Fecha de vencimiento requerida',
-        message: 'La oferta no tiene una fecha de vencimiento configurada. Por favor, edita la oferta y establece una fecha de vencimiento válida.' 
-      };
-    }
-
-    const now = new Date();
-    const deadlineDate = new Date(deadline);
-    const timeDiff = deadlineDate.getTime() - now.getTime();
-    const hoursDiff = timeDiff / (1000 * 60 * 60); // Convertir a horas
-
-    if (hoursDiff < 24) {
-      return { 
-        isValid: false, 
-        title: 'Fecha de vencimiento inválida',
-        message: 'No se puede publicar porque la fecha de vencimiento debe ser al menos 24 horas después de la fecha actual.\n\nCambie la fecha y vuelva a intentarlo.'
-      };
-    }
-
-    return { isValid: true, title: '', message: '' };
-  }
-
   // Manejar la publicación de la oferta
   onPublish(): void {
-    if (this.jobOffer.status === 'publicado') {
-      this.toast.show('Esta oferta ya está publicada', 'info');
-      this.isMenuOpen = false;
-      return;
-    }
-
-    // Verificar si la fecha de vencimiento es válida
-    const deadlineValidation = this.isDeadlineValid(this.jobOffer.deadline);
-    if (!deadlineValidation.isValid) {
-      this.confirmationModalService.show(
-        {
-          title: deadlineValidation.title,
-          message: deadlineValidation.message,
-          confirmText: '',
-          cancelText: 'Entendido',
-        },
-        () => {
-          // Cerrar el menú después de que el usuario haga clic en "Entendido"
-          this.isMenuOpen = false;
-        },
-        () => {
-          // Manejar cancelación (por si acaso)
+    this.jobOfferPublishService.confirmPublish(this.jobOffer).subscribe({
+      next: (published) => {
+        if (published) {
           this.isMenuOpen = false;
         }
-      );
-      return;
-    }
-
-    // Si la fecha es válida, mostrar el modal de confirmación
-    this.confirmationModalService.show(
-      {
-        title: 'Publicar oferta',
-        message: '¿Estás seguro de que deseas publicar esta oferta de trabajo? Una vez publicada, no podrá ser editada.',
-        confirmText: 'Publicar',
-        cancelText: 'Cancelar'
       },
-      () => {
-        this.jobOfferService.publishJobOffer(this.jobOffer.id).subscribe({
-          next: () => {
-            this.toast.show('Oferta publicada exitosamente', 'success');
-            // Actualizar el estado local de la oferta
-            this.jobOffer.status = 'publicado';
-            this.jobOffer.publicationDate = new Date().toISOString();
-          },
-          error: (error: Error) => {
-            console.error('Error al publicar oferta:', error);
-            this.toast.show(error.message || 'Error al publicar la oferta', 'error');
-          },
-          complete: () => {
-            this.isMenuOpen = false;
-          }
-        });
-      },
-      () => {
-        // Acción al cancelar
+      error: () => {
         this.isMenuOpen = false;
       }
-    );
+    });
   }
 
   // Manejar la cancelación de la oferta
   onCancelPublish(): void {
-    if (this.jobOffer.status !== 'publicado') {
-      this.toast.show('Solo se pueden cancelar ofertas publicadas', 'info');
-      this.isMenuOpen = false;
-      return;
-    }
-
-    this.confirmationModalService.show(
-      {
-        title: 'Cancelar publicación',
-        message: '¿Estás seguro de que deseas cancelar la publicación de esta oferta de trabajo?',
-        confirmText: 'Sí, cancelar',
-        cancelText: 'No, mantener publicada'
+    this.jobOfferPublishService.confirmCancelPublish(this.jobOffer).subscribe({
+      next: (cancelled) => {
+        if (cancelled) {
+          this.isMenuOpen = false;
+        }
       },
-      () => {
-        this.jobOfferService.cancelJobOffer(this.jobOffer.id).subscribe({
-          next: () => {
-            this.toast.show('Publicación cancelada exitosamente', 'success');
-            // Actualizar el estado local de la oferta
-            this.jobOffer.status = 'cancelado';
-            this.jobOffer.updatedAt = new Date().toISOString();
-          },
-          error: (error: Error) => {
-            console.error('Error al cancelar publicación de oferta:', error);
-            this.toast.show(error.message || 'Error al cancelar la publicación', 'error');
-          },
-          complete: () => {
-            this.isMenuOpen = false;
-          }
-        });
+      error: () => {
+        this.isMenuOpen = false;
       }
-    );
+    });
   }
 }

@@ -16,6 +16,8 @@ export interface JobOffer {
   applications?: string[]; // IDs de los usuarios que han aplicado
   views?: number; // Número de visualizaciones
   experienceLevel?: 'trainee' | 'junior' | 'mid' | 'senior' | 'expert';
+  likes?: number; // Contador de likes
+  userLiked?: boolean; // Indica si el usuario actual ha dado like a esta oferta
   // Metadatos
   createdAt?: Date | string;
   updatedAt?: Date | string;

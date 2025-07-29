@@ -115,14 +115,11 @@
         </div>
       </div>
 
-      <!-- Iconos Interactivos -->
+      <!-- Iconos de visualización (no interactivos) -->
       <div class="card-icons">
-        <i [ngClass]="iconStates.heart ? 'fas fa-heart active' : 'far fa-heart'" title="Me gusta"
-          (click)="toggleIcon('heart', $event)"></i>
-        <i [ngClass]="iconStates.bookmark ? 'fas fa-bookmark active' : 'far fa-bookmark'" title="Guardar"
-          (click)="toggleIcon('bookmark', $event)"></i>
-        <i [ngClass]="{'active': iconStates.share}" class="fas fa-share-alt" title="Compartir"
-          (click)="toggleIcon('share', $event)"></i>
+        <!-- <i class="far fa-heart" title="Me gusta"></i> -->
+        <i class="far fa-bookmark" title="Guardar"></i>
+        <i class="fas fa-share-alt" title="Compartir"></i>
       </div>
     </div>
 
@@ -154,14 +151,22 @@
     </div>
   </div>
 
+  <!-- Footer -->
   <div class="job-offer-footer">
     <div class="time-remaining" [class.time-critical]="isTimeCritical">
       <i class="bi bi-hourglass-split"></i><span>{{ timeRemaining }}</span>
     </div>
+    <div class="footer-actions">
+      <div class="likes-count">
+        <i class="fas fa-heart"></i>
+        <span class="like-count" *ngIf="likesCount > 0">{{ likesCount }}</span>
+        <label>Me gusta</label>
+      </div>
+    </div>
     <button class="apply-button">
       <i class="fas fa-file-alt"></i>
-      <span>{{ jobOffer.applications || 0 }}</span>
-      <label>Postulados</label>
+      <span>({{ jobOffer.applications?.length || 0 }})</span>
+      <label>Ver postulados</label>
     </button>
   </div>
 </div>

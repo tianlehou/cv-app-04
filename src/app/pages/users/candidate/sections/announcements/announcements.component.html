@@ -94,11 +94,12 @@
           @if (jobOffer.id) {
           <div class="card-icons">
             <i [ngClass]="iconStates[jobOffer.id].heart ? 'fas fa-heart active' : 'far fa-heart'" title="Me gusta"
-              (click)="toggleIcon(jobOffer.id, 'heart', $event)"></i>
+              (click)="$event.stopPropagation(); toggleIcon(jobOffer, 'heart', $event)">
+            </i>
             <i [ngClass]="iconStates[jobOffer.id].bookmark ? 'fas fa-bookmark active' : 'far fa-bookmark'"
-              title="Guardar" (click)="toggleIcon(jobOffer.id, 'bookmark', $event)"></i>
+              title="Guardar" (click)="$event.stopPropagation(); toggleIcon(jobOffer, 'bookmark', $event)"></i>
             <i [ngClass]="{'active': iconStates[jobOffer.id].share}" class="fas fa-share-alt" title="Compartir"
-              (click)="toggleIcon(jobOffer.id, 'share', $event)"></i>
+              (click)="$event.stopPropagation(); toggleIcon(jobOffer, 'share', $event)"></i>
           </div>
           }
         </div>

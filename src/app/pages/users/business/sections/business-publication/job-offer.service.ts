@@ -5,7 +5,7 @@ import { catchError, map, switchMap } from 'rxjs/operators';
 import { FirebaseService } from 'src/app/shared/services/firebase.service';
 import { DataSnapshot } from '@angular/fire/database';
 import { AuthService } from 'src/app/pages/home/auth/auth.service';
-import { Database, get, ref } from '@angular/fire/database';
+import { Database, get, ref, onValue, update, increment } from '@angular/fire/database';
 
 @Injectable({
   providedIn: 'root'

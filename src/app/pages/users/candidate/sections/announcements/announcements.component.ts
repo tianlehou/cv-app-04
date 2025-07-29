@@ -1,8 +1,10 @@
 import { Component, OnInit, OnDestroy, Renderer2, NgZone } from '@angular/core';
-import { Subscription, interval } from 'rxjs';
 import { CommonModule } from '@angular/common';
-import { PublicJobOfferService } from 'src/app/shared/services/public-job-offer.service';
+import { Subscription, interval} from 'rxjs';
+import { Auth, User, user } from '@angular/fire/auth';
 import { JobOffer } from 'src/app/pages/users/business/sections/business-publication/job-offer.model';
+import { PublicJobOfferService } from './services/public-job-offer.service';
+import { JobInteractionService } from './services/job-interaction.service';
 
 @Component({
   selector: 'app-announcements',
@@ -17,7 +19,7 @@ export class AnnouncementsComponent implements OnInit, OnDestroy {
 
   // Objeto para rastrear el estado de expansión de cada oferta
   expandedStates: { [key: string]: { description: boolean; requirements: boolean } } = {};
-  iconStates: { [key: string]: { heart: boolean; bookmark: boolean; share: boolean } } = {};
+  iconStates: { [key: string]: { heart: boolean; bookmark: boolean; share: boolean; cooldown?: boolean } } = {};
   jobOffers: JobOffer[] = [];
   isLoading = true;
   error: string | null = null;
@@ -30,11 +32,21 @@ export class AnnouncementsComponent implements OnInit, OnDestroy {
 
   private clickListener: (() => void) | null = null;
 
+  private user: User | null = null;
+  private userSubscription: Subscription | null = null;
+
   constructor(
     private publicJobOfferService: PublicJobOfferService,
     private renderer: Renderer2,
-    private ngZone: NgZone
-  ) {}
+    private ngZone: NgZone,
+    private auth: Auth,
+    private jobInteractionService: JobInteractionService
+  ) {
+    // Suscribirse a cambios en el estado de autenticación
+    this.userSubscription = user(this.auth).subscribe((user) => {
+      this.user = user;
+    });
+  }
 
   ngOnInit(): void {
     this.loadJobOffers();
@@ -44,6 +56,9 @@ export class AnnouncementsComponent implements OnInit, OnDestroy {
     if (this.countdownSub) {
       this.countdownSub.unsubscribe();
     }
+    if (this.userSubscription) {
+      this.userSubscription.unsubscribe();
+    }
     this.removeOutsideClickListener();
   }
 
@@ -51,17 +66,31 @@ export class AnnouncementsComponent implements OnInit, OnDestroy {
     this.isLoading = true;
     this.error = null;
     
-    // Obtener todas las ofertas de trabajo públicas de todas las empresas
-    this.publicJobOfferService.getAllPublicJobOffers().subscribe({
+    // Obtener el email del usuario actual si está autenticado
+    const userEmail = this.auth.currentUser?.email || undefined;
+    
+    this.publicJobOfferService.getAllPublicJobOffers(userEmail).subscribe({
       next: (offers) => {
         this.jobOffers = offers;
+        
         // Inicializar los estados de expansión para cada oferta
         this.jobOffers.forEach(offer => {
           if (offer.id) {
             this.expandedStates[offer.id] = { description: false, requirements: false };
-            this.iconStates[offer.id] = { heart: false, bookmark: false, share: false };
           }
         });
+        
+        // Inicializar el estado de los iconos basado en los likes del usuario
+        offers.forEach(offer => {
+          if (!this.iconStates[offer.id!]) {
+            this.iconStates[offer.id!] = { heart: false, bookmark: false, share: false };
+          }
+          // Establecer el estado del corazón según si el usuario dio like
+          if (offer.userLiked) {
+            this.iconStates[offer.id!].heart = true;
+          }
+        });
+        
         this.isLoading = false;
         
         if (offers.length === 0) {
@@ -71,12 +100,10 @@ export class AnnouncementsComponent implements OnInit, OnDestroy {
           this.initializeTimeRemaining();
         }
       },
-      error: (error) => {
-        console.error('Error al cargar las ofertas de trabajo:', error);
+      error: (err) => {
+        console.error('Error al cargar las ofertas:', err);
         this.error = 'Error al cargar las ofertas de trabajo. Por favor, inténtalo de nuevo más tarde.';
         this.isLoading = false;
-      },
-      complete: () => {
       }
     });
   }
@@ -157,12 +184,16 @@ export class AnnouncementsComponent implements OnInit, OnDestroy {
     }
   }
 
-  // Método para alternar el estado de un icono
-  toggleIcon(jobOfferId: string | undefined, icon: 'heart' | 'bookmark' | 'share', event: MouseEvent): void {
+  // Método para manejar el clic en el corazón
+  toggleLike(jobOffer: JobOffer, event: Event): void {
     event.stopPropagation();
-    if (jobOfferId) {
-      this.iconStates[jobOfferId][icon] = !this.iconStates[jobOfferId][icon];
-    }
+    this.jobInteractionService.toggleLike(jobOffer, this.iconStates).subscribe();
+  }
+
+  // Método para alternar iconos
+  toggleIcon(jobOffer: JobOffer, iconType: 'heart' | 'bookmark' | 'share', event: Event): void {
+    event.stopPropagation();
+    this.jobInteractionService.toggleIcon(jobOffer, iconType, this.iconStates).subscribe();
   }
 
   // Método para contraer todas las secciones
