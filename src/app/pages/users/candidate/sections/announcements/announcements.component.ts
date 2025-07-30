@@ -193,7 +193,15 @@ export class AnnouncementsComponent implements OnInit, OnDestroy {
   // Método para alternar iconos
   toggleIcon(jobOffer: JobOffer, iconType: 'heart' | 'bookmark' | 'share', event: Event): void {
     event.stopPropagation();
-    this.jobInteractionService.toggleIcon(jobOffer, iconType, this.iconStates).subscribe();
+    
+    if (iconType === 'heart') {
+      this.jobInteractionService.toggleLike(jobOffer, this.iconStates).subscribe();
+    } else if (iconType === 'bookmark') {
+      this.jobInteractionService.toggleSave(jobOffer, this.iconStates).subscribe();
+    } else {
+      // Para otros tipos de iconos (como 'share')
+      this.jobInteractionService.toggleIcon(jobOffer, iconType, this.iconStates).subscribe();
+    }
   }
 
   // Método para contraer todas las secciones

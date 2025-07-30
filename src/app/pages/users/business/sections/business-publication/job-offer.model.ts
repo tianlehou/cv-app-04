@@ -18,6 +18,8 @@ export interface JobOffer {
   experienceLevel?: 'trainee' | 'junior' | 'mid' | 'senior' | 'expert';
   likes?: number; // Contador de likes
   userLiked?: boolean; // Indica si el usuario actual ha dado like a esta oferta
+  saves?: number;
+  userSaved?: boolean;
   // Metadatos
   createdAt?: Date | string;
   updatedAt?: Date | string;

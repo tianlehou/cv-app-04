@@ -1,5 +1,5 @@
 import { Component, Output, EventEmitter } from '@angular/core';
-import { ConfirmationModalService } from 'src/app/shared/services/confirmation-modal.service';
+import { ConfirmationModalService } from 'src/app/shared/components/confirmation-modal/confirmation-modal.service';
 import { inject } from '@angular/core';
 
 @Component({

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { JobOfferService } from './job-offer.service';
-import { ConfirmationModalService } from 'src/app/shared/services/confirmation-modal.service';
+import { ConfirmationModalService } from 'src/app/shared/components/confirmation-modal/confirmation-modal.service';
 import { ToastService } from 'src/app/shared/components/toast/toast.service';
 
 @Injectable({
@@ -14,11 +14,6 @@ export class JobOfferPublishService {
     private toast: ToastService
   ) {}
 
-  /**
-   * Verifica si la fecha de vencimiento es válida (al menos 24 horas en el futuro)
-   * @param deadline Fecha de vencimiento en formato ISO string
-   * @returns Objeto con validación y mensajes
-   */
   isDeadlineValid(deadline: string): { isValid: boolean; title: string; message: string } {
     if (!deadline) {
       return {
@@ -52,11 +47,6 @@ export class JobOfferPublishService {
     return { isValid: true, title: '', message: '' };
   }
 
-  /**
-   * Muestra el diálogo de confirmación para publicar una oferta
-   * @param jobOffer Oferta de trabajo a publicar
-   * @returns Observable que emite cuando se completa la acción
-   */
   confirmPublish(jobOffer: any): Observable<boolean> {
     return new Observable(subscriber => {
       // Verificar si ya está publicada
@@ -124,11 +114,6 @@ export class JobOfferPublishService {
     });
   }
 
-  /**
-   * Muestra el diálogo de confirmación para cancelar la publicación de una oferta
-   * @param jobOffer Oferta de trabajo a cancelar
-   * @returns Observable que emite cuando se completa la acción
-   */
   confirmCancelPublish(jobOffer: any): Observable<boolean> {
     return new Observable(subscriber => {
       // Verificar si está publicada

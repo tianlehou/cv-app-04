@@ -15,7 +15,7 @@ import { FirebaseService } from 'src/app/shared/services/firebase.service';
 import { ExamplesService } from 'src/app/shared/services/examples.service';
 import { User } from '@angular/fire/auth';
 import { ToastService } from 'src/app/shared/components/toast/toast.service';
-import { ConfirmationModalService } from 'src/app/shared/services/confirmation-modal.service';
+import { ConfirmationModalService } from 'src/app/shared/components/confirmation-modal/confirmation-modal.service';
 import { ProfilePictureInfoComponent } from './profile-picture-info/profile-picture-info.component';
 import { ImageCompressionService } from 'src/app/shared/services/image-compression.service';
 

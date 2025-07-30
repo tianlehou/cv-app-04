@@ -115,10 +115,9 @@
         </div>
       </div>
 
-      <!-- Iconos de visualización (no interactivos) -->
+      <!-- Iconos de visualización -->
       <div class="card-icons">
-        <!-- <i class="far fa-heart" title="Me gusta"></i> -->
-        <i class="far fa-bookmark" title="Guardar"></i>
+        <!-- Icono de compartir -->
         <i class="fas fa-share-alt" title="Compartir"></i>
       </div>
     </div>
@@ -161,6 +160,11 @@
         <i class="fas fa-heart"></i>
         <span class="like-count" *ngIf="likesCount > 0">{{ likesCount }}</span>
         <label>Me gusta</label>
+      </div>
+      <div class="bookmarks-count">
+        <i class="fas fa-bookmark"></i>
+        <span class="bookmark-count" *ngIf="bookmarksCount > 0">{{ bookmarksCount }}</span>
+        <label>Guardados</label>
       </div>
     </div>
     <button class="apply-button">

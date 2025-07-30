@@ -372,7 +372,9 @@ i {
   color: #7f8c8d;
 }
 
+/*======================================*/
 /* Estilos para las acciones del footer */
+/*======================================*/
 .footer-actions {
   display: flex;
   justify-content: space-between;
@@ -408,6 +410,37 @@ i {
   cursor: default;
 }
 
+/* Estilos para el contador de bookmarks */
+.bookmarks-count {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #3498db;
+  font-weight: 500;
+  padding: 0.4rem 1rem;
+  border-radius: 20px;
+  background-color: rgba(52, 152, 219, 0.1);
+  transition: all 0.2s ease;
+}
+
+.bookmarks-count i {
+  color: #3498db;
+  font-size: 1rem;
+}
+
+.bookmarks-count span {
+  font-weight: 600;
+}
+
+.bookmarks-count label {
+  font-size: 0.8rem;
+  color: #7f8c8d;
+  cursor: default;
+}
+
+/*====================================*/
+/* Estilos para el botón de aplicados */
+/*====================================*/
 .apply-button {
   padding: 0.6rem 1.2rem;
   border: none;

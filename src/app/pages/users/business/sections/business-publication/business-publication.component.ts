@@ -4,7 +4,7 @@ import { PublicationFormComponent } from './publication-form/publication-form.co
 import { CreatePublicationButtonComponent } from './create-publication-button/create-publication-button.component';
 import { EmptyPublicationMessageComponent } from './empty-publication-message/empty-publication-message.component';
 import { JobOfferItemComponent } from './job-offer-item-container/job-offer-item.component';
-import { JobOfferService } from './job-offer.service';
+import { JobOfferService } from './services/job-offer.service';
 import { JobOffer } from './job-offer.model';
 import { AuthService } from 'src/app/pages/home/auth/auth.service';
 import { Subscription } from 'rxjs';

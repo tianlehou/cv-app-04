@@ -1,5 +1,5 @@
 import { EnvironmentInjector, Injectable, inject, runInInjectionContext } from '@angular/core';
-import { JobOffer } from './job-offer.model';
+import { JobOffer } from '../job-offer.model';
 import { Observable, from, throwError } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 import { FirebaseService } from 'src/app/shared/services/firebase.service';

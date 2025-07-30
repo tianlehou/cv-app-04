@@ -9,7 +9,7 @@ import {
 } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { FirebaseService } from 'src/app/shared/services/firebase.service';
-import { ConfirmationModalService } from 'src/app/shared/services/confirmation-modal.service';
+import { ConfirmationModalService } from 'src/app/shared/components/confirmation-modal/confirmation-modal.service';
 import { User } from '@angular/fire/auth';
 import { ExperienceInfoComponent } from './experience-info/experience-info.component';
 import { ToastService } from 'src/app/shared/components/toast/toast.service';

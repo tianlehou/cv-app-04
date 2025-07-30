@@ -2,10 +2,10 @@ import { Component, OnInit, Output, EventEmitter, inject, NgZone, Input, OnChang
 import { FormBuilder, FormGroup, Validators, AbstractControl, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Subject } from 'rxjs';
-import { JobOfferService } from '../job-offer.service';
+import { JobOfferService } from '../services/job-offer.service';
 import { JobOffer } from '../job-offer.model';
 import { AuthService } from 'src/app/pages/home/auth/auth.service';
-import { ConfirmationModalService } from 'src/app/shared/services/confirmation-modal.service';
+import { ConfirmationModalService } from 'src/app/shared/components/confirmation-modal/confirmation-modal.service';
 import { ToastService } from 'src/app/shared/components/toast/toast.service';
 
 @Component({

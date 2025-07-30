@@ -3,12 +3,13 @@ import { Component, Input, Output, EventEmitter, inject, NgZone, OnDestroy, OnIn
 import { interval, Subscription } from 'rxjs';
 import { JobOfferInfoModalComponent } from './job-offer-info-modal/job-offer-info-modal.component';
 import { User } from '@angular/fire/auth';
-import { ConfirmationModalService } from 'src/app/shared/services/confirmation-modal.service';
+import { ConfirmationModalService } from 'src/app/shared/components/confirmation-modal/confirmation-modal.service';
 import { ToastService } from 'src/app/shared/components/toast/toast.service';
-import { JobOfferService } from '../job-offer.service';
-import { JobOfferPublishService } from '../job-offer-publish.service';
+import { JobOfferService } from '../services/job-offer.service';
+import { JobOfferPublishService } from '../services/job-offer-publish.service';
 import { JobOfferLikeService } from '../services/job-offer-like.service';
 import { JobOffer } from '../job-offer.model';
+import { JobOfferBookmarkService } from '../services/job-offer-bookmark.service';
 
 @Component({
   selector: 'app-job-offer-item',
@@ -35,6 +36,7 @@ export class JobOfferItemComponent implements OnInit, OnDestroy {
   private jobOfferService = inject(JobOfferService);
   private jobOfferPublishService = inject(JobOfferPublishService);
   private jobOfferLikeService = inject(JobOfferLikeService);
+  private jobOfferBookmarkService = inject(JobOfferBookmarkService);
 
   // Listener para el menú desplegable
   private menuClickListener: (() => void) | null = null;
@@ -50,7 +52,11 @@ export class JobOfferItemComponent implements OnInit, OnDestroy {
 
   // Estado para mostrar el contador de likes
   likesCount: number = 0;
-  private likesSubscription: any = null;
+  private likesSubscription: Subscription | null = null;
+
+  // Estado para mostrar el contador de saves/bookmarks
+  bookmarksCount: number = 0;
+  private bookmarksSubscription: Subscription | null = null;
 
   ngOnInit() {
     this.updateTimeRemaining();
@@ -61,6 +67,7 @@ export class JobOfferItemComponent implements OnInit, OnDestroy {
 
     // Suscribirse a actualizaciones de likes
     if (this.jobOffer?.id && this.jobOffer?.companyId) {
+      
       console.log('Iniciando suscripción a likes para oferta:', this.jobOffer.id);
       this.likesSubscription = this.jobOfferLikeService.getLikesUpdates(
         this.jobOffer.companyId,
@@ -70,12 +77,27 @@ export class JobOfferItemComponent implements OnInit, OnDestroy {
           console.log('Nuevo conteo de likes recibido:', count);
           this.ngZone.run(() => {
             this.likesCount = count || 0;
-            // El contador de likes se actualiza, pero no necesitamos cambiar el estado visual
-            // ya que los iconos ahora son solo de visualización
           });
         },
         error: (error) => {
           console.error('Error al obtener actualizaciones de likes:', error);
+        }
+      });
+
+      // Suscribirse a actualizaciones de bookmarks
+      console.log('Iniciando suscripción a bookmarks para oferta:', this.jobOffer.id);
+      this.bookmarksSubscription = this.jobOfferBookmarkService.getSavesUpdates(
+        this.jobOffer.companyId,
+        this.jobOffer.id
+      ).subscribe({
+        next: (count) => {
+          console.log('Nuevo conteo de bookmarks recibido:', count);
+          this.ngZone.run(() => {
+            this.bookmarksCount = count || 0;
+          });
+        },
+        error: (error) => {
+          console.error('Error al obtener actualizaciones de bookmarks:', error);
         }
       });
     }
@@ -93,6 +115,12 @@ export class JobOfferItemComponent implements OnInit, OnDestroy {
     if (this.likesSubscription) {
       this.likesSubscription.unsubscribe();
       this.likesSubscription = null;
+    }
+
+    // Limpiar suscripción de bookmarks
+    if (this.bookmarksSubscription) {
+      this.bookmarksSubscription.unsubscribe();
+      this.bookmarksSubscription = null;
     }
 
     // Limpiar listeners de clic

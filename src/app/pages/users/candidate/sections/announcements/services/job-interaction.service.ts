@@ -1,9 +1,8 @@
 import { Injectable, inject } from '@angular/core';
-import { JobOffer } from '../../../../business/sections/business-publication/job-offer.model';
-import { PublicJobOfferService } from './public-job-offer.service';
-import { catchError, of } from 'rxjs';
+import { catchError, from, of, Observable, map, switchMap } from 'rxjs';
 import { Auth, User, user } from '@angular/fire/auth';
-import { Observable, map } from 'rxjs';
+import { Database, get, ref, update } from '@angular/fire/database';
+import { JobOffer } from '../../../../business/sections/business-publication/job-offer.model';
 
 type IconType = 'heart' | 'bookmark' | 'share';
 interface IconStates {
@@ -20,8 +19,8 @@ interface IconStates {
 })
 export class JobInteractionService {
   private auth = inject(Auth);
-  private publicJobOfferService = inject(PublicJobOfferService);
-  
+  private database = inject(Database);
+
   // Almacenar estados de iconos
   private iconStates: IconStates = {};
   private user: User | null = null;
@@ -33,12 +32,33 @@ export class JobInteractionService {
     });
   }
 
-  /**
-   * Alternar el estado de like de una oferta de trabajo
-   * @param jobOffer Oferta de trabajo a la que se le dará/quitará like
-   * @param iconStates Objeto con los estados actuales de los iconos
-   * @returns Un observable que emite el nuevo estado del like o null si hay un error
-   */
+  toggleIcon(
+    jobOffer: JobOffer,
+    iconType: IconType,
+    iconStates: IconStates
+  ): Observable<boolean | null> {
+    // Manejar el corazón de manera especial
+    if (iconType === 'heart') {
+      return this.toggleLike(jobOffer, iconStates);
+    }
+
+    // Para los demás iconos, mantener el comportamiento actual
+    if (iconStates[jobOffer.id || '']) {
+      const newState = !iconStates[jobOffer.id || ''][iconType];
+      iconStates[jobOffer.id || ''][iconType] = newState;
+      return of(newState);
+    }
+
+    return of(null);
+  }
+
+  getIconState(jobOfferId: string): { heart: boolean; bookmark: boolean; share: boolean } {
+    if (!this.iconStates[jobOfferId]) {
+      this.iconStates[jobOfferId] = { heart: false, bookmark: false, share: false };
+    }
+    return this.iconStates[jobOfferId];
+  }
+
   toggleLike(jobOffer: JobOffer, iconStates: IconStates): Observable<boolean | null> {
     // Verificar si el usuario está autenticado
     if (!this.user?.email) {
@@ -66,17 +86,17 @@ export class JobInteractionService {
     // Obtener el estado actual del corazón
     const currentState = iconStates[jobOfferId].heart;
     const newState = !currentState;
-    
+
     // Iniciar cooldown de 3 segundos
     iconStates[jobOfferId].cooldown = true;
     setTimeout(() => {
       if (iconStates[jobOfferId]) {
         iconStates[jobOfferId].cooldown = false;
       }
-    }, 3000);
+    }, 1000);
 
     // Llamar al servicio para actualizar los likes
-    return this.publicJobOfferService.updateJobOfferLikes(
+    return this.updateJobOfferLikes(
       jobOfferId,
       jobOffer.companyId,
       this.user.email || '',
@@ -96,42 +116,174 @@ export class JobInteractionService {
     );
   }
 
-  /**
-   * Alternar el estado de un icono
-   * @param jobOffer Oferta de trabajo
-   * @param iconType Tipo de icono a alternar
-   * @param iconStates Objeto con los estados actuales de los iconos
-   * @returns Un observable que emite el nuevo estado del icono o null si hay un error
-   */
-  toggleIcon(
-    jobOffer: JobOffer, 
-    iconType: IconType, 
-    iconStates: IconStates
-  ): Observable<boolean | null> {
-    // Manejar el corazón de manera especial
-    if (iconType === 'heart') {
-      return this.toggleLike(jobOffer, iconStates);
+  toggleSave(jobOffer: JobOffer, iconStates: IconStates): Observable<boolean | null> {
+    // Verificar si el usuario está autenticado
+    if (!this.user?.email) {
+      console.warn('Usuario no autenticado');
+      return of(null);
     }
-    
-    // Para los demás iconos, mantener el comportamiento actual
-    if (iconStates[jobOffer.id || '']) {
-      const newState = !iconStates[jobOffer.id || ''][iconType];
-      iconStates[jobOffer.id || ''][iconType] = newState;
-      return of(newState);
+
+    const jobOfferId = jobOffer.id;
+    if (!jobOfferId || !jobOffer.companyId) {
+      console.error('ID de oferta o compañía no válido');
+      return of(null);
     }
-    
-    return of(null);
+
+    // Inicializar el estado del icono si no existe
+    if (!iconStates[jobOfferId]) {
+      iconStates[jobOfferId] = { heart: false, bookmark: false, share: false };
+    }
+
+    // Si el botón está en cooldown, no hacer nada
+    if (iconStates[jobOfferId].cooldown) {
+      console.log('Botón en cooldown');
+      return of(null);
+    }
+
+    // Obtener el estado actual del bookmark
+    const currentState = iconStates[jobOfferId].bookmark;
+    const newState = !currentState;
+
+    // Iniciar cooldown de 3 segundos
+    iconStates[jobOfferId].cooldown = true;
+    setTimeout(() => {
+      if (iconStates[jobOfferId]) {
+        iconStates[jobOfferId].cooldown = false;
+      }
+    }, 1000);
+
+    // Llamar al servicio para actualizar los bookmarks
+    return this.updateJobOfferSaves(
+      jobOfferId,
+      jobOffer.companyId,
+      this.user.email || '',
+      newState
+    ).pipe(
+      map(() => {
+        // Actualizar el estado local
+        iconStates[jobOfferId].bookmark = newState;
+        return newState;
+      }),
+      catchError(error => {
+        console.error('Error al actualizar bookmark:', error);
+        // En caso de error, terminar el cooldown
+        iconStates[jobOfferId].cooldown = false;
+        return of(currentState);
+      })
+    );
   }
 
-  /**
-   * Obtener el estado actual de los iconos
-   * @param jobOfferId ID de la oferta de trabajo
-   * @returns Estado actual de los iconos para la oferta especificada
-   */
-  getIconState(jobOfferId: string): { heart: boolean; bookmark: boolean; share: boolean } {
-    if (!this.iconStates[jobOfferId]) {
-      this.iconStates[jobOfferId] = { heart: false, bookmark: false, share: false };
+  // Método para actualizar el contador de likes de una oferta de trabajo
+  updateJobOfferLikes(jobOfferId: string, companyId: string, userEmail: string, increment: boolean = true): Observable<{ success: boolean, alreadyLiked?: boolean }> {
+    if (!jobOfferId || !userEmail || !companyId) {
+      console.error('Se requiere el ID de la oferta, el ID de la compañía y el email del usuario');
+      return of({ success: false });
     }
-    return this.iconStates[jobOfferId];
+
+    // Formatear el email para usarlo como clave
+    const emailKey = userEmail.replace(/[.#\[\]]/g, '_');
+
+    // Referencia a la oferta de trabajo específica
+    const jobOfferRef = ref(this.database, `cv-app/users/${companyId}/job-offer/${jobOfferId}`);
+    // Referencia para rastrear qué usuarios han dado like (usando email como clave)
+    const userLikesRef = ref(this.database, `cv-app/users/${companyId}/job-offer/${jobOfferId}/likedBy/${emailKey}`);
+
+    return from(get(userLikesRef)).pipe(
+      switchMap((userLikeSnapshot) => {
+        const userAlreadyLiked = userLikeSnapshot.exists() && userLikeSnapshot.val() === true;
+
+        // Si el usuario ya dio like y está intentando dar like de nuevo, o
+        // si está intentando quitar like pero no lo había dado
+        if ((increment && userAlreadyLiked) || (!increment && !userAlreadyLiked)) {
+          return of({ success: false, alreadyLiked: userAlreadyLiked });
+        }
+
+        // Obtener la oferta para actualizar el contador
+        return from(get(jobOfferRef)).pipe(
+          switchMap((jobOfferSnapshot) => {
+            if (!jobOfferSnapshot.exists()) {
+              console.error('La oferta de trabajo no existe');
+              return of({ success: false });
+            }
+
+            const jobOffer = jobOfferSnapshot.val();
+            const currentLikes = jobOffer.likes || 0;
+            const newLikes = increment ? currentLikes + 1 : currentLikes - 1;
+
+            // Actualizar el contador de likes y el estado del like del usuario en una sola operación
+            const updates: any = {};
+            updates[`cv-app/users/${companyId}/job-offer/${jobOfferId}/likes`] = newLikes;
+            updates[`cv-app/users/${companyId}/job-offer/${jobOfferId}/likedBy/${emailKey}`] = increment;
+
+            return from(update(ref(this.database), updates)).pipe(
+              map(() => ({ success: true })),
+              catchError(error => {
+                console.error('Error al actualizar likes:', error);
+                return of({ success: false });
+              })
+            );
+          })
+        );
+      })
+    );
+  }
+
+  // Método para actualizar los bookmarks de una oferta de trabajo
+  updateJobOfferSaves(jobOfferId: string, companyId: string, userEmail: string, addBookmark: boolean = true): Observable<{ success: boolean, alreadyBookmarked?: boolean }> {
+    if (!jobOfferId || !userEmail || !companyId) {
+      console.error('Se requiere el ID de la oferta, el ID de la compañía y el email del usuario');
+      return of({ success: false });
+    }
+
+    // Formatear el email para usarlo como clave
+    const emailKey = userEmail.replace(/[.#\[\]]/g, '_');
+
+    // Referencia a la oferta de trabajo específica
+    const jobOfferRef = ref(this.database, `cv-app/users/${companyId}/job-offer/${jobOfferId}`);
+    // Referencia para rastrear qué usuarios han guardado la oferta (usando email como clave)
+    const userBookmarksRef = ref(this.database, `cv-app/users/${companyId}/job-offer/${jobOfferId}/savedBy/${emailKey}`);
+
+    return from(get(userBookmarksRef)).pipe(
+      switchMap((userBookmarkSnapshot) => {
+        const userAlreadyBookmarked = userBookmarkSnapshot.exists() && userBookmarkSnapshot.val() === true;
+
+        // Si el usuario ya guardó y está intentando guardar de nuevo, o
+        // si está intentando quitar el guardado pero no lo tenía guardado
+        if ((addBookmark && userAlreadyBookmarked) || (!addBookmark && !userAlreadyBookmarked)) {
+          return of({ success: false, alreadyBookmarked: userAlreadyBookmarked });
+        }
+
+        // Obtener la oferta para actualizar el contador de guardados
+        return from(get(jobOfferRef)).pipe(
+          switchMap((jobOfferSnapshot) => {
+            if (!jobOfferSnapshot.exists()) {
+              console.error('La oferta de trabajo no existe');
+              return of({ success: false });
+            }
+
+            const jobOffer = jobOfferSnapshot.val();
+            const currentSaves = jobOffer.saves || 0;
+            const newSaves = addBookmark ? currentSaves + 1 : Math.max(0, currentSaves - 1);
+
+            // Actualizar el contador de guardados y el estado del guardado del usuario en una sola operación
+            const updates: any = {};
+            updates[`cv-app/users/${companyId}/job-offer/${jobOfferId}/saves`] = newSaves;
+            updates[`cv-app/users/${companyId}/job-offer/${jobOfferId}/savedBy/${emailKey}`] = addBookmark;
+
+            return from(update(ref(this.database), updates)).pipe(
+              map(() => ({ success: true })),
+              catchError(error => {
+                console.error('Error al actualizar bookmarks:', error);
+                return of({ success: false });
+              })
+            );
+          })
+        );
+      }),
+      catchError(error => {
+        console.error('Error al verificar el estado del bookmark:', error);
+        return of({ success: false });
+      })
+    );
   }
 }

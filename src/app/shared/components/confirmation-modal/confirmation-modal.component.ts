@@ -1,7 +1,7 @@
 // confirmation-modal.component.ts
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ConfirmationModalService } from '../../services/confirmation-modal.service';
+import { ConfirmationModalService } from './confirmation-modal.service';
 
 @Component({
   selector: 'app-confirmation-modal',

@@ -5,18 +5,18 @@ import { Observable, from } from 'rxjs';
 @Injectable({
   providedIn: 'root'
 })
-export class JobOfferLikeService {
+export class JobOfferBookmarkService {
   private db = inject(Database);
 
-  getLikesUpdates(companyId: string, jobOfferId: string): Observable<number> {
+  getSavesUpdates(companyId: string, jobOfferId: string): Observable<number> {
     return new Observable<number>(subscriber => {
-      const likesRef = ref(this.db, `cv-app/users/${companyId}/job-offer/${jobOfferId}/likes`);
-      
-      const unsubscribe = onValue(likesRef, (snapshot) => {
-        const likes = snapshot.val() || 0;
-        subscriber.next(likes);
+      const savesRef = ref(this.db, `cv-app/users/${companyId}/job-offer/${jobOfferId}/saves`);
+
+      const unsubscribe = onValue(savesRef, (snapshot) => {
+        const saves = snapshot.val() || 0;
+        subscriber.next(saves);
       }, (error) => {
-        console.error('Error al obtener actualizaciones de likes:', error);
+        console.error('Error al obtener actualizaciones de saves:', error);
         subscriber.error(error);
       });
 
@@ -25,19 +25,19 @@ export class JobOfferLikeService {
     });
   }
 
-  likeJobOffer(companyId: string, jobOfferId: string): Observable<void> {
+  saveJobOffer(companyId: string, jobOfferId: string): Observable<void> {
     const jobOfferRef = ref(this.db, `cv-app/users/${companyId}/job-offer/${jobOfferId}`);
-    
+
     return from(update(jobOfferRef, {
-      likes: increment(1)
+      saves: increment(1)
     }));
   }
 
-  unlikeJobOffer(companyId: string, jobOfferId: string): Observable<void> {
+  unsaveJobOffer(companyId: string, jobOfferId: string): Observable<void> {
     const jobOfferRef = ref(this.db, `cv-app/users/${companyId}/job-offer/${jobOfferId}`);
-    
+
     return from(update(jobOfferRef, {
-      likes: increment(-1)
+      saves: increment(-1)
     }));
   }
 }
