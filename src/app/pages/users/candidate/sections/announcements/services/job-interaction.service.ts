@@ -1,4 +1,4 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable, inject, EnvironmentInjector, runInInjectionContext } from '@angular/core';
 import { catchError, from, of, Observable, map, switchMap } from 'rxjs';
 import { Auth, User, user } from '@angular/fire/auth';
 import { Database, get, ref, update } from '@angular/fire/database';
@@ -20,6 +20,7 @@ interface IconStates {
 export class JobInteractionService {
   private auth = inject(Auth);
   private database = inject(Database);
+  private injector = inject(EnvironmentInjector);
 
   // Almacenar estados de iconos
   private iconStates: IconStates = {};
@@ -175,115 +176,131 @@ export class JobInteractionService {
 
   // Método para actualizar el contador de likes de una oferta de trabajo
   updateJobOfferLikes(jobOfferId: string, companyId: string, userEmail: string, increment: boolean = true): Observable<{ success: boolean, alreadyLiked?: boolean }> {
-    if (!jobOfferId || !userEmail || !companyId) {
-      console.error('Se requiere el ID de la oferta, el ID de la compañía y el email del usuario');
-      return of({ success: false });
-    }
+    return runInInjectionContext(this.injector, () => {
+      if (!jobOfferId || !userEmail || !companyId) {
+        console.error('Se requiere el ID de la oferta, el ID de la compañía y el email del usuario');
+        return of({ success: false });
+      }
 
-    // Formatear el email para usarlo como clave
-    const emailKey = userEmail.replace(/[.#\[\]]/g, '_');
+      // Formatear el email para usarlo como clave
+      const emailKey = userEmail.replace(/[.#\[\]]/g, '_');
 
-    // Referencia a la oferta de trabajo específica
-    const jobOfferRef = ref(this.database, `cv-app/users/${companyId}/job-offer/${jobOfferId}`);
-    // Referencia para rastrear qué usuarios han dado like (usando email como clave)
-    const userLikesRef = ref(this.database, `cv-app/users/${companyId}/job-offer/${jobOfferId}/likedBy/${emailKey}`);
+      // Referencia a la oferta de trabajo específica
+      const jobOfferRef = ref(this.database, `cv-app/users/${companyId}/job-offer/${jobOfferId}`);
+      // Referencia para rastrear qué usuarios han dado like (usando email como clave)
+      const userLikesRef = ref(this.database, `cv-app/users/${companyId}/job-offer/${jobOfferId}/likedBy/${emailKey}`);
 
-    return from(get(userLikesRef)).pipe(
-      switchMap((userLikeSnapshot) => {
-        const userAlreadyLiked = userLikeSnapshot.exists() && userLikeSnapshot.val() === true;
+      // Primera operación Firebase (get)
+      const getLikes$ = from(runInInjectionContext(this.injector, () => get(userLikesRef)));
 
-        // Si el usuario ya dio like y está intentando dar like de nuevo, o
-        // si está intentando quitar like pero no lo había dado
-        if ((increment && userAlreadyLiked) || (!increment && !userAlreadyLiked)) {
-          return of({ success: false, alreadyLiked: userAlreadyLiked });
-        }
+      return getLikes$.pipe(
+        switchMap((userLikeSnapshot) => {
+          const userAlreadyLiked = userLikeSnapshot.exists() && userLikeSnapshot.val() === true;
 
-        // Obtener la oferta para actualizar el contador
-        return from(get(jobOfferRef)).pipe(
-          switchMap((jobOfferSnapshot) => {
-            if (!jobOfferSnapshot.exists()) {
-              console.error('La oferta de trabajo no existe');
-              return of({ success: false });
-            }
+          if ((increment && userAlreadyLiked) || (!increment && !userAlreadyLiked)) {
+            return of({ success: false, alreadyLiked: userAlreadyLiked });
+          }
 
-            const jobOffer = jobOfferSnapshot.val();
-            const currentLikes = jobOffer.likes || 0;
-            const newLikes = increment ? currentLikes + 1 : currentLikes - 1;
+          // Segunda operación Firebase (get)
+          const getJobOffer$ = from(runInInjectionContext(this.injector, () => get(jobOfferRef)));
 
-            // Actualizar el contador de likes y el estado del like del usuario en una sola operación
-            const updates: any = {};
-            updates[`cv-app/users/${companyId}/job-offer/${jobOfferId}/likes`] = newLikes;
-            updates[`cv-app/users/${companyId}/job-offer/${jobOfferId}/likedBy/${emailKey}`] = increment;
-
-            return from(update(ref(this.database), updates)).pipe(
-              map(() => ({ success: true })),
-              catchError(error => {
-                console.error('Error al actualizar likes:', error);
+          return getJobOffer$.pipe(
+            switchMap((jobOfferSnapshot) => {
+              if (!jobOfferSnapshot.exists()) {
+                console.error('La oferta de trabajo no existe');
                 return of({ success: false });
-              })
-            );
-          })
-        );
-      })
-    );
+              }
+
+              const jobOffer = jobOfferSnapshot.val();
+              const currentLikes = jobOffer.likes || 0;
+              const newLikes = increment ? currentLikes + 1 : currentLikes - 1;
+
+              // Actualizar el contador de likes y el estado del like del usuario en una sola operación
+              const updates: any = {};
+              updates[`cv-app/users/${companyId}/job-offer/${jobOfferId}/likes`] = newLikes;
+              updates[`cv-app/users/${companyId}/job-offer/${jobOfferId}/likedBy/${emailKey}`] = increment;
+
+              // Tercera operación Firebase (update)
+              const update$ = from(runInInjectionContext(this.injector, () => update(ref(this.database), updates)));
+
+              return update$.pipe(
+                map(() => ({ success: true })),
+                catchError(error => {
+                  console.error('Error al actualizar likes:', error);
+                  return of({ success: false });
+                })
+              );
+            })
+          );
+        })
+      );
+    });
   }
 
   // Método para actualizar los bookmarks de una oferta de trabajo
   updateJobOfferSaves(jobOfferId: string, companyId: string, userEmail: string, addBookmark: boolean = true): Observable<{ success: boolean, alreadyBookmarked?: boolean }> {
-    if (!jobOfferId || !userEmail || !companyId) {
-      console.error('Se requiere el ID de la oferta, el ID de la compañía y el email del usuario');
-      return of({ success: false });
-    }
-
-    // Formatear el email para usarlo como clave
-    const emailKey = userEmail.replace(/[.#\[\]]/g, '_');
-
-    // Referencia a la oferta de trabajo específica
-    const jobOfferRef = ref(this.database, `cv-app/users/${companyId}/job-offer/${jobOfferId}`);
-    // Referencia para rastrear qué usuarios han guardado la oferta (usando email como clave)
-    const userBookmarksRef = ref(this.database, `cv-app/users/${companyId}/job-offer/${jobOfferId}/savedBy/${emailKey}`);
-
-    return from(get(userBookmarksRef)).pipe(
-      switchMap((userBookmarkSnapshot) => {
-        const userAlreadyBookmarked = userBookmarkSnapshot.exists() && userBookmarkSnapshot.val() === true;
-
-        // Si el usuario ya guardó y está intentando guardar de nuevo, o
-        // si está intentando quitar el guardado pero no lo tenía guardado
-        if ((addBookmark && userAlreadyBookmarked) || (!addBookmark && !userAlreadyBookmarked)) {
-          return of({ success: false, alreadyBookmarked: userAlreadyBookmarked });
-        }
-
-        // Obtener la oferta para actualizar el contador de guardados
-        return from(get(jobOfferRef)).pipe(
-          switchMap((jobOfferSnapshot) => {
-            if (!jobOfferSnapshot.exists()) {
-              console.error('La oferta de trabajo no existe');
-              return of({ success: false });
-            }
-
-            const jobOffer = jobOfferSnapshot.val();
-            const currentSaves = jobOffer.saves || 0;
-            const newSaves = addBookmark ? currentSaves + 1 : Math.max(0, currentSaves - 1);
-
-            // Actualizar el contador de guardados y el estado del guardado del usuario en una sola operación
-            const updates: any = {};
-            updates[`cv-app/users/${companyId}/job-offer/${jobOfferId}/saves`] = newSaves;
-            updates[`cv-app/users/${companyId}/job-offer/${jobOfferId}/savedBy/${emailKey}`] = addBookmark;
-
-            return from(update(ref(this.database), updates)).pipe(
-              map(() => ({ success: true })),
-              catchError(error => {
-                console.error('Error al actualizar bookmarks:', error);
-                return of({ success: false });
-              })
-            );
-          })
-        );
-      }),
-      catchError(error => {
-        console.error('Error al verificar el estado del bookmark:', error);
+    return runInInjectionContext(this.injector, () => {
+      if (!jobOfferId || !userEmail || !companyId) {
+        console.error('Se requiere el ID de la oferta, el ID de la compañía y el email del usuario');
         return of({ success: false });
-      })
-    );
+      }
+
+      // Formatear el email para usarlo como clave
+      const emailKey = userEmail.replace(/[.#\[\]]/g, '_');
+
+      // Referencia a la oferta de trabajo específica
+      const jobOfferRef = ref(this.database, `cv-app/users/${companyId}/job-offer/${jobOfferId}`);
+      // Referencia para rastrear qué usuarios han guardado la oferta (usando email como clave)
+      const userBookmarksRef = ref(this.database, `cv-app/users/${companyId}/job-offer/${jobOfferId}/savedBy/${emailKey}`);
+
+      // Primera operación Firebase (get)
+      const getBookmarks$ = from(runInInjectionContext(this.injector, () => get(userBookmarksRef)));
+
+      return getBookmarks$.pipe(
+        switchMap((userBookmarkSnapshot) => {
+          const userAlreadyBookmarked = userBookmarkSnapshot.exists() && userBookmarkSnapshot.val() === true;
+
+          if ((addBookmark && userAlreadyBookmarked) || (!addBookmark && !userAlreadyBookmarked)) {
+            return of({ success: false, alreadyBookmarked: userAlreadyBookmarked });
+          }
+
+          // Segunda operación Firebase (get)
+          const getJobOffer$ = from(runInInjectionContext(this.injector, () => get(jobOfferRef)));
+
+          return getJobOffer$.pipe(
+            switchMap((jobOfferSnapshot) => {
+              if (!jobOfferSnapshot.exists()) {
+                console.error('La oferta de trabajo no existe');
+                return of({ success: false });
+              }
+
+              const jobOffer = jobOfferSnapshot.val();
+              const currentSaves = jobOffer.saves || 0;
+              const newSaves = addBookmark ? currentSaves + 1 : Math.max(0, currentSaves - 1);
+
+              // Actualizar el contador de guardados y el estado del guardado del usuario en una sola operación
+              const updates: any = {};
+              updates[`cv-app/users/${companyId}/job-offer/${jobOfferId}/saves`] = newSaves;
+              updates[`cv-app/users/${companyId}/job-offer/${jobOfferId}/savedBy/${emailKey}`] = addBookmark;
+
+              // Tercera operación Firebase (update)
+              const update$ = from(runInInjectionContext(this.injector, () => update(ref(this.database), updates)));
+
+              return update$.pipe(
+                map(() => ({ success: true })),
+                catchError(error => {
+                  console.error('Error al actualizar bookmarks:', error);
+                  return of({ success: false });
+                })
+              );
+            })
+          );
+        }),
+        catchError(error => {
+          console.error('Error al verificar el estado del bookmark:', error);
+          return of({ success: false });
+        })
+      );
+    });
   }
 }

@@ -80,7 +80,7 @@ export class AnnouncementsComponent implements OnInit, OnDestroy {
           }
         });
         
-        // Inicializar el estado de los iconos basado en los likes del usuario
+        // Inicializar el estado de los iconos basado en los likes y bookmarks del usuario
         offers.forEach(offer => {
           if (!this.iconStates[offer.id!]) {
             this.iconStates[offer.id!] = { heart: false, bookmark: false, share: false };
@@ -88,6 +88,10 @@ export class AnnouncementsComponent implements OnInit, OnDestroy {
           // Establecer el estado del corazón según si el usuario dio like
           if (offer.userLiked) {
             this.iconStates[offer.id!].heart = true;
+          }
+          // Establecer el estado del bookmark según si el usuario lo guardó
+          if (offer.userSaved) {
+            this.iconStates[offer.id!].bookmark = true;
           }
         });
         

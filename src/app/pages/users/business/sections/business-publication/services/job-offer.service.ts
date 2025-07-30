@@ -5,7 +5,7 @@ import { catchError, map, switchMap } from 'rxjs/operators';
 import { FirebaseService } from 'src/app/shared/services/firebase.service';
 import { DataSnapshot } from '@angular/fire/database';
 import { AuthService } from 'src/app/pages/home/auth/auth.service';
-import { Database, get, ref, onValue, update, increment } from '@angular/fire/database';
+import { Database, get, ref } from '@angular/fire/database';
 
 @Injectable({
   providedIn: 'root'
@@ -13,8 +13,8 @@ import { Database, get, ref, onValue, update, increment } from '@angular/fire/da
 export class JobOfferService {
   private firebaseService = inject(FirebaseService);
   private authService = inject(AuthService);
-  private db = inject(Database);
-  private injector = inject(EnvironmentInjector);
+  database = inject(Database);
+  injector = inject(EnvironmentInjector);
 
   // Método para obtener el userEmailKey del usuario actual
   private getCurrentUserEmailKey(): string {
@@ -28,7 +28,7 @@ export class JobOfferService {
   // Método para encontrar el próximo ID disponible
   private async getNextAvailableJobId(userEmailKey: string): Promise<string> {
     return runInInjectionContext(this.injector, async () => {
-      const jobOffersRef = ref(this.db, `cv-app/users/${userEmailKey}/job-offer`);
+      const jobOffersRef = ref(this.database, `cv-app/users/${userEmailKey}/job-offer`);
       const snapshot = await get(jobOffersRef);
 
       if (!snapshot.exists()) {
@@ -385,7 +385,7 @@ export class JobOfferService {
   // Método para obtener el nombre de la empresa
   async getCompanyName(userEmailKey: string): Promise<string> {
     return runInInjectionContext(this.injector, async () => {
-      const userRef = ref(this.db, `cv-app/users/${userEmailKey}/profileData/personalData`);
+      const userRef = ref(this.database, `cv-app/users/${userEmailKey}/profileData/personalData`);
       const snapshot = await get(userRef);
       return snapshot.exists() ? snapshot.val().fullName : '';
     });
