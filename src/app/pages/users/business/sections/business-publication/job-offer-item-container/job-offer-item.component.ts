@@ -5,9 +5,7 @@ import { JobOfferInfoModalComponent } from './job-offer-info-modal/job-offer-inf
 import { User } from '@angular/fire/auth';
 import { ConfirmationModalService } from 'src/app/shared/components/confirmation-modal/confirmation-modal.service';
 import { ToastService } from 'src/app/shared/components/toast/toast.service';
-import { JobOfferService } from '../services/job-offer.service';
-import { JobOfferPublishService } from '../services/job-offer-publish.service';
-import { JobOffer } from '../job-offer.model';
+import { JobOfferActionsService } from '../services/job-offer-actions.service';
 import { JobOfferLikeService } from '../services/job-offer-like.service';
 import { JobOfferBookmarkService } from '../services/job-offer-bookmark.service';
 import { JobOfferApplicationService } from '../services/job-offer-application.service';
@@ -34,8 +32,7 @@ export class JobOfferItemComponent implements OnInit, OnDestroy {
   private confirmationModalService = inject(ConfirmationModalService);
   private toast = inject(ToastService);
   private ngZone = inject(NgZone);
-  private jobOfferService = inject(JobOfferService);
-  private jobOfferPublishService = inject(JobOfferPublishService);
+  private jobOfferActionsService = inject(JobOfferActionsService);
   private jobOfferLikeService = inject(JobOfferLikeService);
   private jobOfferBookmarkService = inject(JobOfferBookmarkService);
   private jobOfferApplicationService = inject(JobOfferApplicationService);
@@ -373,59 +370,14 @@ export class JobOfferItemComponent implements OnInit, OnDestroy {
 
   // Manejar la duplicación de la oferta
   onDuplicate(): void {
-    this.confirmationModalService.show(
-      {
-        title: '¿Duplicar oferta?',
-        message: '¿Estás seguro de que deseas duplicar esta oferta de trabajo?',
-        confirmText: 'Duplicar',
-        cancelText: 'Cancelar'
+    this.jobOfferActionsService.confirmDuplicate(this.jobOffer).subscribe({
+      next: (duplicated) => {
+        if (duplicated) {
+          this.isMenuOpen = false;
+        }
       },
-      () => {
-        this.duplicateJobOffer();
-      }
-    );
-  }
-
-  // Método para duplicar la oferta de trabajo
-  private duplicateJobOffer(): void {
-    // Crear una copia profunda del objeto jobOffer
-    const jobOfferCopy: Partial<JobOffer> = JSON.parse(JSON.stringify(this.jobOffer));
-
-    // Eliminar el ID para que se genere uno nuevo
-    delete jobOfferCopy.id;
-
-    // Eliminar la fecha de publicación para que no se copie al duplicar
-    delete jobOfferCopy.publicationDate;
-
-    // Asegurarse de que los campos requeridos estén presentes
-    const now = new Date();
-    jobOfferCopy.createdAt = now;
-    jobOfferCopy.updatedAt = now;
-    jobOfferCopy.status = 'borrador'; // La oferta duplicada comienza como borrador
-
-    // Limpiar estadísticas y postulantes
-    jobOfferCopy.views = 0;
-    jobOfferCopy.likes = 0;
-    jobOfferCopy.applications = 0;
-
-    // Llamar al servicio para crear la nueva oferta
-    this.jobOfferService.createJobOffer(jobOfferCopy as Omit<JobOffer, 'id'>).subscribe({
-      next: (newJobId) => {
-        this.ngZone.run(() => {
-          this.toast.show('Oferta duplicada exitósamente', 'success');
-          // Emitir el evento de duplicación con la nueva oferta
-          this.duplicated.emit({ ...jobOfferCopy, id: newJobId });
-        });
-      },
-      error: (error) => {
-        console.error('Error al duplicar la oferta:', error);
-        this.ngZone.run(() => {
-          this.toast.show('Error al duplicar la oferta', 'error');
-        });
-      },
-      complete: () => {
-        this.ngZone.run(() => {
-        });
+      error: () => {
+        this.isMenuOpen = false;
       }
     });
   }
@@ -457,7 +409,7 @@ export class JobOfferItemComponent implements OnInit, OnDestroy {
 
   // Manejar la publicación de la oferta
   onPublish(): void {
-    this.jobOfferPublishService.confirmPublish(this.jobOffer).subscribe({
+    this.jobOfferActionsService.confirmPublish(this.jobOffer).subscribe({
       next: (published) => {
         if (published) {
           this.isMenuOpen = false;
@@ -471,7 +423,7 @@ export class JobOfferItemComponent implements OnInit, OnDestroy {
 
   // Manejar la cancelación de la oferta
   onCancelPublish(): void {
-    this.jobOfferPublishService.confirmCancelPublish(this.jobOffer).subscribe({
+    this.jobOfferActionsService.confirmCancelPublish(this.jobOffer).subscribe({
       next: (cancelled) => {
         if (cancelled) {
           this.isMenuOpen = false;

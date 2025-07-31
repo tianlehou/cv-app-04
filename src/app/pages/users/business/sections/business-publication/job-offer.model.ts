@@ -1,4 +1,5 @@
 export interface JobOffer {
+  isNew?: boolean; // Para la animación de entrada
   id?: string; // Opcional, será generado por Firebase
   title: string;
   deadline: string; // Fecha en formato ISO string

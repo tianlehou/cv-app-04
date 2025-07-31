@@ -9,6 +9,7 @@ import { JobOffer } from './job-offer.model';
 import { AuthService } from 'src/app/pages/home/auth/auth.service';
 import { Subscription } from 'rxjs';
 import { FirebaseService } from 'src/app/shared/services/firebase.service';
+import { JobOfferActionsService } from './services/job-offer-actions.service';
 
 @Component({
   selector: 'app-business-publication',
@@ -26,7 +27,8 @@ import { FirebaseService } from 'src/app/shared/services/firebase.service';
 export class BusinessPublicationComponent implements OnInit, OnDestroy {
   private jobOfferService = inject(JobOfferService);
   private authService = inject(AuthService);
-    private firebaseService = inject(FirebaseService);
+  private firebaseService = inject(FirebaseService);
+  private jobOfferActionsService = inject(JobOfferActionsService);
   private subscriptions = new Subscription();
 
   jobOffers: JobOffer[] = [];
@@ -38,9 +40,13 @@ export class BusinessPublicationComponent implements OnInit, OnDestroy {
   currentJobOffer: JobOffer | null = null;
   lastDuplicatedId: string | null = null; // Para rastrear la última oferta duplicada
 
-  ngOnInit(): void {
+  constructor() {
     this.currentUser = this.authService.getCurrentAuthUser();
+  }
+
+  ngOnInit(): void {
     this.loadJobOffers();
+    this.setupOfferDuplicatedListener();
   }
 
   ngOnDestroy(): void {
@@ -68,22 +74,22 @@ export class BusinessPublicationComponent implements OnInit, OnDestroy {
           // Ordenar las ofertas según el estado: borrador, publicado, cancelado, vencido
           this.jobOffers = offers.sort((a, b) => {
             // Definir el orden de los estados
-            const statusOrder: {[key: string]: number} = {
+            const statusOrder: { [key: string]: number } = {
               'borrador': 0,
               'publicado': 1,
               'cancelado': 2,
               'vencido': 3
             };
-            
+
             // Comparar los estados según el orden definido
             const orderA = statusOrder[a.status] ?? 4; // Si el estado no está en la lista, va al final
             const orderB = statusOrder[b.status] ?? 4;
-            
+
             // Si los estados son iguales, ordenar según el tipo de estado
             if (orderA === orderB) {
               let dateA: number;
               let dateB: number;
-              
+
               // Determinar qué fecha usar según el estado
               if (a.status === 'borrador') {
                 // Para borradores, usar fecha de creación
@@ -102,13 +108,13 @@ export class BusinessPublicationComponent implements OnInit, OnDestroy {
                 dateA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
                 dateB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
               }
-              
+
               return dateB - dateA; // Orden descendente (más reciente primero)
             }
-            
+
             return orderA - orderB; // Ordenar según el orden de estados definido
           });
-          
+
           this.hasPublications = offers.length > 0;
           this.isLoading = false;
         },
@@ -147,11 +153,11 @@ export class BusinessPublicationComponent implements OnInit, OnDestroy {
     // Establecer el ID de la oferta recién duplicada para la animación
     if (newJobOffer.id) {
       this.lastDuplicatedId = newJobOffer.id;
-      
+
       // Agregar la nueva oferta al principio de la lista
       this.jobOffers = [newJobOffer, ...this.jobOffers];
       this.hasPublications = true;
-      
+
       // Remover la clase de animación después de que termine
       setTimeout(() => {
         this.lastDuplicatedId = null;
@@ -159,54 +165,25 @@ export class BusinessPublicationComponent implements OnInit, OnDestroy {
     }
   }
 
-  // Obtener el texto del tipo de contrato
-  getContractTypeLabel(type: string): string {
-    const types: { [key: string]: string } = {
-      'indefinido': 'Indefinido',
-      'temporal': 'Temporal',
-      'practicas': 'Prácticas',
-      'formacion': 'Formación'
-    };
-    return types[type] || type;
-  }
+  // Configurar el listener para ofertas duplicadas
+  private setupOfferDuplicatedListener(): void {
+    this.subscriptions.add(
+      this.jobOfferActionsService.offerDuplicated$.subscribe((newOffer: JobOffer) => {
+        // Agregar la nueva oferta al principio del array con la clase de animación
+        const offerWithAnimation = { ...newOffer, isNew: true };
+        this.jobOffers = [offerWithAnimation, ...this.jobOffers];
+        // Actualizar el estado de hasPublications
+        this.hasPublications = this.jobOffers.length > 0;
 
-  // Obtener el texto de la jornada laboral
-  getWorkdayLabel(workday: string): string {
-    const workdays: { [key: string]: string } = {
-      'completa': 'Jornada Completa',
-      'parcial': 'Media Jornada',
-      'por-horas': 'Por Horas'
-    };
-    return workdays[workday] || workday;
-  }
-
-  // Obtener el texto de la modalidad
-  getModalityLabel(modality: string): string {
-    const modalities: { [key: string]: string } = {
-      'presencial': 'Presencial',
-      'remoto': 'Remoto',
-      'hibrido': 'Híbrido'
-    };
-    return modalities[modality] || modality;
-  }
-
-  // Formatear la fecha
-  formatDate(dateString: string): string {
-    const options: Intl.DateTimeFormatOptions = {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    };
-    return new Date(dateString).toLocaleDateString('es-ES', options);
-  }
-
-  // Formatear el salario
-  formatSalary(salary: number): string {
-    return new Intl.NumberFormat('es-ES', {
-      style: 'currency',
-      currency: 'USD',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0
-    }).format(salary);
+        // Eliminar la clase de animación después de que termine
+        setTimeout(() => {
+          const index = this.jobOffers.findIndex(offer => offer.id === newOffer.id);
+          if (index !== -1) {
+            this.jobOffers[index] = { ...this.jobOffers[index], isNew: false };
+            this.jobOffers = [...this.jobOffers]; // Forzar detección de cambios
+          }
+        }, 1000);
+      })
+    );
   }
 }

@@ -1,5 +1,5 @@
-import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { inject, Injectable, NgZone } from '@angular/core';
+import { Observable, Subject } from 'rxjs';
 import { JobOfferService } from './job-offer.service';
 import { ConfirmationModalService } from 'src/app/shared/components/confirmation-modal/confirmation-modal.service';
 import { ToastService } from 'src/app/shared/components/toast/toast.service';
@@ -7,7 +7,13 @@ import { ToastService } from 'src/app/shared/components/toast/toast.service';
 @Injectable({
   providedIn: 'root'
 })
-export class JobOfferPublishService {
+export class JobOfferActionsService {
+  // Evento que se emite cuando se duplica una oferta exitosamente
+  private offerDuplicated = new Subject<any>();
+  offerDuplicated$ = this.offerDuplicated.asObservable();
+  
+  private ngZone = inject(NgZone);
+
   constructor(
     private jobOfferService: JobOfferService,
     private confirmationModalService: ConfirmationModalService,
@@ -45,6 +51,67 @@ export class JobOfferPublishService {
     }
 
     return { isValid: true, title: '', message: '' };
+  }
+
+  confirmDuplicate(jobOffer: any): Observable<boolean> {
+    return new Observable(subscriber => {
+      this.confirmationModalService.show(
+        {
+          title: '¿Duplicar oferta?',
+          message: '¿Estás seguro de que deseas duplicar esta oferta de trabajo?',
+          confirmText: 'Duplicar',
+          cancelText: 'Cancelar'
+        },
+        () => {
+          // Crear una copia profunda del objeto jobOffer
+          const jobOfferCopy: any = JSON.parse(JSON.stringify(jobOffer));
+
+          // Eliminar el ID para que se genere uno nuevo
+          delete jobOfferCopy.id;
+
+          // Eliminar la fecha de publicación para que no se copie al duplicar
+          delete jobOfferCopy.publicationDate;
+
+          // Asegurarse de que los campos requeridos estén presentes
+          const now = new Date();
+          jobOfferCopy.createdAt = now;
+          jobOfferCopy.updatedAt = now;
+          jobOfferCopy.status = 'borrador'; // La oferta duplicada comienza como borrador
+
+          // Limpiar estadísticas y postulantes
+          jobOfferCopy.views = 0;
+          jobOfferCopy.likes = 0;
+          jobOfferCopy.saves = 0;
+          jobOfferCopy.applications = 0;
+
+          // Llamar al servicio para crear la nueva oferta
+          this.jobOfferService.createJobOffer(jobOfferCopy).subscribe({
+            next: (newJobId) => {
+              this.ngZone.run(() => {
+                this.toast.show('Oferta duplicada exitosamente', 'success');
+                // Emitir el evento con la nueva oferta
+                this.offerDuplicated.next({ ...jobOfferCopy, id: newJobId });
+                // Notificar al suscriptor que la duplicación fue exitosa
+                subscriber.next(true);
+                subscriber.complete();
+              });
+            },
+            error: (error) => {
+              console.error('Error al duplicar la oferta:', error);
+              this.ngZone.run(() => {
+                this.toast.show('Error al duplicar la oferta', 'error');
+                subscriber.error(error);
+              });
+            }
+          });
+        },
+        () => {
+          // El usuario canceló la duplicación
+          subscriber.next(false);
+          subscriber.complete();
+        }
+      );
+    });
   }
 
   confirmPublish(jobOffer: any): Observable<boolean> {

@@ -1,4 +1,25 @@
 /* Estilos para la tarjeta de oferta de trabajo */
+/* Animación de entrada para nuevas ofertas */
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+  }
+
+  to {
+    transform: translateX(0);
+  }
+}
+
+/* Clase para la animación de entrada */
+.job-offer-card.new-offer {
+  animation: slideInRight 1.5s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+  position: relative;
+  z-index: 1;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.3s ease;
+}
+
+/* Estilo base de la tarjeta */
 .job-offer-card {
   background: #ffffff;
   border-radius: 8px;
