@@ -7,9 +7,10 @@ import { ConfirmationModalService } from 'src/app/shared/components/confirmation
 import { ToastService } from 'src/app/shared/components/toast/toast.service';
 import { JobOfferService } from '../services/job-offer.service';
 import { JobOfferPublishService } from '../services/job-offer-publish.service';
-import { JobOfferLikeService } from '../services/job-offer-like.service';
 import { JobOffer } from '../job-offer.model';
+import { JobOfferLikeService } from '../services/job-offer-like.service';
 import { JobOfferBookmarkService } from '../services/job-offer-bookmark.service';
+import { JobOfferApplicationService } from '../services/job-offer-application.service';
 
 @Component({
   selector: 'app-job-offer-item',
@@ -37,6 +38,7 @@ export class JobOfferItemComponent implements OnInit, OnDestroy {
   private jobOfferPublishService = inject(JobOfferPublishService);
   private jobOfferLikeService = inject(JobOfferLikeService);
   private jobOfferBookmarkService = inject(JobOfferBookmarkService);
+  private jobOfferApplicationService = inject(JobOfferApplicationService);
 
   // Listener para el menú desplegable
   private menuClickListener: (() => void) | null = null;
@@ -58,6 +60,10 @@ export class JobOfferItemComponent implements OnInit, OnDestroy {
   bookmarksCount: number = 0;
   private bookmarksSubscription: Subscription | null = null;
 
+  // Estado para mostrar el contador de aplicaciones
+  applicationsCount: number = 0;
+  private applicationsSubscription: Subscription | null = null;
+
   ngOnInit() {
     this.updateTimeRemaining();
     // Actualizar cada segundo
@@ -67,14 +73,11 @@ export class JobOfferItemComponent implements OnInit, OnDestroy {
 
     // Suscribirse a actualizaciones de likes
     if (this.jobOffer?.id && this.jobOffer?.companyId) {
-      
-      console.log('Iniciando suscripción a likes para oferta:', this.jobOffer.id);
       this.likesSubscription = this.jobOfferLikeService.getLikesUpdates(
         this.jobOffer.companyId,
         this.jobOffer.id
       ).subscribe({
         next: (count) => {
-          console.log('Nuevo conteo de likes recibido:', count);
           this.ngZone.run(() => {
             this.likesCount = count || 0;
           });
@@ -85,19 +88,32 @@ export class JobOfferItemComponent implements OnInit, OnDestroy {
       });
 
       // Suscribirse a actualizaciones de bookmarks
-      console.log('Iniciando suscripción a bookmarks para oferta:', this.jobOffer.id);
       this.bookmarksSubscription = this.jobOfferBookmarkService.getSavesUpdates(
         this.jobOffer.companyId,
         this.jobOffer.id
       ).subscribe({
         next: (count) => {
-          console.log('Nuevo conteo de bookmarks recibido:', count);
           this.ngZone.run(() => {
             this.bookmarksCount = count || 0;
           });
         },
         error: (error) => {
           console.error('Error al obtener actualizaciones de bookmarks:', error);
+        }
+      });
+
+      // Suscribirse a cambios en las aplicaciones
+      this.applicationsSubscription = this.jobOfferApplicationService.getApplicationsUpdates(
+        this.jobOffer.companyId,
+        this.jobOffer.id
+      ).subscribe({
+        next: (count) => {
+          this.ngZone.run(() => {
+            this.applicationsCount = count || 0;
+          });
+        },
+        error: (error) => {
+          console.error('Error al obtener actualizaciones de aplicaciones:', error);
         }
       });
     }
@@ -121,6 +137,12 @@ export class JobOfferItemComponent implements OnInit, OnDestroy {
     if (this.bookmarksSubscription) {
       this.bookmarksSubscription.unsubscribe();
       this.bookmarksSubscription = null;
+    }
+
+    // Limpiar suscripción de aplicaciones
+    if (this.applicationsSubscription) {
+      this.applicationsSubscription.unsubscribe();
+      this.applicationsSubscription = null;
     }
 
     // Limpiar listeners de clic
@@ -384,7 +406,7 @@ export class JobOfferItemComponent implements OnInit, OnDestroy {
     // Limpiar estadísticas y postulantes
     jobOfferCopy.views = 0;
     jobOfferCopy.likes = 0;
-    jobOfferCopy.applications = [];
+    jobOfferCopy.applications = 0;
 
     // Llamar al servicio para crear la nueva oferta
     this.jobOfferService.createJobOffer(jobOfferCopy as Omit<JobOffer, 'id'>).subscribe({

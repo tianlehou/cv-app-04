@@ -250,8 +250,6 @@ export class JobOfferService {
           updatedAt: new Date()
         };
         
-        console.log('Actualizando oferta con datos:', updatedJobOffer);
-        
         // Crear un objeto para Firebase convirtiendo las fechas a strings ISO
         const firebaseData: Record<string, any> = {};
         

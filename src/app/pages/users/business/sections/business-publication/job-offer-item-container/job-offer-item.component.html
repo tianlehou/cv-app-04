@@ -169,7 +169,7 @@
     </div>
     <button class="apply-button">
       <i class="fas fa-file-alt"></i>
-      <span>({{ jobOffer.applications?.length || 0 }})</span>
+      <span class="applications-count" *ngIf="applicationsCount > 0">({{ applicationsCount }})</span>
       <label>Ver postulados</label>
     </button>
   </div>

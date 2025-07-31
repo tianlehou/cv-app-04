@@ -1,10 +1,12 @@
 import { Component, OnInit, OnDestroy, Renderer2, NgZone } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Subscription, interval} from 'rxjs';
+import { Subscription, interval } from 'rxjs';
 import { Auth, User, user } from '@angular/fire/auth';
 import { JobOffer } from 'src/app/pages/users/business/sections/business-publication/job-offer.model';
 import { PublicJobOfferService } from './services/public-job-offer.service';
 import { JobInteractionService } from './services/job-interaction.service';
+import { ConfirmationModalService } from 'src/app/shared/components/confirmation-modal/confirmation-modal.service';
+import { getFullText, getPreviewText, isTextLong } from 'src/app/shared/utils/text.utils'
 
 @Component({
   selector: 'app-announcements',
@@ -30,17 +32,25 @@ export class AnnouncementsComponent implements OnInit, OnDestroy {
   private countdownSub: Subscription | null = null;
   private timeZone = 'America/Panama';
 
+  // Objeto para rastrear el estado de carga de los botones de aplicación
+  isApplying: { [key: string]: boolean } = {};
+
   private clickListener: (() => void) | null = null;
 
-  private user: User | null = null;
+  user: User | null = null;
   private userSubscription: Subscription | null = null;
+
+  public getFullText = getFullText;
+  public getPreviewText = getPreviewText;
+  public isTextLong = isTextLong;
 
   constructor(
     private publicJobOfferService: PublicJobOfferService,
     private renderer: Renderer2,
     private ngZone: NgZone,
     private auth: Auth,
-    private jobInteractionService: JobInteractionService
+    private jobInteractionService: JobInteractionService,
+    private confirmationModalService: ConfirmationModalService
   ) {
     // Suscribirse a cambios en el estado de autenticación
     this.userSubscription = user(this.auth).subscribe((user) => {
@@ -65,22 +75,22 @@ export class AnnouncementsComponent implements OnInit, OnDestroy {
   loadJobOffers(): void {
     this.isLoading = true;
     this.error = null;
-    
+
     // Obtener el email del usuario actual si está autenticado
     const userEmail = this.auth.currentUser?.email || undefined;
-    
+
     this.publicJobOfferService.getAllPublicJobOffers(userEmail).subscribe({
       next: (offers) => {
         this.jobOffers = offers;
-        
+
         // Inicializar los estados de expansión para cada oferta
         this.jobOffers.forEach(offer => {
           if (offer.id) {
             this.expandedStates[offer.id] = { description: false, requirements: false };
           }
         });
-        
-        // Inicializar el estado de los iconos basado en los likes y bookmarks del usuario
+
+        // Inicializar el estado de los iconos basado en los likes, bookmarks y aplicaciones del usuario
         offers.forEach(offer => {
           if (!this.iconStates[offer.id!]) {
             this.iconStates[offer.id!] = { heart: false, bookmark: false, share: false };
@@ -93,10 +103,14 @@ export class AnnouncementsComponent implements OnInit, OnDestroy {
           if (offer.userSaved) {
             this.iconStates[offer.id!].bookmark = true;
           }
+          // Verificar si el usuario ya aplicó a esta oferta
+          if (offer.appliedBy) {
+            offer.hasApplied = true;
+          }
         });
-        
+
         this.isLoading = false;
-        
+
         if (offers.length === 0) {
           console.warn('No se encontraron ofertas de trabajo públicas.');
           this.error = 'No hay ofertas de trabajo disponibles en este momento.';
@@ -113,9 +127,9 @@ export class AnnouncementsComponent implements OnInit, OnDestroy {
   }
 
   formatDate(dateString: string): string {
-    const options: Intl.DateTimeFormatOptions = { 
-      year: 'numeric', 
-      month: 'long', 
+    const options: Intl.DateTimeFormatOptions = {
+      year: 'numeric',
+      month: 'long',
       day: 'numeric',
       hour: '2-digit',
       minute: '2-digit'
@@ -123,24 +137,11 @@ export class AnnouncementsComponent implements OnInit, OnDestroy {
     return new Date(dateString).toLocaleDateString('es-ES', options);
   }
 
-  // Obtener texto recortado para vista previa
-  getPreviewText(text: string | undefined): string {
-    if (!text) return '';
-    return text.length > this.MAX_PREVIEW_LENGTH
-      ? text.slice(0, this.MAX_PREVIEW_LENGTH) + '...'
-      : text;
-  }
-
-  // Obtener texto completo
-  getFullText(text: string | undefined): string {
-    if (!text) return '';
-    return text;
-  }
-
-  // Ver si el texto es más largo que el límite de vista previa
-  isTextLong(text: string | undefined): boolean {
-    if (!text) return false;
-    return text.length > this.MAX_PREVIEW_LENGTH;
+  // Función para trackear ofertas por un identificador único
+  trackByOfferId(index: number, jobOffer: JobOffer): string {
+    // Usar una combinación de companyName y id para asegurar unicidad
+    // Si no hay companyName, usamos el índice como respaldo
+    return jobOffer.companyName ? `${jobOffer.companyName}_${jobOffer.id}` : `offer_${index}`;
   }
 
   // Manejar clic en ver más/menos
@@ -194,10 +195,65 @@ export class AnnouncementsComponent implements OnInit, OnDestroy {
     this.jobInteractionService.toggleLike(jobOffer, this.iconStates).subscribe();
   }
 
+  // Método para manejar la aplicación a una oferta de trabajo
+  onApply(jobOffer: JobOffer, event: Event): void {
+    event.stopPropagation();
+
+    // Verificar si ya se está procesando una aplicación para esta oferta
+    if (this.isApplying[jobOffer.id!]) {
+      return;
+    }
+
+    // Mostrar el modal de confirmación
+    this.confirmationModalService.show(
+      {
+        title: 'Confirmar aplicación',
+        message: `¿Estás seguro de que deseas aplicar a la oferta de ${jobOffer.title} en ${jobOffer.companyName}?`,
+        confirmText: 'Sí, aplicar',
+        cancelText: 'Cancelar'
+      },
+      () => {
+        // Código que se ejecutará si el usuario confirma
+        this.processApplication(jobOffer);
+      },
+      () => {
+        // Código que se ejecutará si el usuario cancela
+        console.log('Aplicación cancelada por el usuario');
+      }
+    );
+  }
+
+  // Método para procesar la aplicación a la oferta
+  private processApplication(jobOffer: JobOffer): void {
+    // Marcar que se está procesando la aplicación
+    this.isApplying[jobOffer.id!] = true;
+
+    // Llamar al servicio para procesar la aplicación
+    this.jobInteractionService.toggleApply(jobOffer).subscribe({
+      next: (success) => {
+        if (success) {
+          // Actualizar la UI para reflejar que el usuario ha aplicado
+          jobOffer.hasApplied = true;
+          // Mostrar mensaje de éxito
+          console.log('¡Has aplicado exitosamente a esta oferta!');
+        } else {
+          console.warn('No se pudo procesar la aplicación a la oferta');
+        }
+        // Restablecer el estado de carga
+        this.isApplying[jobOffer.id!] = false;
+      },
+      error: (error) => {
+        console.error('Error al aplicar a la oferta:', error);
+        // Restablecer el estado de carga en caso de error
+        this.isApplying[jobOffer.id!] = false;
+      }
+    });
+  }
+
   // Método para alternar iconos
   toggleIcon(jobOffer: JobOffer, iconType: 'heart' | 'bookmark' | 'share', event: Event): void {
     event.stopPropagation();
-    
+
     if (iconType === 'heart') {
       this.jobInteractionService.toggleLike(jobOffer, this.iconStates).subscribe();
     } else if (iconType === 'bookmark') {

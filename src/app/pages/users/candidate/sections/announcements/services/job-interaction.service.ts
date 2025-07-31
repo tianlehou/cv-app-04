@@ -174,6 +174,40 @@ export class JobInteractionService {
     );
   }
 
+  // Método para manejar la aplicación a una oferta de trabajo
+  toggleApply(jobOffer: JobOffer): Observable<boolean | null> {
+    // Verificar si el usuario está autenticado
+    if (!this.user?.email) {
+      console.warn('Usuario no autenticado');
+      return of(null);
+    }
+
+    const jobOfferId = jobOffer.id;
+    if (!jobOfferId || !jobOffer.companyId) {
+      console.error('ID de oferta o compañía no válido');
+      return of(null);
+    }
+
+    // Llamar al servicio para actualizar las aplicaciones
+    return this.updateJobOfferApplications(
+      jobOfferId,
+      jobOffer.companyId,
+      this.user.email || ''
+    ).pipe(
+      map(success => {
+        if (success) {
+          // Actualizar el estado local de la oferta
+          jobOffer.hasApplied = true;
+        }
+        return success;
+      }),
+      catchError(error => {
+        console.error('Error al aplicar a la oferta:', error);
+        return of(false);
+      })
+    );
+  }
+
   // Método para actualizar el contador de likes de una oferta de trabajo
   updateJobOfferLikes(jobOfferId: string, companyId: string, userEmail: string, increment: boolean = true): Observable<{ success: boolean, alreadyLiked?: boolean }> {
     return runInInjectionContext(this.injector, () => {
@@ -299,6 +333,72 @@ export class JobInteractionService {
         catchError(error => {
           console.error('Error al verificar el estado del bookmark:', error);
           return of({ success: false });
+        })
+      );
+    });
+  }
+
+  // Método para actualizar las aplicaciones a una oferta de trabajo
+  updateJobOfferApplications(jobOfferId: string, companyId: string, userEmail: string): Observable<boolean> {
+    return runInInjectionContext(this.injector, () => {
+      if (!jobOfferId || !userEmail || !companyId) {
+        console.error('Se requiere el ID de la oferta, el ID de la compañía y el email del usuario');
+        return of(false);
+      }
+
+      // Formatear el email para usarlo como clave
+      const emailKey = userEmail.replace(/[.#\[\]]/g, '_');
+
+      // Referencia a la oferta de trabajo específica
+      const jobOfferRef = ref(this.database, `cv-app/users/${companyId}/job-offer/${jobOfferId}`);
+      // Referencia para rastrear qué usuarios han aplicado (usando email como clave)
+      const userApplicationsRef = ref(this.database, `cv-app/users/${companyId}/job-offer/${jobOfferId}/appliedBy/${emailKey}`);
+
+      // Verificar si el usuario ya aplicó
+      const checkApplication$ = from(runInInjectionContext(this.injector, () => get(userApplicationsRef)));
+
+      return checkApplication$.pipe(
+        switchMap((userApplicationSnapshot) => {
+          // Si el usuario ya aplicó, no hacer nada
+          if (userApplicationSnapshot.exists() && userApplicationSnapshot.val() === true) {
+            console.log('El usuario ya ha aplicado a esta oferta');
+            return of(false);
+          }
+
+          // Obtener los datos actuales de la oferta
+          const getJobOffer$ = from(runInInjectionContext(this.injector, () => get(jobOfferRef)));
+
+          return getJobOffer$.pipe(
+            switchMap((jobOfferSnapshot) => {
+              if (!jobOfferSnapshot.exists()) {
+                console.error('La oferta de trabajo no existe');
+                return of(false);
+              }
+
+              const jobOffer = jobOfferSnapshot.val();
+              const currentApplications = jobOffer.applications || 0;
+
+              // Actualizar el contador de aplicaciones y marcar que el usuario aplicó
+              const updates: any = {};
+              updates[`cv-app/users/${companyId}/job-offer/${jobOfferId}/applications`] = currentApplications + 1;
+              updates[`cv-app/users/${companyId}/job-offer/${jobOfferId}/appliedBy/${emailKey}`] = true;
+
+              // Actualizar la base de datos
+              const update$ = from(runInInjectionContext(this.injector, () => update(ref(this.database), updates)));
+
+              return update$.pipe(
+                map(() => true),
+                catchError(error => {
+                  console.error('Error al actualizar aplicaciones:', error);
+                  return of(false);
+                })
+              );
+            })
+          );
+        }),
+        catchError(error => {
+          console.error('Error al verificar el estado de la aplicación:', error);
+          return of(false);
         })
       );
     });
