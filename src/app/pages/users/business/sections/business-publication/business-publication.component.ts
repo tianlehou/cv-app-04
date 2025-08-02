@@ -30,7 +30,6 @@ export class BusinessPublicationComponent implements OnInit, OnDestroy {
   private jobOfferService = inject(JobOfferService);
   private authService = inject(AuthService);
   private firebaseService = inject(FirebaseService);
-
   private jobOfferActionsService = inject(JobOfferActionsService);
   private subscriptions = new Subscription();
 
@@ -86,8 +85,7 @@ export class BusinessPublicationComponent implements OnInit, OnDestroy {
           this.calculateStatusCounts(allOffers);
           this.hasPublications = allOffers.length > 0;
           this.isLoading = false;
-          // Trigger initial filtering
-          this.onFilteredOffers(allOffers); // Or you could use ViewChild to call applyFilter on the child
+          this.onFilteredOffers(allOffers);
         },
         error: (error: any) => {
           console.error('Error al cargar las ofertas:', error);
@@ -122,7 +120,8 @@ export class BusinessPublicationComponent implements OnInit, OnDestroy {
       this.jobOfferService.deleteJobOffer(jobId).subscribe({
         next: () => {
           this.jobOffers = this.jobOffers.filter(offer => offer.id !== jobId);
-          this.hasPublications = this.jobOffers.length > 0;
+          this.filteredJobOffers = this.filteredJobOffers.filter(offer => offer.id !== jobId);
+          this.hasPublications = this.filteredJobOffers.length > 0;
           this.calculateStatusCounts(this.jobOffers);
         },
         error: (error) => {
@@ -136,7 +135,8 @@ export class BusinessPublicationComponent implements OnInit, OnDestroy {
     if (newJobOffer.id) {
       this.lastDuplicatedId = newJobOffer.id;
       this.jobOffers = [newJobOffer, ...this.jobOffers];
-      this.hasPublications = true;
+      this.filteredJobOffers = [newJobOffer, ...this.filteredJobOffers];
+      this.hasPublications = this.filteredJobOffers.length > 0;
       this.calculateStatusCounts(this.jobOffers);
 
       setTimeout(() => {
@@ -150,14 +150,21 @@ export class BusinessPublicationComponent implements OnInit, OnDestroy {
       this.jobOfferActionsService.offerDuplicated$.subscribe((newOffer: JobOffer) => {
         const offerWithAnimation = { ...newOffer, isNew: true };
         this.jobOffers = [offerWithAnimation, ...this.jobOffers];
-        this.hasPublications = this.jobOffers.length > 0;
+        this.filteredJobOffers = [offerWithAnimation, ...this.filteredJobOffers];
+        this.hasPublications = this.filteredJobOffers.length > 0;
         this.calculateStatusCounts(this.jobOffers);
 
         setTimeout(() => {
-          const index = this.jobOffers.findIndex(offer => offer.id === newOffer.id);
-          if (index !== -1) {
-            this.jobOffers[index] = { ...this.jobOffers[index], isNew: false };
+          const fullIndex = this.jobOffers.findIndex(offer => offer.id === newOffer.id);
+          if (fullIndex !== -1) {
+            this.jobOffers[fullIndex] = { ...this.jobOffers[fullIndex], isNew: false };
             this.jobOffers = [...this.jobOffers];
+          }
+          
+          const filteredIndex = this.filteredJobOffers.findIndex(offer => offer.id === newOffer.id);
+          if (filteredIndex !== -1) {
+            this.filteredJobOffers[filteredIndex] = { ...this.filteredJobOffers[filteredIndex], isNew: false };
+            this.filteredJobOffers = [...this.filteredJobOffers];
           }
         }, 1000);
       })

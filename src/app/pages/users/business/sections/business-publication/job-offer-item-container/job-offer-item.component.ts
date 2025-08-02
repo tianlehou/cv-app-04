@@ -10,11 +10,12 @@ import { JobOfferLikeService } from '../services/job-offer-like.service';
 import { JobOfferBookmarkService } from '../services/job-offer-bookmark.service';
 import { JobOfferApplicationService } from '../services/job-offer-application.service';
 import { getFullText, getPreviewText, isTextLong } from 'src/app/shared/utils/text.utils';
+import { JobOfferMenuComponent } from './job-offer-menu/job-offer-menu.component';
 
 @Component({
   selector: 'app-job-offer-item',
   standalone: true,
-  imports: [CommonModule, JobOfferInfoModalComponent],
+  imports: [CommonModule, JobOfferInfoModalComponent, JobOfferMenuComponent],
   templateUrl: './job-offer-item.component.html',
   styleUrls: ['./job-offer-item.component.css']
 })
@@ -26,7 +27,7 @@ export class JobOfferItemComponent implements OnInit, OnDestroy {
   @Output() edit = new EventEmitter<any>();
   @Output() deleted = new EventEmitter<string>();
 
-  isMenuOpen = false;
+
   isDuplicating = false;
 
   // Inyectar servicios necesarios
@@ -38,13 +39,7 @@ export class JobOfferItemComponent implements OnInit, OnDestroy {
   private jobOfferBookmarkService = inject(JobOfferBookmarkService);
   private jobOfferApplicationService = inject(JobOfferApplicationService);
 
-  // Listener para el menú desplegable
-  private menuClickListener: (() => void) | null = null;
-  private clickListener: (() => void) | null = null;
 
-  // Limites de caracteres
-  private readonly MAX_PREVIEW_LENGTH = 25;
-  private readonly MAX_FULL_LENGTH = 1000;
 
   // Estado para controlar la expansión de texto
   showFullDescription = false;
@@ -149,11 +144,13 @@ export class JobOfferItemComponent implements OnInit, OnDestroy {
 
     // Limpiar listeners de clic
     this.removeOutsideClickListener();
-    this.removeClickListener();
 
     // Limpiar cualquier referencia a callbacks para prevenir memory leaks
-    this.menuClickListener = null;
+    // this.menuClickListener se eliminó ya que la lógica del menú está en el componente hijo
   }
+
+  // Propiedad para el listener de clic
+  private clickListener: (() => void) | null = null;
 
   // Contador regresivo
   private countdownSub: Subscription | null = null;
@@ -197,30 +194,9 @@ export class JobOfferItemComponent implements OnInit, OnDestroy {
     this.timeRemaining = `Tiempo Restante (${days}d ${hours}h ${minutes}m ${seconds}s)`;
   }
 
-  // Métodos para manejar el menú desplegable
-  toggleMenu(event: Event): void {
-    event.stopPropagation();
-    this.isMenuOpen = !this.isMenuOpen;
-
-    if (this.isMenuOpen) {
-      // Cerrar el menú al hacer clic fuera de él
-      setTimeout(() => {
-        this.menuClickListener = () => {
-          this.isMenuOpen = false;
-          this.removeClickListener();
-        };
-        document.addEventListener('click', this.menuClickListener);
-      });
-    } else {
-      this.removeClickListener();
-    }
-  }
-
-  private removeClickListener(): void {
-    if (this.menuClickListener) {
-      document.removeEventListener('click', this.menuClickListener);
-      this.menuClickListener = null;
-    }
+  // Método para cerrar el menú al salir del área del menú
+  onMouseLeave(): void {
+    // Esta función se mantiene por compatibilidad
   }
 
   //==============================
@@ -230,7 +206,6 @@ export class JobOfferItemComponent implements OnInit, OnDestroy {
   // Abrir el modal de información
   openInfoModal(): void {
     this.showInfoModal = true;
-    this.isMenuOpen = false; // Cerrar el menú popover
   }
 
   // Cerrar el modal de información
@@ -247,13 +222,8 @@ export class JobOfferItemComponent implements OnInit, OnDestroy {
   }
   //==============================
 
-  // Manejar cuando el mouse sale del componente
-  onMouseLeave(): void {
-    if (this.isMenuOpen) {
-      this.isMenuOpen = false;
-      this.removeClickListener();
-    }
-  }
+  // Método para manejar cuando el mouse sale del componente
+  // Se mantiene por compatibilidad pero ya no hace nada ya que el menú está en un componente separado
 
   // Manejar clic en ver más/menos
   toggleShowMore(section: 'description' | 'requirements', event: MouseEvent): void {
@@ -287,7 +257,7 @@ export class JobOfferItemComponent implements OnInit, OnDestroy {
     }, 0);
   }
 
-  // Remover listener
+  // Remover listener de clic fuera del componente
   private removeOutsideClickListener(): void {
     if (this.clickListener) {
       document.removeEventListener('click', this.clickListener);
@@ -356,12 +326,10 @@ export class JobOfferItemComponent implements OnInit, OnDestroy {
   onDuplicate(): void {
     this.jobOfferActionsService.confirmDuplicate(this.jobOffer).subscribe({
       next: (duplicated) => {
-        if (duplicated) {
-          this.isMenuOpen = false;
-        }
+        // La lógica del menú ahora está en el componente hijo
       },
       error: () => {
-        this.isMenuOpen = false;
+        // Manejo de error
       }
     });
   }
@@ -370,7 +338,7 @@ export class JobOfferItemComponent implements OnInit, OnDestroy {
   // Este método emite el evento de edición con la oferta de trabajo
   onEdit(): void {
     this.edit.emit(this.jobOffer);
-    this.isMenuOpen = false;
+    // La lógica del menú ahora está en el componente hijo
   }
 
   // Manejar la eliminación de la oferta
@@ -395,12 +363,10 @@ export class JobOfferItemComponent implements OnInit, OnDestroy {
   onPublish(): void {
     this.jobOfferActionsService.confirmPublish(this.jobOffer).subscribe({
       next: (published) => {
-        if (published) {
-          this.isMenuOpen = false;
-        }
+        // La lógica del menú ahora está en el componente hijo
       },
       error: () => {
-        this.isMenuOpen = false;
+        // Manejo de error
       }
     });
   }
@@ -409,12 +375,10 @@ export class JobOfferItemComponent implements OnInit, OnDestroy {
   onCancelPublish(): void {
     this.jobOfferActionsService.confirmCancelPublish(this.jobOffer).subscribe({
       next: (cancelled) => {
-        if (cancelled) {
-          this.isMenuOpen = false;
-        }
+        // La lógica del menú ahora está en el componente hijo
       },
       error: () => {
-        this.isMenuOpen = false;
+        // Manejo de error
       }
     });
   }

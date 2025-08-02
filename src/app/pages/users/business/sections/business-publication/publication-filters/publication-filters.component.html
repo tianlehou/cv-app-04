@@ -2,29 +2,29 @@
   <div class="filter-option" [class.active]="activeFilter === 'all'" (click)="selectFilter('all')">
     <i class="fas fa-list-ul icon"></i>
     <span class="filter-label">Todas</span>
-    <span class="filter-count" *ngIf="statusCounts.all > 0">{{statusCounts.all}}</span>
+    <span class="filter-count">{{statusCounts.all || 0}}</span>
     <div class="active-line"></div>
   </div>
 
   <div class="filter-option" [class.active]="activeFilter === 'published'" (click)="selectFilter('published')">
-    <i class="fas fa-check-circle icon"></i>
+    <i class="fas fa-check-circle icon" style="font-weight: 500;"></i>
     <span class="filter-label">Publicado</span>
-    <span class="filter-count" *ngIf="statusCounts.published > 0">{{statusCounts.published}}</span>
+    <span class="filter-count">{{statusCounts.published || 0}}</span>
     <div class="active-line"></div>
   </div>
 
   <div class="filter-option" [class.active]="activeFilter === 'draft'" (click)="selectFilter('draft')">
-    <i class="fas fa-file-alt icon"></i>
+    <i class="fas fa-file-alt icon" style="font-weight: 500;"></i>
     <span class="filter-label">Borrador</span>
-    <span class="filter-count" *ngIf="statusCounts.draft > 0">{{statusCounts.draft}}</span>
+    <span class="filter-count">{{statusCounts.draft || 0}}</span>
     <div class="active-line"></div>
   </div>
 
   <div class="filter-option" [class.active]="activeFilter === 'expired'" (click)="selectFilter('expired')">
     <i class="fas fa-ban icon"></i>
     <span class="filter-label">Vencido/Cancelado</span>
-    <span class="filter-count" *ngIf="(statusCounts.expired + statusCounts.cancelled) > 0">
-      {{statusCounts.expired + statusCounts.cancelled}}
+    <span class="filter-count">
+      {{(statusCounts.expired || 0) + (statusCounts.cancelled || 0)}}
     </span>
     <div class="active-line"></div>
   </div>

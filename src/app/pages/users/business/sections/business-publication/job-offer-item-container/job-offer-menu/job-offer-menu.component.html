@@ -1,0 +1,60 @@
+<!-- Menú de Opciones -->
+<div class="menu-container" (click)="$event.stopPropagation()">
+  <!-- Botón de Menú -->
+  <button class="menu-button" (click)="toggleMenu($event)">
+    <i class="bi bi-three-dots-vertical"></i>
+  </button>
+
+  <!-- Contenido del Menú -->
+  <div class="popover" [class.show]="isMenuOpen" (click)="stopPropagation($event)">
+    <!-- Boton de Información -->
+    <button class="popover-item info" (click)="onInfo()">
+      <i class="bi bi-info-circle" style="color: var(--clr-blue);"></i>
+      <label> Información</label>
+    </button>
+    <div class="popover-divider"></div>
+
+    <!-- Boton de Duplicar -->
+    <button class="popover-item" (click)="onDuplicate()">
+      <i class="bi bi-files"></i>
+      <label> Duplicar</label>
+    </button>
+
+    <!-- Boton de Editar -->
+    <button class="popover-item" (click)="onEdit()"
+      [disabled]="jobOffer.status === 'publicado' || jobOffer.status === 'vencido' || jobOffer.status === 'cancelado'">
+      <i class="fas fa-pencil-alt"
+        [class.text-muted]="jobOffer.status === 'publicado' || jobOffer.status === 'vencido' || jobOffer.status === 'cancelado'"></i>
+      <label> Editar</label>
+    </button>
+
+    <!-- Boton de Eliminar -->
+    <button class="popover-item danger" (click)="onDelete()"
+      [disabled]="jobOffer.status === 'publicado' || jobOffer.status === 'vencido' || jobOffer.status === 'cancelado'">
+      <i class="bi bi-trash" style="color: var(--clr-red);"
+        [class.text-muted]="jobOffer.status === 'publicado' || jobOffer.status === 'vencido' || jobOffer.status === 'cancelado'"></i>
+      <label> Eliminar</label>
+    </button>
+
+    <!-- Boton de Publicar -->
+    <button class="popover-item" (click)="onPublish()"
+      [disabled]="jobOffer.status === 'publicado' || jobOffer.status === 'vencido' || jobOffer.status === 'cancelado'"
+      [class.text-success]="jobOffer.status === 'publicado'"
+      [class.text-muted]="jobOffer.status === 'publicado' || jobOffer.status === 'vencido' || jobOffer.status === 'cancelado'">
+      <i class="bi" [ngClass]="{
+        'bi-send-check': jobOffer.status !== 'publicado',
+        'bi-check-circle': jobOffer.status === 'publicado',
+        'text-success': jobOffer.status === 'publicado',
+        'text-muted': jobOffer.status === 'publicado' || jobOffer.status === 'vencido' || jobOffer.status === 'cancelado'
+      }"></i>
+      {{ jobOffer.status === 'publicado' ? 'Publicado' : 'Publicar' }}
+    </button>
+
+    <!-- Boton de Cancelar Publicación -->
+    <button class="popover-item text-warning" (click)="onCancelPublish()" [disabled]="jobOffer.status !== 'publicado'"
+      [class.text-muted]="jobOffer.status !== 'publicado'">
+      <i class="bi bi-x-circle" [ngClass]="{'text-muted': jobOffer.status !== 'publicado'}"></i>
+      <label>Cancelar Publicación</label>
+    </button>
+  </div>
+</div>
