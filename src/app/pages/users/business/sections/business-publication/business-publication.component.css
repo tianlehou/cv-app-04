@@ -34,7 +34,7 @@ app-create-publication-button {
     position: fixed;
     top: 10px;
     right: 20px;
-    z-index: 1000;
+    z-index: 10;
 }
 
 /* Estilos para el modal */

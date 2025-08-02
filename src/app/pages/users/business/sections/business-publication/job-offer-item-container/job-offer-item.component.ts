@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input, Output, EventEmitter, inject, NgZone, OnDestroy, OnInit } from '@angular/core';
-import { interval, Subscription } from 'rxjs';
-import { JobOfferInfoModalComponent } from './job-offer-info-modal/job-offer-info-modal.component';
+import { Subscription } from 'rxjs';
 import { User } from '@angular/fire/auth';
+import { JobOfferInfoModalComponent } from './job-offer-menu/job-offer-info-modal/job-offer-info-modal.component';
 import { ConfirmationModalService } from 'src/app/shared/components/confirmation-modal/confirmation-modal.service';
 import { ToastService } from 'src/app/shared/components/toast/toast.service';
 import { JobOfferActionsService } from '../services/job-offer-actions.service';
@@ -11,11 +11,19 @@ import { JobOfferBookmarkService } from '../services/job-offer-bookmark.service'
 import { JobOfferApplicationService } from '../services/job-offer-application.service';
 import { getFullText, getPreviewText, isTextLong } from 'src/app/shared/utils/text.utils';
 import { JobOfferMenuComponent } from './job-offer-menu/job-offer-menu.component';
+import { ApplicantsModalComponent } from './applicants-modal/applicants-modal.component';
+import { JobOfferFooterComponent } from './job-offer-footer/job-offer-footer.component';
 
 @Component({
   selector: 'app-job-offer-item',
   standalone: true,
-  imports: [CommonModule, JobOfferInfoModalComponent, JobOfferMenuComponent],
+  imports: [
+    CommonModule, 
+    JobOfferInfoModalComponent, 
+    JobOfferMenuComponent,
+    ApplicantsModalComponent,
+    JobOfferFooterComponent
+  ],
   templateUrl: './job-offer-item.component.html',
   styleUrls: ['./job-offer-item.component.css']
 })
@@ -44,6 +52,7 @@ export class JobOfferItemComponent implements OnInit, OnDestroy {
   // Estado para controlar la expansión de texto
   showFullDescription = false;
   showFullRequirements = false;
+  showApplicantsModal = false;
 
   public getFullText = getFullText;
   public getPreviewText = getPreviewText;
@@ -62,11 +71,6 @@ export class JobOfferItemComponent implements OnInit, OnDestroy {
   private applicationsSubscription: Subscription | null = null;
 
   ngOnInit() {
-    this.updateTimeRemaining();
-    // Actualizar cada segundo
-    this.countdownSub = interval(1000).subscribe(() => {
-      this.updateTimeRemaining();
-    });
 
     // Suscribirse a actualizaciones de likes
     if (this.jobOffer?.id && this.jobOffer?.companyId) {
@@ -116,14 +120,8 @@ export class JobOfferItemComponent implements OnInit, OnDestroy {
     }
   }
 
-  // Limpiar todas las suscripciones y listeners al destruir el componente
+  // Limpiar todas las suscripciones al destruir el componente
   ngOnDestroy(): void {
-    // Limpiar suscripción del contador regresivo
-    if (this.countdownSub) {
-      this.countdownSub.unsubscribe();
-      this.countdownSub = null;
-    }
-
     // Limpiar suscripción de likes
     if (this.likesSubscription) {
       this.likesSubscription.unsubscribe();
@@ -144,59 +142,15 @@ export class JobOfferItemComponent implements OnInit, OnDestroy {
 
     // Limpiar listeners de clic
     this.removeOutsideClickListener();
-
-    // Limpiar cualquier referencia a callbacks para prevenir memory leaks
-    // this.menuClickListener se eliminó ya que la lógica del menú está en el componente hijo
   }
 
   // Propiedad para el listener de clic
   private clickListener: (() => void) | null = null;
 
-  // Contador regresivo
-  private countdownSub: Subscription | null = null;
-  timeRemaining: string = '';
-  isTimeCritical: boolean = false; // Indica si faltan menos de 24 horas o está expirado
-  private timeZone = 'America/Panama';
-
-  private updateTimeRemaining() {
-    if (!this.jobOffer?.deadline) {
-      this.timeRemaining = '';
-      this.isTimeCritical = false;
-      return;
-    }
-
-    const now = new Date();
-    // Ajustar 5 horas a la fecha actual
-    now.setHours(now.getHours() - 5);
-
-    const deadline = new Date(this.jobOffer.deadline);
-
-    // Asegurarse de que estamos comparando en la misma zona horaria
-    const nowPanama = new Date(now.toLocaleString('en-US', { timeZone: this.timeZone }));
-    const deadlinePanama = new Date(deadline.toLocaleString('en-US', { timeZone: this.timeZone }));
-
-    const diffMs = deadlinePanama.getTime() - nowPanama.getTime();
-    const hoursDiff = diffMs / (1000 * 60 * 60); // Convertir a horas
-
-    // Verificar si faltan menos de 24 horas o si ya expiró
-    this.isTimeCritical = hoursDiff < 24 || diffMs <= 0;
-
-    if (diffMs <= 0) {
-      this.timeRemaining = 'Expirado';
-      return;
-    }
-
-    const days = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-    const hours = Math.floor((diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-    const minutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
-    const seconds = Math.floor((diffMs % (1000 * 60)) / 1000);
-
-    this.timeRemaining = `Tiempo Restante (${days}d ${hours}h ${minutes}m ${seconds}s)`;
-  }
-
-  // Método para cerrar el menú al salir del área del menú
+  // Método para manejar el evento mouseleave en la tarjeta
   onMouseLeave(): void {
-    // Esta función se mantiene por compatibilidad
+    // Este método se mantiene para compatibilidad con el template
+    // La lógica específica se maneja en el componente de menú
   }
 
   //==============================
@@ -320,6 +274,16 @@ export class JobOfferItemComponent implements OnInit, OnDestroy {
       'por-horas': 'Por Horas'
     };
     return workdays[workday] || workday;
+  }
+
+  // Método para mostrar el modal de postulados
+  onViewApplicants() {
+    this.showApplicantsModal = true;
+  }
+  
+  // Cerrar el modal de postulados
+  onCloseApplicantsModal() {
+    this.showApplicantsModal = false;
   }
 
   // Manejar la duplicación de la oferta

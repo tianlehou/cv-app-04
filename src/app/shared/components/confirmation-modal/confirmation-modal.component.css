@@ -30,7 +30,7 @@
   width: 90%;
   max-width: 400px;
   overflow: hidden;
-  animation: spinIn 1s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+  animation: spinIn 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
   text-align: center;
   padding: 30px;
   transform-style: preserve-3d; /* Needed for 3D rotation */

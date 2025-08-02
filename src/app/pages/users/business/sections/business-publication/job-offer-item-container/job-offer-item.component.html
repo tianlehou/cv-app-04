@@ -106,30 +106,24 @@
     </div>
   </div>
 
-  <!-- Footer -->
-  <div class="job-offer-footer">
-    <div class="time-remaining" [class.time-critical]="isTimeCritical">
-      <i class="bi bi-hourglass-split"></i><span>{{ timeRemaining }}</span>
-    </div>
-    <div class="footer-actions">
-      <div class="likes-count">
-        <i class="fas fa-heart"></i>
-        <span class="like-count" *ngIf="likesCount > 0">{{ likesCount }}</span>
-        <label>Me gusta</label>
-      </div>
-      <div class="bookmarks-count">
-        <i class="fas fa-bookmark"></i>
-        <span class="bookmark-count" *ngIf="bookmarksCount > 0">{{ bookmarksCount }}</span>
-        <label>Guardados</label>
-      </div>
-    </div>
-    <button class="apply-button">
-      <i class="fas fa-file-alt"></i>
-      <span class="applications-count" *ngIf="applicationsCount > 0">({{ applicationsCount }})</span>
-      <label>Ver postulados</label>
-    </button>
-  </div>
+  <!-- Footer Component -->
+  <app-job-offer-footer
+    [jobOffer]="jobOffer"
+    [likesCount]="likesCount"
+    [bookmarksCount]="bookmarksCount"
+    [applicationsCount]="applicationsCount"
+    (viewApplicants)="onViewApplicants()">
+  </app-job-offer-footer>
 </div>
 
 <!-- Componente de Modal de Información -->
 <app-job-offer-info-modal *ngIf="showInfoModal" (closeModal)="onInfoModalClose()"></app-job-offer-info-modal>
+
+<!-- Modal de Postulados -->
+<app-applicants-modal 
+  *ngIf="showApplicantsModal && jobOffer"
+  [isOpen]="showApplicantsModal"
+  [jobOfferId]="jobOffer.id || ''"
+  [companyId]="jobOffer.companyId || ''"
+  (closeModal)="onCloseApplicantsModal()">
+</app-applicants-modal>
