@@ -10,6 +10,7 @@ import { AuthService } from 'src/app/pages/home/auth/auth.service';
 import { Subscription } from 'rxjs';
 import { FirebaseService } from 'src/app/shared/services/firebase.service';
 import { JobOfferActionsService } from './services/job-offer-actions.service';
+import { PublicationFiltersComponent } from './publication-filters/publication-filters.component';
 
 @Component({
   selector: 'app-business-publication',
@@ -19,7 +20,8 @@ import { JobOfferActionsService } from './services/job-offer-actions.service';
     PublicationFormComponent,
     CreatePublicationButtonComponent,
     EmptyPublicationMessageComponent,
-    JobOfferItemComponent
+    JobOfferItemComponent,
+    PublicationFiltersComponent
   ],
   templateUrl: './business-publication.component.html',
   styleUrls: ['./business-publication.component.css']
@@ -28,17 +30,27 @@ export class BusinessPublicationComponent implements OnInit, OnDestroy {
   private jobOfferService = inject(JobOfferService);
   private authService = inject(AuthService);
   private firebaseService = inject(FirebaseService);
+
   private jobOfferActionsService = inject(JobOfferActionsService);
   private subscriptions = new Subscription();
 
   jobOffers: JobOffer[] = [];
+  filteredJobOffers: JobOffer[] = [];
   isLoading = true;
   currentUser: any = null;
   showPublicationModal = false;
   hasPublications = false;
   isEditing = false;
   currentJobOffer: JobOffer | null = null;
-  lastDuplicatedId: string | null = null; // Para rastrear la última oferta duplicada
+  lastDuplicatedId: string | null = null;
+
+  statusCounts = {
+    all: 0,
+    published: 0,
+    draft: 0,
+    expired: 0,
+    cancelled: 0
+  };
 
   constructor() {
     this.currentUser = this.authService.getCurrentAuthUser();
@@ -63,60 +75,19 @@ export class BusinessPublicationComponent implements OnInit, OnDestroy {
     this.togglePublicationModal(false);
   }
 
-  // Cargar las ofertas de trabajo del usuario actual
   private loadJobOffers(): void {
     this.isLoading = true;
     const userEmailKey = this.firebaseService.formatEmailKey(this.currentUser.email);
 
     this.subscriptions.add(
-      this.jobOfferService.getJobOffersByCompany(userEmailKey).subscribe({
-        next: (offers: JobOffer[]) => {
-          // Ordenar las ofertas según el estado: borrador, publicado, cancelado, vencido
-          this.jobOffers = offers.sort((a, b) => {
-            // Definir el orden de los estados
-            const statusOrder: { [key: string]: number } = {
-              'borrador': 0,
-              'publicado': 1,
-              'cancelado': 2,
-              'vencido': 3
-            };
-
-            // Comparar los estados según el orden definido
-            const orderA = statusOrder[a.status] ?? 4; // Si el estado no está en la lista, va al final
-            const orderB = statusOrder[b.status] ?? 4;
-
-            // Si los estados son iguales, ordenar según el tipo de estado
-            if (orderA === orderB) {
-              let dateA: number;
-              let dateB: number;
-
-              // Determinar qué fecha usar según el estado
-              if (a.status === 'borrador') {
-                // Para borradores, usar fecha de creación
-                dateA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
-                dateB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
-              } else if (a.status === 'publicado' || a.status === 'vencido') {
-                // Para publicados o vencidos, usar fecha de vencimiento
-                dateA = a.deadline ? new Date(a.deadline).getTime() : 0;
-                dateB = b.deadline ? new Date(b.deadline).getTime() : 0;
-              } else if (a.status === 'cancelado') {
-                // Para cancelados, usar fecha de actualización (que sería cuando se canceló)
-                dateA = a.updatedAt ? new Date(a.updatedAt).getTime() : 0;
-                dateB = b.updatedAt ? new Date(b.updatedAt).getTime() : 0;
-              } else {
-                // Para cualquier otro estado, usar la fecha de creación por defecto
-                dateA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
-                dateB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
-              }
-
-              return dateB - dateA; // Orden descendente (más reciente primero)
-            }
-
-            return orderA - orderB; // Ordenar según el orden de estados definido
-          });
-
-          this.hasPublications = offers.length > 0;
+      this.jobOfferService.getJobOffersByCompany(userEmailKey, 'all').subscribe({
+        next: (allOffers: JobOffer[]) => {
+          this.jobOffers = allOffers;
+          this.calculateStatusCounts(allOffers);
+          this.hasPublications = allOffers.length > 0;
           this.isLoading = false;
+          // Trigger initial filtering
+          this.onFilteredOffers(allOffers); // Or you could use ViewChild to call applyFilter on the child
         },
         error: (error: any) => {
           console.error('Error al cargar las ofertas:', error);
@@ -126,20 +97,33 @@ export class BusinessPublicationComponent implements OnInit, OnDestroy {
     );
   }
 
-  // Se llama cuando se guarda exitosamente una publicación
   onPublicationSaved(): void {
     this.togglePublicationModal(false);
-    this.loadJobOffers(); // Recargar la lista de ofertas
+    this.loadJobOffers();
   }
 
-  // Manejar la eliminación de una oferta
+  private calculateStatusCounts(offers: JobOffer[]): void {
+    this.statusCounts = {
+      all: offers.length,
+      published: offers.filter(offer => offer.status === 'publicado').length,
+      draft: offers.filter(offer => offer.status === 'borrador').length,
+      expired: offers.filter(offer => offer.status === 'vencido').length,
+      cancelled: offers.filter(offer => offer.status === 'cancelado').length
+    };
+  }
+
+  onFilteredOffers(filteredOffers: JobOffer[]): void {
+    this.filteredJobOffers = filteredOffers;
+    this.hasPublications = filteredOffers.length > 0;
+  }
+
   onJobOfferDeleted(jobId: string): void {
     this.subscriptions.add(
       this.jobOfferService.deleteJobOffer(jobId).subscribe({
         next: () => {
-          // Filtrar la oferta eliminada de la lista
           this.jobOffers = this.jobOffers.filter(offer => offer.id !== jobId);
           this.hasPublications = this.jobOffers.length > 0;
+          this.calculateStatusCounts(this.jobOffers);
         },
         error: (error) => {
           console.error('Error al eliminar la oferta:', error);
@@ -148,39 +132,32 @@ export class BusinessPublicationComponent implements OnInit, OnDestroy {
     );
   }
 
-  // Manejar la duplicación de una oferta
   onJobOfferDuplicated(newJobOffer: JobOffer): void {
-    // Establecer el ID de la oferta recién duplicada para la animación
     if (newJobOffer.id) {
       this.lastDuplicatedId = newJobOffer.id;
-
-      // Agregar la nueva oferta al principio de la lista
       this.jobOffers = [newJobOffer, ...this.jobOffers];
       this.hasPublications = true;
+      this.calculateStatusCounts(this.jobOffers);
 
-      // Remover la clase de animación después de que termine
       setTimeout(() => {
         this.lastDuplicatedId = null;
-      }, 3000); // Duración de la animación en ms
+      }, 3000);
     }
   }
 
-  // Configurar el listener para ofertas duplicadas
   private setupOfferDuplicatedListener(): void {
     this.subscriptions.add(
       this.jobOfferActionsService.offerDuplicated$.subscribe((newOffer: JobOffer) => {
-        // Agregar la nueva oferta al principio del array con la clase de animación
         const offerWithAnimation = { ...newOffer, isNew: true };
         this.jobOffers = [offerWithAnimation, ...this.jobOffers];
-        // Actualizar el estado de hasPublications
         this.hasPublications = this.jobOffers.length > 0;
+        this.calculateStatusCounts(this.jobOffers);
 
-        // Eliminar la clase de animación después de que termine
         setTimeout(() => {
           const index = this.jobOffers.findIndex(offer => offer.id === newOffer.id);
           if (index !== -1) {
             this.jobOffers[index] = { ...this.jobOffers[index], isNew: false };
-            this.jobOffers = [...this.jobOffers]; // Forzar detección de cambios
+            this.jobOffers = [...this.jobOffers];
           }
         }, 1000);
       })

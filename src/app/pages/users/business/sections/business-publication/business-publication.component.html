@@ -8,6 +8,11 @@
         <app-create-publication-button (createClick)="togglePublicationModal(true)"></app-create-publication-button>
     </div>
 
+    <!-- Filtros de publicaciones -->
+    <app-publication-filters [statusCounts]="statusCounts" [allOffers]="jobOffers"
+        (filteredOffers)="onFilteredOffers($event)">
+    </app-publication-filters>
+
     <!-- Indicador de carga -->
     @if (isLoading) {
     <div class="loading-container">
@@ -17,7 +22,7 @@
     } @else if (hasPublications) {
     <!-- Lista de ofertas de trabajo -->
     <div class="job-offers-grid">
-        @for (jobOffer of jobOffers; track jobOffer.id) {
+        @for (jobOffer of filteredJobOffers; track jobOffer.id) {
         <div [class.new-duplicated-card]="lastDuplicatedId === jobOffer.id">
             <app-job-offer-item [jobOffer]="jobOffer" [currentUser]="currentUser" [isOwner]="true"
                 (deleted)="onJobOfferDeleted($event)" (edit)="togglePublicationModal(true, $event)"

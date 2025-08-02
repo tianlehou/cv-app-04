@@ -12,7 +12,7 @@ export interface JobOffer {
   modality: 'presencial' | 'remoto' | 'hibrido';
   companyId: string;
   companyName: string;
-  status: 'borrador' | 'publicado' | 'vencido'; // Estado de la oferta
+  status: 'borrador' | 'publicado' | 'vencido' | 'cancelado'; // Estado de la oferta
   publicationDate?: string; // Fecha en formato ISO string - opcional para borradores
   views?: number; // Número de visualizaciones
   experienceLevel?: 'trainee' | 'junior' | 'mid' | 'senior' | 'expert';

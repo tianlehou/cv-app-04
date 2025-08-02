@@ -129,7 +129,7 @@ export class JobOfferService {
   }
 
   // Obtener ofertas por usuario (método interno)
-  private getJobOffersByUser(userEmailKey: string): Observable<JobOffer[]> {
+  private getJobOffersByUser(userEmailKey: string, status?: 'all' | 'published' | 'draft' | 'expired'): Observable<JobOffer[]> {
     const userJobOffersRef = this.firebaseService.getDatabaseRef(
       `cv-app/users/${userEmailKey}/job-offer`
     );
@@ -140,7 +140,12 @@ export class JobOfferService {
         if (snapshot.exists()) {
           snapshot.forEach((childSnapshot: any) => {
             const jobData = childSnapshot.val();
-            jobOffers.push(this.mapJobOffer(childSnapshot.key, jobData));
+            const jobOffer = this.mapJobOffer(childSnapshot.key, jobData);
+            
+            // Aplicar filtro de estado si se especificó
+            if (!status || status === 'all' || this.doesOfferMatchStatus(jobOffer, status)) {
+              jobOffers.push(jobOffer);
+            }
           });
         }
         return jobOffers;
@@ -152,9 +157,9 @@ export class JobOfferService {
     );
   }
 
-  // Obtener ofertas por empresa (alias para getJobOffersByUser)
-  getJobOffersByCompany(companyEmailKey: string): Observable<JobOffer[]> {
-    return this.getJobOffersByUser(companyEmailKey).pipe(
+  // Obtener ofertas por empresa con filtro de estado
+  getJobOffersByCompany(companyEmailKey: string, status?: 'all' | 'published' | 'draft' | 'expired'): Observable<JobOffer[]> {
+    return this.getJobOffersByUser(companyEmailKey, status).pipe(
       switchMap(jobOffers => {
         // Convertir la promesa a observable
         return from(this.getCompanyName(companyEmailKey)).pipe(
@@ -177,6 +182,27 @@ export class JobOfferService {
         })
       )
     );
+  }
+
+  // Verificar si una oferta coincide con el estado especificado
+  private doesOfferMatchStatus(offer: JobOffer, status: string): boolean {
+    // Primero actualizamos el estado de vencimiento si es necesario
+    const updatedOffer = this.updateExpiredStatus(offer);
+    
+    switch (status) {
+      case 'published':
+        // Solo mostrar ofertas con estado 'publicado' y que no estén vencidas
+        return updatedOffer.status === 'publicado';
+      case 'draft':
+        // Mostrar solo borradores
+        return updatedOffer.status === 'borrador';
+      case 'expired':
+        // Mostrar ofertas vencidas o canceladas
+        return updatedOffer.status === 'vencido' || updatedOffer.status === 'cancelado';
+      default:
+        // 'all' o cualquier otro valor: mostrar todo
+        return true;
+    }
   }
 
   // Obtener una oferta por ID

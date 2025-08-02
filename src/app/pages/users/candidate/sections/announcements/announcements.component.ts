@@ -16,12 +16,10 @@ import { getFullText, getPreviewText, isTextLong } from 'src/app/shared/utils/te
   styleUrls: ['./announcements.component.css']
 })
 export class AnnouncementsComponent implements OnInit, OnDestroy {
-  // Límite de caracteres para la vista previa
-  private readonly MAX_PREVIEW_LENGTH = 25;
-
   // Objeto para rastrear el estado de expansión de cada oferta
   expandedStates: { [key: string]: { description: boolean; requirements: boolean } } = {};
   iconStates: { [key: string]: { heart: boolean; bookmark: boolean; share: boolean; cooldown?: boolean } } = {};
+  isApplying: { [key: string]: boolean } = {};
   jobOffers: JobOffer[] = [];
   isLoading = true;
   error: string | null = null;
@@ -31,9 +29,6 @@ export class AnnouncementsComponent implements OnInit, OnDestroy {
   isTimeCriticalStates: { [key: string]: boolean } = {};
   private countdownSub: Subscription | null = null;
   private timeZone = 'America/Panama';
-
-  // Objeto para rastrear el estado de carga de los botones de aplicación
-  isApplying: { [key: string]: boolean } = {};
 
   private clickListener: (() => void) | null = null;
 
@@ -70,6 +65,49 @@ export class AnnouncementsComponent implements OnInit, OnDestroy {
       this.userSubscription.unsubscribe();
     }
     this.removeOutsideClickListener();
+  }
+
+  // Método para contraer todas las secciones
+  initializeTimeRemaining(): void {
+    if (this.countdownSub) {
+      this.countdownSub.unsubscribe();
+    }
+    this.updateAllTimeRemainings();
+    this.countdownSub = interval(1000).subscribe(() => {
+      this.updateAllTimeRemainings();
+    });
+  }
+
+  updateAllTimeRemainings(): void {
+    this.jobOffers.forEach(offer => {
+      if (!offer.id || !offer.deadline) {
+        return;
+      }
+
+      const now = new Date();
+      now.setHours(now.getHours() - 5); // Ajuste de zona horaria
+      const deadline = new Date(offer.deadline);
+
+      const nowPanama = new Date(now.toLocaleString('en-US', { timeZone: this.timeZone }));
+      const deadlinePanama = new Date(deadline.toLocaleString('en-US', { timeZone: this.timeZone }));
+
+      const diffMs = deadlinePanama.getTime() - nowPanama.getTime();
+      const hoursDiff = diffMs / (1000 * 60 * 60);
+
+      this.isTimeCriticalStates[offer.id] = hoursDiff < 24 || diffMs <= 0;
+
+      if (diffMs <= 0) {
+        this.timeRemainingStates[offer.id] = 'Expirado';
+        return;
+      }
+
+      const days = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((diffMs % (1000 * 60)) / 1000);
+
+      this.timeRemainingStates[offer.id] = `Tiempo Restante (${days}d ${hours}h ${minutes}m ${seconds}s)`;
+    });
   }
 
   loadJobOffers(): void {
@@ -262,49 +300,6 @@ export class AnnouncementsComponent implements OnInit, OnDestroy {
       // Para otros tipos de iconos (como 'share')
       this.jobInteractionService.toggleIcon(jobOffer, iconType, this.iconStates).subscribe();
     }
-  }
-
-  // Método para contraer todas las secciones
-  initializeTimeRemaining(): void {
-    if (this.countdownSub) {
-      this.countdownSub.unsubscribe();
-    }
-    this.updateAllTimeRemainings();
-    this.countdownSub = interval(1000).subscribe(() => {
-      this.updateAllTimeRemainings();
-    });
-  }
-
-  updateAllTimeRemainings(): void {
-    this.jobOffers.forEach(offer => {
-      if (!offer.id || !offer.deadline) {
-        return;
-      }
-
-      const now = new Date();
-      now.setHours(now.getHours() - 5); // Ajuste de zona horaria
-      const deadline = new Date(offer.deadline);
-
-      const nowPanama = new Date(now.toLocaleString('en-US', { timeZone: this.timeZone }));
-      const deadlinePanama = new Date(deadline.toLocaleString('en-US', { timeZone: this.timeZone }));
-
-      const diffMs = deadlinePanama.getTime() - nowPanama.getTime();
-      const hoursDiff = diffMs / (1000 * 60 * 60);
-
-      this.isTimeCriticalStates[offer.id] = hoursDiff < 24 || diffMs <= 0;
-
-      if (diffMs <= 0) {
-        this.timeRemainingStates[offer.id] = 'Expirado';
-        return;
-      }
-
-      const days = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-      const hours = Math.floor((diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-      const minutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
-      const seconds = Math.floor((diffMs % (1000 * 60)) / 1000);
-
-      this.timeRemainingStates[offer.id] = `Tiempo Restante (${days}d ${hours}h ${minutes}m ${seconds}s)`;
-    });
   }
 
   // Método para contraer todas las secciones

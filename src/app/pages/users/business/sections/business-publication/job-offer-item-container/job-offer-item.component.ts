@@ -9,6 +9,7 @@ import { JobOfferActionsService } from '../services/job-offer-actions.service';
 import { JobOfferLikeService } from '../services/job-offer-like.service';
 import { JobOfferBookmarkService } from '../services/job-offer-bookmark.service';
 import { JobOfferApplicationService } from '../services/job-offer-application.service';
+import { getFullText, getPreviewText, isTextLong } from 'src/app/shared/utils/text.utils';
 
 @Component({
   selector: 'app-job-offer-item',
@@ -48,6 +49,10 @@ export class JobOfferItemComponent implements OnInit, OnDestroy {
   // Estado para controlar la expansión de texto
   showFullDescription = false;
   showFullRequirements = false;
+
+  public getFullText = getFullText;
+  public getPreviewText = getPreviewText;
+  public isTextLong = isTextLong;
 
   // Estado para mostrar el contador de likes
   likesCount: number = 0;
@@ -192,22 +197,6 @@ export class JobOfferItemComponent implements OnInit, OnDestroy {
     this.timeRemaining = `Tiempo Restante (${days}d ${hours}h ${minutes}m ${seconds}s)`;
   }
 
-  // Obtener texto recortado para vista previa
-  getPreviewText(text: string | undefined): string {
-    if (!text) return '';
-    return text.length > this.MAX_PREVIEW_LENGTH
-      ? text.slice(0, this.MAX_PREVIEW_LENGTH) + '...'
-      : text;
-  }
-
-  // Obtener texto completo con límite
-  getFullText(text: string | undefined): string {
-    if (!text) return '';
-    return text.length > this.MAX_FULL_LENGTH
-      ? text.slice(0, this.MAX_FULL_LENGTH) + '...'
-      : text;
-  }
-
   // Métodos para manejar el menú desplegable
   toggleMenu(event: Event): void {
     event.stopPropagation();
@@ -264,11 +253,6 @@ export class JobOfferItemComponent implements OnInit, OnDestroy {
       this.isMenuOpen = false;
       this.removeClickListener();
     }
-  }
-
-  // Ver si el texto es más largo que el límite de vista previa
-  isTextLong(text: string | undefined): boolean {
-    return text ? text.length > this.MAX_PREVIEW_LENGTH : false;
   }
 
   // Manejar clic en ver más/menos
