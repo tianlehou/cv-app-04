@@ -15,7 +15,7 @@ import { getFullText, getPreviewText, isTextLong } from 'src/app/shared/utils/te
 import { ApplicantsModalComponent } from './applicants-modal/applicants-modal.component';
 import { JobOfferFooterComponent } from './job-offer-footer/job-offer-footer.component';
 import { JobOfferHeaderComponent } from './job-offer-header/job-offer-header.component';
-import { JobOfferService } from '../services/job-offer.service';
+import { JobOfferBodyComponent } from './job-offer-body/job-offer-body.component';
 
 @Component({
   selector: 'app-job-offer-item',
@@ -26,7 +26,8 @@ import { JobOfferService } from '../services/job-offer.service';
     JobOfferInfoModalComponent, 
     ApplicantsModalComponent,
     JobOfferFooterComponent,
-    JobOfferHeaderComponent
+    JobOfferHeaderComponent,
+    JobOfferBodyComponent
   ],
   templateUrl: './job-offer-item.component.html',
   styleUrls: ['./job-offer-item.component.css']
@@ -52,23 +53,13 @@ export class JobOfferItemComponent implements OnInit, OnDestroy {
   private jobOfferLikeService = inject(JobOfferLikeService);
   private jobOfferBookmarkService = inject(JobOfferBookmarkService);
   private jobOfferApplicationService = inject(JobOfferApplicationService);
-  private jobOfferService = inject(JobOfferService);
 
-
-
-  // Estado para controlar la expansión de texto
-  showFullDescription = false;
-  showFullRequirements = false;
   showInfoModal = false;
   // Estado para controlar la edición de la fecha de vencimiento
   editingDeadline = false;
   newDeadline = '';
   minDate = new Date().toISOString().slice(0, 16);
   showApplicantsModal = false;
-
-  public getFullText = getFullText;
-  public getPreviewText = getPreviewText;
-  public isTextLong = isTextLong;
 
   // Estado para mostrar el contador de likes
   likesCount: number = 0;
@@ -151,13 +142,9 @@ export class JobOfferItemComponent implements OnInit, OnDestroy {
       this.applicationsSubscription.unsubscribe();
       this.applicationsSubscription = null;
     }
-
-    // Limpiar listeners de clic
-    this.removeOutsideClickListener();
   }
 
-  // Propiedad para el listener de clic
-  private clickListener: (() => void) | null = null;
+
 
   // Método para manejar el evento mouseleave en la tarjeta
   onMouseLeave(): void {
@@ -189,76 +176,10 @@ export class JobOfferItemComponent implements OnInit, OnDestroy {
   // Método para manejar cuando el mouse sale del componente
   // Se mantiene por compatibilidad pero ya no hace nada ya que el menú está en un componente separado
 
-  // Manejar clic en ver más/menos
-  toggleShowMore(section: 'description' | 'requirements', event: MouseEvent): void {
-    event.stopPropagation();
 
-    if (section === 'description') {
-      this.showFullDescription = !this.showFullDescription;
-    } else {
-      this.showFullRequirements = !this.showFullRequirements;
-    }
 
-    // Configurar listener para cerrar al hacer clic fuera
-    this.setupOutsideClickListener();
-  }
 
-  // Configurar listener para cerrar al hacer clic fuera
-  private setupOutsideClickListener(): void {
-    // Remover listener anterior si existe
-    this.removeOutsideClickListener();
-
-    // Agregar nuevo listener
-    this.clickListener = () => {
-      this.showFullDescription = false;
-      this.showFullRequirements = false;
-      this.removeOutsideClickListener();
-    };
-
-    // Usar setTimeout para evitar que el clic actual active el listener
-    setTimeout(() => {
-      document.addEventListener('click', this.clickListener!);
-    }, 0);
-  }
-
-  // Remover listener de clic fuera del componente
-  private removeOutsideClickListener(): void {
-    if (this.clickListener) {
-      document.removeEventListener('click', this.clickListener);
-      this.clickListener = null;
-    }
-  }
-
-  // Obtener el texto de la modalidad
-  getModalityLabel(modality: string): string {
-    const modalities: { [key: string]: string } = {
-      'presencial': 'Presencial',
-      'remoto': 'Remoto',
-      'hibrido': 'Híbrido'
-    };
-    return modalities[modality] || modality;
-  }
-
-  // Obtener el texto del tipo de contrato
-  getContractTypeLabel(type: string): string {
-    const types: { [key: string]: string } = {
-      'indefinido': 'Indefinido',
-      'temporal': 'Temporal',
-      'practicas': 'Prácticas',
-      'formacion': 'Formación'
-    };
-    return types[type] || type;
-  }
-
-  // Obtener el texto de la jornada laboral
-  getWorkdayLabel(workday: string): string {
-    const workdays: { [key: string]: string } = {
-      'completa': 'Turno completo',
-      'parcial': 'Medio turno',
-      'por-horas': 'Por Horas'
-    };
-    return workdays[workday] || workday;
-  }
+  
 
   // Método para mostrar el modal de postulados
   onViewApplicants(): void {

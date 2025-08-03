@@ -1,0 +1,98 @@
+/* Estilos para el cuerpo de la tarjeta de oferta de trabajo */
+.job-offer-body {
+  padding: 1.5rem;
+}
+
+/* Estilos para los títulos */
+.job-description h4,
+.job-requirements h4 {
+  font-size: 1rem;
+  font-weight: 500;
+  text-align: left;
+  margin-bottom: 0.5rem;
+  color: var(--text-color-light);
+}
+
+/* Estilos para las secciones de descripción y requisitos */
+.job-requirements,
+.job-description {
+  line-height: 1.6;
+  margin-bottom: 1rem;
+}
+
+/* Estilos para el texto */
+.job-offer-body p {
+  margin: 0;
+  font-size: 0.8rem;
+  font-weight: 300;
+  text-align: justify;
+  line-height: 1.5;
+  white-space: pre-line;
+  word-wrap: break-word;
+  color: var(--text-color-light);
+}
+
+/* Estilos para el botón de ver más/menos */
+.btn-text-link {
+  background: none;
+  border: none;
+  color: var(--clr-blue);
+  cursor: pointer;
+  padding: 0 0.25rem;
+  font-size: 0.8rem;
+  font-weight: 500;
+  text-decoration: none;
+  display: inline;
+  margin: 0;
+  transition: color 0.2s ease;
+}
+
+.btn-text-link:hover {
+  color: var(--clr-blue-dark);
+  text-decoration: none;
+}
+
+/* Asegurar que el botón no se rompa en una línea nueva */
+.btn-text-link {
+  white-space: nowrap;
+}
+
+/* Estilos para los detalles del trabajo */
+.job-details {
+  display: grid;
+  gap: 0.75rem;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border-color);
+}
+
+.job-details-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.job-details .detail {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8rem;
+  color: var(--text-color-light);
+}
+
+.job-details .detail i {
+  color: var(--clr-blue);
+  width: 16px;
+  text-align: center;
+}
+
+/* Estilos para el contenedor principal */
+.card-content-wrapper {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.main-content {
+  flex: 1;
+}

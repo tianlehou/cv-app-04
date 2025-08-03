@@ -71,26 +71,16 @@ export class ApplicantsModalComponent implements OnChanges {
     this.pagedApplicants = this.applicants.slice(startIndex, startIndex + this.pageSize);
   }
 
-  /**
-   * Cambia la página actual
-   * @param page Número de página
-   */
   onPageChange(page: number): void {
     this.currentPage = page;
     this.updatePagedApplicants();
   }
 
-  /**
-   * Abre el modal de perfil del postulante
-   * @param applicant Datos del postulante
-   */
   viewProfile(applicant: any): void {
     this.selectedApplicant = applicant;
   }
 
-  /**
-   * Cierra el modal de perfil
-   */
+  // Cierra el modal de perfil
   closeProfileModal(): void {
     this.selectedApplicant = null;
   }

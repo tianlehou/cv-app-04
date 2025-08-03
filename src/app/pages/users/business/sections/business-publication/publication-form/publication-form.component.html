@@ -39,12 +39,12 @@
                         <i class="fas fa-file-alt"></i>
                         <label for="jobDescription">Descripción del Puesto <span class="text-danger">*</span></label>
                     </div>
-                    <small class="text-muted" [class.text-danger]="descriptionLength > MAX_DESCRIPTION_LENGTH">
-                        {{ descriptionLength }} / {{ MAX_DESCRIPTION_LENGTH }} caracteres
+                    <small class="text-muted" [class.text-danger]="descriptionLength > MAX_LENGTH">
+                        {{ descriptionLength }} / {{ MAX_LENGTH }} caracteres
                     </small>
                 </div>
                 <textarea id="jobDescription" formControlName="description" class="form-control" rows="4"
-                    [class.is-invalid]="(jobForm.get('description')?.invalid && jobForm.get('description')?.touched) || descriptionLength > MAX_DESCRIPTION_LENGTH"
+                    [class.is-invalid]="(jobForm.get('description')?.invalid && jobForm.get('description')?.touched) || descriptionLength > MAX_LENGTH"
                     placeholder="Describe las responsabilidades del puesto" required></textarea>
                 <div *ngIf="jobForm.get('description')?.errors?.['required'] && jobForm.get('description')?.touched"
                     class="invalid-feedback">
@@ -53,8 +53,8 @@
                 <div *ngIf="jobForm.get('description')?.errors?.['minlength']" class="invalid-feedback">
                     La descripción debe tener al menos 20 caracteres
                 </div>
-                <div *ngIf="descriptionLength > MAX_DESCRIPTION_LENGTH" class="text-danger small">
-                    Has excedido el límite de {{ MAX_DESCRIPTION_LENGTH }} caracteres
+                <div *ngIf="descriptionLength > MAX_LENGTH" class="text-danger small">
+                    Has excedido el límite de {{ MAX_LENGTH }} caracteres
                 </div>
             </div>
 
@@ -65,12 +65,12 @@
                         <i class="fas fa-clipboard-list"></i>
                         <label for="jobRequirements">Requisitos <span class="text-danger">*</span></label>
                     </div>
-                    <small class="text-muted" [class.text-danger]="requirementsLength > MAX_REQUIREMENTS_LENGTH">
-                        {{ requirementsLength }} / {{ MAX_REQUIREMENTS_LENGTH }} caracteres
+                    <small class="text-muted" [class.text-danger]="requirementsLength > MAX_LENGTH">
+                        {{ requirementsLength }} / {{ MAX_LENGTH }} caracteres
                     </small>
                 </div>
                 <textarea id="jobRequirements" formControlName="requirements" class="form-control" rows="4"
-                    [class.is-invalid]="(jobForm.get('requirements')?.invalid && jobForm.get('requirements')?.touched) || requirementsLength > MAX_REQUIREMENTS_LENGTH"
+                    [class.is-invalid]="(jobForm.get('requirements')?.invalid && jobForm.get('requirements')?.touched) || requirementsLength > MAX_LENGTH"
                     placeholder="Lista los requisitos necesarios" required></textarea>
                 <div class="form-text">Menciona las habilidades técnicas, experiencia y formación requerida.</div>
                 <div *ngIf="jobForm.get('requirements')?.errors?.['required'] && jobForm.get('requirements')?.touched"
@@ -80,8 +80,8 @@
                 <div *ngIf="jobForm.get('requirements')?.errors?.['minlength']" class="invalid-feedback">
                     Los requisitos deben tener al menos 20 caracteres
                 </div>
-                <div *ngIf="requirementsLength > MAX_REQUIREMENTS_LENGTH" class="text-danger small">
-                    Has excedido el límite de {{ MAX_REQUIREMENTS_LENGTH }} caracteres
+                <div *ngIf="requirementsLength > MAX_LENGTH" class="text-danger small">
+                    Has excedido el límite de {{ MAX_LENGTH }} caracteres
                 </div>
             </div>
 
@@ -144,7 +144,9 @@
                     <div class="input-group">
                         <input type="text" id="salary" formControlName="salary" class="form-control"
                             [class.is-invalid]="jobForm.get('salary')?.invalid && jobForm.get('salary')?.touched"
-                            placeholder="ej. 1,000.00" (input)="formatSalaryInput($event)" (blur)="onSalaryBlur($event)"
+                            placeholder="ej. 1,000.00" 
+                            (input)="handleSalaryEvent($event, 'input')" 
+                            (blur)="handleSalaryEvent($event, 'blur')"
                             required>
                         <span class="input-group-text">$</span>
                         <div *ngIf="jobForm.get('salary')?.errors?.['required'] && jobForm.get('salary')?.touched"

@@ -1,81 +1,14 @@
 <div class="job-offer-card card-border" (mouseleave)="onMouseLeave()" [class.new-offer]="jobOffer.isNew">
-  <app-job-offer-header
-    [jobOffer]="jobOffer"
-    [minDate]="minDate"
-    (onInfo)="openInfoModal()"
-    (onDuplicate)="onDuplicate()"
-    (onEdit)="onEdit()"
-    (onDelete)="onDelete()"
-    (onPublish)="onPublish()"
+  <app-job-offer-header [jobOffer]="jobOffer" [minDate]="minDate" (onInfo)="openInfoModal()"
+    (onDuplicate)="onDuplicate()" (onEdit)="onEdit()" (onDelete)="onDelete()" (onPublish)="onPublish()"
     (onCancelPublish)="onCancelPublish()">
   </app-job-offer-header>
 
-  <div class="job-offer-body">
-    <div class="card-content-wrapper">
-      <div class="main-content">
-        <!-- Descripción del Puesto -->
-        <div class="job-description">
-          <h4>Descripción del Puesto:</h4>
-          <p>
-            {{ showFullDescription ? getFullText(jobOffer.description) : getPreviewText(jobOffer.description) }}
-            <button *ngIf="isTextLong(jobOffer.description)" (click)="toggleShowMore('description', $event)"
-              class="btn-text-link">
-              {{ showFullDescription ? 'ver menos' : 'ver más' }}
-            </button>
-          </p>
-        </div>
-
-        <!-- Requisitos -->
-        <div class="job-requirements" *ngIf="jobOffer.requirements">
-          <h4>Requisitos:</h4>
-          <p>
-            {{ showFullRequirements ? getFullText(jobOffer.requirements) : getPreviewText(jobOffer.requirements) }}
-            <button *ngIf="isTextLong(jobOffer.requirements)" (click)="toggleShowMore('requirements', $event)"
-              class="btn-text-link">
-              {{ showFullRequirements ? 'ver menos' : 'ver más' }}
-            </button>
-          </p>
-        </div>
-      </div>
-
-      <!-- Iconos de visualización -->
-      <div class="card-icons">
-        <!-- Icono de compartir -->
-        <i class="fas fa-share-alt" title="Compartir"></i>
-      </div>
-    </div>
-
-    <!-- Detalles del Puesto -->
-    <div class="job-details">
-      <!-- Fila 1 -->
-      <div class="job-details-row">
-        <div class="detail">
-          <span class="job-modality">
-            <i class="fas fa-laptop-house"></i> {{ getModalityLabel(jobOffer.modality) }}
-          </span>
-        </div>
-        <div class="detail">
-          <i class="fas fa-file-contract"></i>
-          <span>{{ getContractTypeLabel(jobOffer.contractType) }}</span>
-        </div>
-      </div>
-      <!-- Fila 2 -->
-      <div class="job-details-row">
-        <div class="detail">
-          <i class="fas fa-clock"></i>
-          <span>{{ getWorkdayLabel(jobOffer.workday) }}</span>
-        </div>
-        <div class="detail">
-          <i class="fas fa-money-bill-wave"></i>
-          <span>{{ (jobOffer.salary) }}</span>
-        </div>
-      </div>
-    </div>
-  </div>
+  <app-job-offer-body [jobOffer]="jobOffer"></app-job-offer-body>
 
   <!-- Footer Component -->
-  <app-job-offer-footer [jobOffer]="jobOffer" [likesCount]="likesCount" [bookmarksCount]="bookmarksCount"
-    [applicationsCount]="applicationsCount" (viewApplicants)="onViewApplicants()">
+  <app-job-offer-footer [jobOffer]="jobOffer" (viewApplicants)="onViewApplicants()"
+    [likesCount]="likesCount" [bookmarksCount]="bookmarksCount" [applicationsCount]="applicationsCount">
   </app-job-offer-footer>
 </div>
 
@@ -83,7 +16,6 @@
 <app-job-offer-info-modal *ngIf="showInfoModal" (closeModal)="onInfoModalClose()"></app-job-offer-info-modal>
 
 <!-- Modal de Postulados -->
-<app-applicants-modal [jobOffer]="jobOffer"
- *ngIf="showApplicantsModal && jobOffer" [isOpen]="showApplicantsModal"
-  [jobOfferId]="jobOffer.id || ''" [companyId]="jobOffer.companyId || ''" (closeModal)="onCloseApplicantsModal()">
-</app-applicants-modal>
+<app-applicants-modal [jobOffer]="jobOffer" *ngIf="showApplicantsModal && jobOffer" [isOpen]="showApplicantsModal"
+  [jobOfferId]="jobOffer.id || ''" [companyId]="jobOffer.companyId || ''"
+  (closeModal)="onCloseApplicantsModal()"></app-applicants-modal>

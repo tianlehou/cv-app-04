@@ -7,6 +7,7 @@ import { JobOffer } from '../job-offer.model';
 import { AuthService } from 'src/app/pages/home/auth/auth.service';
 import { ConfirmationModalService } from 'src/app/shared/components/confirmation-modal/confirmation-modal.service';
 import { ToastService } from 'src/app/shared/components/toast/toast.service';
+import { formatSalary } from 'src/app/shared/utils/text.utils';
 
 @Component({
   selector: 'app-publication-form',
@@ -20,74 +21,33 @@ import { ToastService } from 'src/app/shared/components/toast/toast.service';
   styleUrls: ['./publication-form.component.css']
 })
 export class PublicationFormComponent implements OnInit, OnChanges, OnDestroy {
-  // Constantes para los límites de caracteres
-  readonly MAX_DESCRIPTION_LENGTH = 1000;
-  readonly MAX_REQUIREMENTS_LENGTH = 1000;
-  
   @Input() jobOffer: JobOffer | null = null;
   @Input() isEditing = false;
-  
+
+  // Evento que se emite cuando se guarda exitosamente
+  @Output() saved = new EventEmitter<boolean>();
+
   jobForm!: FormGroup;
   isSubmitting = false;
   isFormPristine = true; // Para rastrear si el formulario está en su estado inicial
-  
+
   // Contadores de caracteres
   descriptionLength = 0;
   requirementsLength = 0;
-  
-  // Evento que se emite cuando se guarda exitosamente
-  @Output() saved = new EventEmitter<boolean>();
 
   // Fecha mínima para el selector de fechas
   minDate: string;
 
-  // Formatear salario con comas para miles, punto para decimales y 2 decimales
-  formatSalary(salary: number | null): string {
-    if (salary === null) return '';
-    
-    // Formatear el número con comas para miles y punto para decimales
-    return salary.toFixed(2)
-      .toString()
-      .replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-  }
+  // Constantes para los límites de caracteres
+  readonly MAX_LENGTH = 1000;
 
-  // Formatear el valor del input mientras se escribe
-  formatSalaryInput(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    let value = input.value.replace(/[^0-9.]/g, ''); // Solo números y puntos
-    
-    // Si hay más de un punto, mantener solo el último
-    const decimalSplit = value.split('.');
-    if (decimalSplit.length > 2) {
-      value = `${decimalSplit.slice(0, -1).join('')}.${decimalSplit[decimalSplit.length - 1]}`;
-    }
-    
-    // Actualizar el valor del control del formulario
-    this.jobForm.patchValue({
-      salary: value
-    }, { emitEvent: false });
-  }
-
-  // Formatear el valor cuando el campo pierde el foco
-  onSalaryBlur(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    let value = input.value;
-    
-    // Si el valor está vacío, no hacer nada
-    if (!value) return;
-    
-    // Eliminar comas y convertir a número
-    const cleanValue = value.replace(/,/g, '');
-    const numberValue = parseFloat(cleanValue);
-    
-    if (!isNaN(numberValue)) {
-      // Formatear con comas para miles y punto para decimales
-      const formattedValue = this.formatSalary(numberValue);
-      this.jobForm.patchValue({
-        salary: formattedValue
-      }, { emitEvent: false });
-    }
-  }
+  // Servicios inyectados
+  private authService = inject(AuthService);
+  private jobOfferService = inject(JobOfferService);
+  private confirmationModalService = inject(ConfirmationModalService);
+  private toastService = inject(ToastService);
+  private fb = inject(FormBuilder);
+  private ngZone = inject(NgZone);
 
   // Opciones para los selectores
   contractTypes = [
@@ -109,14 +69,6 @@ export class PublicationFormComponent implements OnInit, OnChanges, OnDestroy {
     { value: 'hibrido', label: 'Híbrido' }
   ];
 
-  // Servicios inyectados
-  private authService = inject(AuthService);
-  private jobOfferService = inject(JobOfferService);
-  private confirmationModalService = inject(ConfirmationModalService);
-  private toastService = inject(ToastService);
-  private fb = inject(FormBuilder);
-  private ngZone = inject(NgZone);
-  
   constructor() {
     // Establecer la fecha mínima como hoy
     const today = new Date();
@@ -162,14 +114,14 @@ export class PublicationFormComponent implements OnInit, OnChanges, OnDestroy {
     this.jobForm = this.fb.group({
       title: ['', [Validators.required, Validators.minLength(5)]],
       description: ['', [
-        Validators.required, 
+        Validators.required,
         Validators.minLength(20),
-        Validators.maxLength(this.MAX_DESCRIPTION_LENGTH)
+        Validators.maxLength(this.MAX_LENGTH)
       ]],
       requirements: ['', [
-        Validators.required, 
+        Validators.required,
         Validators.minLength(20),
-        Validators.maxLength(this.MAX_REQUIREMENTS_LENGTH)
+        Validators.maxLength(this.MAX_LENGTH)
       ]],
       contractType: ['', Validators.required],
       workday: ['', Validators.required],
@@ -181,7 +133,7 @@ export class PublicationFormComponent implements OnInit, OnChanges, OnDestroy {
 
     // Verificar si el formulario está en su estado inicial (vacío)
     this.updateFormPristineState();
-    
+
     // Suscribirse a los cambios del formulario para actualizar el estado
     this.jobForm.valueChanges.subscribe(() => {
       this.updateFormPristineState();
@@ -202,18 +154,18 @@ export class PublicationFormComponent implements OnInit, OnChanges, OnDestroy {
     if (!control.value) {
       return null; // Permitir que el validador required maneje este caso
     }
-    
+
     const selectedDate = new Date(control.value);
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    
+
     return selectedDate >= today ? null : { futureDate: true };
   }
 
   onSubmit(): void {
     // Marcar todos los controles como tocados para mostrar errores
     this.markFormGroupTouched(this.jobForm);
-    
+
     if (this.jobForm.invalid) {
       this.toastService.show('Por favor, completa correctamente todos los campos obligatorios.', 'error');
       return;
@@ -234,8 +186,8 @@ export class PublicationFormComponent implements OnInit, OnChanges, OnDestroy {
 
   private handleSaveSuccess(id: string): void {
     this.ngZone.run(() => {
-      const message = this.isEditing 
-        ? 'Oferta actualizada exitosamente' 
+      const message = this.isEditing
+        ? 'Oferta actualizada exitosamente'
         : 'Oferta publicada exitosamente';
       this.toastService.show(message, 'success');
       this.saved.emit(true);
@@ -260,7 +212,7 @@ export class PublicationFormComponent implements OnInit, OnChanges, OnDestroy {
 
   private async saveJobOffer(): Promise<void> {
     this.isSubmitting = true;
-    
+
     // Obtener el usuario actual
     const currentUser = this.authService.getCurrentAuthUser();
     if (!currentUser) {
@@ -348,8 +300,8 @@ export class PublicationFormComponent implements OnInit, OnChanges, OnDestroy {
     const formValue = this.jobForm.value;
     this.isFormPristine = Object.values(formValue).every(value => {
       // Considerar vacío: null, undefined, string vacío o array vacío
-      return value === null || value === undefined || value === '' || 
-             (Array.isArray(value) && value.length === 0);
+      return value === null || value === undefined || value === '' ||
+        (Array.isArray(value) && value.length === 0);
     });
   }
 
@@ -399,5 +351,20 @@ export class PublicationFormComponent implements OnInit, OnChanges, OnDestroy {
         this.markFormGroupTouched(control);
       }
     });
+  }
+
+  handleSalaryEvent(event: Event, eventType: 'input' | 'blur'): void {
+    const input = event.target as HTMLInputElement;
+    const formattedValue = formatSalary(input.value, eventType);
+
+    // Actualizar el valor en el input
+    input.value = formattedValue;
+
+    // Solo actualizar el formulario en el evento blur
+    if (eventType === 'blur') {
+      this.jobForm.patchValue({
+        salary: formattedValue
+      }, { emitEvent: false });
+    }
   }
 }
