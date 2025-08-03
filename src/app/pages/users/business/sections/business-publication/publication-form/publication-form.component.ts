@@ -222,9 +222,9 @@ export class PublicationFormComponent implements OnInit, OnChanges, OnDestroy {
     // Mostrar confirmación antes de guardar
     this.confirmationModalService.show(
       {
-        title: 'Confirmar Publicación',
-        message: '¿Estás seguro de que deseas publicar esta oferta?',
-        confirmText: 'Sí, publicar',
+        title: 'Confirmar Cambios',
+        message: '¿Estás seguro de que deseas guardar estos cambios?',
+        confirmText: 'Sí, guardar',
         cancelText: 'Cancelar'
       },
       () => this.saveJobOffer(), // Función que se ejecuta al confirmar

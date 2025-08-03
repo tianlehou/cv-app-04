@@ -131,6 +131,56 @@ export class BusinessPublicationComponent implements OnInit, OnDestroy {
     );
   }
 
+  onJobOfferPublished(updatedOffer: JobOffer): void {
+    // Actualizar la oferta en el array jobOffers
+    const index = this.jobOffers.findIndex(offer => offer.id === updatedOffer.id);
+    if (index !== -1) {
+      this.jobOffers[index] = { ...updatedOffer };
+    } else {
+      this.jobOffers = [updatedOffer, ...this.jobOffers];
+    }
+    
+    // Actualizar filteredJobOffers si es necesario
+    const filteredIndex = this.filteredJobOffers.findIndex(offer => offer.id === updatedOffer.id);
+    if (filteredIndex !== -1) {
+      this.filteredJobOffers[filteredIndex] = { ...updatedOffer };
+    } else if (this.shouldShowInCurrentFilter(updatedOffer)) {
+      this.filteredJobOffers = [updatedOffer, ...this.filteredJobOffers];
+    }
+    
+    // Recalcular los contadores de estado
+    this.calculateStatusCounts(this.jobOffers);
+  }
+
+  onJobOfferCancelled(updatedOffer: JobOffer): void {
+    // Actualizar la oferta en el array jobOffers
+    const index = this.jobOffers.findIndex(offer => offer.id === updatedOffer.id);
+    if (index !== -1) {
+      this.jobOffers[index] = { ...updatedOffer };
+    }
+    
+    // Actualizar filteredJobOffers si es necesario
+    const filteredIndex = this.filteredJobOffers.findIndex(offer => offer.id === updatedOffer.id);
+    if (filteredIndex !== -1) {
+      this.filteredJobOffers[filteredIndex] = { ...updatedOffer };
+      // Si el filtro actual no incluye ofertas canceladas, quitarla del filtro
+      if (!this.shouldShowInCurrentFilter(updatedOffer)) {
+        this.filteredJobOffers = this.filteredJobOffers.filter(offer => offer.id !== updatedOffer.id);
+      }
+    } else if (this.shouldShowInCurrentFilter(updatedOffer)) {
+      this.filteredJobOffers = [updatedOffer, ...this.filteredJobOffers];
+    }
+    
+    // Recalcular los contadores de estado
+    this.calculateStatusCounts(this.jobOffers);
+  }
+  
+  private shouldShowInCurrentFilter(offer: JobOffer): boolean {
+    // Aquí deberías implementar la lógica para determinar si la oferta debe mostrarse
+    // según el filtro actual. Por ahora, asumimos que siempre se muestra.
+    return true;
+  }
+
   onJobOfferDuplicated(newJobOffer: JobOffer): void {
     if (newJobOffer.id) {
       this.lastDuplicatedId = newJobOffer.id;

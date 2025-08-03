@@ -1,20 +1,18 @@
 .container {
-    padding-bottom: 3rem;
+    padding-bottom: 4rem;
 }
 
 .card-header {
     background: linear-gradient(135deg, #1d4ed8 0%, #1e3a8a 100%);
     color: var(--clr-white);
     text-align: center;
-}
-
-h2 {
-    color: var(--clr-primary);
-    padding: 10px;
+    padding: 20px;
+    border-radius: 12px;
 }
 
 .card-body {
     text-align: left;
+    margin-top: 20px;
 
     label {
         font-weight: 500;
@@ -28,6 +26,28 @@ h2 {
     .invalid-feedback {
         padding-left: 14px;
     }
+}
+
+i {
+    margin-left: 25px;
+    color: var(--text-color-light);
+}
+
+label {
+    color: var(--text-color-light);
+}
+
+input,
+textarea,
+select,
+.input-group-text {
+    border: 1px solid var(--text-color-light);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+
+.row {
+    gap: 30px 0;
 }
 
 .btn-row {

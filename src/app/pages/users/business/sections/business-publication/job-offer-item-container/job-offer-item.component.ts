@@ -3,6 +3,7 @@ import { Component, Input, Output, EventEmitter, inject, NgZone, OnDestroy, OnIn
 import { Subscription } from 'rxjs';
 import { User } from '@angular/fire/auth';
 import { JobOfferInfoModalComponent } from './job-offer-menu/job-offer-info-modal/job-offer-info-modal.component';
+import { JobOffer } from '../job-offer.model';
 import { ConfirmationModalService } from 'src/app/shared/components/confirmation-modal/confirmation-modal.service';
 import { ToastService } from 'src/app/shared/components/toast/toast.service';
 import { JobOfferActionsService } from '../services/job-offer-actions.service';
@@ -34,6 +35,8 @@ export class JobOfferItemComponent implements OnInit, OnDestroy {
   @Output() duplicated = new EventEmitter<any>();
   @Output() edit = new EventEmitter<any>();
   @Output() deleted = new EventEmitter<string>();
+  @Output() published = new EventEmitter<JobOffer>();
+  @Output() cancelled = new EventEmitter<JobOffer>();
 
 
   isDuplicating = false;
@@ -327,10 +330,20 @@ export class JobOfferItemComponent implements OnInit, OnDestroy {
   onPublish(): void {
     this.jobOfferActionsService.confirmPublish(this.jobOffer).subscribe({
       next: (published) => {
-        // La lógica del menú ahora está en el componente hijo
+        if (published) {
+          // Actualizar el estado local de la oferta
+          const updatedOffer = {
+            ...this.jobOffer,
+            status: 'publicado',
+            publicationDate: new Date().toISOString()
+          };
+          this.jobOffer = updatedOffer;
+          // Emitir el evento de oferta publicada
+          this.published.emit(updatedOffer);
+        }
       },
-      error: () => {
-        // Manejo de error
+      error: (error) => {
+        console.error('Error al publicar la oferta:', error);
       }
     });
   }
@@ -339,10 +352,20 @@ export class JobOfferItemComponent implements OnInit, OnDestroy {
   onCancelPublish(): void {
     this.jobOfferActionsService.confirmCancelPublish(this.jobOffer).subscribe({
       next: (cancelled) => {
-        // La lógica del menú ahora está en el componente hijo
+        if (cancelled) {
+          // Actualizar el estado local de la oferta
+          const updatedOffer = {
+            ...this.jobOffer,
+            status: 'cancelado',
+            updatedAt: new Date().toISOString()
+          };
+          this.jobOffer = updatedOffer;
+          // Emitir el evento de oferta cancelada
+          this.cancelled.emit(updatedOffer);
+        }
       },
-      error: () => {
-        // Manejo de error
+      error: (error) => {
+        console.error('Error al cancelar la publicación de la oferta:', error);
       }
     });
   }
