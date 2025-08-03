@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input, Output, EventEmitter, inject, NgZone, OnDestroy, OnInit } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { User } from '@angular/fire/auth';
 import { JobOfferInfoModalComponent } from './job-offer-menu/job-offer-info-modal/job-offer-info-modal.component';
@@ -14,12 +15,14 @@ import { getFullText, getPreviewText, isTextLong } from 'src/app/shared/utils/te
 import { JobOfferMenuComponent } from './job-offer-menu/job-offer-menu.component';
 import { ApplicantsModalComponent } from './applicants-modal/applicants-modal.component';
 import { JobOfferFooterComponent } from './job-offer-footer/job-offer-footer.component';
+import { JobOfferService } from '../services/job-offer.service';
 
 @Component({
   selector: 'app-job-offer-item',
   standalone: true,
   imports: [
     CommonModule, 
+    FormsModule,
     JobOfferInfoModalComponent, 
     JobOfferMenuComponent,
     ApplicantsModalComponent,
@@ -49,13 +52,18 @@ export class JobOfferItemComponent implements OnInit, OnDestroy {
   private jobOfferLikeService = inject(JobOfferLikeService);
   private jobOfferBookmarkService = inject(JobOfferBookmarkService);
   private jobOfferApplicationService = inject(JobOfferApplicationService);
+  private jobOfferService = inject(JobOfferService);
 
 
 
   // Estado para controlar la expansión de texto
   showFullDescription = false;
   showFullRequirements = false;
+  showInfoModal = false;
   showApplicantsModal = false;
+  editingDeadline = false;
+  newDeadline = '';
+  minDate = new Date().toISOString().slice(0, 16);
 
   public getFullText = getFullText;
   public getPreviewText = getPreviewText;
@@ -158,8 +166,6 @@ export class JobOfferItemComponent implements OnInit, OnDestroy {
 
   //==============================
   // Estado para controlar la visibilidad del modal de información
-  showInfoModal = false;
-
   // Abrir el modal de información
   openInfoModal(): void {
     this.showInfoModal = true;
@@ -280,8 +286,59 @@ export class JobOfferItemComponent implements OnInit, OnDestroy {
   }
 
   // Método para mostrar el modal de postulados
-  onViewApplicants() {
+  onViewApplicants(): void {
     this.showApplicantsModal = true;
+  }
+
+  startEditingDeadline(): void {
+    // Convertir la fecha ISO a formato YYYY-MM-DD para el input date
+    if (this.jobOffer.deadline) {
+      const date = new Date(this.jobOffer.deadline);
+      this.newDeadline = date.toISOString().split('T')[0];
+    } else {
+      // Si no hay fecha, usar la fecha actual
+      this.newDeadline = new Date().toISOString().split('T')[0];
+    }
+    this.editingDeadline = true;
+  }
+
+  cancelEditDeadline(): void {
+    this.editingDeadline = false;
+  }
+
+  saveDeadline(): void {
+    if (!this.newDeadline) {
+      this.toast.show('Por favor ingresa una fecha válida', 'error');
+      return;
+    }
+
+    // Crear fecha a medianoche para comparación
+    const deadlineDate = new Date(this.newDeadline);
+    const now = new Date();
+    now.setHours(0, 0, 0, 0); // Establecer a medianoche para comparar solo fechas
+    
+    if (deadlineDate < now) {
+      this.toast.show('La fecha de vencimiento debe ser hoy o en el futuro', 'error');
+      return;
+    }
+
+    // Establecer la hora a las 23:59:59 del día seleccionado
+    deadlineDate.setHours(23, 59, 59, 999);
+    
+    this.jobOfferService.updateJobOffer(this.jobOffer.id, {
+      deadline: deadlineDate.toISOString(),
+      updatedAt: new Date().toISOString()
+    }).subscribe({
+      next: () => {
+        this.jobOffer.deadline = deadlineDate.toISOString();
+        this.editingDeadline = false;
+        this.toast.show('Fecha de vencimiento actualizada correctamente', 'success');
+      },
+      error: (error) => {
+        console.error('Error al actualizar la fecha de vencimiento:', error);
+        this.toast.show('Error al actualizar la fecha de vencimiento', 'error');
+      }
+    });
   }
   
   // Cerrar el modal de postulados

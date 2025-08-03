@@ -87,7 +87,13 @@
   margin-right: 0.25rem;
 }
 
+.deadline button {
+  transition: transform 0.2s ease;
+}
 
+.deadline button:hover {
+  transform: translateY(-2px);
+}
 
 /* Encabezado de la tarjeta */
 .job-offer-header {

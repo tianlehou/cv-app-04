@@ -2,14 +2,8 @@
   <div class="job-offer-header">
 
     <!-- Menú de Opciones -->
-    <app-job-offer-menu 
-      [jobOffer]="jobOffer"
-      (info)="openInfoModal()"
-      (duplicate)="onDuplicate()"
-      (edit)="onEdit()"
-      (delete)="onDelete()"
-      (publish)="onPublish()"
-      (cancelPublish)="onCancelPublish()">
+    <app-job-offer-menu [jobOffer]="jobOffer" (info)="openInfoModal()" (duplicate)="onDuplicate()" (edit)="onEdit()"
+      (delete)="onDelete()" (publish)="onPublish()" (cancelPublish)="onCancelPublish()">
     </app-job-offer-menu>
 
     <!-- Título y Estado del Puesto -->
@@ -36,11 +30,21 @@
           {{ jobOffer.status | titlecase }}
         </span>
       </div>
-      <div class="job-location">
-        <i class="fas fa-calendar-alt"></i><span>Vence: {{ jobOffer.deadline }}</span>
+      <div class="job-location deadline">
+        <i class="fas fa-calendar-alt"></i>
+        <span *ngIf="!editingDeadline">Vence: {{ formatDate(jobOffer.deadline) }}</span>
+        <div *ngIf="editingDeadline" class="display-flex-center">
+          <input type="date" [(ngModel)]="newDeadline" [min]="minDate" class="form-control">
+          <div class="display-flex-center">
+            <button (click)="saveDeadline()" class="fas fa-save" style="color: var(--clr-green); padding: 8px 12px; margin: 0 16px;"></button>
+            <button (click)="cancelEditDeadline()" class="fas fa-ban" style="color: var(--clr-red); padding: 8px 12px;"></button>
+          </div>
+        </div>
+        <button *ngIf="jobOffer?.status === 'borrador' && !editingDeadline" (click)="startEditingDeadline()">
+          <span style="color: var(--clr-blue);">Editar</span>
+        </button>
       </div>
     </div>
-
   </div>
 
   <div class="job-offer-body">
@@ -107,12 +111,8 @@
   </div>
 
   <!-- Footer Component -->
-  <app-job-offer-footer
-    [jobOffer]="jobOffer"
-    [likesCount]="likesCount"
-    [bookmarksCount]="bookmarksCount"
-    [applicationsCount]="applicationsCount"
-    (viewApplicants)="onViewApplicants()">
+  <app-job-offer-footer [jobOffer]="jobOffer" [likesCount]="likesCount" [bookmarksCount]="bookmarksCount"
+    [applicationsCount]="applicationsCount" (viewApplicants)="onViewApplicants()">
   </app-job-offer-footer>
 </div>
 
@@ -120,10 +120,6 @@
 <app-job-offer-info-modal *ngIf="showInfoModal" (closeModal)="onInfoModalClose()"></app-job-offer-info-modal>
 
 <!-- Modal de Postulados -->
-<app-applicants-modal 
-  *ngIf="showApplicantsModal && jobOffer"
-  [isOpen]="showApplicantsModal"
-  [jobOfferId]="jobOffer.id || ''"
-  [companyId]="jobOffer.companyId || ''"
-  (closeModal)="onCloseApplicantsModal()">
+<app-applicants-modal *ngIf="showApplicantsModal && jobOffer" [isOpen]="showApplicantsModal"
+  [jobOfferId]="jobOffer.id || ''" [companyId]="jobOffer.companyId || ''" (closeModal)="onCloseApplicantsModal()">
 </app-applicants-modal>
