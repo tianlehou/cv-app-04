@@ -15,6 +15,7 @@ export class ApplicantsModalComponent implements OnChanges {
   @Input() isOpen = false;
   @Input() jobOfferId: string = '';
   @Input() companyId: string = '';
+  @Input() jobOffer: any;
   @Output() closeModal = new EventEmitter<void>();
   
   applicants: any[] = [];

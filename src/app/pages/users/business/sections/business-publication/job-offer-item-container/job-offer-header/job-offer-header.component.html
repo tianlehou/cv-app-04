@@ -1,0 +1,51 @@
+<div class="job-offer-header">
+  <!-- Menú de Opciones -->
+  <app-job-offer-menu [jobOffer]="jobOffer" (info)="onInfo.emit()" (duplicate)="onDuplicate.emit()"
+    (edit)="onEdit.emit()" (delete)="onDelete.emit()" (publish)="onPublish.emit()"
+    (cancelPublish)="onCancelPublish.emit()">
+  </app-job-offer-menu>
+
+  <!-- Título y Estado del Puesto -->
+  <h3 class="job-title">{{ jobOffer.title }}</h3>
+
+  <div class="job-meta">
+    <div class="job-title-row">
+      <span class="job-company">
+        <i class="fas fa-building"></i> {{ jobOffer.companyName }}
+      </span>
+      <span class="job-id">
+        <i class="bi bi-hash"></i> {{ jobOffer.id }}
+      </span>
+    </div>
+    <div class="job-location">
+      <i class="fas fa-map-marker-alt"></i> {{ jobOffer.location }}
+    </div>
+    <div class="job-title-row">
+      <span class="job-date" *ngIf="jobOffer.publicationDate">
+        <i class="bi bi-calendar-event"></i> Publicada: {{ formatDate(jobOffer.publicationDate) }}
+      </span>
+      <!-- Badge de Estado -->
+      <span class="status-badge" [ngClass]="'status-' + jobOffer.status">
+        {{ jobOffer.status | titlecase }}
+      </span>
+    </div>
+
+    <!-- Fin de Postulación -->
+    <div class="job-location deadline">
+      <i class="fas fa-calendar-alt"></i>
+      <span *ngIf="!editingDeadline">Vence: {{ formatDate(jobOffer.deadline) }}</span>
+      <div *ngIf="editingDeadline" class="display-flex-center">
+        <input type="date" [(ngModel)]="newDeadline" [min]="minDate" class="form-control">
+        <div class="display-flex-center">
+          <button (click)="saveDeadline()" class="fas fa-save"
+            style="color: var(--clr-green); padding: 8px 12px; margin: 0 16px;"></button>
+          <button (click)="cancelEditDeadline()" class="fas fa-ban"
+            style="color: var(--clr-red); padding: 8px 12px;"></button>
+        </div>
+      </div>
+      <button *ngIf="jobOffer?.status === 'borrador' && !editingDeadline" (click)="startEditingDeadline()">
+        <span style="color: var(--clr-blue);">Editar</span>
+      </button>
+    </div>
+  </div>
+</div>

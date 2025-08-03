@@ -9,7 +9,7 @@
   display: flex;
   justify-content: center;
   align-items: flex-start;
-  z-index: 10;
+  z-index: 12;
   overflow-y: auto;
   backdrop-filter: blur(3px);
 }
@@ -35,8 +35,14 @@
 
 .modal-header h2 {
   margin: 0;
-  color: #333;
-  font-size: 1.5rem;
+  color: var(--text-color-light);
+  font-size: 1.2rem;
+}
+
+.modal-header span {
+  font-size: 1rem;
+  color: var(--clr-blue);
+  margin-left: 10px;
 }
 
 .close-button {
@@ -73,7 +79,8 @@ table {
   min-width: 800px;
 }
 
-th, td {
+th,
+td {
   padding: 12px 15px;
   text-align: left;
   border-bottom: 1px solid #e0e0e0;

@@ -1,0 +1,149 @@
+/* Los estilos del footer han sido movidos al componente job-offer-footer */
+app-job-offer-menu {
+  opacity: 0;
+  transition: all 0.3s ease ;
+}
+
+.job-offer-header:hover app-job-offer-menu {
+  opacity: 1;
+}
+
+/* Estilos para la cabecera de la oferta de trabajo */
+.job-offer-header {
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid #f0f0f0;
+  background-color: #f9f9f9;
+  position: relative;
+}
+
+.job-title {
+  margin: 0 0 0.5rem 0;
+  color: var(--text-color);
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.job-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  font-size: 0.9rem;
+  color: #7f8c8d;
+}
+
+.job-title-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.job-company {
+  font-weight: 500;
+  color: var(--clr-blue);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.25rem;
+}
+
+.job-location {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.job-id {
+  font-size: 0.8rem;
+  color: #7f8c8d;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.job-date {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.8rem;
+  color: #6c757d;
+  margin-right: 1rem;
+}
+
+.job-date i {
+  margin-right: 0.25rem;
+}
+
+/* Badge de estado */
+.status-badge {
+  padding: 0.25rem 0.75rem;
+  border-radius: 1rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: capitalize;
+  white-space: nowrap;
+}
+
+.status-borrador {
+  background-color: #fff3cd;
+  color: #856404;
+  border: 1px solid #ffeeba;
+}
+
+.status-publicado {
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.status-vencido {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
+.status-cancelado {
+  background-color: #e9ecef;
+  color: #495057;
+  border: 1px solid #dee2e6;
+}
+
+/* Estilos para la edición de fecha */
+.deadline {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.deadline input {
+  color: var(--text-color-light);
+}
+
+.deadline button {
+  transition: transform 0.2s ease;
+}
+
+.deadline button:hover {
+  transform: translateY(-2px);
+}
+
+/* Ajustes responsivos */
+@media (max-width: 768px) {
+  .job-offer-header {
+    padding: 1rem;
+  }
+  
+  .job-title {
+    font-size: 1.1rem;
+  }
+  
+  .job-meta {
+    font-size: 0.85rem;
+  }
+  
+  .deadline {
+    flex-direction: row;
+    align-items: center;
+    gap: 0.5rem;
+  }
+}
+
+

@@ -12,9 +12,9 @@ import { JobOfferLikeService } from '../services/job-offer-like.service';
 import { JobOfferBookmarkService } from '../services/job-offer-bookmark.service';
 import { JobOfferApplicationService } from '../services/job-offer-application.service';
 import { getFullText, getPreviewText, isTextLong } from 'src/app/shared/utils/text.utils';
-import { JobOfferMenuComponent } from './job-offer-menu/job-offer-menu.component';
 import { ApplicantsModalComponent } from './applicants-modal/applicants-modal.component';
 import { JobOfferFooterComponent } from './job-offer-footer/job-offer-footer.component';
+import { JobOfferHeaderComponent } from './job-offer-header/job-offer-header.component';
 import { JobOfferService } from '../services/job-offer.service';
 
 @Component({
@@ -24,9 +24,9 @@ import { JobOfferService } from '../services/job-offer.service';
     CommonModule, 
     FormsModule,
     JobOfferInfoModalComponent, 
-    JobOfferMenuComponent,
     ApplicantsModalComponent,
-    JobOfferFooterComponent
+    JobOfferFooterComponent,
+    JobOfferHeaderComponent
   ],
   templateUrl: './job-offer-item.component.html',
   styleUrls: ['./job-offer-item.component.css']
@@ -60,10 +60,11 @@ export class JobOfferItemComponent implements OnInit, OnDestroy {
   showFullDescription = false;
   showFullRequirements = false;
   showInfoModal = false;
-  showApplicantsModal = false;
+  // Estado para controlar la edición de la fecha de vencimiento
   editingDeadline = false;
   newDeadline = '';
   minDate = new Date().toISOString().slice(0, 16);
+  showApplicantsModal = false;
 
   public getFullText = getFullText;
   public getPreviewText = getPreviewText;
@@ -228,32 +229,6 @@ export class JobOfferItemComponent implements OnInit, OnDestroy {
     }
   }
 
-  // Formatear la fecha para mostrarla de manera legible
-  formatDate(dateString: string | undefined | null): string {
-    if (!dateString) return 'No especificada';
-
-    try {
-      // Intentar formatear con el locale 'es' (que registramos en main.ts)
-      const date = new Date(dateString);
-      if (isNaN(date.getTime())) {
-        throw new Error('Fecha inválida');
-      }
-      return date.toLocaleDateString('es', {
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit'
-      });
-    } catch (error) {
-      console.error('Error al formatear fecha:', error);
-      // Si hay un error, devolver la fecha en formato ISO o el string original
-      try {
-        return new Date(dateString).toISOString().split('T')[0];
-      } catch (e) {
-        return dateString;
-      }
-    }
-  }
-
   // Obtener el texto de la modalidad
   getModalityLabel(modality: string): string {
     const modalities: { [key: string]: string } = {
@@ -290,58 +265,6 @@ export class JobOfferItemComponent implements OnInit, OnDestroy {
     this.showApplicantsModal = true;
   }
 
-  startEditingDeadline(): void {
-    // Convertir la fecha ISO a formato YYYY-MM-DD para el input date
-    if (this.jobOffer.deadline) {
-      const date = new Date(this.jobOffer.deadline);
-      this.newDeadline = date.toISOString().split('T')[0];
-    } else {
-      // Si no hay fecha, usar la fecha actual
-      this.newDeadline = new Date().toISOString().split('T')[0];
-    }
-    this.editingDeadline = true;
-  }
-
-  cancelEditDeadline(): void {
-    this.editingDeadline = false;
-  }
-
-  saveDeadline(): void {
-    if (!this.newDeadline) {
-      this.toast.show('Por favor ingresa una fecha válida', 'error');
-      return;
-    }
-
-    // Crear fecha a medianoche para comparación
-    const deadlineDate = new Date(this.newDeadline);
-    const now = new Date();
-    now.setHours(0, 0, 0, 0); // Establecer a medianoche para comparar solo fechas
-    
-    if (deadlineDate < now) {
-      this.toast.show('La fecha de vencimiento debe ser hoy o en el futuro', 'error');
-      return;
-    }
-
-    // Establecer la hora a las 23:59:59 del día seleccionado
-    deadlineDate.setHours(23, 59, 59, 999);
-    
-    this.jobOfferService.updateJobOffer(this.jobOffer.id, {
-      deadline: deadlineDate.toISOString(),
-      updatedAt: new Date().toISOString()
-    }).subscribe({
-      next: () => {
-        this.jobOffer.deadline = deadlineDate.toISOString();
-        this.editingDeadline = false;
-        this.toast.show('Fecha de vencimiento actualizada correctamente', 'success');
-      },
-      error: (error) => {
-        console.error('Error al actualizar la fecha de vencimiento:', error);
-        this.toast.show('Error al actualizar la fecha de vencimiento', 'error');
-      }
-    });
-  }
-  
-  // Cerrar el modal de postulados
   onCloseApplicantsModal() {
     this.showApplicantsModal = false;
   }
