@@ -378,10 +378,19 @@ export class JobInteractionService {
               const jobOffer = jobOfferSnapshot.val();
               const currentApplications = jobOffer.applications || 0;
 
-              // Actualizar el contador de aplicaciones y marcar que el usuario aplicó
+              // Obtener la fecha y hora actual en el formato DD/MM/AAAA HH/MM
+              const now = new Date();
+              const day = String(now.getDate()).padStart(2, '0');
+              const month = String(now.getMonth() + 1).padStart(2, '0');
+              const year = now.getFullYear();
+              const hours = String(now.getHours()).padStart(2, '0');
+              const minutes = String(now.getMinutes()).padStart(2, '0');
+              const applicationDate = `${day}/${month}/${year} ${hours}:${minutes}`;
+
+              // Actualizar el contador de aplicaciones y marcar que el usuario aplicó con la fecha
               const updates: any = {};
               updates[`cv-app/users/${companyId}/job-offer/${jobOfferId}/applications`] = currentApplications + 1;
-              updates[`cv-app/users/${companyId}/job-offer/${jobOfferId}/appliedBy/${emailKey}`] = true;
+              updates[`cv-app/users/${companyId}/job-offer/${jobOfferId}/appliedBy/${emailKey}`] = applicationDate;
 
               // Actualizar la base de datos
               const update$ = from(runInInjectionContext(this.injector, () => update(ref(this.database), updates)));

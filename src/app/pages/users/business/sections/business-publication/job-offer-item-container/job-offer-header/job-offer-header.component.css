@@ -1,7 +1,7 @@
 /* Los estilos del footer han sido movidos al componente job-offer-footer */
 app-job-offer-menu {
   opacity: 0;
-  transition: all 0.3s ease ;
+  transition: all 0.3s ease;
 }
 
 .job-offer-header:hover app-job-offer-menu {
@@ -37,27 +37,24 @@ app-job-offer-menu {
   align-items: center;
 }
 
-.job-company {
+.job-company,
+.job-id {
   font-weight: 500;
-  color: var(--clr-blue);
   display: flex;
   align-items: center;
   gap: 0.5rem;
   margin-bottom: 0.25rem;
 }
 
+.job-company span,
+.job-id span {
+  color: var(--clr-blue);
+}
+
 .job-location {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-}
-
-.job-id {
-  font-size: 0.8rem;
-  color: #7f8c8d;
-  display: flex;
-  align-items: center;
-  gap: 0.25rem;
 }
 
 .job-date {
@@ -124,26 +121,3 @@ app-job-offer-menu {
 .deadline button:hover {
   transform: translateY(-2px);
 }
-
-/* Ajustes responsivos */
-@media (max-width: 768px) {
-  .job-offer-header {
-    padding: 1rem;
-  }
-  
-  .job-title {
-    font-size: 1.1rem;
-  }
-  
-  .job-meta {
-    font-size: 0.85rem;
-  }
-  
-  .deadline {
-    flex-direction: row;
-    align-items: center;
-    gap: 0.5rem;
-  }
-}
-
-

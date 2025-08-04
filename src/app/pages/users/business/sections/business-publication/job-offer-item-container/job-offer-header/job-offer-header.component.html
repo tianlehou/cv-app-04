@@ -11,14 +11,17 @@
   <div class="job-meta">
     <div class="job-title-row">
       <span class="job-company">
-        <i class="fas fa-building"></i> {{ jobOffer.companyName }}
+        <i class="fas fa-building"></i>
+        <span>{{ jobOffer.companyName }}</span>
       </span>
       <span class="job-id">
-        <i class="bi bi-hash"></i> {{ jobOffer.id }}
+        <i class="bi bi-hash"></i>
+        <span>{{ jobOffer.id }}</span>
       </span>
     </div>
     <div class="job-location">
-      <i class="fas fa-map-marker-alt"></i> {{ jobOffer.location }}
+      <i class="fas fa-map-marker-alt"></i>
+      <span>{{ jobOffer.location }}</span>
     </div>
     <div class="job-title-row">
       <span class="job-date" *ngIf="jobOffer.publicationDate">

@@ -1,8 +1,7 @@
 import { Injectable, inject } from '@angular/core';
-import { Database, get, ref, query, orderByChild, equalTo } from '@angular/fire/database';
+import { Database, get, ref } from '@angular/fire/database';
 import { Observable, from, of } from 'rxjs';
-import { map, switchMap, catchError } from 'rxjs/operators';
-import { Auth } from '@angular/fire/auth';
+import { switchMap, catchError } from 'rxjs/operators';
 import { FirebaseService } from 'src/app/shared/services/firebase.service';
 
 @Injectable({
@@ -10,7 +9,6 @@ import { FirebaseService } from 'src/app/shared/services/firebase.service';
 })
 export class ApplicantsService {
   private database = inject(Database);
-  private auth = inject(Auth);
   private firebaseService = inject(FirebaseService);
 
   /**
@@ -38,12 +36,13 @@ export class ApplicantsService {
         const userPromises = [];
 
         // Obtener los datos de cada usuario que aplicó
-        for (const [emailKey] of Object.entries(applicantsData)) {
-          if (applicantsData[emailKey] === true) {
+        for (const [emailKey, applicationData] of Object.entries(applicantsData)) {
+          // Verificar si el valor es true (formato anterior) o una cadena de fecha (nuevo formato)
+          if (applicantsData[emailKey] === true || typeof applicantsData[emailKey] === 'string') {
             // Convertir la clave de email de nuevo al formato original
             const userEmail = emailKey.replace(/_/g, '.');
             // Buscar el perfil del usuario por email
-            userPromises.push(this.getUserProfileByEmail(userEmail));
+            userPromises.push(this.getUserProfileByEmail(userEmail, applicationData));
           }
         }
 
@@ -57,7 +56,7 @@ export class ApplicantsService {
     );
   }
 
-  private async getUserProfileByEmail(email: string): Promise<any> {
+  private async getUserProfileByEmail(email: string, applicationData: any): Promise<any> {
     try {
       const emailKey = this.firebaseService.formatEmailKey(email);
       const userRef = ref(this.database, `cv-app/users/${emailKey}`);
@@ -77,6 +76,12 @@ export class ApplicantsService {
       // Obtener datos del perfil personal
       const profileData = userData?.profileData?.personalData || {};
       
+      // Si applicationData es una cadena, es la fecha de postulación (nuevo formato)
+      // Si es true, usar la fecha actual (formato antiguo)
+      const applicationDate = typeof applicationData === 'string' 
+        ? applicationData 
+        : new Date().toISOString();
+      
       return {
         id: emailKey,
         email: metadata.email || email,
@@ -85,7 +90,8 @@ export class ApplicantsService {
         profesion: profileData.profesion || 'Sin profesión especificada',
         country: metadata.country || 'País no especificado',
         direction: profileData.direction || 'Dirección no especificada',
-        // Agregar más campos según sea necesario
+        applicationDate: applicationDate, // Incluir la fecha de postulación
+        status: 'pending' // Estado por defecto
       };
     } catch (error) {
       console.error('Error al obtener el perfil del usuario:', error);

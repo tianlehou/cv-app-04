@@ -78,11 +78,15 @@ export class JobOfferActionsService {
           jobOfferCopy.updatedAt = now;
           jobOfferCopy.status = 'borrador'; // La oferta duplicada comienza como borrador
 
-          // Limpiar estadísticas y postulantes
-          jobOfferCopy.views = 0;
+          // Limpiar estadísticas, postulantes y arrays de seguimiento
           jobOfferCopy.likes = 0;
           jobOfferCopy.saves = 0;
           jobOfferCopy.applications = 0;
+          
+          // Limpiar arrays de seguimiento de usuarios
+          jobOfferCopy.appliedBy = [];
+          jobOfferCopy.likedBy = [];
+          jobOfferCopy.savedBy = [];
 
           // Llamar al servicio para crear la nueva oferta
           this.jobOfferService.createJobOffer(jobOfferCopy).subscribe({
