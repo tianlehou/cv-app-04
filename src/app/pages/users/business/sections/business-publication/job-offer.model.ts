@@ -20,8 +20,10 @@ export interface JobOffer {
   likes?: number; // Contador de likes
   userLiked?: boolean; // Indica si el usuario actual ha dado like a esta oferta
 
-  saves?: number;
-  userSaved?: boolean;
+  saves?: number; // Contador de guardados
+  userSaved?: boolean; // Indica si el usuario actual ha guardado esta oferta
+  
+  shares?: number; // Contador de veces que se ha compartido la oferta
 
   applications?: number;// IDs de los usuarios que han aplicado
   appliedBy?: boolean;

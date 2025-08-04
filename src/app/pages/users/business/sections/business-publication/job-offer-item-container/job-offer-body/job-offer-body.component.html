@@ -1,35 +1,27 @@
 <div class="job-offer-body">
-  <div class="card-content-wrapper">
-    <div class="main-content">
-      <!-- Descripción del Puesto -->
-      <div class="job-description">
-        <h4>Descripción del Puesto:</h4>
-        <p>
-          {{ showFullDescription ? getFullText(jobOffer.description) : getPreviewText(jobOffer.description) }}
-          <button *ngIf="isTextLong(jobOffer.description)" (click)="toggleShowMore('description', $event)"
-            class="btn-text-link">
-            <span>{{ showFullDescription ? 'ver menos' : 'ver más' }}</span>
-          </button>
-        </p>
-      </div>
-
-      <!-- Requisitos -->
-      <div class="job-requirements" *ngIf="jobOffer.requirements">
-        <h4>Requisitos:</h4>
-        <p>
-          {{ showFullRequirements ? getFullText(jobOffer.requirements) : getPreviewText(jobOffer.requirements) }}
-          <button *ngIf="isTextLong(jobOffer.requirements)" (click)="toggleShowMore('requirements', $event)"
-            class="btn-text-link">
-            <span>{{ showFullRequirements ? 'ver menos' : 'ver más' }}</span>
-          </button>
-        </p>
-      </div>
+  <div class="main-content">
+    <!-- Descripción del Puesto -->
+    <div class="job-description">
+      <h4>Descripción del Puesto:</h4>
+      <p>
+        {{ showFullDescription ? getFullText(jobOffer.description) : getPreviewText(jobOffer.description) }}
+        <button *ngIf="isTextLong(jobOffer.description)" (click)="toggleShowMore('description', $event)"
+          class="btn-text-link">
+          <span>{{ showFullDescription ? 'ver menos' : 'ver más' }}</span>
+        </button>
+      </p>
     </div>
 
-    <!-- Iconos de visualización -->
-    <div class="card-icons">
-      <!-- Icono de compartir -->
-      <i class="fas fa-share-alt" title="Compartir"></i>
+    <!-- Requisitos -->
+    <div class="job-requirements" *ngIf="jobOffer.requirements">
+      <h4>Requisitos:</h4>
+      <p>
+        {{ showFullRequirements ? getFullText(jobOffer.requirements) : getPreviewText(jobOffer.requirements) }}
+        <button *ngIf="isTextLong(jobOffer.requirements)" (click)="toggleShowMore('requirements', $event)"
+          class="btn-text-link">
+          <span>{{ showFullRequirements ? 'ver menos' : 'ver más' }}</span>
+        </button>
+      </p>
     </div>
   </div>
 

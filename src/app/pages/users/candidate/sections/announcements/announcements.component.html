@@ -113,7 +113,7 @@
               title="Guardar" (click)="$event.stopPropagation(); toggleIcon(jobOffer, 'bookmark', $event)">
             </i>
             <i [ngClass]="{'active': iconStates[jobOffer.id].share}" class="fas fa-share-alt" title="Compartir"
-              (click)="$event.stopPropagation(); toggleIcon(jobOffer, 'share', $event)">
+              (click)="$event.stopPropagation(); shareJobOffer(jobOffer, $event)">
             </i>
           </div>
           }

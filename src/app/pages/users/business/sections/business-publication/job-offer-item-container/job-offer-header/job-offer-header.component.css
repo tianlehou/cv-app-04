@@ -1,4 +1,6 @@
-/* Los estilos del footer han sido movidos al componente job-offer-footer */
+/* ================================== */
+/* Los estilos para el icono de menu */
+/* ================================ */
 app-job-offer-menu {
   opacity: 0;
   transition: all 0.3s ease;
@@ -8,7 +10,9 @@ app-job-offer-menu {
   opacity: 1;
 }
 
+/* ================================================= */
 /* Estilos para la cabecera de la oferta de trabajo */
+/* =============================================== */
 .job-offer-header {
   padding: 1.25rem 1.5rem;
   border-bottom: 1px solid #f0f0f0;
@@ -58,18 +62,19 @@ app-job-offer-menu {
 }
 
 .job-date {
-  display: inline-flex;
+  display: flex;
   align-items: center;
   font-size: 0.8rem;
   color: #6c757d;
-  margin-right: 1rem;
 }
 
-.job-date i {
-  margin-right: 0.25rem;
+.job-date .bi-calendar-event {
+  margin-right: 0.5rem;
 }
 
+/* ================ */
 /* Badge de estado */
+/* ============== */
 .status-badge {
   padding: 0.25rem 0.75rem;
   border-radius: 1rem;
@@ -103,7 +108,10 @@ app-job-offer-menu {
   border: 1px solid #dee2e6;
 }
 
+
+/* ================================= */
 /* Estilos para la edición de fecha */
+/* =============================== */
 .deadline {
   display: flex;
   align-items: center;

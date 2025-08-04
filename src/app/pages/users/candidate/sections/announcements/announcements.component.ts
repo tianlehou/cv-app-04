@@ -41,11 +41,11 @@ export class AnnouncementsComponent implements OnInit, OnDestroy {
 
   constructor(
     private publicJobOfferService: PublicJobOfferService,
-    private renderer: Renderer2,
-    private ngZone: NgZone,
-    private auth: Auth,
     private jobInteractionService: JobInteractionService,
-    private confirmationModalService: ConfirmationModalService
+    private confirmationModalService: ConfirmationModalService,
+    private auth: Auth,
+    private renderer: Renderer2,
+    private ngZone: NgZone
   ) {
     // Suscribirse a cambios en el estado de autenticación
     this.userSubscription = user(this.auth).subscribe((user) => {
@@ -106,7 +106,7 @@ export class AnnouncementsComponent implements OnInit, OnDestroy {
       const minutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
       const seconds = Math.floor((diffMs % (1000 * 60)) / 1000);
 
-      this.timeRemainingStates[offer.id] = `Tiempo Restante (${days}d ${hours}h ${minutes}m ${seconds}s)`;
+      this.timeRemainingStates[offer.id] = `Termina en: (${days}d ${hours}h ${minutes}m ${seconds}s)`;
     });
   }
 
@@ -166,8 +166,8 @@ export class AnnouncementsComponent implements OnInit, OnDestroy {
 
   formatDate(dateString: string): string {
     const options: Intl.DateTimeFormatOptions = {
-      year: 'numeric',
-      month: 'long',
+      year: '2-digit',
+      month: 'short',
       day: 'numeric',
       hour: '2-digit',
       minute: '2-digit'
@@ -231,6 +231,69 @@ export class AnnouncementsComponent implements OnInit, OnDestroy {
   toggleLike(jobOffer: JobOffer, event: Event): void {
     event.stopPropagation();
     this.jobInteractionService.toggleLike(jobOffer, this.iconStates).subscribe();
+  }
+
+  // Método para manejar el clic en el ícono de compartir
+  async shareJobOffer(jobOffer: JobOffer, event: Event): Promise<void> {
+    event.stopPropagation();
+    
+    // Si ya está en cooldown, no hacer nada
+    if (this.iconStates[jobOffer.id!]?.cooldown) return;
+    
+    try {
+      // Activar estado de cooldown
+      this.iconStates[jobOffer.id!] = { ...this.iconStates[jobOffer.id!], cooldown: true };
+      
+      // Crear el texto para compartir
+      const shareData = {
+        title: `Oferta de Trabajo: ${jobOffer.title}`,
+        text: `Mira esta oferta de trabajo: ${jobOffer.title}\n\n${jobOffer.description?.substring(0, 100)}...`,
+        url: window.location.href
+      };
+
+      // Verificar si el navegador soporta la Web Share API
+      if (navigator.share) {
+        await navigator.share(shareData);
+      } else {
+        // Fallback para navegadores que no soportan Web Share API
+        await navigator.clipboard.writeText(`${shareData.title}\n\n${shareData.text}\n\n${shareData.url}`);
+        alert('¡Enlace copiado al portapapeles!');
+      }
+
+      // Actualizar el contador de compartidos en la base de datos
+      if (this.user?.email && jobOffer.id && jobOffer.companyId) {
+        this.jobInteractionService.updateJobOfferShares(
+          jobOffer.id,
+          jobOffer.companyId,
+          this.user.email
+        ).subscribe({
+          next: (response) => {
+            if (response.success) {
+              // Actualizar el contador localmente si es necesario
+              if (jobOffer.id) {
+                jobOffer.shares = (jobOffer.shares || 0) + 1;
+              }
+            }
+          },
+          error: (error) => {
+            console.error('Error al actualizar el contador de compartidos:', error);
+          }
+        });
+      }
+    } catch (err) {
+      console.error('Error al compartir:', err);
+      // No mostrar error al usuario si fue una cancelación
+      if ((err as Error).name !== 'AbortError') {
+        alert('No se pudo compartir la oferta. Intenta copiar el enlace manualmente.');
+      }
+    } finally {
+      // Desactivar cooldown después de 1 segundo
+      setTimeout(() => {
+        this.ngZone.run(() => {
+          this.iconStates[jobOffer.id!] = { ...this.iconStates[jobOffer.id!], cooldown: false };
+        });
+      }, 1000);
+    }
   }
 
   // Método para manejar la aplicación a una oferta de trabajo

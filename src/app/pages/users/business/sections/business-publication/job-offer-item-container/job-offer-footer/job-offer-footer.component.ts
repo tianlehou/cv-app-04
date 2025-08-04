@@ -13,6 +13,7 @@ export class JobOfferFooterComponent implements OnInit, OnDestroy {
   @Input() jobOffer: any;
   @Input() likesCount: number = 0;
   @Input() bookmarksCount: number = 0;
+  @Input() sharesCount: number = 0;
   @Input() applicationsCount: number = 0;
   
   @Output() viewApplicants = new EventEmitter<void>();
@@ -35,6 +36,32 @@ export class JobOfferFooterComponent implements OnInit, OnDestroy {
 
   onViewApplicants(): void {
     this.viewApplicants.emit();
+  }
+
+  // Método para formatear números según los requisitos
+  formatNumber(value: number): string {
+    if (value === null || value === undefined) return '0';
+    
+    // Para números menores a 1000, mostrarlos completos
+    if (value < 1000) {
+      return value.toString();
+    }
+    
+    // Para números entre 1,000 y 999,999
+    if (value < 1000000) {
+      const formatted = (value / 1000).toFixed(1);
+      return `${formatted}K`;
+    }
+    
+    // Para números entre 1,000,000 y 999,999,999
+    if (value < 1000000000) {
+      const formatted = (value / 1000000).toFixed(1);
+      return `${formatted}M`;
+    }
+
+    // Para números de 1,000,000 en adelante
+    const formatted = (value / 1000000000).toFixed(1);
+    return `${formatted}B`;
   }
 
   private updateTimeRemaining() {

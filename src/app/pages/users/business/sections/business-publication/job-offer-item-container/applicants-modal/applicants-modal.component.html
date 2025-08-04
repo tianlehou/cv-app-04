@@ -74,9 +74,8 @@
                 <!-- Ubicacion -->
                 <td>
                   <div *ngIf="applicant.country || applicant.direction" class="location">
-                    <i class="fas fa-map-marker-alt text-muted me-1"></i>
-                    <span *ngIf="applicant.direction" style="font-weight: 600; margin: 0 5px;">{{ applicant.country
-                      }},</span>
+                    <span *ngIf="applicant.direction" style="font-weight: 600; margin-right: 5px;">
+                      {{ applicant.country }},</span>
                     <span>{{ applicant.direction }}</span>
                   </div>
                   <span *ngIf="!applicant.country && !applicant.direction" class="text-muted">No especificada</span>

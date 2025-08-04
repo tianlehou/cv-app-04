@@ -412,4 +412,48 @@ export class JobInteractionService {
       );
     });
   }
+
+  // Método para actualizar el contador de compartidos de una oferta de trabajo
+  updateJobOfferShares(jobOfferId: string, companyId: string, userEmail: string): Observable<{ success: boolean }> {
+    return runInInjectionContext(this.injector, () => {
+      if (!jobOfferId || !userEmail || !companyId) {
+        console.error('Se requiere el ID de la oferta, el ID de la compañía y el email del usuario');
+        return of({ success: false });
+      }
+
+      // Referencia a la oferta de trabajo específica
+      const jobOfferRef = ref(this.database, `cv-app/users/${companyId}/job-offer/${jobOfferId}`);
+
+      // Primera operación Firebase (get)
+      const getJobOffer$ = from(runInInjectionContext(this.injector, () => get(jobOfferRef)));
+
+      return getJobOffer$.pipe(
+        switchMap((jobOfferSnapshot) => {
+          if (!jobOfferSnapshot.exists()) {
+            console.error('La oferta de trabajo no existe');
+            return of({ success: false });
+          }
+
+          const jobOffer = jobOfferSnapshot.val();
+          const currentShares = jobOffer.shares || 0;
+          const newShares = currentShares + 1;
+
+          // Actualizar el contador de compartidos
+          const updates: any = {};
+          updates[`cv-app/users/${companyId}/job-offer/${jobOfferId}/shares`] = newShares;
+
+          // Segunda operación Firebase (update)
+          const update$ = from(runInInjectionContext(this.injector, () => update(ref(this.database), updates)));
+
+          return update$.pipe(
+            map(() => ({ success: true })),
+            catchError(error => {
+              console.error('Error al actualizar contador de compartidos:', error);
+              return of({ success: false });
+            })
+          );
+        })
+      );
+    });
+  }
 }

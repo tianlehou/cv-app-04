@@ -3,20 +3,32 @@
     <i class="bi bi-hourglass-split"></i><span>{{ timeRemaining }}</span>
   </div>
   <div class="footer-actions">
-    <div class="likes-count">
-      <i class="fas fa-heart"></i>
-      <span class="like-count" *ngIf="likesCount > 0">{{ likesCount }}</span>
+    <div class="icon-grid">
+      <div class="likes-count">
+        <i class="fas fa-heart"></i>
+        <span>{{ formatNumber(likesCount) }}</span>
+      </div>
       <label>Me gusta</label>
     </div>
-    <div class="bookmarks-count">
-      <i class="fas fa-bookmark"></i>
-      <span class="bookmark-count" *ngIf="bookmarksCount > 0">{{ bookmarksCount }}</span>
+    <div class="icon-grid">
+      <div class="bookmarks-count">
+        <i class="fas fa-bookmark"></i>
+        <span>{{ formatNumber(bookmarksCount) }}</span>
+      </div>
       <label>Guardados</label>
     </div>
+    <div class="icon-grid">
+      <div class="shares-count">
+        <i class="fas fa-share-alt"></i>
+        <span>{{ formatNumber(sharesCount) }}</span>
+      </div>
+      <label>Compartidos</label>
+    </div>
   </div>
+
   <button class="apply-button" (click)="onViewApplicants()">
     <i class="fas fa-file-alt"></i>
-    <span class="applications-count" *ngIf="applicationsCount > 0">({{ applicationsCount }})</span>
+    <span>( {{ formatNumber(applicationsCount) }} )</span>
     <label>Ver postulados</label>
   </button>
 </div>

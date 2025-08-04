@@ -85,14 +85,3 @@
   width: 16px;
   text-align: center;
 }
-
-/* Estilos para el contenedor principal */
-.card-content-wrapper {
-  display: flex;
-  justify-content: space-between;
-  gap: 1rem;
-}
-
-.main-content {
-  flex: 1;
-}

@@ -26,65 +26,52 @@
 /*======================================*/
 .footer-actions {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  margin-top: 0.5rem;
+  justify-content: space-between;
+}
+
+.icon-grid {
+  display: grid;
+  flex-direction: column;
+}
+
+.icon-grid div {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-weight: 500;
+  padding: 6px 10px;
+  border-radius: 12px;
+  transition: all 0.2s ease;
+}
+
+.icon-grid i {
+  font-size: 1rem;
+}
+
+.icon-grid label {
+  font-size: 0.8rem;
+  color: #7f8c8d;
+  cursor: default;
 }
 
 /* Estilos para el contador de likes */
 .likes-count {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
   color: #e74c3c;
-  font-weight: 500;
-  padding: 0.4rem 1rem;
-  border-radius: 20px;
   background-color: rgba(231, 76, 60, 0.1);
-  transition: all 0.2s ease;
-}
-
-.likes-count i {
-  color: #e74c3c;
-  font-size: 1rem;
-}
-
-.likes-count span {
-  font-weight: 600;
-}
-
-.likes-count label {
-  font-size: 0.8rem;
-  color: #7f8c8d;
-  cursor: default;
 }
 
 /* Estilos para el contador de bookmarks */
 .bookmarks-count {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
   color: #3498db;
-  font-weight: 500;
-  padding: 0.4rem 1rem;
-  border-radius: 20px;
   background-color: rgba(52, 152, 219, 0.1);
-  transition: all 0.2s ease;
 }
 
-.bookmarks-count i {
-  color: #3498db;
-  font-size: 1rem;
-}
-
-.bookmarks-count span {
-  font-weight: 600;
-}
-
-.bookmarks-count label {
-  font-size: 0.8rem;
-  color: #7f8c8d;
-  cursor: default;
+/* Estilos para el contador de compartidos */
+.shares-count {
+  color: #9b59b6;
+  background-color: rgba(155, 89, 182, 0.1);
 }
 
 /*====================================*/

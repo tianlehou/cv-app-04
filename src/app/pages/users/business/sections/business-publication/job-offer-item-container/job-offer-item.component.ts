@@ -10,8 +10,8 @@ import { ToastService } from 'src/app/shared/components/toast/toast.service';
 import { JobOfferActionsService } from '../services/job-offer-actions.service';
 import { JobOfferLikeService } from '../services/job-offer-like.service';
 import { JobOfferBookmarkService } from '../services/job-offer-bookmark.service';
+import { JobOfferShareService } from '../services/job-offer-share.service';
 import { JobOfferApplicationService } from '../services/job-offer-application.service';
-import { getFullText, getPreviewText, isTextLong } from 'src/app/shared/utils/text.utils';
 import { ApplicantsModalComponent } from './applicants-modal/applicants-modal.component';
 import { JobOfferFooterComponent } from './job-offer-footer/job-offer-footer.component';
 import { JobOfferHeaderComponent } from './job-offer-header/job-offer-header.component';
@@ -21,9 +21,9 @@ import { JobOfferBodyComponent } from './job-offer-body/job-offer-body.component
   selector: 'app-job-offer-item',
   standalone: true,
   imports: [
-    CommonModule, 
+    CommonModule,
     FormsModule,
-    JobOfferInfoModalComponent, 
+    JobOfferInfoModalComponent,
     ApplicantsModalComponent,
     JobOfferFooterComponent,
     JobOfferHeaderComponent,
@@ -52,6 +52,7 @@ export class JobOfferItemComponent implements OnInit, OnDestroy {
   private jobOfferActionsService = inject(JobOfferActionsService);
   private jobOfferLikeService = inject(JobOfferLikeService);
   private jobOfferBookmarkService = inject(JobOfferBookmarkService);
+  private jobOfferShareService = inject(JobOfferShareService);
   private jobOfferApplicationService = inject(JobOfferApplicationService);
 
   showInfoModal = false;
@@ -68,6 +69,10 @@ export class JobOfferItemComponent implements OnInit, OnDestroy {
   // Estado para mostrar el contador de saves/bookmarks
   bookmarksCount: number = 0;
   private bookmarksSubscription: Subscription | null = null;
+
+  // Estado para mostrar el contador de shares
+  sharesCount: number = 0;
+  private sharesSubscription: Subscription | null = null;
 
   // Estado para mostrar el contador de aplicaciones
   applicationsCount: number = 0;
@@ -106,6 +111,21 @@ export class JobOfferItemComponent implements OnInit, OnDestroy {
         }
       });
 
+      // Suscribirse a actualizaciones de shares
+      this.sharesSubscription = this.jobOfferShareService.getSharesUpdates(
+        this.jobOffer.companyId,
+        this.jobOffer.id
+      ).subscribe({
+        next: (count) => {
+          this.ngZone.run(() => {
+            this.sharesCount = count || 0;
+          });
+        },
+        error: (error) => {
+          console.error('Error al obtener actualizaciones de bookmarks:', error);
+        }
+      });
+
       // Suscribirse a cambios en las aplicaciones
       this.applicationsSubscription = this.jobOfferApplicationService.getApplicationsUpdates(
         this.jobOffer.companyId,
@@ -135,6 +155,12 @@ export class JobOfferItemComponent implements OnInit, OnDestroy {
     if (this.bookmarksSubscription) {
       this.bookmarksSubscription.unsubscribe();
       this.bookmarksSubscription = null;
+    }
+
+    // Limpiar suscripción de bookmarks
+    if (this.sharesSubscription) {
+      this.sharesSubscription.unsubscribe();
+      this.sharesSubscription = null;
     }
 
     // Limpiar suscripción de aplicaciones
@@ -179,7 +205,7 @@ export class JobOfferItemComponent implements OnInit, OnDestroy {
 
 
 
-  
+
 
   // Método para mostrar el modal de postulados
   onViewApplicants(): void {

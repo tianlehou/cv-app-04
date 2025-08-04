@@ -30,18 +30,25 @@ main {
 
 /* Estilos para la cuadrícula de ofertas */
 .job-offers-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-  gap: 1.5rem;
-  margin-top: 1.5rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 360px));
+    justify-content: center;
+    gap: 1.5rem;
+    padding: 1rem 0;
+    width: 100%;
 }
 
 /* Estilos para las tarjetas de ofertas */
 .job-offer-card {
-  background: white;
-  border-radius: 10px;
   padding: 1.5rem;
-  transition: all 0.3s ease, box-shadow 0.3s ease;
+  background: #ffffff;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  margin-bottom: 1.5rem;
+  max-width: 350px;
+  position: relative;
+  color: var(--text-color-light);
 }
 
 .job-offer-card:hover {
@@ -307,7 +314,7 @@ main {
   flex-grow: 1;
 }
 
-/* Estilos para los iconos de la tarjeta */
+/* Estilos para los iconos de interacción */
 .card-icons {
   display: flex;
   flex-direction: column;
@@ -343,20 +350,4 @@ main {
 .card-icons .fa-share-alt:hover,
 .card-icons .fa-share-alt.active {
   color: #3498db;
-}
-
-/* Estilos responsivos */
-@media (max-width: 768px) {
-  .job-offers-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .job-offer-actions {
-    flex-direction: column;
-  }
-
-  .apply-button,
-  .save-button {
-    width: 100%;
-  }
 }
