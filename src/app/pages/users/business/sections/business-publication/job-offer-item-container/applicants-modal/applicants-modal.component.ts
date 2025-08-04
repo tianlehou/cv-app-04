@@ -91,6 +91,21 @@ export class ApplicantsModalComponent implements OnChanges {
   }
   
   // Obtiene la clase CSS según el estado del postulante
+  getStatusText(status: string): string {
+    if (!status) return 'Pendiente';
+    
+    const statusMap: { [key: string]: string } = {
+      'pending': 'Pendiente',
+      'reviewed': 'Revisado',
+      'interview': 'Entrevistado',
+      'interview_scheduled': 'Entrevista agendado',
+      'rejected': 'Rechazado',
+      'hired': 'Contratado'
+    };
+    
+    return statusMap[status.toLowerCase()] || status;
+  }
+
   getStatusClass(status: string): string {
     switch (status?.toLowerCase()) {
       case 'pending':
@@ -108,22 +123,38 @@ export class ApplicantsModalComponent implements OnChanges {
         return 'status-pending';
     }
   }
-  
-  // Obtiene el texto legible del estado
-  getStatusText(status: string): string {
-    if (!status) return 'Pendiente';
-    
-    const statusMap: { [key: string]: string } = {
-      'pending': 'Pendiente',
-      'reviewed': 'Revisado',
-      'interview': 'Entrevista',
-      'interview_scheduled': 'Entrevista agendada',
-      'rejected': 'Rechazado',
-      'hired': 'Contratado'
-    };
-    
-    return statusMap[status.toLowerCase()] || status;
+
+  /**
+   * Actualiza el estado de un postulante
+   * @param applicant Postulante a actualizar
+   * @param newStatus Nuevo estado
+   */
+  async updateStatus(applicant: any, newStatus: string): Promise<void> {
+    if (!this.jobOfferId || !this.companyId || !applicant?.email) {
+      console.error('Faltan datos necesarios para actualizar el estado');
+      return;
+    }
+
+    try {
+      await this.applicantsService.updateApplicantStatus(
+        this.companyId,
+        this.jobOfferId,
+        applicant.email,
+        newStatus
+      );
+      
+      // Actualizar el estado en la lista local
+      const updatedApplicant = this.applicants.find(a => a.email === applicant.email);
+      if (updatedApplicant) {
+        updatedApplicant.status = newStatus;
+        this.updatePagedApplicants(); // Actualizar la vista
+      }
+    } catch (error) {
+      console.error('Error al actualizar el estado del postulante:', error);
+      // Aquí podrías mostrar un mensaje de error al usuario
+    }
   }
+
   
   // Formatea la fecha para mostrarla de manera legible
   formatDate(date: Date | string): string {

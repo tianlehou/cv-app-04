@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { Database, get, ref } from '@angular/fire/database';
+import { Database, get, ref, set } from '@angular/fire/database';
 import { Observable, from, of } from 'rxjs';
 import { switchMap, catchError } from 'rxjs/operators';
 import { FirebaseService } from 'src/app/shared/services/firebase.service';
@@ -10,6 +10,27 @@ import { FirebaseService } from 'src/app/shared/services/firebase.service';
 export class ApplicantsService {
   private database = inject(Database);
   private firebaseService = inject(FirebaseService);
+
+  /**
+   * Obtiene el estado actual de un postulante
+   * @param companyId ID de la compañía
+   * @param jobOfferId ID de la oferta
+   * @param email Email del postulante
+   */
+  private async getApplicantStatus(companyId: string, jobOfferId: string, email: string): Promise<string> {
+    try {
+      const emailKey = this.firebaseService.formatEmailKey(email);
+      const statusRef = ref(
+        this.database, 
+        `cv-app/users/${companyId}/job-offer/${jobOfferId}/applicantStatus/${emailKey}`
+      );
+      const statusSnapshot = await get(statusRef);
+      return statusSnapshot.exists() ? statusSnapshot.val() : 'pending';
+    } catch (error) {
+      console.error('Error al obtener el estado del postulante:', error);
+      return 'pending';
+    }
+  }
 
   /**
    * Obtiene los postulantes a una oferta de trabajo
@@ -42,7 +63,7 @@ export class ApplicantsService {
             // Convertir la clave de email de nuevo al formato original
             const userEmail = emailKey.replace(/_/g, '.');
             // Buscar el perfil del usuario por email
-            userPromises.push(this.getUserProfileByEmail(userEmail, applicationData));
+            userPromises.push(this.getUserProfileByEmail(userEmail, applicationData, companyId, jobOfferId));
           }
         }
 
@@ -56,7 +77,7 @@ export class ApplicantsService {
     );
   }
 
-  private async getUserProfileByEmail(email: string, applicationData: any): Promise<any> {
+  private async getUserProfileByEmail(email: string, applicationData: any, companyId: string, jobOfferId: string): Promise<any> {
     try {
       const emailKey = this.firebaseService.formatEmailKey(email);
       const userRef = ref(this.database, `cv-app/users/${emailKey}`);
@@ -91,7 +112,7 @@ export class ApplicantsService {
         country: metadata.country || 'País no especificado',
         direction: profileData.direction || 'Dirección no especificada',
         applicationDate: applicationDate, // Incluir la fecha de postulación
-        status: 'pending' // Estado por defecto
+        status: await this.getApplicantStatus(companyId, jobOfferId, email) // Obtener el estado actual
       };
     } catch (error) {
       console.error('Error al obtener el perfil del usuario:', error);
@@ -110,7 +131,30 @@ export class ApplicantsService {
       phone: 'No disponible',
       profesion: 'Sin profesión especificada',
       country: 'País no especificado',
-      direction: 'Dirección no especificada'
+      direction: 'Dirección no especificada',
+      status: 'pending'
     };
+  }
+
+  /**
+   * Actualiza el estado de un postulante
+   * @param companyId ID de la compañía
+   * @param jobOfferId ID de la oferta de trabajo
+   * @param applicantEmail Email del postulante
+   * @param newStatus Nuevo estado (ej: 'reviewed', 'interview', 'rejected')
+   */
+  updateApplicantStatus(
+    companyId: string, 
+    jobOfferId: string, 
+    applicantEmail: string, 
+    newStatus: string
+  ): Promise<void> {
+    const emailKey = this.firebaseService.formatEmailKey(applicantEmail);
+    const statusRef = ref(
+      this.database, 
+      `cv-app/users/${companyId}/job-offer/${jobOfferId}/applicantStatus/${emailKey}`
+    );
+    
+    return set(statusRef, newStatus);
   }
 }

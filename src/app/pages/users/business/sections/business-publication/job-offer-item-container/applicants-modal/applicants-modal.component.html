@@ -20,31 +20,58 @@
       <div class="applicants-table">
         <div class="table-scroll-container">
           <table class="table">
+
+            <!-- Encabezado -->
             <thead>
               <tr>
                 <th>#</th>
                 <th>Ver</th>
+                <th>Estado</th>
                 <th>Nombre</th>
                 <th>Profesión</th>
                 <th>Ubicación</th>
                 <th>Fecha de Postulación</th>
-                <th>Estado</th>
               </tr>
             </thead>
+
+            <!-- Contenido -->
             <tbody>
               <tr *ngFor="let applicant of pagedApplicants; let i = index">
+                <!-- # -->
                 <td>{{ (currentPage - 1) * pageSize + i + 1 }}</td>
+                <!-- Ver -->
                 <td class="actions">
-                  <button class="btn btn-sm btn-primary" (click)="viewProfile(applicant)" title="Ver perfil">
+                  <button class="btn btn-sm" 
+                    [ngClass]="'btn-status-' + (applicant.status || 'pending')" 
+                    (click)="viewProfile(applicant)" 
+                    title="Ver perfil">
                     <i class="fas fa-user"></i>
                   </button>
                 </td>
+                <!-- Estado -->
+                <td>
+                  <div class="status-selector">
+                    <select class="form-select form-select-sm" [ngClass]="getStatusClass(applicant.status)"
+                      [value]="applicant.status || 'pending'"
+                      (change)="updateStatus(applicant, $any($event.target).value)">
+                      <option value="pending">Pendiente</option>
+                      <option value="reviewed">Revisado</option>
+                      <option value="interview_scheduled">Entrevista agendado</option>
+                      <option value="interview">Entrevistado</option>
+                      <option value="rejected">Rechazado</option>
+                      <option value="hired">Contratado</option>
+                    </select>
+                  </div>
+                </td>
+                <!-- Nombre -->
                 <td>
                   <div class="applicant-name">
                     {{ applicant.fullName || 'No disponible' }}
                   </div>
                 </td>
+                <!-- Profesion -->
                 <td>{{ applicant.profesion || 'No especificado' }}</td>
+                <!-- Ubicacion -->
                 <td>
                   <div *ngIf="applicant.country || applicant.direction" class="location">
                     <i class="fas fa-map-marker-alt text-muted me-1"></i>
@@ -54,13 +81,11 @@
                   </div>
                   <span *ngIf="!applicant.country && !applicant.direction" class="text-muted">No especificada</span>
                 </td>
+                <!-- Fecha de Postulación -->
                 <td>{{ formatDate(applicant.applicationDate) }}</td>
-                <td>
-                  <span class="status-badge" [ngClass]="getStatusClass(applicant.status)">
-                    {{ getStatusText(applicant.status) }}
-                  </span>
-                </td>
               </tr>
+
+              <!-- Mensaje cuando no hay postulantes -->
               <tr *ngIf="!isLoading && (!applicants || applicants.length === 0)">
                 <td colspan="9" class="no-applicants">
                   <i class="fas fa-users-slash"></i>
@@ -85,10 +110,8 @@
     </div>
   </div>
 
-<!-- Modal de perfil del candidato -->
-<app-business-candidate-profile-modal 
-  *ngIf="selectedApplicant" 
-  [user]="selectedApplicant"
-  [close]="closeProfileModal.bind(this)">
-</app-business-candidate-profile-modal>
+  <!-- Modal de perfil del candidato -->
+  <app-business-candidate-profile-modal *ngIf="selectedApplicant" [user]="selectedApplicant"
+    [close]="closeProfileModal.bind(this)">
+  </app-business-candidate-profile-modal>
 </div>
