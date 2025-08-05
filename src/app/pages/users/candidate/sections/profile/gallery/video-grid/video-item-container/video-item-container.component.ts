@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, ViewChild, ElementRef } from '@angular/core';
+import { Component, Input, Output, EventEmitter, ViewChild, ElementRef, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -16,6 +16,7 @@ export class VideoItemContainerComponent {
   @Output() deleteVideo = new EventEmitter<string>();
   
   @ViewChild('videoPlayer') videoPlayer!: ElementRef<HTMLVideoElement>;
+  @ViewChild('videoContainer', { static: true }) videoContainer!: ElementRef<HTMLDivElement>;
 
   onToggleExpand(): void {
     this.toggleExpand.emit();
@@ -34,5 +35,13 @@ export class VideoItemContainerComponent {
         video.pause();
       }
     });
+  }
+
+  @HostListener('document:click', ['$event'])
+  onClickOutside(event: MouseEvent): void {
+    // Verificar si el clic fue fuera del contenedor del video
+    if (this.isExpanded && !this.videoContainer.nativeElement.contains(event.target as Node)) {
+      this.onToggleExpand();
+    }
   }
 }

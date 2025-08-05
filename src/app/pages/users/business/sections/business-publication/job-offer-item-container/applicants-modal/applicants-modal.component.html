@@ -26,6 +26,7 @@
               <tr>
                 <th>#</th>
                 <th>Ver</th>
+                <th>Coincidencia</th>
                 <th>Estado</th>
                 <th>Nombre</th>
                 <th>Profesión</th>
@@ -47,6 +48,14 @@
                     title="Ver perfil">
                     <i class="fas fa-user"></i>
                   </button>
+                </td>
+                <!-- Coincidencia -->
+                <td class="match-cell">
+                  <div class="match-container" [ngClass]="getMatchClass(calculateMatch(applicant))">
+                    <div class="match-bar" [style.width.%]="calculateMatch(applicant)">
+                      <span class="match-percentage">{{ calculateMatch(applicant) }}%</span>
+                    </div>
+                  </div>
                 </td>
                 <!-- Estado -->
                 <td>

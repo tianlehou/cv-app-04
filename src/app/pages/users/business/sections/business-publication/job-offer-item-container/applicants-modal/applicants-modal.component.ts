@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, Output, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ApplicantsService } from '../../services/applicants.service';
+import { ApplicantsService } from './services/applicants.service';
+import { MatchService } from './services/match.service';
 import { finalize } from 'rxjs/operators';
 import { BusinessCandidateProfileModalComponent } from '../../../../sections/business-dashboard/user-table/candidate-profile-modal/business-candidate-profile-modal.component';
 
@@ -9,7 +10,8 @@ import { BusinessCandidateProfileModalComponent } from '../../../../sections/bus
   standalone: true,
   imports: [CommonModule, BusinessCandidateProfileModalComponent],
   templateUrl: './applicants-modal.component.html',
-  styleUrls: ['./applicants-modal.component.css']
+  styleUrls: ['./applicants-modal.component.css'],
+  providers: [MatchService]
 })
 export class ApplicantsModalComponent implements OnChanges {
   @Input() isOpen = false;
@@ -27,7 +29,45 @@ export class ApplicantsModalComponent implements OnChanges {
   // Para el modal de perfil
   selectedApplicant: any = null;
   
-  constructor(private applicantsService: ApplicantsService) {}
+  private matchService: MatchService;
+  private applicantsService: ApplicantsService;
+
+  constructor(
+    matchService: MatchService,
+    applicantsService: ApplicantsService
+  ) {
+    this.matchService = matchService;
+    this.applicantsService = applicantsService;
+  }
+
+  /**
+   * Calcula el porcentaje de coincidencia entre el perfil del candidato y la oferta de trabajo
+   * @param applicant Perfil del candidato
+   * @returns Porcentaje de coincidencia (0-100)
+   */
+  calculateMatch(applicant: any): number {
+    try {
+      if (!this.jobOffer || !this.matchService?.calculateMatch) return 0;
+      const result = this.matchService.calculateMatch(applicant, this.jobOffer);
+      return result?.percentage || 0;
+    } catch (error) {
+      console.error('Error al calcular coincidencia:', error);
+      return 0;
+    }
+  }
+
+  /**
+   * Obtiene la clase CSS para el nivel de coincidencia
+   */
+  getMatchClass(matchPercentage: number): string {
+    try {
+      if (!this.matchService?.getMatchClass) return 'match-low';
+      return this.matchService.getMatchClass(matchPercentage);
+    } catch (error) {
+      console.error('Error al obtener clase de coincidencia:', error);
+      return 'match-low';
+    }
+  }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['isOpen']?.currentValue === true && this.jobOfferId && this.companyId) {

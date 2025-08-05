@@ -1,4 +1,4 @@
-<div class="video-item" [ngClass]="{'expanded': isExpanded}" (contextmenu)="$event.preventDefault()">
+<div #videoContainer class="video-item" [ngClass]="{'expanded': isExpanded}" (contextmenu)="$event.preventDefault()">
     <video 
         #videoPlayer 
         controls 

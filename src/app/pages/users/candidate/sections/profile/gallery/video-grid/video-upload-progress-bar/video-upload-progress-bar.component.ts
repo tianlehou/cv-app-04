@@ -1,12 +1,12 @@
 // video-upload-progress-bar.component.ts
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FileSizePipe } from 'src/app/shared/pipes/filesize.pipe';
+import { FileSizePipeProgressBar } from 'src/app/shared/pipes/filesize-progress-bar.pipe';
 
 @Component({
   selector: 'app-video-upload-progress-bar',
   standalone: true,
-  imports: [CommonModule, FileSizePipe],
+  imports: [CommonModule, FileSizePipeProgressBar],
   templateUrl: './video-upload-progress-bar.component.html',
   styleUrls: ['./video-upload-progress-bar.component.css']
 })
