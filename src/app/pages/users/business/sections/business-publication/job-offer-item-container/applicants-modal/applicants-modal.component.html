@@ -26,12 +26,15 @@
               <tr>
                 <th>#</th>
                 <th>Ver</th>
-                <th>Coincidencia</th>
                 <th>Estado</th>
+                <th>Coincidencia</th>
                 <th>Nombre</th>
-                <th>Profesión</th>
                 <th>Ubicación</th>
                 <th>Fecha de Postulación</th>
+                <th>Profesión</th>
+                <th>Habilidades</th>
+                <th>Experiencias</th>
+                <th>Educación</th>
               </tr>
             </thead>
 
@@ -42,20 +45,10 @@
                 <td>{{ (currentPage - 1) * pageSize + i + 1 }}</td>
                 <!-- Ver -->
                 <td class="actions">
-                  <button class="btn btn-sm" 
-                    [ngClass]="'btn-status-' + (applicant.status || 'pending')" 
-                    (click)="viewProfile(applicant)" 
-                    title="Ver perfil">
+                  <button class="btn btn-sm" [ngClass]="'btn-status-' + (applicant.status || 'pending')"
+                    (click)="viewProfile(applicant)" title="Ver perfil">
                     <i class="fas fa-user"></i>
                   </button>
-                </td>
-                <!-- Coincidencia -->
-                <td class="match-cell">
-                  <div class="match-container" [ngClass]="getMatchClass(calculateMatch(applicant))">
-                    <div class="match-bar" [style.width.%]="calculateMatch(applicant)">
-                      <span class="match-percentage">{{ calculateMatch(applicant) }}%</span>
-                    </div>
-                  </div>
                 </td>
                 <!-- Estado -->
                 <td>
@@ -72,14 +65,20 @@
                     </select>
                   </div>
                 </td>
+                <!-- Coincidencia -->
+                <td class="match-cell">
+                  <div class="match-container" [ngClass]="getMatchClass(calculateMatch(applicant))">
+                    <div class="match-bar" [style.width.%]="calculateMatch(applicant)">
+                      <span class="match-percentage">{{ calculateMatch(applicant) }}%</span>
+                    </div>
+                  </div>
+                </td>
                 <!-- Nombre -->
                 <td>
                   <div class="applicant-name">
                     {{ applicant.fullName || 'No disponible' }}
                   </div>
                 </td>
-                <!-- Profesion -->
-                <td>{{ applicant.profesion || 'No especificado' }}</td>
                 <!-- Ubicacion -->
                 <td>
                   <div *ngIf="applicant.country || applicant.direction" class="location">
@@ -91,6 +90,46 @@
                 </td>
                 <!-- Fecha de Postulación -->
                 <td>{{ formatDate(applicant.applicationDate) }}</td>
+                <!-- Profesion -->
+                <td>{{ applicant.profesion || 'No especificado' }}</td>
+                <!-- Habilidades -->
+                <td>
+                  <div *ngIf="applicant.skills?.length > 0" class="skills-container">
+                    <span class="badge bg-primary me-1 mb-1" *ngFor="let skill of applicant.skills | slice:0:3">
+                      {{ skill }}
+                    </span>
+                    <span *ngIf="applicant.skills?.length > 3" class="text-muted">+{{ applicant.skills.length - 3 }}
+                      más</span>
+                  </div>
+                  <span *ngIf="!applicant.skills || applicant.skills.length === 0" class="text-muted">No
+                    especificadas</span>
+                </td>
+                <!-- Experiencias -->
+                <td>
+                  <div *ngIf="applicant.experiences?.length > 0" class="experiences-container">
+                    <div class="experience-item" *ngFor="let exp of applicant.experiences | slice:0:2">
+                      <!-- <div class="fw-bold">{{ exp.position || 'Sin cargo' }}</div>
+                      <div class="small text-muted">{{ exp.company || '' }}</div> -->
+                    </div>
+                    <span *ngIf="applicant.experiences?.length > 2" class="text-muted">+{{ applicant.experiences.length
+                      - 2 }} más</span>
+                  </div>
+                  <span *ngIf="!applicant.experiences || applicant.experiences.length === 0" class="text-muted">No
+                    especificadas</span>
+                </td>
+                <!-- Educación -->
+                <td>
+                  <div *ngIf="applicant.education?.length > 0" class="education-container">
+                    <div class="education-item" *ngFor="let edu of applicant.education | slice:0:2">
+                      <!-- <div class="fw-bold">{{ edu.degree || 'Sin título' }}</div>
+                      <div class="small text-muted">{{ edu.institution || '' }}</div> -->
+                    </div>
+                    <span *ngIf="applicant.education?.length > 2" class="text-muted">+{{ applicant.education.length - 2
+                      }} más</span>
+                  </div>
+                  <span *ngIf="!applicant.education || applicant.education.length === 0" class="text-muted">No
+                    especificada</span>
+                </td>
               </tr>
 
               <!-- Mensaje cuando no hay postulantes -->

@@ -23,7 +23,7 @@ export class ApplicantsService {
       try {
         const emailKey = this.firebaseService.formatEmailKey(email);
         const statusRef = ref(
-          this.database, 
+          this.database,
           `cv-app/users/${companyId}/job-offer/${jobOfferId}/applicantStatus/${emailKey}`
         );
         const statusSnapshot = await get(statusRef);
@@ -54,7 +54,7 @@ export class ApplicantsService {
           // Referencia a los aplicantes de la oferta
           const applicantsRef = ref(this.database, `cv-app/users/${companyId}/job-offer/${jobOfferId}/appliedBy`);
           const snapshot = await get(applicantsRef);
-          
+
           if (!snapshot.exists()) {
             subscriber.next([]);
             subscriber.complete();
@@ -94,38 +94,41 @@ export class ApplicantsService {
         const emailKey = this.firebaseService.formatEmailKey(email);
         const userRef = ref(this.database, `cv-app/users/${emailKey}`);
         const userSnapshot = await get(userRef);
-        
+
         if (!userSnapshot.exists()) {
           return this.getDefaultProfile(email);
         }
 
         const userData = userSnapshot.val();
-        
+
         // Obtener metadatos del usuario (incluye el email)
         const metadataRef = ref(this.database, `cv-app/users/${emailKey}/metadata`);
-        const metadataSnapshot = await get(metadataRef);
-        const metadata = metadataSnapshot.exists() ? metadataSnapshot.val() : {};
+        return runInInjectionContext(this.injector, async () => {
+          const metadataSnapshot = await get(metadataRef);
 
-        // Obtener datos del perfil personal
-        const profileData = userData?.profileData?.personalData || {};
-        
-        // Si applicationData es una cadena, es la fecha de postulación (nuevo formato)
-        // Si es true, usar la fecha actual (formato antiguo)
-        const applicationDate = typeof applicationData === 'string' 
-          ? applicationData 
-          : new Date().toISOString();
-        
-        return {
-          id: emailKey,
-          email: metadata.email || email,
-          fullName: profileData.fullName || 'Nombre no disponible',
-          phone: profileData.phone || 'No disponible',
-          profesion: profileData.profesion || 'Sin profesión especificada',
-          country: metadata.country || 'País no especificado',
-          direction: profileData.direction || 'Dirección no especificada',
-          applicationDate: applicationDate, // Incluir la fecha de postulación
-          status: await this.getApplicantStatus(companyId, jobOfferId, email) // Obtener el estado actual
-        };
+          const metadata = metadataSnapshot.exists() ? metadataSnapshot.val() : {};
+
+          // Obtener datos del perfil personal
+          const profileData = userData?.profileData?.personalData || {};
+
+          // Si applicationData es una cadena, es la fecha de postulación (nuevo formato)
+          // Si es true, usar la fecha actual (formato antiguo)
+          const applicationDate = typeof applicationData === 'string'
+            ? applicationData
+            : new Date().toISOString();
+
+          return {
+            id: emailKey,
+            email: metadata.email || email,
+            fullName: profileData.fullName || 'Nombre no disponible',
+            phone: profileData.phone || 'No disponible',
+            profesion: profileData.profesion || 'Sin profesión especificada',
+            country: metadata.country || 'País no especificado',
+            direction: profileData.direction || 'Dirección no especificada',
+            applicationDate: applicationDate, // Incluir la fecha de postulación
+            status: await this.getApplicantStatus(companyId, jobOfferId, email) // Obtener el estado actual
+          };
+        });
       } catch (error) {
         console.error('Error al obtener el perfil del usuario:', error);
         return this.getDefaultProfile(email);
@@ -157,19 +160,19 @@ export class ApplicantsService {
    * @param newStatus Nuevo estado (ej: 'reviewed', 'interview', 'rejected')
    */
   updateApplicantStatus(
-    companyId: string, 
-    jobOfferId: string, 
-    applicantEmail: string, 
+    companyId: string,
+    jobOfferId: string,
+    applicantEmail: string,
     newStatus: string
   ): Promise<void> {
     return runInInjectionContext(this.injector, async () => {
       try {
         const emailKey = this.firebaseService.formatEmailKey(applicantEmail);
         const statusRef = ref(
-          this.database, 
+          this.database,
           `cv-app/users/${companyId}/job-offer/${jobOfferId}/applicantStatus/${emailKey}`
         );
-        
+
         await set(statusRef, newStatus);
       } catch (error) {
         console.error('Error al actualizar el estado del postulante:', error);

@@ -4,6 +4,7 @@ import { ApplicantsService } from './services/applicants.service';
 import { MatchService } from './services/match.service';
 import { finalize } from 'rxjs/operators';
 import { BusinessCandidateProfileModalComponent } from '../../../../sections/business-dashboard/user-table/candidate-profile-modal/business-candidate-profile-modal.component';
+import { applicantUtils } from './utils/applicant-utils';
 
 @Component({
   selector: 'app-applicants-modal',
@@ -19,18 +20,24 @@ export class ApplicantsModalComponent implements OnChanges {
   @Input() companyId: string = '';
   @Input() jobOffer: any;
   @Output() closeModal = new EventEmitter<void>();
-  
+
   applicants: any[] = [];
   pagedApplicants: any[] = [];
   isLoading = true;
   currentPage = 1;
   pageSize = 10;
-  
+
   // Para el modal de perfil
   selectedApplicant: any = null;
-  
+
   private matchService: MatchService;
   private applicantsService: ApplicantsService;
+
+  // Métodos de utilidad importados
+  // Formatea la fecha usando la utilidad
+  formatDate = applicantUtils.formatDate;
+  getStatusText = applicantUtils.getStatusText;
+  getStatusClass = applicantUtils.getStatusClass;
 
   constructor(
     matchService: MatchService,
@@ -124,44 +131,10 @@ export class ApplicantsModalComponent implements OnChanges {
   closeProfileModal(): void {
     this.selectedApplicant = null;
   }
-  
+
   // Evita que el clic en el contenido del modal cierre el modal
   onModalClick(event: Event) {
     event.stopPropagation();
-  }
-  
-  // Obtiene la clase CSS según el estado del postulante
-  getStatusText(status: string): string {
-    if (!status) return 'Pendiente';
-    
-    const statusMap: { [key: string]: string } = {
-      'pending': 'Pendiente',
-      'reviewed': 'Revisado',
-      'interview': 'Entrevistado',
-      'interview_scheduled': 'Entrevista agendado',
-      'rejected': 'Rechazado',
-      'hired': 'Contratado'
-    };
-    
-    return statusMap[status.toLowerCase()] || status;
-  }
-
-  getStatusClass(status: string): string {
-    switch (status?.toLowerCase()) {
-      case 'pending':
-        return 'status-pending';
-      case 'reviewed':
-        return 'status-reviewed';
-      case 'interview':
-      case 'interview_scheduled':
-        return 'status-interview';
-      case 'rejected':
-        return 'status-rejected';
-      case 'hired':
-        return 'status-hired';
-      default:
-        return 'status-pending';
-    }
   }
 
   /**
@@ -182,7 +155,7 @@ export class ApplicantsModalComponent implements OnChanges {
         applicant.email,
         newStatus
       );
-      
+
       // Actualizar el estado en la lista local
       const updatedApplicant = this.applicants.find(a => a.email === applicant.email);
       if (updatedApplicant) {
@@ -193,19 +166,5 @@ export class ApplicantsModalComponent implements OnChanges {
       console.error('Error al actualizar el estado del postulante:', error);
       // Aquí podrías mostrar un mensaje de error al usuario
     }
-  }
-
-  
-  // Formatea la fecha para mostrarla de manera legible
-  formatDate(date: Date | string): string {
-    if (!date) return 'N/A';
-    const d = new Date(date);
-    return d.toLocaleDateString('es-ES', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
   }
 }

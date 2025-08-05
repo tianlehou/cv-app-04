@@ -63,6 +63,54 @@
 /* ==================================== */
 /* Estilos para la tabla de postulados */
 /* ================================== */
+
+/* Estilos para las nuevas columnas */
+.skills-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  max-width: 200px;
+}
+
+.skills-container .badge {
+  font-size: 0.7rem;
+  font-weight: 500;
+  padding: 0.25rem 0.5rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.experiences-container .experience-item,
+.education-container .education-item {
+  margin-bottom: 8px;
+  line-height: 1.3;
+}
+
+.experiences-container .experience-item:last-child,
+.education-container .education-item:last-child {
+  margin-bottom: 0;
+}
+
+/* Ajustes de ancho para las columnas */
+th:nth-last-child(3),
+td:nth-last-child(3) {
+  min-width: 180px;
+  max-width: 200px;
+}
+
+th:nth-last-child(2),
+td:nth-last-child(2) {
+  min-width: 200px;
+  max-width: 250px;
+}
+
+th:last-child,
+td:last-child {
+  min-width: 180px;
+  max-width: 220px;
+}
 .applicants-table {
   width: 100%;
   margin-bottom: 1.5rem;
