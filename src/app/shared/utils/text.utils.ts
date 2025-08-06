@@ -80,3 +80,25 @@ export const formatSalary = (value: string | number | null, mode: 'input' | 'blu
     maximumFractionDigits: 2
   });
 };
+
+/**
+ * Formatea un número según los requisitos específicos
+ * @param value - El número a formatear
+ * @returns El número formateado como cadena
+ */
+export const formatNumber = (value: number | null | undefined): string => {
+  if (value === null || value === undefined) return '0';
+  
+  // Para números menores a 1000, mostrarlos completos
+  if (value < 1000) {
+    return value.toString();
+  }
+  
+  // Para números entre 1000 y 999,999, mostrar con K (ej: 1.5K)
+  if (value < 1000000) {
+    return (value / 1000).toFixed(1).replace(/\.0$/, '') + 'K';
+  }
+  
+  // Para números mayores o iguales a 1,000,000, mostrar con M (ej: 1.5M)
+  return (value / 1000000).toFixed(1).replace(/\.0$/, '') + 'M';
+};

@@ -6,17 +6,17 @@
     <div class="active-line"></div>
   </div>
 
-  <div class="filter-option" [class.active]="activeFilter === 'published'" (click)="selectFilter('published')">
-    <i class="fas fa-check-circle icon" style="font-weight: 500;"></i>
-    <span class="filter-label">Publicado</span>
-    <span class="filter-count">{{statusCounts.published || 0}}</span>
-    <div class="active-line"></div>
-  </div>
-
   <div class="filter-option" [class.active]="activeFilter === 'draft'" (click)="selectFilter('draft')">
     <i class="fas fa-file-alt icon" style="font-weight: 500;"></i>
     <span class="filter-label">Borrador</span>
     <span class="filter-count">{{statusCounts.draft || 0}}</span>
+    <div class="active-line"></div>
+  </div>
+
+  <div class="filter-option" [class.active]="activeFilter === 'published'" (click)="selectFilter('published')">
+    <i class="fas fa-check-circle icon" style="font-weight: 500;"></i>
+    <span class="filter-label">Publicado</span>
+    <span class="filter-count">{{statusCounts.published || 0}}</span>
     <div class="active-line"></div>
   </div>
 

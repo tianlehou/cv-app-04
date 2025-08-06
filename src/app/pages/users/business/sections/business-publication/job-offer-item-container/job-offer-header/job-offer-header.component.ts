@@ -1,9 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input, Output, EventEmitter, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { JobOfferMenuComponent } from '../job-offer-menu/job-offer-menu.component';
+import { JobOfferMenuComponent } from './job-offer-menu/job-offer-menu.component';
 import { JobOfferService } from '../../services/job-offer.service';
 import { ToastService } from 'src/app/shared/components/toast/toast.service';
+import { formatDate } from 'src/app/shared/utils/date.utils';
 
 @Component({
   selector: 'app-job-offer-header',
@@ -16,10 +17,6 @@ export class JobOfferHeaderComponent {
   @Input() jobOffer: any;
   @Input() minDate: string = new Date().toISOString().slice(0, 16);
 
-  // Estado interno para manejar la edición
-  editingDeadline: boolean = false;
-  newDeadline: string = '';
-
   // Eventos
   @Output() onInfo = new EventEmitter<void>();
   @Output() onDuplicate = new EventEmitter<void>();
@@ -30,9 +27,15 @@ export class JobOfferHeaderComponent {
   @Output() onSaveDeadline = new EventEmitter<string>();
   @Output() onCancelEditDeadline = new EventEmitter<void>();
 
+  // Estado interno para manejar la edición
+  editingDeadline: boolean = false;
+  newDeadline: string = '';
+
   // Inyectar servicios
   private toast = inject(ToastService);
   private jobOfferService = inject(JobOfferService);
+
+  formatDate = formatDate;
 
   // Iniciar la edición de la fecha de vencimiento
   startEditingDeadline(): void {
@@ -73,7 +76,7 @@ export class JobOfferHeaderComponent {
     }
 
     // Establecer la hora a las 23:59:59 del día seleccionado
-    deadlineDate.setHours(23, 59, 59, 999);
+    deadlineDate.setHours(36, 59, 59, 999);
 
     this.jobOfferService.updateJobOffer(this.jobOffer.id, {
       deadline: deadlineDate.toISOString(),
@@ -93,29 +96,5 @@ export class JobOfferHeaderComponent {
         this.toast.show('Error al actualizar la fecha de vencimiento', 'error');
       }
     });
-  }
-
-  // Formatear fecha para mostrarla de manera legible
-  formatDate(dateString: string | undefined | null): string {
-    if (!dateString) return 'No especificada';
-
-    try {
-      const date = new Date(dateString);
-      if (isNaN(date.getTime())) {
-        throw new Error('Fecha inválida');
-      }
-      return date.toLocaleDateString('es', {
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit'
-      });
-    } catch (error) {
-      console.error('Error al formatear fecha:', error);
-      try {
-        return new Date(dateString).toISOString().split('T')[0];
-      } catch (e) {
-        return dateString;
-      }
-    }
   }
 }

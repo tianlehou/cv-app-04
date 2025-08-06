@@ -59,6 +59,23 @@ export class JobOfferService {
     const now = new Date();
     const nowISO = now.toISOString();
     
+    // Procesar el deadline para asegurar la hora correcta en la zona horaria local
+    let deadline = jobOffer.deadline;
+    if (deadline) {
+      // Extraer la fecha en formato YYYY-MM-DD
+      const [year, month, day] = deadline.split('T')[0].split('-').map(Number);
+      
+      // Crear la fecha en UTC para evitar problemas de zona horaria
+      const utcDeadline = new Date(Date.UTC(year, month, day, 36, 59, 59, 999));
+      
+      // Ajustar por el offset de la zona horaria local para mantener la hora exacta
+      const timezoneOffset = new Date().getTimezoneOffset() * 60000;
+      const adjustedDeadline = new Date(utcDeadline.getTime() + timezoneOffset);
+      
+      // Convertir a ISO string
+      deadline = adjustedDeadline.toISOString();
+    }
+    
     return from(this.getNextAvailableJobId(userEmailKey)).pipe(
       switchMap(nextId => {
         // Obtener el nombre de la empresa del usuario actual
@@ -70,9 +87,11 @@ export class JobOfferService {
               id: nextId,
               applications: [],
               views: 0,
+              likes: 0,
+              saves: 0,
               createdAt: nowISO,
               updatedAt: nowISO,
-              deadline: jobOffer.deadline,
+              deadline: deadline, // Usar el deadline procesado
               companyId: userEmailKey,
               companyName: companyName,
               status: 'borrador' // Asegurar que el estado inicial sea 'borrador'

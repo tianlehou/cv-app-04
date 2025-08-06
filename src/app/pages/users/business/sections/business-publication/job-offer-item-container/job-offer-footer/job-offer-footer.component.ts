@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, Output, EventEmitter, OnDestroy, OnInit, NgZone } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnDestroy, OnInit } from '@angular/core';
 import { interval, Subscription } from 'rxjs';
+import { formatNumber } from 'src/app/shared/utils/text.utils';
 
 @Component({
   selector: 'app-job-offer-footer',
@@ -15,7 +16,7 @@ export class JobOfferFooterComponent implements OnInit, OnDestroy {
   @Input() bookmarksCount: number = 0;
   @Input() sharesCount: number = 0;
   @Input() applicationsCount: number = 0;
-  
+
   @Output() viewApplicants = new EventEmitter<void>();
 
   // Estado para el tiempo restante
@@ -24,7 +25,8 @@ export class JobOfferFooterComponent implements OnInit, OnDestroy {
   private countdownSub: Subscription | null = null;
   private timeZone = 'America/Panama';
 
-  constructor(private ngZone: NgZone) {}
+  // método de utilidd
+  formatNumber = formatNumber;
 
   ngOnInit(): void {
     this.updateTimeRemaining();
@@ -38,39 +40,15 @@ export class JobOfferFooterComponent implements OnInit, OnDestroy {
     this.viewApplicants.emit();
   }
 
-  // Método para formatear números según los requisitos
-  formatNumber(value: number): string {
-    if (value === null || value === undefined) return '0';
-    
-    // Para números menores a 1000, mostrarlos completos
-    if (value < 1000) {
-      return value.toString();
-    }
-    
-    // Para números entre 1,000 y 999,999
-    if (value < 1000000) {
-      const formatted = (value / 1000).toFixed(1);
-      return `${formatted}K`;
-    }
-    
-    // Para números entre 1,000,000 y 999,999,999
-    if (value < 1000000000) {
-      const formatted = (value / 1000000).toFixed(1);
-      return `${formatted}M`;
-    }
-
-    // Para números de 1,000,000 en adelante
-    const formatted = (value / 1000000000).toFixed(1);
-    return `${formatted}B`;
-  }
-
   private updateTimeRemaining() {
+    // Verifica si no hay fecha de vencimiento o no hay oferta de trabajo
     if (!this.jobOffer?.deadline) {
-      this.timeRemaining = '';
-      this.isTimeCritical = false;
-      return;
+      this.timeRemaining = '';  // Si no hay fecha, deja el campo vacío
+      this.isTimeCritical = false;  // Reinicia el estado de tiempo crítico
+      return;  // Sale de la función
     }
 
+    // Crea un objeto Date con la fecha y hora actuales
     const now = new Date();
     // Ajustar 5 horas a la fecha actual
     now.setHours(now.getHours() - 5);
@@ -86,7 +64,8 @@ export class JobOfferFooterComponent implements OnInit, OnDestroy {
 
     // Verificar si faltan menos de 24 horas o si ya expiró
     this.isTimeCritical = hoursDiff < 24 || diffMs <= 0;
-
+    
+    // Si ya pasó la fecha límite
     if (diffMs <= 0) {
       this.timeRemaining = 'Expirado';
       return;
@@ -98,13 +77,14 @@ export class JobOfferFooterComponent implements OnInit, OnDestroy {
     const seconds = Math.floor((diffMs % (1000 * 60)) / 1000);
 
     if (days > 0) {
-      this.timeRemaining = `${days}d ${hours}h`;
+      // Muestra días, horas, minutos y segundos
+      this.timeRemaining = `${days}d ${hours}h ${minutes}m ${seconds}s`;
     } else if (hours > 0) {
-      this.timeRemaining = `${hours}h ${minutes}m`;
-    } else if (minutes > 0) {
-      this.timeRemaining = `${minutes}m ${seconds}s`;
+      // Muestra horas, minutos y segundos
+      this.timeRemaining = `${hours}h ${minutes}m ${seconds}s`;
     } else {
-      this.timeRemaining = `${seconds}s`;
+      // Muestra minutos y segundos
+      this.timeRemaining = `${minutes}m ${seconds}s`;
     }
   }
 

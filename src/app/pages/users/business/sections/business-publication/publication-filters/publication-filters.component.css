@@ -81,25 +81,25 @@
   width: 100%;
 }
 
-/* Estilo para el filtro de Publicado */
+/* Estilo para el filtro de Borrador */
 .filter-option:nth-child(2):hover,
 .filter-option:nth-child(2).active {
-  color: var(--clr-green-dark);
-}
-
-.filter-option:nth-child(2).active .active-line {
-  background-color: var(--clr-green-dark);
-  width: 100%;
-}
-
-/* Estilo para el filtro de Borrador */
-.filter-option:nth-child(3):hover,
-.filter-option:nth-child(3).active {
   color: var(--clr-yellow-dark);
 }
 
-.filter-option:nth-child(3).active .active-line {
+.filter-option:nth-child(2).active .active-line {
   background-color: var(--clr-yellow-dark);
+  width: 100%;
+}
+
+/* Estilo para el filtro de Publicado */
+.filter-option:nth-child(3):hover,
+.filter-option:nth-child(3).active {
+  color: var(--clr-green-dark);
+}
+
+.filter-option:nth-child(3).active .active-line {
+  background-color: var(--clr-green-dark);
   width: 100%;
 }
 

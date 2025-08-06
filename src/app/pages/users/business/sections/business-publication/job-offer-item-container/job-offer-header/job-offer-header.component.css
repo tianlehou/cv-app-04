@@ -115,7 +115,16 @@ app-job-offer-menu {
 .deadline {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 0.5rem;
+}
+
+.deadline i {
+  margin-right: 10px;
+}
+
+.deadline span {
+  font-weight: 500;
 }
 
 .deadline input {

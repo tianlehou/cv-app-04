@@ -36,19 +36,23 @@
 
     <!-- Fin de Postulación -->
     <div class="job-date deadline">
-      <i class="fas fa-calendar-alt"></i>
-      <span *ngIf="!editingDeadline">Vence: {{ formatDate(jobOffer.deadline) }}</span>
-      <div *ngIf="editingDeadline" class="display-flex-center">
-        <input type="date" [(ngModel)]="newDeadline" [min]="minDate" class="form-control">
-        <div class="display-flex-center">
-          <button (click)="saveDeadline()" class="fas fa-save"
-            style="color: var(--clr-green); padding: 8px 12px; margin: 0 16px;"></button>
-          <button (click)="cancelEditDeadline()" class="fas fa-ban"
-            style="color: var(--clr-red); padding: 8px 12px;"></button>
+      <div>
+        <i class="fas fa-calendar-alt"></i>
+        <label *ngIf="!editingDeadline">Vence:</label>
+        <span *ngIf="!editingDeadline"> {{ formatDate(jobOffer.deadline) }} ( 6p.m. )</span>
+        <div *ngIf="editingDeadline" class="display-flex-center">
+          <input type="date" [(ngModel)]="newDeadline" [min]="minDate" class="form-control">
+          <div class="display-flex-center">
+            <button (click)="saveDeadline()" class="fas fa-save"
+              style="color: var(--clr-green); padding: 8px 12px; margin: 0 16px;"></button>
+            <button (click)="cancelEditDeadline()" class="fas fa-ban"
+              style="color: var(--clr-red); padding: 8px 12px;"></button>
+          </div>
         </div>
       </div>
-      <button *ngIf="jobOffer?.status === 'borrador' && !editingDeadline" (click)="startEditingDeadline()">
-        <span style="color: var(--clr-blue);">Editar</span>
+      <button *ngIf="jobOffer?.status === 'borrador' && !editingDeadline"
+        (click)="startEditingDeadline()">
+        <span style="color: var(--clr-blue);">Editar Fecha</span>
       </button>
     </div>
   </div>

@@ -3,7 +3,7 @@ import { Component, Input, Output, EventEmitter, inject, NgZone, OnDestroy, OnIn
 import { FormsModule } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { User } from '@angular/fire/auth';
-import { JobOfferInfoModalComponent } from './job-offer-menu/job-offer-info-modal/job-offer-info-modal.component';
+import { JobOfferInfoModalComponent } from './job-offer-header/job-offer-menu/job-offer-info-modal/job-offer-info-modal.component';
 import { JobOffer } from '../job-offer.model';
 import { ConfirmationModalService } from 'src/app/shared/components/confirmation-modal/confirmation-modal.service';
 import { ToastService } from 'src/app/shared/components/toast/toast.service';
@@ -41,8 +41,6 @@ export class JobOfferItemComponent implements OnInit, OnDestroy {
   @Output() deleted = new EventEmitter<string>();
   @Output() published = new EventEmitter<JobOffer>();
   @Output() cancelled = new EventEmitter<JobOffer>();
-
-
   isDuplicating = false;
 
   // Inyectar servicios necesarios
@@ -56,30 +54,24 @@ export class JobOfferItemComponent implements OnInit, OnDestroy {
   private jobOfferApplicationService = inject(JobOfferApplicationService);
 
   showInfoModal = false;
+  showApplicantsModal = false;
+
   // Estado para controlar la edición de la fecha de vencimiento
   editingDeadline = false;
   newDeadline = '';
   minDate = new Date().toISOString().slice(0, 16);
-  showApplicantsModal = false;
 
   // Estado para mostrar el contador de likes
   likesCount: number = 0;
-  private likesSubscription: Subscription | null = null;
-
-  // Estado para mostrar el contador de saves/bookmarks
   bookmarksCount: number = 0;
-  private bookmarksSubscription: Subscription | null = null;
-
-  // Estado para mostrar el contador de shares
   sharesCount: number = 0;
-  private sharesSubscription: Subscription | null = null;
-
-  // Estado para mostrar el contador de aplicaciones
   applicationsCount: number = 0;
+  private likesSubscription: Subscription | null = null;
+  private bookmarksSubscription: Subscription | null = null;
+  private sharesSubscription: Subscription | null = null;
   private applicationsSubscription: Subscription | null = null;
 
   ngOnInit() {
-
     // Suscribirse a actualizaciones de likes
     if (this.jobOffer?.id && this.jobOffer?.companyId) {
       this.likesSubscription = this.jobOfferLikeService.getLikesUpdates(
@@ -170,8 +162,6 @@ export class JobOfferItemComponent implements OnInit, OnDestroy {
     }
   }
 
-
-
   // Método para manejar el evento mouseleave en la tarjeta
   onMouseLeave(): void {
     // Este método se mantiene para compatibilidad con el template
@@ -198,14 +188,6 @@ export class JobOfferItemComponent implements OnInit, OnDestroy {
     this.showInfoModal = false;
   }
   //==============================
-
-  // Método para manejar cuando el mouse sale del componente
-  // Se mantiene por compatibilidad pero ya no hace nada ya que el menú está en un componente separado
-
-
-
-
-
 
   // Método para mostrar el modal de postulados
   onViewApplicants(): void {
